@@ -1,9 +1,0 @@
-- Sort output
-- ColumnNames abbreviated in XML file
-- Set wait interval based if it is a calculated property
-- Make calculated properties work better...
-- "Time to collect" output should not always happen -- maybe a cmd-line arg
-- Tree should be able to use template 
-- Tree should be able to use "table" output
-- Add comments to all code
-- getReplacedOutput is pretty lame -- there must be a better way for that to work
