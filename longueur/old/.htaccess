@@ -1,0 +1,6 @@
+ErrorDocument 404 /404.html
+
+Options Indexes FollowSymLinks Includes
+AddType application/x-httpd-cgi .cgi
+AddType text/x-server-parsed-html .html
+AddType text/x-server-parsed-html .shtml

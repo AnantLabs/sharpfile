@@ -1,0 +1,11 @@
+BODY { font-family: arial, verdana, serf; color: #000000; font-size: 8pt }
+TD { font-family: arial, verdana, serf; color: #000000; font-size: 8pt }
+P { font-family: arial, verdana, serf; color: #000000; font-size: 8pt }
+A:link { font-family: arial, verdana, serf; text-decoration: none; color: #908c90 }
+A:active { font-family: arial, verdana, serf; text-decoration: none; color: #000000 }
+A:visited { font-family: arial, verdana, serf; text-decoration: none; color: #908c90 }
+A:hover { font-family: arial, verdana, serf; text-decoration: none; color: #000000 }
+
+.border { position: static; border-left-width: 1px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-color: #000000; border-style: solid; padding-left: 5px; padding-right: 5px; padding-up: 5px; padding-bottom: 5px }
+
+.border_pic { position: static; border-left-width: 1px; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-color: #000000; border-style: solid; padding-left: 0px; padding-right: 0px; padding-up: 0px; padding-bottom: 0px }

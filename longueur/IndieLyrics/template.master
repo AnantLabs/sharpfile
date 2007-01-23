@@ -1,0 +1,94 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="template.master.cs" Inherits="template" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head id="Head1" runat="server">
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+	<title>IndieLyrics</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	
+	<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		_uacct = "UA-247760-1";
+		//urchinTracker();
+	</script>
+
+	<script language="javascript" type="text/javascript">
+	function createRequestObject() {
+		var ro;
+		var browser = navigator.appName;
+		if(browser == "Microsoft Internet Explorer"){
+			ro = new ActiveXObject("Microsoft.XMLHTTP");
+		}else{
+			ro = new XMLHttpRequest();
+		}
+		return ro;
+	}
+
+	var http = createRequestObject();
+	var fn;
+
+	function sndReq(action, args, fnToCall) {
+		fn = fnToCall;
+		
+		if (args != null && args != '') {
+			http.open('get', 'action.aspx?id='+getGuid()+'&action='+action+args);
+		} else {
+			http.open('get', 'action.aspx?id='+getGuid()+'&action='+action);
+		}
+		
+		http.onreadystatechange = handleResponse;
+		http.send(null);
+	}
+
+	function handleResponse() {
+		if(http.readyState == 4){
+			var response = http.responseText;
+			var update = new Array();
+
+			if(response.indexOf('|' != -1)) {
+				update = response.split('|');
+				
+				for (i = 0; i < update.length; i = i+2) {
+					if (update[i] != null && update[i+1] != null) {
+						document.getElementById(update[i]).innerHTML = update[i+1];
+					}
+				}
+			}
+			
+			if (fn != null && fn != '') {
+				fn();
+			}
+		}
+	}
+	</script>
+</head>
+<body>
+    <form id="form1" runat="server">
+		<div id="container">
+			<h1>Indie Lyrics</h1>
+			<div id="nav">
+		 		<ul>
+					<li><asp:HyperLink id="HomeLink" runat="server" NavigateUrl="~/IndieLyrics/default.aspx" Text="HOME"></asp:HyperLink></li>
+					<li><asp:HyperLink id="NewsLink" runat="server" NavigateUrl="~/IndieLyrics/news.aspx" Text="NEWS"></asp:HyperLink></li>
+					<li><asp:HyperLink id="AddLink" runat="server" NavigateUrl="~/IndieLyrics/add_quote.aspx" Text="ADD A LYRIC"></asp:HyperLink></li>
+					<li><asp:HyperLink ID="SearchLink" runat="server" NavigateUrl="~/IndieLyrics/search.aspx" Text="SEARCH"></asp:HyperLink></li>
+					<asp:Literal ID="UserLiteral" runat="server"></asp:Literal>
+				</ul>
+			</div>			
+			<br />
+
+			<div class="content">
+				<asp:contentplaceholder id="Content" runat="server" Visible="true" />
+				<asp:contentplaceholder id="NotAuthorized" runat="server" Visible="false" />
+			</div>
+		</div>
+		
+		<div class="copyright">
+			Copyright belongs to the artists. Obviously.<br />
+			<asp:Literal ID="ltrWittism" runat="server" />
+		</div>
+    </form>
+</body>
+</html>

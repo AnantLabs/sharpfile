@@ -1,0 +1,228 @@
+<html>
+<head>
+<title>longueur.org >> Software</title>
+<style type="text/css">
+	@import "styles.css";
+</style>
+<script javascript="javascript/text">
+	function toggleChangeLog(app) 
+	{
+		if (document.getElementById('changeLog_' + app).style.display == 'none') 
+		{
+			document.getElementById('changeLog_' + app).style.display = '';
+		}
+		else 
+		{
+			document.getElementById('changeLog_' + app).style.display = 'none';
+		}
+	}
+</script>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+	_uacct = "UA-247760-1";
+	urchinTracker();
+</script>
+</head>
+<body>
+	<div class="title">
+		Software
+	</div>
+
+	<div class="item">
+		<a href="#wintail">WinTail</a> - Just another GUI for the ever-elusive "tail -f" functionailty on Windows.<br />
+		<a href="#geektool">GeekTool</a> - Display text information on your desktop.<br />
+		<a href="#bugzapper">BugZapper</a> - Scrape BugZilla information and show it in your system tray.<br />
+		<br />
+
+		<strong>Note that all applications require the <a href="http://www.microsoft.com/downloads/details.aspx?familyid=0856eacb-4362-4b0d-8edd-aab15c5e04f5&displaylang=en">.NET 2.0 Framework</a>.</strong>
+		<br />
+		<br />
+
+		Also note that there is also no assurance, implied or otherwise, that these programs won't crash Windows or cause your machine to explode into a fiery death. I have never seen anything terrible happen, but I wouldn't count it out, either. Look at the source if you want to see what is going on.
+	</div>
+
+	<div class="item">
+		<div class="itemHeader">		
+			<a name="wintail">WinTail 0.2</a>
+		</div>
+
+		<div class="itemImage">
+			<img src="images/wintail.jpg" class="itemImageBorder">
+		</div>
+
+		<div class="itemContent">
+			There are a ton of GUI's for tail -f functionality on Windows, but most are bare-bones affairs (I can't pause a tail?!). This is a more feature-complete, hopefully easy to use, tail GUI. 
+			<br />
+			<br />
+
+			Some of the features available include: the ability to stop a tail, ability to stop the automatic scrolling when new content arrives, and highlighting lines of content based on regular expressions with configurable colors.
+			<br />
+			<br />
+			
+			<strong>Note:</strong> You will need to take a look at the XML file that stores all of the settings for this application to work for you. It's not hard to figure it out, though, so just take a peak.
+			<br />
+			<br />
+
+			Since this program is still alpha software, there is no executable to download, yet. To grab the latest from SVN, have a look at the code.google.com site setup for <a href="http://code.google.com/p/wintailsharp/">WinTail</a>.
+			<br />
+			<br />
+
+			<div class="olderVersionsTitle">
+				Older Versions
+			</div>
+
+			<div class="olderVersions">
+				If you would like to look at the older versions just email me (contact information at the bottom of this page). Not sure why you would want to, though.
+			</div>
+			<br />
+
+			<div class="changeLogTitle">
+				<a href="#wintail" onclick="toggleChangeLog('wintail');">Change log</a>
+			</div>
+
+			<div class="changeLog" id="changeLog_wintail" style="display: none">
+				0.2<br />
+				- Start, stop tail.<br />
+				- Filtering.<br />
+				- Scroll on new content.<br />
+				- Aggressively poll the file.
+				<br />
+			</div>
+		</div>
+	</div>
+
+	<div class="item">
+		<div class="itemHeader">		
+			<a name="geektool">GeekTool 0.4</a>
+		</div>
+
+		<div class="itemImage">
+			<img src="images/geektool.jpg" class="itemImageBorder">
+		</div>
+
+		<div class="itemContent">
+			There seems to a lot of Windows applications which will display certain information to your screen, but they are either chock-full of eye candy (widgets?) or are limited by the programmer to what <em>they</em> want to display; I wanted something a little more flexible. One of my favorite apps on OS X is <a href="http://projects.tynsoe.org/en/geektool/">GeekTool</a> which is program that takes the output from a process and, in essence, writes it to your desktop. I figured it wouldn't be that difficult of an app to replicate for Windows users so I decided to do just that. And I stole their name, too, which is pretty lame, but I couldn't think up anything as catchy as "BugZapper". 
+			<br />
+			<br />
+
+			Usually I use <a href="http://www.sysinternals.com">SysInternals</a>' excellent command-line <a href="http://www.microsoft.com/technet/sysinternals/ProcessesAndThreads/PsList.mspx">PsList</a> (part of the also excellent <a href="http://www.microsoft.com/technet/sysinternals/ProcessesAndThreads/PsTools.mspx">PsTools</a>) to output a continuously updated list of processes onto my desktop, but many other command-line applications should work just fine. I am sure there are other command-line utilities (Linux ports, or Cygwin, maybe?) that could generate some great content for your backdrop.
+			<br />
+			<br />
+
+			One of the things that I thought would also be helpful is the ability to use regular expressions to only display the content that I actually wanted to see, so the ability is there. Note, however, that if you don't know how to write regex, you don't need to. The default is to just show all of the output from the process.
+			<br />
+			<br />
+			
+			<strong>Note:</strong> You will need to take a look at the XML file that stores all of the settings for this application to work for you. It's not hard to figure it out, though, so just take a peak.
+			<br />
+			<br />
+
+			Since this program is still alpha software, there is no executable to download, yet. To grab the latest from SVN, have a look at the code.google.com site setup for <a href="http://code.google.com/p/geektoolsharp/">GeekTool</a>.
+			<br />
+			<br />
+
+			<div class="olderVersionsTitle">
+				Older Versions
+			</div>
+
+			<div class="olderVersions">
+				If you would like to look at the older versions just email me (contact information at the bottom of this page). Not sure why you would want to, though.
+			</div>
+			<br />
+
+			<div class="changeLogTitle">
+				<a href="#geektool" onclick="toggleChangeLog('geektool');">Change log</a>
+			</div>
+
+			<div class="changelog" id="changeLog_geektool" style="display: none">
+				0.4<br />
+				- Multiple instances of GeekTool windows with one executable.<br />
+				<br />
+
+				0.3<br />
+				-Regex to only display interested content.<br />
+				-Templates with explicit groups for greater flexibility.<br />
+				<br />
+
+				0.2<br />
+				- Negative coordinates.<br />
+				- Transparancy.<br />
+				- Lock the position.<br />
+				- Opacity.<br />
+				- Error handling for unspecified settings.<br />
+				<br />
+
+				0.1<br />
+				- Initial version that just output the entire result from the process to the screen.<br />
+				- Set color, font, size, location.
+			</div>
+		</div>
+	</div>
+
+	<div class="item">
+		<div class="itemHeader">		
+			<a name="bugzapper">BugZapper 0.4</a>
+		</div>
+
+		<div class="itemImage">
+			<img src="images/bugzapper.jpg" class="itemImageBorder">
+		</div>
+
+		<div class="itemContent">
+			The company I work for uses Bugzilla for project tasks and I wanted a way to be alerted when/if new bugs were added to my queue. There were a few options on how to retireve this data: if Bugzilla had an api I could access that, I could look in the database directly to grab the information, or I could scrape the webpage that has all of the bug information directly. The easiest (although, arguably the hackiest) approach is to just scrape the website, so that's what I did. The application scrapes a user-supplied URL looking for bug information on the page and then pops up balloon tip notifications when your bugs have changed. It also changes color giving some visual indication of your task "status".
+			<br />
+			<br />
+			
+			<strong>Note:</strong> In all likelihood, this executable <strong>will not</strong> work for you. Basic regular expressions are hardcoded into the source which specify how the bugs appear on the website scraped. But, I figure only developers are looking for this type of tool, so you can download the source and hack away to your heart's content. Beware that it's not the cleanest or most elegant code. It was done on a whim in about two nights, so you have been warned. Most of the configurable settings are in the App.config file (for example, your URL to access your bug webpage), but some things are still pretty hard-coded.
+			<br />
+			<br />
+
+			Download the latest <a href="bugzapper/bugzapper_0.4.zip">executable</a> and/or the <a href="bugzapper/bugzapper_source_0.4.zip">source</a> to see what is going on.
+			<br />
+			<br />
+
+			<div class="olderVersionsTitle">
+				Older Versions
+			</div>
+
+			<div class="olderVersions">
+				If you would like to look at the older versions just email me (contact information at the bottom of this page). Not sure why you would want to, though.
+			</div>
+			<br />
+
+			<div class="changeLogTitle">
+				<a href="#bugzapper" onclick="toggleChangeLog('bugzapper');">Change log</a>
+			</div>
+
+			<div class="changeLog" id="changeLog_bugzapper" style="display: none">
+				0.4<br />
+				- Fixed a bug where an empty balloon tip would throw an error.<br />
+				- Added the option to show the list of "normal" bugs.<br />
+				- Took advantage of some code in my common.dll so that code is consolidated.<br />
+				<br />
+
+				0.3<br />
+				- Changed the attribute name in the config file for detailedBalloonTip.<br />
+				- Rewrote the core code that generates the balloon tips from the bug information.<br />
+				- Moved code around for faster execution and lower memory.<br />
+				- Cleaned up a bug where the correct count wasn't accurate.<br />
+				- Make sure that the balloon tip always pops up when it first loads, even if there are no bugs found.<br />
+				- Changed the algorithm to determine the total bugs found (and display it in the balloon title).<br />
+				<br />
+				
+				0.2<br />
+				- Changed the way bug "state" is saved to be more accurate and reliable.<br />
+				<br />
+				
+				0.1<br />
+				- Working prototype. It works!<br />
+			</div>
+		</div>
+	</div>
+
+	<div class="contact">
+		Any suggestions or comments: longueur.software_at_gmail.com
+	</div>
+</body>
+</html>
