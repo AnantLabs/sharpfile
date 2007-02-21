@@ -33,6 +33,7 @@
 		<a href="#wintail">WinTail</a> - Just another GUI for the ever-elusive "tail -f" functionailty on Windows.<br />
 		<a href="#geektool">GeekTool</a> - Display text information on your desktop.<br />
 		<a href="#bugzapper">BugZapper</a> - Scrape BugZilla information and show it in your system tray.<br />
+		<a href="#common">Common.dll</a> - Common code that I re-use across multiple projects.<br />
 		<br />
 
 		<strong>Note that all applications require the <a href="http://www.microsoft.com/downloads/details.aspx?familyid=0856eacb-4362-4b0d-8edd-aab15c5e04f5&displaylang=en">.NET 2.0 Framework</a>.</strong>
@@ -68,15 +69,6 @@
 			<br />
 			<br />
 
-			<div class="olderVersionsTitle">
-				Older Versions
-			</div>
-
-			<div class="olderVersions">
-				If you would like to look at the older versions just email me (contact information at the bottom of this page). Not sure why you would want to, though.
-			</div>
-			<br />
-
 			<div class="changeLogTitle">
 				<a href="#wintail" onclick="toggleChangeLog('wintail');">Change log</a>
 			</div>
@@ -94,7 +86,7 @@
 
 	<div class="item">
 		<div class="itemHeader">		
-			<a name="geektool">GeekTool 0.4</a>
+			<a name="geektool">GeekTool 0.5.2</a>
 		</div>
 
 		<div class="itemImage">
@@ -118,17 +110,12 @@
 			<br />
 			<br />
 
-			Since this program is still alpha software, there is no executable to download, yet. To grab the latest from SVN, have a look at the code.google.com site setup for <a href="http://code.google.com/p/geektoolsharp/">GeekTool</a>.
+			This program is still alpha software so beware and have caution. There is a known issue: shutting down seems to send off a flurry of dialogue boxes asking to close whatever process GeekTool is attempting to start up. I am looking for a solution, but haven't found one, yet. To grab the latest from SVN, have a look at the code.google.com site setup for <a href="http://code.google.com/p/geektoolsharp/">GeekTool</a>.  For some more insight to how the code works visit the CodeProject <a href="http://www.codeproject.com/useritems/geektool.asp">article</a>.
 			<br />
 			<br />
 
-			<div class="olderVersionsTitle">
-				Older Versions
-			</div>
-
-			<div class="olderVersions">
-				If you would like to look at the older versions just email me (contact information at the bottom of this page). Not sure why you would want to, though.
-			</div>
+			Download the latest <a href="geektool/geektool_bin_0.5.2.zip">executable</a> and/or the <a href="geektool/geektool_src_0.5.2.zip">source</a> to see what is going on.
+			<br />
 			<br />
 
 			<div class="changeLogTitle">
@@ -136,6 +123,21 @@
 			</div>
 
 			<div class="changelog" id="changeLog_geektool" style="display: none">
+				0.5.2<br />
+				- Code cleanup and refactor.<br />
+				- Post-build task to automatically generate the executable and source zip files.<br />
+				- Fixed a bug where if an instance was locked it would disappear when a mouse clicked and dragged over it.<br />
+				- Moved general code into a common asssembly that is automatically integrated into the regular executable.<br />
+				- Handle the case where a process takes longer to execute than the timeout to call the process again.<br />
+				- Explicitedly set the floor for the timerInterval to 2 seconds to also mitigate the above from happening.<br />
+				- Add GPL license and update the Readme file.<br />
+				<br />
+
+				0.5<br />
+				- Disable the GeekTool icons when a user is ALT-TABing.<br />
+				- Case-sensitivity option for regex.<br />
+				<br />
+
 				0.4<br />
 				- Multiple instances of GeekTool windows with one executable.<br />
 				<br />
@@ -162,7 +164,7 @@
 
 	<div class="item">
 		<div class="itemHeader">		
-			<a name="bugzapper">BugZapper 0.4</a>
+			<a name="bugzapper">BugZapper 0.5</a>
 		</div>
 
 		<div class="itemImage">
@@ -178,17 +180,8 @@
 			<br />
 			<br />
 
-			Download the latest <a href="bugzapper/bugzapper_0.4.zip">executable</a> and/or the <a href="bugzapper/bugzapper_source_0.4.zip">source</a> to see what is going on.
+			Download the latest <a href="bugzapper/bugzapper_bin_0.5.zip">executable</a> and/or the <a href="bugzapper/bugzapper_src_0.5.zip">source</a> to see what is going on.
 			<br />
-			<br />
-
-			<div class="olderVersionsTitle">
-				Older Versions
-			</div>
-
-			<div class="olderVersions">
-				If you would like to look at the older versions just email me (contact information at the bottom of this page). Not sure why you would want to, though.
-			</div>
 			<br />
 
 			<div class="changeLogTitle">
@@ -196,6 +189,10 @@
 			</div>
 
 			<div class="changeLog" id="changeLog_bugzapper" style="display: none">
+				0.5<br />
+				- Add the ability to ignore ids and display some status message about the ignored bugs.<br />
+				<br />
+
 				0.4<br />
 				- Fixed a bug where an empty balloon tip would throw an error.<br />
 				- Added the option to show the list of "normal" bugs.<br />
@@ -217,6 +214,31 @@
 				
 				0.1<br />
 				- Working prototype. It works!<br />
+			</div>
+		</div>
+	</div>
+
+	<div class="item">
+		<div class="itemHeader">		
+			<a name="common">Common 0.4.2</a>
+		</div>
+
+		<div class="itemContent">
+			This is just a storeroom for the code that is useful across more than one project. The only reason you might want to look at this code... well, there is no real reason actually. However, I include it (already compiled) in the source for most of the other downloads, so I figured I should have the source available to download somewhere.
+			<br />
+			<br />
+
+			Download the latest <a href="common/common_src_0.4.2.zip">source</a>.
+			<br />
+			<br />
+
+			<div class="changeLogTitle">
+				<a href="#common" onclick="toggleChangeLog('common');">Change log</a>
+			</div>
+
+			<div class="changeLog" id="changeLog_common" style="display: none">
+				0.4.2<br />
+				- Updated the getHumanReadable code.<br />
 			</div>
 		</div>
 	</div>
