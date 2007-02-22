@@ -30,8 +30,9 @@
 	</div>
 
 	<div class="item">
-		<a href="#wintail">WinTail</a> - Just another GUI for the ever-elusive "tail -f" functionailty on Windows.<br />
+		<a href="#ps">ps</a> - Another clone of the Unix ps.<br />
 		<a href="#geektool">GeekTool</a> - Display text information on your desktop.<br />
+		<a href="#wintail">WinTail</a> - Just another GUI for the ever-elusive "tail -f" functionailty on Windows.<br />
 		<a href="#bugzapper">BugZapper</a> - Scrape BugZilla information and show it in your system tray.<br />
 		<a href="#common">Common.dll</a> - Common code that I re-use across multiple projects.<br />
 		<br />
@@ -45,41 +46,62 @@
 
 	<div class="item">
 		<div class="itemHeader">		
-			<a name="wintail">WinTail 0.2</a>
+			<a name="ps">ps 0.4.1.0</a>
 		</div>
 
-		<div class="itemImage">
-			<img src="images/wintail.jpg" class="itemImageBorder">
-		</div>
+		<!-- <div class="itemImage">
+			<img src="images/ps.jpg" class="itemImageBorder">
+		</div> -->
 
 		<div class="itemContent">
-			There are a ton of GUI's for tail -f functionality on Windows, but most are bare-bones affairs (I can't pause a tail?!). This is a more feature-complete, hopefully easy to use, tail GUI. 
+			I was looking for a feature-rich ps clone for Windows and I couldn't really find anything that fit my needs. The best I could find was  <a href="http://www.sysinternals.com">SysInternal's</a> <a href="http://www.microsoft.com/technet/sysinternals/ProcessesAndThreads/PsList.mspx">PsList</a>, but even that wasn't exactly what I was looking for. My version includes the following features:<br />
+
+			<ul>
+				<li>Templated output to specify how the values should be displayed (for example tab-delimited, CSV, etc.)</li>
+				<li>Tree view</li>
+				<li>Ability to specify a list of properties that should be displayed for each process</li>
+				<li>Filter the processes output</li>
+				<li>Sort the output by specified column</li>
+				<li>Human-readable output</li>
+			</ul>
+
+			This program is still beta software so there may be bugs and there is definately room for some optimization, but most of the functionality I want is there.
 			<br />
 			<br />
 
-			Some of the features available include: the ability to stop a tail, ability to stop the automatic scrolling when new content arrives, and highlighting lines of content based on regular expressions with configurable colors.
-			<br />
-			<br />
-			
-			<strong>Note:</strong> You will need to take a look at the XML file that stores all of the settings for this application to work for you. It's not hard to figure it out, though, so just take a peak.
-			<br />
-			<br />
-
-			Since this program is still alpha software, there is no executable to download, yet. To grab the latest from SVN, have a look at the code.google.com site setup for <a href="http://code.google.com/p/wintailsharp/">WinTail</a>.
+			Download the latest <a href="ps/ps_bin_0.4.1.0.zip">executable</a> and/or the <a href="ps/ps_src_0.4.1.0.zip">source</a> to see what is going on.
 			<br />
 			<br />
 
 			<div class="changeLogTitle">
-				<a href="#wintail" onclick="toggleChangeLog('wintail');">Change log</a>
+				<a href="#ps" onclick="toggleChangeLog('ps');">Change log</a>
 			</div>
 
-			<div class="changeLog" id="changeLog_wintail" style="display: none">
-				0.2<br />
-				- Start, stop tail.<br />
-				- Filtering.<br />
-				- Scroll on new content.<br />
-				- Aggressively poll the file.
+			<div class="changelog" id="changeLog_ps" style="display: none">
+				0.4<br />
+				- Tree view can use template.<br />
+				- Get rid of outside dll dependency.<br />
+				- Error-handling for bad argument list.<br />
+				- Updated help contents.<br />
+				- "No processes match filter" message.<br />
 				<br />
+
+				0.3<br />
+				- Standard generation of calculated values instead of the lame, hard-coded way it was done earlier.<br />
+				<br />
+
+				0.2<br />
+				- User-specific output columns.<br />
+				- Output is sortable.<br />
+				<br />
+
+				0.1<br />
+				- Basic functionality.<br />
+				- Specify all of the available process properties to display.<br />
+				- Tree, normal (templated), and table views.<br />
+				- Calculate processor percentage.<br />
+				- Descriptions of all process properties.<br />
+				- Filtering capability.<br />
 			</div>
 		</div>
 	</div>
@@ -98,7 +120,7 @@
 			<br />
 			<br />
 
-			Usually I use <a href="http://www.sysinternals.com">SysInternals</a>' excellent command-line <a href="http://www.microsoft.com/technet/sysinternals/ProcessesAndThreads/PsList.mspx">PsList</a> (part of the also excellent <a href="http://www.microsoft.com/technet/sysinternals/ProcessesAndThreads/PsTools.mspx">PsTools</a>) to output a continuously updated list of processes onto my desktop, but many other command-line applications should work just fine. I am sure there are other command-line utilities (Linux ports, or Cygwin, maybe?) that could generate some great content for your backdrop.
+			Originally I used <a href="http://www.sysinternals.com">SysInternals</a>' excellent command-line <a href="http://www.microsoft.com/technet/sysinternals/ProcessesAndThreads/PsList.mspx">PsList</a> (part of the also excellent <a href="http://www.microsoft.com/technet/sysinternals/ProcessesAndThreads/PsTools.mspx">PsTools</a>) to output a continuously updated list of processes onto my desktop, but many other command-line applications should work just fine. In fact I wrote a brand new (ha!) clone of <a href="#ps">ps</a> because I found all of the versions floating around the net so underwhelming. I also wrote a bare-bones mini-app to grab content from a website, which I then parse with regex and display on my desktop (think a really hacky/rudimentary RSS feed... although an RSS feed parser would be a good thing to write as well). And in my third form I display output from a tail of a log file, which I use the <a href="http://unxutils.sourceforge.net/">unxutil's</a> port of tail for. I am sure there are other command-line utilities that could also generate some great content for your desktop.
 			<br />
 			<br />
 
@@ -158,6 +180,46 @@
 				0.1<br />
 				- Initial version that just output the entire result from the process to the screen.<br />
 				- Set color, font, size, location.
+			</div>
+		</div>
+	</div>
+
+	<div class="item">
+		<div class="itemHeader">		
+			<a name="wintail">WinTail 0.2</a>
+		</div>
+
+		<div class="itemImage">
+			<img src="images/wintail.jpg" class="itemImageBorder">
+		</div>
+
+		<div class="itemContent">
+			There are a ton of GUI's for tail -f functionality on Windows, but most are bare-bones affairs (I can't pause a tail?!). This is a more feature-complete, hopefully easy to use, tail GUI. 
+			<br />
+			<br />
+
+			Some of the features available include: the ability to stop a tail, ability to stop the automatic scrolling when new content arrives, and highlighting lines of content based on regular expressions with configurable colors.
+			<br />
+			<br />
+			
+			<strong>Note:</strong> You will need to take a look at the XML file that stores all of the settings for this application to work for you. It's not hard to figure it out, though, so just take a peak.
+			<br />
+			<br />
+
+			Since this program is still alpha software, there is no executable to download, yet. To grab the latest from SVN, have a look at the code.google.com site setup for <a href="http://code.google.com/p/wintailsharp/">WinTail</a>.
+			<br />
+			<br />
+
+			<div class="changeLogTitle">
+				<a href="#wintail" onclick="toggleChangeLog('wintail');">Change log</a>
+			</div>
+
+			<div class="changeLog" id="changeLog_wintail" style="display: none">
+				0.2<br />
+				- Start, stop tail.<br />
+				- Filtering.<br />
+				- Scroll on new content.<br />
+				- Aggressively poll the file.<br />
 			</div>
 		</div>
 	</div>
