@@ -548,7 +548,7 @@ public class AmazonInfo {
 		physicalPath = physicalPath + regex.Replace(artistName, "_") + "-" + regex.Replace(albumName, "_") + imgType + ext;
 		virtualPath = virtualPath + regex.Replace(artistName, "_") + "-" + regex.Replace(albumName, "_") + imgType + ext;
 
-		if (HttpUtil.GetHttpResponseImage(imageUrl, physicalPath)) {
+		if (Common.HttpUtility.GetHttpResponseImage(imageUrl, physicalPath)) {
 			return virtualPath;
 		}
 

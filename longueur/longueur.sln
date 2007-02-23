@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\...\longueur\", "..\longueur", "{18450D84-58E6-4206-8CEE-4E0B0CAEAEBD}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\#source_code\longueur\", ".", "{18450D84-58E6-4206-8CEE-4E0B0CAEAEBD}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = ""
 		SccAuxPath = ""
 		SccLocalPath = ""
 		SccProvider = ""
+		ProjectReferences = "{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}|Common.dll;"
 		Debug.AspNetCompiler.VirtualPath = "/longueur"
 		Debug.AspNetCompiler.PhysicalPath = "..\longueur\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\longueur\"

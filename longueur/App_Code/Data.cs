@@ -8,9 +8,10 @@ using Common;
 /// </summary>
 public class Data {
 	// This needs to be stored in the web.config. Encrypted.
-	private const string connectionString = "Data Source=127.0.0.1;Initial Catalog=Quotes;User Id=sa;Password=_S1mpl3n3ss;";
+	private const string ConnectionString = "Data Source=127.0.0.1;Initial Catalog=Quotes;User Id=sa;Password=_S1mpl3n3ss;";
+	private const string LongueurConnectionString = "Data Source=127.0.0.1;Initial Catalog=longueur;User Id=sa;Password=_S1mpl3n3ss;";
 
-	public Data() {
+	private Data() {
 	}
 
 	public static DataTable Select(string sql) {
@@ -18,7 +19,7 @@ public class Data {
 	}
 
 	public static DataTable Select(string sql, SqlParameter[] parameters) {
-		SqlConnection conn = new SqlConnection(connectionString);
+		SqlConnection conn = new SqlConnection(ConnectionString);
 		SqlCommand cmd = new SqlCommand(sql, conn);
 		cmd.CommandTimeout = 30;
 
@@ -59,7 +60,7 @@ public class Data {
 	}
 
 	public static DataSet SelectMultiple(string sql, SqlParameter[] parameters) {
-		SqlConnection conn = new SqlConnection(connectionString);
+		SqlConnection conn = new SqlConnection(ConnectionString);
 		SqlCommand cmd = new SqlCommand(sql, conn);
 		cmd.CommandTimeout = 30;
 
@@ -96,10 +97,15 @@ public class Data {
 	}
 
 	public static void NonQuery(string sql) {
-		NonQuery(sql, new SqlParameter[] { });
+		NonQuery(sql, new SqlParameter[] { }, ConnectionString);
 	}
 
-	public static void NonQuery(string sql, SqlParameter[] parameters) {
+	public static void NonQuery(string sql, SqlParameter[] parameters)
+	{
+		NonQuery(sql, parameters, ConnectionString);
+	}
+
+	public static void NonQuery(string sql, SqlParameter[] parameters, string connectionString) {
 		SqlConnection conn = new SqlConnection(connectionString);
 		SqlCommand cmd = new SqlCommand(sql, conn);
 		cmd.CommandType = CommandType.StoredProcedure;
@@ -127,7 +133,7 @@ public class Data {
 	}
 
 	public static int Insert(string sql) {
-		SqlConnection conn = new SqlConnection(connectionString);
+		SqlConnection conn = new SqlConnection(ConnectionString);
 
 		if (sql.Trim().EndsWith(";")) {
 			sql = string.Format("{0} SELECT SCOPE_IDENTITY();", sql.Trim());
@@ -477,5 +483,29 @@ public class Data {
 		DataTable result = Select("usp_SearchData", parameters);
 
 		return result;
+	}
+
+	public static void DownloadInsert(string filename, string IP, string referrer, string userAgent, 
+		string browser, string platform, string browserVersion, string hostname)
+	{
+		SqlParameter[] parameters = { new SqlParameter("@Filename", SqlDbType.VarChar),
+			new SqlParameter("@IP", SqlDbType.VarChar),
+			new SqlParameter("@Referrer", SqlDbType.VarChar),
+			new SqlParameter("@UserAgent", SqlDbType.VarChar),
+			new SqlParameter("@Browser", SqlDbType.VarChar),
+			new SqlParameter("@Platform", SqlDbType.VarChar),
+			new SqlParameter("@BrowserVersion", SqlDbType.VarChar),
+			new SqlParameter("@HostName", SqlDbType.VarChar)};
+
+		parameters[0].Value = filename;
+		parameters[1].Value = IP;
+		parameters[2].Value = referrer;
+		parameters[3].Value = userAgent;
+		parameters[4].Value = browser;
+		parameters[5].Value = platform;
+		parameters[6].Value = browserVersion;
+		parameters[7].Value = hostname;
+
+		NonQuery("usp_DownloadInsert", parameters, LongueurConnectionString);
 	}
 }
