@@ -1,179 +1,243 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Configuration;
+using System.Web.Configuration;
 using Common;
 
 /// <summary>
 /// Summary description for Data.
 /// </summary>
 public class Data {
-	// This needs to be stored in the web.config. Encrypted.
-	private const string ConnectionString = "Data Source=127.0.0.1;Initial Catalog=Quotes;User Id=sa;Password=_S1mpl3n3ss;";
-	private const string LongueurConnectionString = "Data Source=127.0.0.1;Initial Catalog=longueur;User Id=sa;Password=_S1mpl3n3ss;";
+	private static SqlConnection _sqlConnection;
 
-	private Data() {
+	private Data()
+	{
 	}
 
-	public static DataTable Select(string sql) {
+	private static string encryptConnectionString()
+	{
+		Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
+		ConfigurationSection section = configuration.GetSection(Constants.ConnectionStrings);
+
+		if (section != null &&
+			!section.SectionInformation.IsProtected)
+		{
+			section.SectionInformation.ProtectSection(Constants.DataProtectionConfigurationProvider);
+			configuration.Save();
+		}
+
+		return ConfigurationManager.ConnectionStrings[Constants.ConnectionString].ConnectionString;
+	}
+
+	#region getSqlCommand
+	private static SqlCommand getSqlCommand(string sql)
+	{
+		return getSqlCommand(sql, Constants.DefaultSqlCommandTimeout);
+	}
+
+	private static SqlCommand getSqlCommand(string sql, SqlParameter[] sqlParameters)
+	{
+		return getSqlCommand(sql, sqlParameters, Constants.DefaultSqlCommandTimeout);
+	}
+
+	private static SqlCommand getSqlCommand(string sql, int commandTimeout)
+	{
+		return getSqlCommand(sql, new SqlParameter[] { }, Constants.DefaultSqlCommandTimeout);
+	}
+
+	private static SqlCommand getSqlCommand(string sql, SqlParameter[] sqlParameters, int commandTimeout)
+	{
+		using (SqlCommand sqlCommand = new SqlCommand(sql, sqlConnection))
+		{
+			sqlCommand.CommandTimeout = commandTimeout;
+
+			if (sql.StartsWith(Constants.StartOfStoredProcedure))
+			{
+				sqlCommand.CommandType = CommandType.StoredProcedure;
+
+				if (sqlParameters.Length > 0)
+				{
+					sqlCommand.Parameters.AddRange(sqlParameters);
+				}
+			}
+			else
+			{
+				sqlCommand.CommandType = CommandType.Text;
+			}
+
+			return sqlCommand;
+		}
+	}
+	#endregion
+
+	#region getSqlParameters
+	private static SqlParameter[] getSqlParameters(string parameterList, params object[] values)
+	{
+		string[] parameterArray = parameterList.Split(',');
+
+		if (parameterArray.Length != values.Length)
+		{
+			throw new Exception("The number of parameters must equal the number of values passed in.");
+		}
+
+		SqlParameter[] parameters = new SqlParameter[parameterArray.Length];
+
+		for (int i = 0; i < parameterArray.Length; i++)
+		{
+			string parameterName = parameterArray[i].Trim();
+			object value = values[i];
+
+			parameters[i] = new SqlParameter(parameterName, value);
+		}
+
+		return parameters;
+	}
+	#endregion
+
+	#region Private getters
+	private static SqlConnection sqlConnection
+	{
+		get
+		{
+			if (_sqlConnection == null)
+			{
+				string connectionString = encryptConnectionString();
+				_sqlConnection = new SqlConnection(connectionString);
+			}
+
+			return _sqlConnection;
+		}
+	}
+	#endregion
+
+	#region Select
+	public static DataTable Select(string sql)
+	{
 		return Select(sql, new SqlParameter[] { });
 	}
 
-	public static DataTable Select(string sql, SqlParameter[] parameters) {
-		SqlConnection conn = new SqlConnection(ConnectionString);
-		SqlCommand cmd = new SqlCommand(sql, conn);
-		cmd.CommandTimeout = 30;
-
-		if (sql.StartsWith("usp_")) {
-			cmd.CommandType = CommandType.StoredProcedure;
-
-			if (parameters.Length > 0) {
-				cmd.Parameters.AddRange(parameters);
-			}
-		} else {
-			cmd.CommandType = CommandType.Text;
-		}
-
-		SqlDataAdapter da = new SqlDataAdapter();
-		da.SelectCommand = cmd;
-		DataSet dataSet = new DataSet();
-
-		try {
-			conn.Open();
-			da.Fill(dataSet);
-		} catch (Exception ex) {
-			throw ex;
-		} finally {
-			cmd.Dispose();
-			conn.Close();
-		}
-
-		if (dataSet.Tables.Count > 0)
+	public static DataTable Select(string sql, SqlParameter[] parameters)
+	{
+		using (DataSet dataSet = SelectMultiple(sql, parameters))
 		{
-			return dataSet.Tables[0];
+			if (dataSet != null &&
+				dataSet.Tables.Count > 0)
+			{
+				return dataSet.Tables[0];
+			}
 		}
 
 		return null;
 	}
+	#endregion
 
-	public static DataSet SelectMultiple(string sql) {
+	#region SelectMultiple
+	public static DataSet SelectMultiple(string sql)
+	{
 		return SelectMultiple(sql, new SqlParameter[] { });
 	}
 
 	public static DataSet SelectMultiple(string sql, SqlParameter[] parameters) {
-		SqlConnection conn = new SqlConnection(ConnectionString);
-		SqlCommand cmd = new SqlCommand(sql, conn);
-		cmd.CommandTimeout = 30;
-
-		if (sql.StartsWith("usp_")) {
-			cmd.CommandType = CommandType.StoredProcedure;
-
-			if (parameters.Length > 0) {
-				cmd.Parameters.AddRange(parameters);
-			}
-		} else {
-			cmd.CommandType = CommandType.Text;
-		}
-
-		SqlDataAdapter da = new SqlDataAdapter();
-		da.SelectCommand = cmd;
-		DataSet dataSet = new DataSet();
-
-		try {
-			conn.Open();
-			da.Fill(dataSet);
-		} catch (Exception ex) {
-			throw ex;
-		} finally {
-			cmd.Dispose();
-			conn.Close();
-		}
-
-		if (dataSet.Tables.Count > 0)
+		using (DataSet dataSet = new DataSet())
 		{
-			return dataSet;
+			using (SqlCommand sqlCommand = getSqlCommand(sql, parameters))
+			{
+				using (SqlDataAdapter da = new SqlDataAdapter())
+				{
+					da.SelectCommand = sqlCommand;
+
+					try
+					{
+						sqlConnection.Open();
+						da.Fill(dataSet);
+					}
+					catch (Exception ex)
+					{
+						throw ex;
+					}
+					finally
+					{
+						sqlConnection.Close();
+					}
+
+					if (dataSet.Tables.Count > 0)
+					{
+						return dataSet;
+					}
+				}
+			}
 		}
 
 		return null;
 	}
+	#endregion
 
+	#region NonQuery
 	public static void NonQuery(string sql) {
-		NonQuery(sql, new SqlParameter[] { }, ConnectionString);
+		NonQuery(sql, new SqlParameter[] { });
 	}
 
-	public static void NonQuery(string sql, SqlParameter[] parameters)
-	{
-		NonQuery(sql, parameters, ConnectionString);
-	}
-
-	public static void NonQuery(string sql, SqlParameter[] parameters, string connectionString) {
-		SqlConnection conn = new SqlConnection(connectionString);
-		SqlCommand cmd = new SqlCommand(sql, conn);
-		cmd.CommandType = CommandType.StoredProcedure;
-		cmd.CommandTimeout = 30;
-
-		if (sql.StartsWith("usp_")) {
-			cmd.CommandType = CommandType.StoredProcedure;
-
-			if (parameters.Length > 0) {
-				cmd.Parameters.AddRange(parameters);
+	public static void NonQuery(string sql, SqlParameter[] parameters) {
+		using (SqlCommand sqlCommand = getSqlCommand(sql, parameters))
+		{
+			try
+			{
+				sqlConnection.Open();
+				sqlCommand.ExecuteNonQuery();
 			}
-		} else {
-			cmd.CommandType = CommandType.Text;
-		}
-
-		try {
-			conn.Open();
-			cmd.ExecuteNonQuery();
-		} catch (Exception ex) {
-			throw ex;
-		} finally {
-			cmd.Dispose();
-			conn.Close();
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				sqlConnection.Close();
+			}
 		}
 	}
+	#endregion
 
+	#region Insert
 	public static int Insert(string sql) {
-		SqlConnection conn = new SqlConnection(ConnectionString);
-
-		if (sql.Trim().EndsWith(";")) {
-			sql = string.Format("{0} SELECT SCOPE_IDENTITY();", sql.Trim());
-		} else {
-			sql = string.Format("{0}; SELECT SCOPE_IDENTITY();", sql.Trim());
-		}
-
-		SqlCommand cmd = new SqlCommand(sql, conn);
-		cmd.CommandTimeout = 30;
-		SqlDataAdapter da = new SqlDataAdapter();
-		da.SelectCommand = cmd;
-		DataTable dataTable = new DataTable();
-
-		try {
-			conn.Open();
-			da.Fill(dataTable);
-		} catch (Exception ex) {
-			throw ex;
-		} finally {
-			cmd.Dispose();
-			conn.Close();
-		}
-
 		int ident = -1;
 
-		if (dataTable.Rows.Count > 0 
-			&& dataTable.Rows[0][0] != null 
-			&& General.IsInt(dataTable.Rows[0][0].ToString())) {
-			ident = int.Parse(dataTable.Rows[0][0].ToString());
+		if (sql.TrimEnd().EndsWith(";"))
+		{
+			sql = string.Format("{0} SELECT SCOPE_IDENTITY();", 
+				sql.Trim());
+		}
+		else
+		{
+			sql = string.Format("{0}; SELECT SCOPE_IDENTITY();", 
+				sql.Trim());
+		}
+
+		using (DataTable dataTable = Select(sql))
+		{
+			if (dataTable != null &&
+				dataTable.Rows.Count > 0 &&
+				dataTable.Rows[0][0] != null &&
+				General.IsInt(dataTable.Rows[0][0].ToString()))
+			{
+				ident = int.Parse(dataTable.Rows[0][0].ToString());
+			}
 		}
 
 		return ident;
 	}
+	#endregion
 
-	public static DataTable GetQuoteDetails(int userId, int quoteId) {
-		SqlParameter[] parameters = { new SqlParameter("@UserID", SqlDbType.Int),
-			new SqlParameter("@QuoteID", SqlDbType.Int) };
+	public static DataTable GetQuoteDetails(int userId, int quoteId)
+	{
+		SqlParameter[] parameters = getSqlParameters("@UserID,@QuoteID", 
+			userId, quoteId);
 
-		parameters[0].Value = userId;
-		parameters[1].Value = quoteId;
+		//SqlParameter[] parameters = { new SqlParameter("@UserID", SqlDbType.Int),
+		//    new SqlParameter("@QuoteID", SqlDbType.Int) };
+
+		//parameters[0].Value = userId;
+		//parameters[1].Value = quoteId;
 
 		return Select("usp_QuoteGetDetails", parameters);
 	}
@@ -488,24 +552,9 @@ public class Data {
 	public static void DownloadInsert(string filename, string IP, string referrer, string userAgent, 
 		string browser, string platform, string browserVersion, string hostname)
 	{
-		SqlParameter[] parameters = { new SqlParameter("@Filename", SqlDbType.VarChar),
-			new SqlParameter("@IP", SqlDbType.VarChar),
-			new SqlParameter("@Referrer", SqlDbType.VarChar),
-			new SqlParameter("@UserAgent", SqlDbType.VarChar),
-			new SqlParameter("@Browser", SqlDbType.VarChar),
-			new SqlParameter("@Platform", SqlDbType.VarChar),
-			new SqlParameter("@BrowserVersion", SqlDbType.VarChar),
-			new SqlParameter("@HostName", SqlDbType.VarChar)};
+		SqlParameter[] parameters = getSqlParameters("@Filename,@IP,@Referrer,@UserAgent,@Browser,@Platform,@BrowserVersion,@HostName",
+			filename, IP, referrer, userAgent, browser, platform, browserVersion, hostname);
 
-		parameters[0].Value = filename;
-		parameters[1].Value = IP;
-		parameters[2].Value = referrer;
-		parameters[3].Value = userAgent;
-		parameters[4].Value = browser;
-		parameters[5].Value = platform;
-		parameters[6].Value = browserVersion;
-		parameters[7].Value = hostname;
-
-		NonQuery("usp_DownloadInsert", parameters, LongueurConnectionString);
+		NonQuery("usp_DownloadInsert", parameters);
 	}
 }
