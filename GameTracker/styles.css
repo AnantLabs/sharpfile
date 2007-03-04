@@ -1,0 +1,37 @@
+﻿body 
+{
+}
+
+.tournamentRow
+{
+	border-style: solid;
+	border-color: #545454;
+	border-width: 1px;
+	height: 25px;
+	background: #cbd1c3;
+}
+
+.matchRow
+{
+	border-style: solid;
+	border-color: #545454;
+	border-width: 1px;
+	height: 25px;
+	background: #666666;
+}
+
+.gameRow
+{
+	border-style: solid;
+	border-color: #545454;
+	border-width: 1px;
+	height: 25px;
+	background: #333333;
+}
+
+.newGame
+{
+	border-style: solid;
+	border-color: #545454;
+	border-width: 1px;
+}
