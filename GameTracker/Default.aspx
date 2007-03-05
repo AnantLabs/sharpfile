@@ -1,4 +1,5 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true"  CodeFile="Default.aspx.cs" Inherits="_Default" %>
+<%@ Register TagPrefix="ajax" Namespace="MagicAjax.UI.Controls" Assembly="MagicAjax" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -9,17 +10,44 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div>
-		<strong>Game</strong>
-		<asp:DropDownList ID="GamesList" runat="server">
-			<asp:ListItem Text="Ping Pong" Value="1" />
-		</asp:DropDownList>
+    <ajax:AjaxPanel ID="ajaxPanel" runat="server" AjaxCallConnection="asynchronous">
+		<table width="100%" class="newGame">
+			<tr>
+				<td colspan=6>Add new game...</td>
+			</tr>
+			<tr>
+				<td>Game</td>
+				<td>Player 1</td>
+				<td>Player 2</td>
+				<td>Date</td>
+				<td>Tournament</td>
+				<td>Match</td>
+			</tr>
+			<tr>
+				<td><asp:DropDownList ID="GameList" runat="server" /></td>
+				<td>Name: <asp:DropDownList ID="Player1List" runat="server" /></td>
+				<td>Name: <asp:DropDownList ID="Player2List" runat="server" /></td>
+				<td><asp:TextBox runat="server" ID="Date" /></td>
+				<td><asp:DropDownList ID="TournamentList" runat="server" /></td>
+				<td><asp:DropDownList ID="MatchList" runat="server" /></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>Points: <asp:TextBox ID="Player1Points" runat="server" Width="30" /></td>
+				<td>Points: <asp:TextBox ID="Player2Points" runat="server" Width="30" /></td>
+			</tr>
+		</table>
 		<br />
 		
-		<br />
-		<table class="newGame">
+		<table width="100%" class="newGame">
 			<tr>
-				<td>Add new game...</td>
+				<td>Filter the results...</td>
+			</tr>
+			<tr>
+				<td>Game</td>
+			</tr>
+			<tr>
+				<td><asp:DropDownList ID="GameFilterList" runat="server" /></td>
 			</tr>
 		</table>
 		<br />
@@ -39,7 +67,7 @@
 				</table>
 			</FooterTemplate>
 		</asp:Repeater>
-    </div>
+	</ajax:AjaxPanel>
     </form>
 </body>
 </html>

@@ -32,11 +32,46 @@ public partial class _Default : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-		DataTable resultsTable = Data.GetRecords();
+		Date.Text = DateTime.Now.ToString();
+
+		DataTable resultsTable = Data.GetRecords();		
 		winnerGenerator = new WinnerGenerator(resultsTable);
 
 		Matches.DataSource = resultsTable;
 		Matches.DataBind();
+
+		Player1List.DataSource = Data.Select("usp_GetPlayers");
+		Player1List.DataTextField = "Name";
+		Player1List.DataValueField = "Id";
+		Player1List.DataBind();
+
+		Player2List.DataSource = Data.Select("usp_GetPlayers");
+		Player2List.DataTextField = "Name";
+		Player2List.DataValueField = "Id";
+		Player2List.DataBind();
+
+		MatchList.DataSource = Data.Select("usp_GetMatches");
+		MatchList.DataTextField = "Id";
+		MatchList.DataValueField = "Id";
+		MatchList.DataBind();
+		MatchList.Items.Insert(0, "");
+
+		TournamentList.DataSource = Data.Select("usp_GetTournaments");
+		TournamentList.DataTextField = "Name";
+		TournamentList.DataValueField = "Id";
+		TournamentList.DataBind();
+		TournamentList.Items.Insert(0, "");
+
+		DataTable gameNameTable = Data.Select("usp_GetGameNames");
+		GameList.DataSource = gameNameTable;
+		GameList.DataTextField = "Name";
+		GameList.DataValueField = "Id";
+		GameList.DataBind();
+
+		GameFilterList.DataSource = gameNameTable;
+		GameFilterList.DataTextField = "Name";
+		GameFilterList.DataValueField = "Id";
+		GameFilterList.DataBind();
     }
 
 	private void getRepeaterItem(RepeaterItem item)
@@ -44,10 +79,10 @@ public partial class _Default : System.Web.UI.Page
 		DataRowView row = (DataRowView)item.DataItem;
 
 		tournamentName = row["TournamentName"] == Convert.DBNull ? "n/a" : row["TournamentName"].ToString();
-		tournamentId = row["TournamentId"] == Convert.DBNull ? -1 : (int)row["TournamentId"];
-		matchId = row["MatchId"] == Convert.DBNull ? -1 : (int)row["MatchId"];
-		player1Id = row["Player1Id"] == Convert.DBNull ? -1 : (int)row["Player1Id"];
-		player2Id = row["Player2Id"] == Convert.DBNull ? -1 : (int)row["Player2Id"];
+		tournamentId = row["TournamentId"] == Convert.DBNull ? 0 : (int)row["TournamentId"];
+		matchId = row["MatchId"] == Convert.DBNull ? 0 : (int)row["MatchId"];
+		player1Id = row["Player1Id"] == Convert.DBNull ? 0 : (int)row["Player1Id"];
+		player2Id = row["Player2Id"] == Convert.DBNull ? 0 : (int)row["Player2Id"];
 		player1 = row["Player1"].ToString();
 		player2 = row["Player2"].ToString();
 		dateTime = row["DateTime"].ToString();
@@ -71,6 +106,13 @@ public partial class _Default : System.Web.UI.Page
 	  winner);
 
 			_tournamentId = tournamentId;
+		}
+		else if (tournamentName.Equals("n/a") && item.ItemIndex == 0)
+		{
+			html = string.Format(@"
+	<td colspan=3 class=tournamentRow><strong>{0}</strong></td>
+</tr>",
+	  tournamentName);
 		}
 
 		return html;
