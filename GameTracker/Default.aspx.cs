@@ -32,41 +32,39 @@ public partial class _Default : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-		Date.Text = DateTime.Now.ToString();
-
 		DataTable resultsTable = Data.GetRecords();		
 		winnerGenerator = new WinnerGenerator(resultsTable);
 
 		Matches.DataSource = resultsTable;
 		Matches.DataBind();
 
-		Player1List.DataSource = Data.Select("usp_GetPlayers");
-		Player1List.DataTextField = "Name";
-		Player1List.DataValueField = "Id";
-		Player1List.DataBind();
+		//Player1List.DataSource = Data.Select("usp_GetPlayers");
+		//Player1List.DataTextField = "Name";
+		//Player1List.DataValueField = "Id";
+		//Player1List.DataBind();
 
-		Player2List.DataSource = Data.Select("usp_GetPlayers");
-		Player2List.DataTextField = "Name";
-		Player2List.DataValueField = "Id";
-		Player2List.DataBind();
+		//Player2List.DataSource = Data.Select("usp_GetPlayers");
+		//Player2List.DataTextField = "Name";
+		//Player2List.DataValueField = "Id";
+		//Player2List.DataBind();
 
-		MatchList.DataSource = Data.Select("usp_GetMatches");
-		MatchList.DataTextField = "Id";
-		MatchList.DataValueField = "Id";
-		MatchList.DataBind();
-		MatchList.Items.Insert(0, "");
+		//MatchList.DataSource = Data.Select("usp_GetMatches");
+		//MatchList.DataTextField = "Id";
+		//MatchList.DataValueField = "Id";
+		//MatchList.DataBind();
+		//MatchList.Items.Insert(0, "");
 
-		TournamentList.DataSource = Data.Select("usp_GetTournaments");
-		TournamentList.DataTextField = "Name";
-		TournamentList.DataValueField = "Id";
-		TournamentList.DataBind();
-		TournamentList.Items.Insert(0, "");
+		//TournamentList.DataSource = Data.Select("usp_GetTournaments");
+		//TournamentList.DataTextField = "Name";
+		//TournamentList.DataValueField = "Id";
+		//TournamentList.DataBind();
+		//TournamentList.Items.Insert(0, "");
 
 		DataTable gameNameTable = Data.Select("usp_GetGameNames");
-		GameList.DataSource = gameNameTable;
-		GameList.DataTextField = "Name";
-		GameList.DataValueField = "Id";
-		GameList.DataBind();
+		//GameList.DataSource = gameNameTable;
+		//GameList.DataTextField = "Name";
+		//GameList.DataValueField = "Id";
+		//GameList.DataBind();
 
 		GameFilterList.DataSource = gameNameTable;
 		GameFilterList.DataTextField = "Name";
@@ -100,7 +98,7 @@ public partial class _Default : System.Web.UI.Page
 			string winner = winnerGenerator.GetTournamentWinner(tournamentId);
 
 			html = string.Format(@"
-	<td colspan=3 class=tournamentRow><strong>{0}</strong> ({1})</td>
+	<td colspan=3 class=tournamentRow><strong>Tournament: {0}</strong> ({1}) | <a href=""#"" onclick=""toggle()"">Add new match...</a></td>
 </tr>",
 	  tournamentName,
 	  winner);
@@ -110,7 +108,7 @@ public partial class _Default : System.Web.UI.Page
 		else if (tournamentName.Equals("n/a") && item.ItemIndex == 0)
 		{
 			html = string.Format(@"
-	<td colspan=3 class=tournamentRow><strong>{0}</strong></td>
+	<td colspan=3 class=tournamentRow><strong>Tournament: {0}</strong> | <a href=""#"" onclick=""toggle()"">Add new match...</a></td>
 </tr>",
 	  tournamentName);
 		}
@@ -138,12 +136,44 @@ public partial class _Default : System.Web.UI.Page
 				record = winnerGenerator.GetPlayerRecord(player1Id, player2Id);
 			}
 
+			string playerOptions = string.Empty;
+
+			foreach (DataRow row in Data.Select("usp_GetPlayers").Rows) 
+			{
+				playerOptions += "<option value=" + row["Id"] + ">" + row["Name"] + "</option>";
+			}
+
 			html = string.Format(@"
 <tr>
 	<td>&nbsp;</td>
-	<td colspan=2 class=matchRow>Record: {0}</td>
+	<td colspan=2 class=matchRow><strong>Match: {0}</strong> | <a href=""#"" onclick=""Toggle('newGame_{1}')"">Add new game...</a></td>
+</tr>
+<tr id=""newGame_{1}"" style=""display: none"">
+	<td>&nbsp;</td>
+	<td colspan=2>
+		<table>
+			<tr>
+				<td>Player 1</td>
+				<td>Player 2</td>
+				<td>Date</td>
+			</tr>
+			<tr>
+				<td><select name=""Player1List_{1}"" id=""Player1List_{1}"">{2}</select></td>
+				<td><select name=""Player2List_{1}"" id=""Player2List_{1}"">{2}</select></td>
+				<td><input type=text id=""Date_{1}"" value=""{3}"" /></td>
+			</tr>
+			<tr>
+				<td><input type=text></input></td>
+				<td><input type=text></input></td>
+				<td><input type=button value=Save /></td>
+			</tr>
+		</table>
+	</td>
 </tr>",
-	  record);
+		record,
+		matchId,
+		playerOptions,
+		DateTime.Now.ToString());
 
 			_matchId = matchId;
 			_player1Id = player1Id;
@@ -162,9 +192,9 @@ public partial class _Default : System.Web.UI.Page
 	<td>
 		<table>
 			<tr class=gameRow>
-				<td>DateTime</td>
-				<td>Player 1</td>
-				<td>Player 2</td>
+				<td><strong>DateTime</strong></td>
+				<td><strong>Player 1</strong></td>
+				<td><strong>Player 2</strong></td>
 			</tr>
 			<tr>
 				<td>{0}</td>

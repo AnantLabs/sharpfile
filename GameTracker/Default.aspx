@@ -6,39 +6,26 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
     <title>GameTracker</title>
-     <link rel="stylesheet" href="styles.css" type="text/css" />
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+    <script language="javascript" type="text/javascript">
+		function Toggle(id) {
+			if (this.document.getElementById(id).style.display == 'none') {
+				this.document.getElementById(id).style.display = '';
+			} else {
+				this.document.getElementById(id).style.display = 'none';
+			}
+		}
+    </script>
 </head>
 <body>
     <form id="form1" runat="server">
     <ajax:AjaxPanel ID="ajaxPanel" runat="server" AjaxCallConnection="asynchronous">
-		<table width="100%" class="newGame">
-			<tr>
-				<td colspan=6>Add new game...</td>
-			</tr>
-			<tr>
-				<td>Game</td>
-				<td>Player 1</td>
-				<td>Player 2</td>
-				<td>Date</td>
-				<td>Tournament</td>
-				<td>Match</td>
-			</tr>
-			<tr>
-				<td><asp:DropDownList ID="GameList" runat="server" /></td>
-				<td>Name: <asp:DropDownList ID="Player1List" runat="server" /></td>
-				<td>Name: <asp:DropDownList ID="Player2List" runat="server" /></td>
-				<td><asp:TextBox runat="server" ID="Date" /></td>
-				<td><asp:DropDownList ID="TournamentList" runat="server" /></td>
-				<td><asp:DropDownList ID="MatchList" runat="server" /></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>Points: <asp:TextBox ID="Player1Points" runat="server" Width="30" /></td>
-				<td>Points: <asp:TextBox ID="Player2Points" runat="server" Width="30" /></td>
-			</tr>
-		</table>
-		<br />
-		
+    
+    TODO:<br />
+    Matches should really be defined as having players and a date... maybe.
+	<br />
+	<br />
+	 
 		<table width="100%" class="newGame">
 			<tr>
 				<td>Filter the results...</td>
@@ -51,6 +38,24 @@
 			</tr>
 		</table>
 		<br />
+		
+		<table width="100%" class="newGame">
+			<tr>
+				<td><a href="#" onclick="Toggle('newTournament')">Add new tournament...</a></td>
+			</tr>
+			<tr id="newTournament" style="display: none">
+				<td>
+					<table>
+						<tr>
+							<td>Tournament Name</td>
+						</tr>
+						<tr>
+							<td><asp:TextBox ID="TournamentName" runat="server" /></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
 		
 		<asp:Repeater ID="Matches" runat="server">
 			<HeaderTemplate>

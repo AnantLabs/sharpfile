@@ -118,7 +118,7 @@ public class WinnerGenerator
 
 			if (playerWins > maxWins)
 			{
-				winner = player;
+				winner = player + " triumphed over all of the odds.";
 				maxWins = playerWins;
 			}
 			else if (Convert.ToInt32(recordHash[player]) == maxWins)
@@ -137,7 +137,7 @@ public class WinnerGenerator
 
 				if (playerScore > maxScore)
 				{
-					winner = player;
+					winner = player + " surpassed the rest with glory and skill.";
 					maxScore = playerScore;
 				}
 				else if (playerScore == maxScore)
