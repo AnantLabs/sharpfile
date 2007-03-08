@@ -30,25 +30,86 @@ public partial class _Default : System.Web.UI.Page
 
 	private string playerOptions = string.Empty;
 
+	private DataTable playerTable;
+
 	private WinnerGenerator winnerGenerator;
 
     protected void Page_Load(object sender, EventArgs e)
     {
-		if (!IsPostBack)
-		{
-			foreach (DataRow row in Data.Select("usp_GetPlayers").Rows)
-			{
-				playerOptions += "<option value=" + row["Id"] + ">" + row["Name"] + "</option>";
-			}
-		}
+		playerTable = Data.Select("usp_GetPlayers");
 
 		DataTable resultsTable = Data.GetRecords();		
 		winnerGenerator = new WinnerGenerator(resultsTable);
 
-		Matches.DataSource = resultsTable;
-		Matches.DataBind();
+		Matches_old.DataSource = resultsTable;
+		Matches_old.DataBind();
+
+		Tournaments.ItemDataBound += new RepeaterItemEventHandler(Tournaments_ItemDataBound);
+
+		Tournaments.DataSource = Data.Select("usp_GetTournaments");
+		Tournaments.DataBind();
     }
 
+	void Tournaments_ItemDataBound(object sender, RepeaterItemEventArgs e)
+	{
+		RepeaterItem item = e.Item;
+
+		if (item.ItemType == ListItemType.AlternatingItem ||
+			item.ItemType == ListItemType.Item)
+		{
+			DropDownList playerList = (DropDownList)item.FindControl("Player1List");
+			playerList.DataSource = playerTable;
+			playerList.DataTextField = "Name";
+			playerList.DataValueField = "Id";
+			playerList.DataBind();
+			playerList.SelectedIndex = 0;
+
+			playerList = (DropDownList)item.FindControl("Player2List");
+			playerList.DataSource = playerTable;
+			playerList.DataTextField = "Name";
+			playerList.DataValueField = "Id";
+			playerList.DataBind();
+			playerList.SelectedIndex = 0;
+
+			int tournamentId = int.Parse(((HtmlInputHidden)item.FindControl("TournamentId")).Value);
+
+			Repeater Matches = (Repeater)item.FindControl("Matches");
+			Matches.ItemDataBound += new RepeaterItemEventHandler(Matches_ItemDataBound);
+			Matches.DataSource = Data.Select("usp_GetMatches", "@TournamentId", new object[] { tournamentId });
+			Matches.DataBind();
+		}
+	}
+
+	void Matches_ItemDataBound(object sender, RepeaterItemEventArgs e)
+	{
+		RepeaterItem item = e.Item;
+
+		if (item.ItemType == ListItemType.AlternatingItem ||
+			item.ItemType == ListItemType.Item)
+		{
+			int matchId = int.Parse(((HtmlInputHidden)item.FindControl("MatchId")).Value);
+
+			Repeater Games = (Repeater)item.FindControl("Games");
+			Games.DataSource = Data.Select("usp_GetGames", "@MatchId", new object[] { matchId });
+			Games.DataBind();
+		}
+	}
+
+	protected void AddMatch_OnClick(object sender, EventArgs e)
+	{
+		int tournamentId = int.Parse(((LinkButton)sender).CommandArgument);
+
+		//Response.Redirect(Request.Path);
+	}
+
+	protected void AddGame_OnClick(object sender, EventArgs e)
+	{
+		int matchId = int.Parse(((LinkButton)sender).CommandArgument);
+
+		//Response.Redirect(Request.Path);
+	}
+
+	#region old crap
 	private void getRepeaterItem(RepeaterItem item)
 	{
 		DataRowView row = (DataRowView)item.DataItem;
@@ -109,7 +170,8 @@ public partial class _Default : System.Web.UI.Page
 			_tournamentId = tournamentId;
 		}
 
-		return html;
+		//return html;
+		return string.Empty;
 	}
 
 	protected string getMatchResults(RepeaterItem item)
@@ -160,11 +222,13 @@ public partial class _Default : System.Web.UI.Page
 			_player2Id = player2Id;
 		}
 
-		return html;
+		//return html;
+		return string.Empty;
 	}
 
 	public string getGameResults(RepeaterItem item)
 	{
+		/*
 		return string.Format(@"
 <tr>
 	<td>&nbsp;</td>
@@ -188,5 +252,9 @@ public partial class _Default : System.Web.UI.Page
 		  dateTime,
 		  player1Points,
 		  player2Points);
+		 */
+
+		return string.Empty;
 	}
+	#endregion
 }

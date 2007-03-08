@@ -136,6 +136,13 @@ public class Data
 
 		return null;
 	}
+
+	public static DataTable Select(string sql, string parameterList, params object[] values)
+	{
+		SqlParameter[] parameters = getSqlParameters(parameterList, values);
+
+		return Select(sql, parameters);
+	}
 	#endregion
 
 	#region SelectMultiple

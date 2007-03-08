@@ -19,19 +19,13 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <ajax:AjaxPanel ID="ajaxPanel" runat="server" AjaxCallConnection="asynchronous">
-    
-    TODO:<br />
-    Matches should really be defined as having players and a date... maybe.
-	<br />
-	<br />
-	 
+    <ajax:AjaxPanel ID="ajaxPanel" runat="server" AjaxCallConnection="asynchronous">	 
 		<table width="100%" class="newGame">
 			<tr>
 				<td>Filter the results...</td>
 			</tr>
 			<tr>
-				<td>Game</td>
+				<td>Player</td>
 			</tr>
 			<tr>
 				<td>blob</td>
@@ -57,7 +51,7 @@
 			</tr>
 		</table>
 		
-		<asp:Repeater ID="Matches" runat="server">
+		<asp:Repeater ID="Matches_old" runat="server" Visible="false">
 			<HeaderTemplate>
 				<table width="100%">
 			</HeaderTemplate>
@@ -67,6 +61,121 @@
 						<%# getMatchResults(Container) %>
 						<%# getGameResults(Container) %>
 					</tr>
+			</ItemTemplate>
+			<FooterTemplate>
+				</table>
+			</FooterTemplate>
+		</asp:Repeater>
+		
+		<asp:Repeater ID="Tournaments" runat="server">
+			<HeaderTemplate>
+				<table width="100%">
+			</HeaderTemplate>
+			<ItemTemplate>
+				<input id="TournamentId" runat="server" type="hidden" value='<%# DataBinder.Eval(Container.DataItem, "Id") %>' />
+				<tr>
+					<td>
+						<table class="tournamentRow" width="100%">
+							<tr>
+								<td><strong>Tournament: <%# DataBinder.Eval(Container.DataItem, "Name") %></strong> (<%# "winner" %>) | <a href="#" onclick="Toggle('newMatch_<%# DataBinder.Eval(Container.DataItem, "Id") %>')">Add new match/game...</a></td>
+							</tr>
+							<tr id="newMatch_<%# DataBinder.Eval(Container.DataItem, "Id") %>" style="display: none">
+								<td>
+									<table>
+										<tr>
+											<td>Player 1</td>
+											<td>Player 2</td>
+											<td>Date</td>
+										</tr>
+										<tr>
+											<td><asp:DropDownList ID="Player1List" runat="server" /></td>
+											<td><asp:DropDownList ID="Player2List" runat="server" /></td>
+											<td><asp:TextBox ID="Date" Text='<%# DateTime.Now.ToString() %>' runat="server" /></td>
+										</tr>
+										<tr>
+											<td><asp:TextBox ID="Player1Points" Width="30" runat="server" /></td>
+											<td><asp:TextBox ID="Player2Points" Width="30" runat="server" /></td>
+											<td><asp:LinkButton ID="AddMatch" Text="Add" CommandArgument='<%# DataBinder.Eval(Container.DataItem, "Id") %>' OnClick="AddMatch_OnClick" runat="server" /></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<asp:Repeater ID="Matches" runat="server">
+							<HeaderTemplate>
+								<table width="100%">
+							</HeaderTemplate>
+							<ItemTemplate>
+								<input id="MatchId" runat="server" type="hidden" value='<%# DataBinder.Eval(Container.DataItem, "Id") %>' />
+								<tr>
+									<td>&nbsp;</td>
+									<td class="matchRow" width="100%">
+										<table>
+											<tr>
+												<td><strong>Match between <%# DataBinder.Eval(Container.DataItem, "Player1") %> and <%# DataBinder.Eval(Container.DataItem, "Player2") %>: <%# "record" %></strong> | <a href="#" onclick="Toggle('newGame_<%# DataBinder.Eval(Container.DataItem, "Id") %>')">Add new game...</a></td>
+											</tr>
+											<tr id="newGame_<%# DataBinder.Eval(Container.DataItem, "Id") %>" style="display: none">
+												<td>
+													<table>
+														<tr>
+															<td><%# DataBinder.Eval(Container.DataItem, "Player1") %>'s Points</td>
+															<td><%# DataBinder.Eval(Container.DataItem, "Player2") %>'s Points</td>
+														</tr>
+														<tr>
+															<td><asp:TextBox ID="Player1Points" Width="30" runat="server" /></td>
+															<td><asp:TextBox ID="Player2Points" Width="30" runat="server" /></td>
+															<td><asp:LinkButton ID="AddGame" Text="Add" CommandArgument='<%# DataBinder.Eval(Container.DataItem, "Id") %>' OnClick="AddGame_OnClick" runat="server" /></td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<table>
+											<tr>
+												<td>&nbsp;</td>
+												<td>&nbsp;</td>
+												<td>
+													<table>
+														<tr>
+															<td><strong><%# DataBinder.Eval(Container.DataItem, "DateTime") %></strong></td>
+															<td><strong><%# DataBinder.Eval(Container.DataItem, "Player1") %></strong></td>
+															<td><strong><%# DataBinder.Eval(Container.DataItem, "Player2") %></strong></td>
+														</tr>
+															<asp:Repeater ID="Games" runat="server">
+																<HeaderTemplate>
+																</HeaderTemplate>
+																<ItemTemplate>
+																	<input id="GameId" runat="server" type="hidden" value='<%# DataBinder.Eval(Container.DataItem, "Id") %>' />
+																	<tr>
+																		<td>&nbsp;</td>
+																		<td align="right"><%# DataBinder.Eval(Container.DataItem, "Player1Points") %></td>
+																		<td align="right"><%# DataBinder.Eval(Container.DataItem, "Player2Points") %></td>
+																	</tr>									
+																</ItemTemplate>
+																<FooterTemplate>
+																</FooterTemplate>
+															</asp:Repeater>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</ItemTemplate>
+							<FooterTemplate>
+								</table>
+							</FooterTemplate>
+						</asp:Repeater>
+					</td>
+				</tr>
 			</ItemTemplate>
 			<FooterTemplate>
 				</table>
