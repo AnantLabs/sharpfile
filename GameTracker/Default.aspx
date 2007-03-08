@@ -34,7 +34,7 @@
 				<td>Game</td>
 			</tr>
 			<tr>
-				<td><asp:DropDownList ID="GameFilterList" runat="server" /></td>
+				<td>blob</td>
 			</tr>
 		</table>
 		<br />

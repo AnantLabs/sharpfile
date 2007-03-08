@@ -28,48 +28,25 @@ public partial class _Default : System.Web.UI.Page
 	private int player2Points;
 	private string dateTime;
 
+	private string playerOptions = string.Empty;
+
 	private WinnerGenerator winnerGenerator;
 
     protected void Page_Load(object sender, EventArgs e)
     {
+		if (!IsPostBack)
+		{
+			foreach (DataRow row in Data.Select("usp_GetPlayers").Rows)
+			{
+				playerOptions += "<option value=" + row["Id"] + ">" + row["Name"] + "</option>";
+			}
+		}
+
 		DataTable resultsTable = Data.GetRecords();		
 		winnerGenerator = new WinnerGenerator(resultsTable);
 
 		Matches.DataSource = resultsTable;
 		Matches.DataBind();
-
-		//Player1List.DataSource = Data.Select("usp_GetPlayers");
-		//Player1List.DataTextField = "Name";
-		//Player1List.DataValueField = "Id";
-		//Player1List.DataBind();
-
-		//Player2List.DataSource = Data.Select("usp_GetPlayers");
-		//Player2List.DataTextField = "Name";
-		//Player2List.DataValueField = "Id";
-		//Player2List.DataBind();
-
-		//MatchList.DataSource = Data.Select("usp_GetMatches");
-		//MatchList.DataTextField = "Id";
-		//MatchList.DataValueField = "Id";
-		//MatchList.DataBind();
-		//MatchList.Items.Insert(0, "");
-
-		//TournamentList.DataSource = Data.Select("usp_GetTournaments");
-		//TournamentList.DataTextField = "Name";
-		//TournamentList.DataValueField = "Id";
-		//TournamentList.DataBind();
-		//TournamentList.Items.Insert(0, "");
-
-		DataTable gameNameTable = Data.Select("usp_GetGameNames");
-		//GameList.DataSource = gameNameTable;
-		//GameList.DataTextField = "Name";
-		//GameList.DataValueField = "Id";
-		//GameList.DataBind();
-
-		GameFilterList.DataSource = gameNameTable;
-		GameFilterList.DataTextField = "Name";
-		GameFilterList.DataValueField = "Id";
-		GameFilterList.DataBind();
     }
 
 	private void getRepeaterItem(RepeaterItem item)
@@ -98,19 +75,38 @@ public partial class _Default : System.Web.UI.Page
 			string winner = winnerGenerator.GetTournamentWinner(tournamentId);
 
 			html = string.Format(@"
-	<td colspan=3 class=tournamentRow><strong>Tournament: {0}</strong> ({1}) | <a href=""#"" onclick=""toggle()"">Add new match...</a></td>
+	<td colspan=3>
+		<table class=tournamentRow>
+			<tr>
+				<td><strong>Tournament: {0}</strong> ({1}) | <a href=""#"" onclick=""Toggle('newMatch_{2}')"">Add new match...</a></td>
+			</tr>
+			<tr id=""newMatch_{2}"" style=""display: none"">
+				<td colspan=3>
+					<table>
+						<tr>
+							<td>Player 1</td>
+							<td>Player 2</td>
+							<td>Date</td>
+						</tr>
+						<tr>
+							<td><select name=""Player1List_{2}"" id=""Player1List_{3}"">{3}</select></td>
+							<td><select name=""Player2List_{2}"" id=""Player2List_{3}"">{3}</select></td>
+							<td><input type=text id=""Date_{2}"" value=""{4}"" /></td>
+							<td><input type=button value=""Add"" /></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</td>
 </tr>",
-	  tournamentName,
-	  winner);
+			  tournamentName,
+			  winner,
+			  tournamentId,
+			  playerOptions,
+			  DateTime.Now.ToString());
 
 			_tournamentId = tournamentId;
-		}
-		else if (tournamentName.Equals("n/a") && item.ItemIndex == 0)
-		{
-			html = string.Format(@"
-	<td colspan=3 class=tournamentRow><strong>Tournament: {0}</strong> | <a href=""#"" onclick=""toggle()"">Add new match...</a></td>
-</tr>",
-	  tournamentName);
 		}
 
 		return html;
@@ -120,56 +116,40 @@ public partial class _Default : System.Web.UI.Page
 	{
 		string html = string.Empty;
 
-		if (matchId != _matchId ||
-			(player1Id != _player1Id ||
-			player2Id != _player2Id))
+		if (matchId != _matchId)
 		{
-			string record = string.Empty;
-
-			if (matchId != _matchId)
-			{
-				record = winnerGenerator.GetMatchRecord(matchId);
-			}
-			else if (player1Id != _player1Id ||
-					player2Id != _player2Id)
-			{
-				record = winnerGenerator.GetPlayerRecord(player1Id, player2Id);
-			}
-
-			string playerOptions = string.Empty;
-
-			foreach (DataRow row in Data.Select("usp_GetPlayers").Rows) 
-			{
-				playerOptions += "<option value=" + row["Id"] + ">" + row["Name"] + "</option>";
-			}
+			string record = winnerGenerator.GetMatchRecord(matchId);
 
 			html = string.Format(@"
 <tr>
 	<td>&nbsp;</td>
-	<td colspan=2 class=matchRow><strong>Match: {0}</strong> | <a href=""#"" onclick=""Toggle('newGame_{1}')"">Add new game...</a></td>
-</tr>
-<tr id=""newGame_{1}"" style=""display: none"">
-	<td>&nbsp;</td>
-	<td colspan=2>
+	<td class=matchRow colspan=3>
 		<table>
 			<tr>
-				<td>Player 1</td>
-				<td>Player 2</td>
-				<td>Date</td>
+				<td>&nbsp;</td>
+				<td colspan=2><strong>Match between {0} and {1}: {2}</strong> | <a href=""#"" onclick=""Toggle('newGame_{3}')"">Add new game...</a></td>
 			</tr>
-			<tr>
-				<td><select name=""Player1List_{1}"" id=""Player1List_{1}"">{2}</select></td>
-				<td><select name=""Player2List_{1}"" id=""Player2List_{1}"">{2}</select></td>
-				<td><input type=text id=""Date_{1}"" value=""{3}"" /></td>
-			</tr>
-			<tr>
-				<td><input type=text></input></td>
-				<td><input type=text></input></td>
-				<td><input type=button value=Save /></td>
+			<tr id=""newGame_{3}"" style=""display: none"">
+				<td>&nbsp;</td>
+				<td colspan=2>
+					<table>
+						<tr>
+							<td>{0}'s Points</td>
+							<td>{1}'s Points</td>
+						</tr>
+						<tr>
+							<td><input type=text size=10></input></td>
+							<td><input type=text size=10></input></td>
+							<td><input type=button value=""Add"" /></td>
+						</tr>
+					</table>
+				</td>
 			</tr>
 		</table>
 	</td>
 </tr>",
+		player1,
+		player2,
 		record,
 		matchId,
 		playerOptions,
@@ -191,22 +171,22 @@ public partial class _Default : System.Web.UI.Page
 	<td>&nbsp;</td>
 	<td>
 		<table>
-			<tr class=gameRow>
-				<td><strong>DateTime</strong></td>
-				<td><strong>Player 1</strong></td>
-				<td><strong>Player 2</strong></td>
+			<tr>
+				<td>&nbsp;</td>
+				<td><strong>{0}</strong></td>
+				<td><strong>{1}</strong></td>
 			</tr>
 			<tr>
-				<td>{0}</td>
-				<td>{1} ({2})</td>
-				<td>{3} ({4})</td>
+				<td>{2}</td>
+				<td align=""right"">{3}</td>
+				<td align=""right"">{4}</td>
 			</tr>
 		</table>
 	</td>",
-		  dateTime,
 		  player1,
-		  player1Points,
 		  player2,
+		  dateTime,
+		  player1Points,
 		  player2Points);
 	}
 }
