@@ -246,9 +246,4 @@ public class Data
 		return ident;
 	}
 	#endregion
-
-	public static DataTable GetRecords()
-	{
-		return Select("usp_GetRecords");
-	}
 }

@@ -2,13 +2,32 @@
 {
 }
 
+.filterResults
+{
+	border-style: solid;
+	border-color: #545454;
+	border-width: 1px;
+	padding: 3px;
+	margin: 2px 2px 10px 2px;
+}
+
+.newTournament
+{
+	border-style: solid;
+	border-color: #545454;
+	border-width: 1px;
+	padding: 3px;
+	margin: 2px;
+}
+
 .tournamentRow
 {
 	border-style: solid;
 	border-color: #545454;
 	border-width: 1px;
-	height: 25px;
 	background: #cbd1c3;
+	padding: 3px;
+	margin: 2px;
 }
 
 .matchRow
@@ -16,22 +35,13 @@
 	border-style: solid;
 	border-color: #545454;
 	border-width: 1px;
-	height: 25px;
 	background: #666666;
+	padding: 3px;
+	margin: 2px 2px 2px 20px;
 }
 
 .gameRow
 {
-	border-style: solid;
-	border-color: #545454;
-	border-width: 1px;
-	height: 25px;
-	background: #333333;
-}
-
-.newGame
-{
-	border-style: solid;
-	border-color: #545454;
-	border-width: 1px;
+	padding: 3px;
+	margin: 2px 2px 2px 40px;
 }

@@ -7,64 +7,21 @@ using System.Collections;
 /// </summary>
 public class WinnerGenerator
 {
-	private DataTable resultsTable;
-
-	public WinnerGenerator(DataTable resultsTable)
+	private WinnerGenerator()
 	{
-		this.resultsTable = resultsTable;
 	}
 
-	public string GetTournamentWinner(int tournamentId)
+	public static string GetTournamentWinner(int tournamentId)
 	{
-		return computeWinner("tournamentId = " + tournamentId);
-	}
+		DataTable matchesTable = Data.Select("usp_GetMatches", 
+			"@TournamentId", 
+			new object[] { tournamentId });
 
-	public string GetMatchRecord(int matchId)
-	{
-		string filter = "MatchId = " + matchId;
-
-		return computeRecord(filter);
-	}
-
-	public string GetPlayerRecord(int player1Id, int player2Id)
-	{
-		string filter = "Player1Id = " + player1Id + " AND Player2Id = " + player2Id + " AND MatchId IS NULL AND TournamentId IS NULL";
-
-		return computeRecord(filter);
-	}
-
-	private string computeRecord(string filter)
-	{
-		int player1Wins = 0;
-		int player2Wins = 0;
-
-		foreach (DataRow row in resultsTable.Select(filter))
-		{
-			int player1Points = Convert.ToInt32(row["Player1Points"]);
-			int player2Points = Convert.ToInt32(row["Player2Points"]);
-
-			if (player1Points > player2Points)
-			{
-				player1Wins++;
-			}
-			else
-			{
-				player2Wins++;
-			}
-		}
-
-		return string.Format("{0} - {1}",
-			player1Wins,
-			player2Wins);
-	}
-
-	private string computeWinner(string filter)
-	{
 		Hashtable recordHash = new Hashtable();
 		Hashtable scoreHash = new Hashtable();
 		string winner = "n/a";
 
-		foreach (DataRow row in resultsTable.Select(filter))
+		foreach (DataRow row in matchesTable.Rows)
 		{
 			string tempWinner;
 			string player1 = row["Player1"].ToString();
@@ -148,5 +105,31 @@ public class WinnerGenerator
 		}
 
 		return winner;
+	}
+
+	public static string GetMatchRecord(int matchId)
+	{
+		DataTable gamesTable = Data.Select("usp_GetGames", "@MatchId", new object[] { matchId });
+		int player1Wins = 0;
+		int player2Wins = 0;
+
+		foreach (DataRow row in gamesTable.Rows)
+		{
+			int player1Points = Convert.ToInt32(row["Player1Points"]);
+			int player2Points = Convert.ToInt32(row["Player2Points"]);
+
+			if (player1Points > player2Points)
+			{
+				player1Wins++;
+			}
+			else
+			{
+				player2Wins++;
+			}
+		}
+
+		return string.Format("{0} - {1}",
+			player1Wins,
+			player2Wins);
 	}
 }
