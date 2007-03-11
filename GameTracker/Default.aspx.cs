@@ -16,12 +16,10 @@ public partial class _Default : System.Web.UI.Page
 
     protected void Page_Load(object sender, EventArgs e)
     {
-		playerTable = Data.Select("usp_GetPlayers");
-
-		Tournaments.ItemDataBound += new RepeaterItemEventHandler(Tournaments_ItemDataBound);
-
-		Tournaments.DataSource = Data.Select("usp_GetTournaments");
-		Tournaments.DataBind();
+		if (!IsPostBack)
+		{
+			refresh();
+		}
     }
 
 	void Tournaments_ItemDataBound(object sender, RepeaterItemEventArgs e)
@@ -74,14 +72,119 @@ public partial class _Default : System.Web.UI.Page
 	protected void AddMatch_OnClick(object sender, EventArgs e)
 	{
 		int tournamentId = int.Parse(((LinkButton)sender).CommandArgument);
+		string player1;
+		string player2;
+		string dateTime;
+		string player1Points;
+		string player2Points;
 
-		//Response.Redirect(Request.Path);
+		foreach (Control tournamentItem in this.Controls[3].Controls[1].Controls[3].Controls)
+		{
+			if (((HtmlInputHidden)tournamentItem.FindControl("TournamentId")).Value == tournamentId.ToString())
+			{
+				player1 = ((DropDownList)tournamentItem.FindControl("Player1List")).SelectedValue;
+				player2 = ((DropDownList)tournamentItem.FindControl("Player2List")).SelectedValue;
+
+				if (player1 == player2)
+				{
+					// throw some exception.
+				}
+
+				dateTime = ((TextBox)tournamentItem.FindControl("Date")).Text;
+
+				if (string.IsNullOrEmpty(dateTime))
+				{
+					dateTime = DateTime.Now.ToString();
+				}
+
+				player1Points = ((TextBox)tournamentItem.FindControl("Player1Points")).Text;
+				player2Points = ((TextBox)tournamentItem.FindControl("Player2Points")).Text;
+
+				if (string.IsNullOrEmpty(player1Points))
+				{
+					player1Points = "0";
+				}
+
+				if (string.IsNullOrEmpty(player2Points))
+				{
+					player2Points = "0";
+				}
+
+				Data.NonQuery("usp_InsertMatch",
+					"@TournamentId,@DateTime,@Player1,@Player1Points,@Player2,@Player2Points",
+					tournamentId,
+					dateTime,
+					player1,
+					player1Points,
+					player2,
+					player2Points);
+
+				break;
+			}
+		}
+
+		refresh();
 	}
 
 	protected void AddGame_OnClick(object sender, EventArgs e)
 	{
 		int matchId = int.Parse(((LinkButton)sender).CommandArgument);
+		string player1;
+		string player2;
+		string dateTime;
+		string player1Points;
+		string player2Points;
 
-		//Response.Redirect(Request.Path);
+		foreach (Control tournamentItem in this.Controls[3].Controls[1].Controls[3].Controls)
+		{
+			foreach (Control matchItem in tournamentItem.FindControl("Matches").Controls)
+			{
+				if (((HtmlInputHidden)matchItem.FindControl("MatchId")).Value == matchId.ToString())
+				{
+					player1 = ((HtmlInputHidden)matchItem.FindControl("Player1")).Value;
+					player2 = ((HtmlInputHidden)matchItem.FindControl("Player2")).Value;
+
+					if (player1 == player2)
+					{
+						// throw some exception.
+					}
+
+					player1Points = ((TextBox)matchItem.FindControl("Player1Points")).Text;
+					player2Points = ((TextBox)matchItem.FindControl("Player2Points")).Text;
+
+					if (string.IsNullOrEmpty(player1Points))
+					{
+						player1Points = "0";
+					}
+
+					if (string.IsNullOrEmpty(player2Points))
+					{
+						player2Points = "0";
+					}
+
+					Data.NonQuery("usp_InsertGame",
+						"@MatchId,@Player1,@Player1Points,@Player2,@Player2Points",
+						matchId,
+						player1,
+						player1Points,
+						player2,
+						player2Points);
+
+					break;
+
+				}
+			}
+		}
+
+		refresh();
+	}
+
+	private void refresh()
+	{
+		playerTable = Data.Select("usp_GetPlayers");
+
+		Tournaments.ItemDataBound += new RepeaterItemEventHandler(Tournaments_ItemDataBound);
+		Tournaments.DataSource = Data.Select("usp_GetTournaments");
+		Tournaments.DataBind();
 	}
 }

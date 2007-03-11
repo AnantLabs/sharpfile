@@ -77,6 +77,8 @@
 					<ItemTemplate>
 						<div class="matchRow">
 							<input id="MatchId" runat="server" type="hidden" value='<%# DataBinder.Eval(Container.DataItem, "Id") %>' />
+							<input id="Player1" runat="server" type="hidden" value='<%# DataBinder.Eval(Container.DataItem, "Player1Id") %>' />
+							<input id="Player2" runat="server" type="hidden" value='<%# DataBinder.Eval(Container.DataItem, "Player2Id") %>' />
 							<strong>Match between <%# DataBinder.Eval(Container.DataItem, "Player1") %> and <%# DataBinder.Eval(Container.DataItem, "Player2") %>: <asp:Literal ID="Winner" runat="server" /></strong> | <a href="#" onclick="Toggle('newGame_<%# DataBinder.Eval(Container.DataItem, "Id") %>')">Add new game...</a><br />
 									
 							<div id="newGame_<%# DataBinder.Eval(Container.DataItem, "Id") %>" style="display: none">

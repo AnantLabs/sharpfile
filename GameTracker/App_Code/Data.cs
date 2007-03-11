@@ -212,6 +212,12 @@ public class Data
 			}
 		}
 	}
+
+	public static void NonQuery(string sql, string parameterList, params object[] values)
+	{
+		SqlParameter[] parameters = getSqlParameters(parameterList, values);
+		NonQuery(sql, parameters);
+	}
 	#endregion
 
 	#region Insert
