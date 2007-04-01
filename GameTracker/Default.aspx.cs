@@ -1,26 +1,20 @@
 using System;
 using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-using System.Collections.Generic;
-using System.Collections;
 
 public partial class _Default : System.Web.UI.Page 
 {
 	private DataTable playerTable;
 
-    protected void Page_Load(object sender, EventArgs e)
-    {
+	protected void Page_Load(object sender, EventArgs e)
+	{
 		if (!IsPostBack)
 		{
 			refresh();
 		}
-    }
+	}
 
 	void Tournaments_ItemDataBound(object sender, RepeaterItemEventArgs e)
 	{
@@ -62,10 +56,22 @@ public partial class _Default : System.Web.UI.Page
 			int matchId = int.Parse(((HtmlInputHidden)item.FindControl("MatchId")).Value);
 
 			((Literal)item.FindControl("Winner")).Text = WinnerGenerator.GetMatchRecord(matchId);
+			
+			Repeater games = (Repeater)item.FindControl("Games");
+			games.DataSource = Data.Select("usp_GetGames", "@MatchId", new object[] { matchId });
+			games.DataBind();
+		}
+	}
+	
+	protected void AddTournament_OnClick(object sender, EventArgs e)
+	{
+		if (!string.IsNullOrEmpty(TournamentName.Text))
+		{
+			Data.NonQuery("usp_InsertTournament",
+			              "@Name",
+			              new object[] { TournamentName.Text });
 
-			Repeater Games = (Repeater)item.FindControl("Games");
-			Games.DataSource = Data.Select("usp_GetGames", "@MatchId", new object[] { matchId });
-			Games.DataBind();
+			refresh();
 		}
 	}
 
@@ -78,7 +84,7 @@ public partial class _Default : System.Web.UI.Page
 		string player1Points;
 		string player2Points;
 
-		foreach (Control tournamentItem in this.Controls[3].Controls[1].Controls[3].Controls)
+		foreach (Control tournamentItem in Tournaments.Controls)
 		{
 			if (((HtmlInputHidden)tournamentItem.FindControl("TournamentId")).Value == tournamentId.ToString())
 			{
@@ -131,11 +137,10 @@ public partial class _Default : System.Web.UI.Page
 		int matchId = int.Parse(((LinkButton)sender).CommandArgument);
 		string player1;
 		string player2;
-		string dateTime;
 		string player1Points;
 		string player2Points;
 
-		foreach (Control tournamentItem in this.Controls[3].Controls[1].Controls[3].Controls)
+		foreach (Control tournamentItem in Tournaments.Controls)
 		{
 			foreach (Control matchItem in tournamentItem.FindControl("Matches").Controls)
 			{

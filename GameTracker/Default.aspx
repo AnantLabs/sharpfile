@@ -21,7 +21,15 @@
 <body>
     <form id="form1" runat="server">
     
-    TODO: All of the crazy inline c# should probably be nice literals or something.
+    TODO:
+    <ul>
+			<li>All of the crazy inline c# should probably be nice literals or something.</li>
+			<li>Fix the styling... that's why I am a developer and not in CrS.</li>
+			<li>Actually calculate the winner for tournaments...</li>
+			<li>Filtering would be sweet.</li>
+			<li>Collapsable tournament, matches, etc.</li>
+			<li>Delete matches and/or games? Maybe not.</li>
+		</ul>					
     
     <ajax:AjaxPanel ID="ajaxPanel" runat="server" AjaxCallConnection="asynchronous">
 		<div class="filterResults">
@@ -41,8 +49,14 @@
 			<a href="#" onclick="Toggle('newTournament')">Add new tournament...</a><br />
 			
 			<div id="newTournament" style="display: none">
-				Tournament Name<br />
-				<asp:TextBox ID="TournamentName" runat="server" />
+				<table>
+					<tr>
+						<td colspan="2">Tournament Name</td>
+					</tr>
+						<td><asp:TextBox ID="TournamentName" runat="server" /></td>
+						<td><asp:LinkButton ID="AddTournament" Text="Add" OnClick="AddTournament_OnClick" runat="server" /></td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		
@@ -82,7 +96,7 @@
 							<strong>Match between <%# DataBinder.Eval(Container.DataItem, "Player1") %> and <%# DataBinder.Eval(Container.DataItem, "Player2") %>: <asp:Literal ID="Winner" runat="server" /></strong> | <a href="#" onclick="Toggle('newGame_<%# DataBinder.Eval(Container.DataItem, "Id") %>')">Add new game...</a><br />
 									
 							<div id="newGame_<%# DataBinder.Eval(Container.DataItem, "Id") %>" style="display: none">
-								<table cellpadding="0" cellspacing="0">
+								<table>
 									<tr>
 										<td><%# DataBinder.Eval(Container.DataItem, "Player1") %>'s Points</td>
 										<td><%# DataBinder.Eval(Container.DataItem, "Player2") %>'s Points</td>
@@ -96,7 +110,7 @@
 							</div>
 						</div>
 										
-						<table class="gameRow" cellpadding="0" cellspacing="0">
+						<table class="gameRow">
 							<tr>
 								<td><strong><%# DataBinder.Eval(Container.DataItem, "DateTime") %></strong></td>
 								<td><strong><%# DataBinder.Eval(Container.DataItem, "Player1") %></strong></td>
@@ -122,6 +136,6 @@
 		</asp:Repeater>
 		
 	</ajax:AjaxPanel>
-    </form>
+   </form>
 </body>
 </html>
