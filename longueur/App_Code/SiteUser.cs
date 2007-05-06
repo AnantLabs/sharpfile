@@ -47,7 +47,7 @@ public class SiteUser
 			return obj as SiteUser;
 		}
 
-		return Data.GetAnonymousUser();
+		return LongueurData.GetAnonymousUser();
 	}
 
 	public static bool IsObjectAUser(object obj)

@@ -9,7 +9,7 @@
 		<br />
 	</HeaderTemplate>
 	<ItemTemplate>
-		<a href="quote.aspx?QID=<%# DataBinder.Eval(Container.DataItem, "QuoteID") %>"><%# General.GetSubString(DataBinder.Eval(Container.DataItem, "QuoteText").ToString(), 15) %></a><br />
+		<a href="quote.aspx?QID=<%# DataBinder.Eval(Container.DataItem, "QuoteID") %>"><%# StringUtility.GetSubString(DataBinder.Eval(Container.DataItem, "QuoteText").ToString(), 15) %></a><br />
 		<p style="text-align: right">
 			<%# DataBinder.Eval(Container.DataItem, "SongName") %><br />
 			<%# DataBinder.Eval(Container.DataItem, "ArtistName") %>

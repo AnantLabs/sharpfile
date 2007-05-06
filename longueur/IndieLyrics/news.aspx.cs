@@ -13,7 +13,7 @@ public partial class news : System.Web.UI.Page
 {
 	protected void Page_Load(object sender, EventArgs e)
 	{
-		NewsItems.DataSource = Data.GetNews();
+		NewsItems.DataSource = LongueurData.GetNews();
 		NewsItems.DataBind();
 	}
 }

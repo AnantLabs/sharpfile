@@ -41,7 +41,7 @@
         </HeaderTemplate>
         <ItemTemplate>
 				<%# GetDetails(Container) %>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='<%# "quote.aspx?id=" + DataBinder.Eval(Container.DataItem, "QuoteId") %>'><%# Common.General.GetSubString(DataBinder.Eval(Container.DataItem, "QuoteText").ToString(), 50) %></a><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='<%# "quote.aspx?id=" + DataBinder.Eval(Container.DataItem, "QuoteId") %>'><%# StringUtility.GetSubString(DataBinder.Eval(Container.DataItem, "QuoteText").ToString(), 50) %></a><br>
         </ItemTemplate>
         <FooterTemplate>
         </FooterTemplate>

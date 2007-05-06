@@ -25,7 +25,7 @@ public partial class Software_download : System.Web.UI.Page
 
 			if (File.Exists(MapPath(serverFilename)))
 			{
-				Data.DownloadInsert(filename, Request.UserHostAddress, Request.UrlReferrer.ToString(), 
+				DownloadData.DownloadInsert(filename, Request.UserHostAddress, Request.UrlReferrer.ToString(), 
 					Request.UserAgent, Request.Browser.Browser, Request.Browser.Platform, 
 					Request.Browser.Version, Request.UserHostName);
 

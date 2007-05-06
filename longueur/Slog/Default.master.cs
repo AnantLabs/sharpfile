@@ -9,11 +9,10 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 
-public partial class Controls_HighestRatedQuotes : System.Web.UI.UserControl
+public partial class Slog_Default : System.Web.UI.MasterPage
 {
 	protected void Page_Load(object sender, EventArgs e)
 	{
-		HighestRepeater.DataSource = LongueurData.GetTopRated();
-		HighestRepeater.DataBind();
+
 	}
 }

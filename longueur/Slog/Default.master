@@ -1,0 +1,62 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Default.master.cs" Inherits="Slog_Default" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Slog: Est. 1842.</title>
+    <link rel="Stylesheet" href="styles.css" type="text/css" />
+    <!--<style type="text/css" media="all">@import "styles.css";</style>-->
+    
+    <script type="text/javascript" language="javascript">
+		var height = 0;
+		
+		function onLoad() 
+		{
+			// Set our global vars.
+			getSize();
+
+			// Resize the right stuff.			
+			document.getElementById('right').style.height = height + 'px';
+			
+			// Resize the post stuff.
+			document.getElementById('posts').style.height = height - 25 + 'px';
+			
+			document.getElementById('bottomRightImage').style.marginTop = height - document.getElementById('bottomRightImage').height + 'px';
+		}
+		
+		function getSize() {
+			// http://www.howtocreate.co.uk/tutorials/javascript/browserwindow
+			if( typeof( window.innerWidth ) == 'number' ) 
+			{
+				//Non-IE
+				height = window.innerHeight - 15;
+			} 
+			else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+				//IE 6+ in 'standards compliant mode'
+				height = document.documentElement.clientHeight - 15;
+			} 
+			else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+				//IE 4 compatible
+				height = document.body.clientHeight - 35;
+			}
+		}
+	</script>
+</head>
+<body onload="onLoad()" onresize="onLoad()">
+    <form id="form1" runat="server">
+    <div id="left">
+		<div id="breadcrumb">
+			... breadcrumb.
+		</div>
+			    
+		<div id="posts">
+			<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />
+		</div>
+    </div>
+    <div id="right">
+		<img src="images/button.gif" id="bottomRightImage" />
+    </div>
+    </form>
+</body>
+</html>

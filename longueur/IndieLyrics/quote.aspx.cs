@@ -56,7 +56,7 @@ public partial class quote : System.Web.UI.Page
     {
         if (Session[Constants.QuoteID] != null)
         {
-            DataTable comments = Data.GetQuoteComments((int)Session[Constants.QuoteID]);
+			DataTable comments = LongueurData.GetQuoteComments((int)Session[Constants.QuoteID]);
 
             if (comments.Rows.Count > 0)
             {
@@ -95,7 +95,7 @@ public partial class quote : System.Web.UI.Page
             quoteId = Convert.ToInt32(Session[Constants.QuoteID]);
         }
 
-        DataTable details = Data.GetQuoteDetails(userId, quoteId);
+		DataTable details = LongueurData.GetQuoteDetails(userId, quoteId);
 
         if (details.Rows.Count == 1)
         {
@@ -123,7 +123,7 @@ public partial class quote : System.Web.UI.Page
 		if (parseComment(commentText))
 		{
 			int userId = siteUser.Id;
-			Data.CommentInsert((int)Session[Constants.QuoteID], userId, commentText);
+			LongueurData.CommentInsert((int)Session[Constants.QuoteID], userId, commentText);
 			GetComments();
 
 			CommentText.Text = string.Empty;
@@ -146,7 +146,7 @@ public partial class quote : System.Web.UI.Page
 		if (parseComment(commentText))
 		{
 			int userId = siteUser.Id;
-			Data.CommentUpdate(commentId, userId, commentText);
+			LongueurData.CommentUpdate(commentId, userId, commentText);
 			GetComments();
 		}
 		else
@@ -267,7 +267,7 @@ public partial class quote : System.Web.UI.Page
             if (selectedRatingValue == string.Empty
                 && userId > -1)
             {
-                Data.RatingDelete(quoteId, userId);
+				LongueurData.RatingDelete(quoteId, userId);
                 GetDetails();
             }
             else if (General.IsInt(selectedRatingValue))
@@ -276,7 +276,7 @@ public partial class quote : System.Web.UI.Page
 
                 if (userId > -1 && rating > -1)
                 {
-                    Data.RatingUpsert(quoteId, userId, rating);
+					LongueurData.RatingUpsert(quoteId, userId, rating);
                     GetDetails();
                 }
             }
@@ -310,7 +310,7 @@ public partial class quote : System.Web.UI.Page
 
         if (e.CommandName.Equals("delete"))
         {
-            Data.CommentDelete(commentId, siteUser.Id);
+			LongueurData.CommentDelete(commentId, siteUser.Id);
             GetComments();
         }
         else if (e.CommandName.Equals("save"))
@@ -322,7 +322,7 @@ public partial class quote : System.Web.UI.Page
                     && ((HtmlTextArea)item.FindControl(_editedCommentText)) != null)
                 {
                     string commentText = ((HtmlTextArea)item.FindControl(_editedCommentText)).Value;
-					Data.CommentUpdate(commentId, siteUser.Id, commentText);
+					LongueurData.CommentUpdate(commentId, siteUser.Id, commentText);
                     GetComments();
                     break;
                 }

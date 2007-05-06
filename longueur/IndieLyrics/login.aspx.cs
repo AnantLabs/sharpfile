@@ -20,8 +20,9 @@ public partial class login : System.Web.UI.Page
 			user.Focus();
 		} else {
 			if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "submit") {
-				if (Data.ValidateUser(user.Text, Security.Encrypt(password.Text))) {
-					Session[Constants.CurrentUser] = Data.GetUser(user.Text);
+				if (LongueurData.ValidateUser(user.Text, Security.Encrypt(password.Text)))
+				{
+					Session[Constants.CurrentUser] = LongueurData.GetUser(user.Text);
 
 					Response.Clear();
 

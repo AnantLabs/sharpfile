@@ -11,6 +11,9 @@ using System.Web.UI.HtmlControls;
 
 public partial class Controls_Authorize : System.Web.UI.UserControl
 {
+	private const string CONTENT = "Content";
+	private const string NOTAUTHORIZED = "NotAuthorized";
+
 	private UserType userType = UserType.NonAuthenticated;
 	private string redirect;
 	private string username;
@@ -26,8 +29,8 @@ public partial class Controls_Authorize : System.Web.UI.UserControl
 			{
 				if (string.IsNullOrEmpty(redirect))
 				{
-					this.Parent.Parent.FindControl("Content").Visible = false;
-					this.Parent.Parent.FindControl("NotAuthorized").Visible = true;
+					this.Parent.Parent.FindControl(CONTENT).Visible = false;
+					this.Parent.Parent.FindControl(NOTAUTHORIZED).Visible = true;
 				}
 				else
 				{

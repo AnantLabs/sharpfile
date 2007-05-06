@@ -37,7 +37,7 @@ public partial class action : System.Web.UI.Page {
 
 								if (string.IsNullOrEmpty(Request["explicit"]) || Request["explicit"].Equals("0")) {
 									if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName)) {
-										DataSet albumResults = Data.AlbumGetDetails(artistName, albumName);
+										DataSet albumResults = LongueurData.AlbumGetDetails(artistName, albumName);
 
 										if (albumResults.Tables[0].Rows.Count > 0) {
 											albumResults.Tables[0].PrimaryKey = new DataColumn[] { 

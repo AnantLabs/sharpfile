@@ -35,7 +35,7 @@ public partial class edit_user : System.Web.UI.Page
 						if (NewPassword.Text.Equals(ConfirmNewPassword.Text)) {
 							if (currentUser.Password.Equals(Security.Encrypt(CurrentPassword.Text))) {
 								try {
-									SiteUser newUser = Data.UpdateUser(currentUser.Id, UserName.Text, Email.Text, NewPassword.Text);
+									SiteUser newUser = LongueurData.UpdateUser(currentUser.Id, UserName.Text, Email.Text, NewPassword.Text);
 									Session[Constants.CurrentUser] = newUser;
 									Message.Text = "The new information has been saved.";
 								} catch (Exception ex) {
@@ -51,7 +51,7 @@ public partial class edit_user : System.Web.UI.Page
 					} else if (NewPassword.Text == string.Empty && ConfirmNewPassword.Text == string.Empty) {
 						if (currentUser.Password.Equals(Security.Encrypt(CurrentPassword.Text))) {
 							try {
-								SiteUser newUser = Data.UpdateUser(currentUser.Id, UserName.Text, Email.Text);
+								SiteUser newUser = LongueurData.UpdateUser(currentUser.Id, UserName.Text, Email.Text);
 								Session[Constants.CurrentUser] = newUser;
 								Message.Text = "The new information has been saved.";
 							} catch (Exception ex) {
@@ -68,8 +68,8 @@ public partial class edit_user : System.Web.UI.Page
 				}
 			} else if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "delete") {
 				if (Session[Constants.CurrentUser] != null && ((SiteUser)Session[Constants.CurrentUser]).UserType != UserType.NonAuthenticated) {
-					Data.DeleteUser(((SiteUser)Session[Constants.CurrentUser]).Id);
-					Session[Constants.CurrentUser] = Data.GetAnonymousUser();
+					LongueurData.DeleteUser(((SiteUser)Session[Constants.CurrentUser]).Id);
+					Session[Constants.CurrentUser] = LongueurData.GetAnonymousUser();
 
 					Response.Clear();
 					Response.Redirect("default.aspx", true);

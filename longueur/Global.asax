@@ -33,7 +33,7 @@
 			}
 			else
 			{
-				Session[Constants.CurrentUser] = Data.GetAnonymousUser();
+				Session[Constants.CurrentUser] = LongueurData.GetAnonymousUser();
 			}
 		}
 		else
