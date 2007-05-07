@@ -29,7 +29,7 @@ public abstract class Data {
 					if (outResult)
 					{
 						section.SectionInformation.ProtectSection(Constants.DataProtectionConfigurationProvider);
-						configuration.Save();
+						configuration.Save(ConfigurationSaveMode.Modified);
 					}
 				}
 			}

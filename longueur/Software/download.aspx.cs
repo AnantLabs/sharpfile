@@ -18,6 +18,7 @@ public partial class Software_download : System.Web.UI.Page
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
+		// http://www.codeproject.com/aspnet/SecureFileDownload.asp.
 		if (!string.IsNullOrEmpty(this.Request.QueryString[fileQueryString]))
 		{
 			filename = this.Request.QueryString[fileQueryString];
@@ -25,11 +26,20 @@ public partial class Software_download : System.Web.UI.Page
 
 			if (File.Exists(MapPath(serverFilename)))
 			{
-				DownloadData.DownloadInsert(filename, Request.UserHostAddress, Request.UrlReferrer.ToString(), 
+				string referrer = Request.UrlReferrer != null ? Request.UrlReferrer.ToString() : string.Empty;
+				string niceFilename = filename.Substring(filename.LastIndexOf("/")+1, filename.Length - filename.LastIndexOf("/")-1);
+
+				DownloadData.DownloadInsert(filename, Request.UserHostAddress, referrer, 
 					Request.UserAgent, Request.Browser.Browser, Request.Browser.Platform, 
 					Request.Browser.Version, Request.UserHostName);
 
-				Server.Transfer(serverFilename);
+				if (Common.General.GetExt(filename).ToLower().Equals(".zip"))
+				{
+					Response.AddHeader("Content-disposition", "attachment; filename=" + niceFilename);
+					Response.ContentType = "application/x-zip-compressed";
+				}
+
+				Server.Transfer(serverFilename, false);
 			}
 		}
 	}
