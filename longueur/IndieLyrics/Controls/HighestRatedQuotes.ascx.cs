@@ -13,7 +13,7 @@ public partial class Controls_HighestRatedQuotes : System.Web.UI.UserControl
 {
 	protected void Page_Load(object sender, EventArgs e)
 	{
-		HighestRepeater.DataSource = LongueurData.GetTopRated();
+		HighestRepeater.DataSource = IndieLyricsData.GetTopRated();
 		HighestRepeater.DataBind();
 	}
 }

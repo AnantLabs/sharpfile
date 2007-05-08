@@ -89,7 +89,7 @@ public partial class search : System.Web.UI.Page
 				maxResults = int.Parse(txtMaxResults.Text);
 			}
 
-			rptList.DataSource = LongueurData.SearchData(searchString, searchType, maxResults);
+			rptList.DataSource = IndieLyricsData.SearchData(searchString, searchType, maxResults);
 			rptList.DataBind();
 
 			populateAlphaNumerals();

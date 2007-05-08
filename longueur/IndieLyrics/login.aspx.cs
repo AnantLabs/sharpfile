@@ -14,24 +14,35 @@ public partial class login : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-		if (!IsPostBack) {
+		if (!IsPostBack)
+		{
 			Session["ReferralUrl"] = Request.UrlReferrer != null ? Request.UrlReferrer.PathAndQuery : "default.aspx";
 			message.Visible = false;
 			user.Focus();
-		} else {
-			if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "submit") {
-				if (LongueurData.ValidateUser(user.Text, Security.Encrypt(password.Text)))
+		}
+		else
+		{
+			if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "submit")
+			{
+				SiteUser siteUser = IndieLyricsData.GetUser(user.Text, password.Text);
+
+				if (siteUser != null)
 				{
-					Session[Constants.CurrentUser] = LongueurData.GetUser(user.Text);
+					Session[Constants.CurrentUser] = siteUser;
 
 					Response.Clear();
 
-					if (Session["ReferralUrl"] != null) {
+					if (Session["ReferralUrl"] != null)
+					{
 						Response.Redirect(Session["ReferralUrl"].ToString(), true);
-					} else {
+					}
+					else
+					{
 						Response.Redirect("default.aspx", true);
 					}
-				} else {
+				}
+				else
+				{
 					message.Visible = true;
 					message.Text = "The username or password entered is incorrect. Try again.";
 				}

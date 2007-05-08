@@ -20,9 +20,11 @@ public partial class login_non_template : System.Web.UI.Page
 			user.Focus();
 		} else {
 			if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "submit") {
-				if (LongueurData.ValidateUser(user.Text, Security.Encrypt(password.Text)))
+				SiteUser siteUser = IndieLyricsData.GetUser(user.Text, password.Text);
+
+				if (siteUser != null)
 				{
-					Session[Constants.CurrentUser] = LongueurData.GetUser(user.Text);
+					Session[Constants.CurrentUser] = siteUser;
 
 					Response.Clear();
 

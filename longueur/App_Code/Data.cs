@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Web.Configuration;
 using Common;
+using System.Text;
 
 /// <summary>
 /// Summary description for Data.
@@ -233,6 +234,197 @@ public abstract class Data {
 		}
 
 		return ident;
+	}
+	#endregion
+
+	#region Legacy user data calls
+	public static SiteUser GetAnonymousUser()
+	{
+		SiteUser user = new SiteUser();
+		DataTable result = Select("usp_SiteUserGetAnonymous");
+
+		if (result.Rows.Count == 1)
+		{
+			user = new SiteUser(int.Parse(result.Rows[0]["UserID"].ToString()), result.Rows[0]["UserName"].ToString(), "", result.Rows[0]["UserEmail"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["UserTypeName"].ToString())));
+		}
+
+		return user;
+	}
+
+	public static SiteUser GetUser(int userId, string plainTextPassword)
+	{
+		if (ValidateUser(userId, plainTextPassword))
+		{
+			return getUser(userId);
+		}
+
+		return null;
+	}
+
+	private static SiteUser getUser(int userId)
+	{
+		SqlParameter[] parameters = { new SqlParameter("@UserID", SqlDbType.Int) };
+		parameters[0].Value = userId;
+		DataTable result = Select("usp_SiteUserGetUser", parameters);
+
+		if (result.Rows.Count == 1)
+		{
+			return new SiteUser(int.Parse(result.Rows[0]["UserID"].ToString()), result.Rows[0]["UserName"].ToString(), result.Rows[0]["UserPassword"].ToString(), result.Rows[0]["UserEmail"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["UserTypeName"].ToString())));
+		}
+
+		return null;
+	}
+
+	public static SiteUser GetUser(string userName, string plainTextPassword)
+	{
+		if (ValidateUser(userName, plainTextPassword))
+		{
+			return getUser(userName);
+		}
+
+		return null;
+	}
+
+	private static SiteUser getUser(string userName)
+	{
+		SqlParameter[] parameters = { new SqlParameter("@UserName", SqlDbType.VarChar, 255) };
+		parameters[0].Value = userName;
+		DataTable result = Select("usp_SiteUserGetUser", parameters);
+
+		if (result.Rows.Count == 1)
+		{
+			return new SiteUser(int.Parse(result.Rows[0]["UserID"].ToString()), result.Rows[0]["UserName"].ToString(), result.Rows[0]["UserPassword"].ToString(), result.Rows[0]["UserEmail"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["UserTypeName"].ToString())));
+		}
+
+		return null;
+	}
+
+	public static bool UserExists(string userName)
+	{
+		if (getUser(userName) == null)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+
+	public static bool ValidateUser(string userName, string plainTextPassword)
+	{
+		string hashedPassword = Security.Encrypt(plainTextPassword);
+		SiteUser user = getUser(userName);
+
+		if (user != null)
+		{
+			if (user.HashedPassword.Equals(hashedPassword))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static bool ValidateUser(int userId, string plainTextPassword)
+	{
+		string hashedPassword = Security.Encrypt(plainTextPassword);
+		SiteUser user = getUser(userId);
+
+		if (user != null)
+		{
+			if (user.HashedPassword.Equals(hashedPassword))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static SiteUser UpdateUser(int userId, string userName, string userEmail)
+	{
+		return UpdateUser(userId, userName, userEmail, "");
+	}
+
+	public static SiteUser UpdateUser(int userId, string userName, string userEmail, string plainTextPassword)
+	{
+		if (!string.IsNullOrEmpty(plainTextPassword))
+		{
+			SqlParameter[] parameters = { new SqlParameter("@UserName", SqlDbType.VarChar, 255),
+			new SqlParameter("@UserEmail", SqlDbType.VarChar, 255),
+			new SqlParameter("@UserID", SqlDbType.VarChar, 255) };
+
+			parameters[0].Value = userName;
+			parameters[1].Value = userEmail;
+			parameters[2].Value = userId;
+
+			NonQuery("usp_SiteUserUpdate", parameters);
+		}
+		else
+		{
+			SqlParameter[] parameters = { new SqlParameter("@UserName", SqlDbType.VarChar, 255),
+			new SqlParameter("@UserEmail", SqlDbType.VarChar, 255),
+			new SqlParameter("@UserID", SqlDbType.VarChar, 255),
+			new SqlParameter("@UserPassword", SqlDbType.VarChar, 255) };
+
+			parameters[0].Value = userName;
+			parameters[1].Value = userEmail;
+			parameters[2].Value = userId;
+			parameters[3].Value = Security.Encrypt(plainTextPassword);
+
+			NonQuery("usp_SiteUserUpdate", parameters);
+		}
+
+		return getUser(userId);
+	}
+
+	public static void DeleteUser(int userId)
+	{
+		int anonId = GetAnonymousUser().Id;
+
+		SqlParameter[] parameters = { new SqlParameter("@AnonUserId", SqlDbType.Int),
+				new SqlParameter("@UserId", SqlDbType.Int) };
+
+		parameters[0].Value = anonId;
+		parameters[1].Value = userId;
+
+		NonQuery("usp_SiteUserDelete", parameters);
+	}
+
+	public static SiteUser CreateUser(string userName, string userEmail, string userPassword)
+	{
+		DataTable result = new DataTable();
+
+		SqlParameter[] parameters = { new SqlParameter("@UserName", SqlDbType.VarChar, 255),
+			new SqlParameter("@UserEmail", SqlDbType.VarChar, 255),
+			new SqlParameter("@UserPassword", SqlDbType.VarChar, 255) };
+
+		parameters[0].Value = userName;
+		parameters[1].Value = userEmail;
+		parameters[2].Value = Security.Encrypt(userPassword);
+
+		result = Select("usp_SiteUserInsert", parameters);
+
+		if (result.Rows.Count > 0 && General.IsInt(result.Rows[0][0].ToString()))
+		{
+			return getUser(Convert.ToInt32(result.Rows[0][0].ToString()));
+		}
+		else
+		{
+			return null;
+		}
+	}
+	#endregion
+
+	#region ErrorLog
+	public static void InsertErrorLog(string message, string stacktrace, string ip, string url)
+	{
+		SqlParameter[] parameters = getSqlParameters("@Message,@Stacktrace,@IP,@Url",
+			message, stacktrace, ip, url);
+
+		NonQuery("usp_ErrorLogInsert", parameters);
 	}
 	#endregion
 }

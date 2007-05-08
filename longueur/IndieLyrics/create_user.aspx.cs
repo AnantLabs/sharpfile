@@ -50,12 +50,12 @@ public partial class create_user : System.Web.UI.Page {
 				Session["CreateError"] += "Please enter a password consisting only of alpha-numerics.<br />";
 			}
 
-			if (LongueurData.UserExists(UserName.Text))
+			if (IndieLyricsData.UserExists(UserName.Text))
 			{
 				Session["CreateError"] += "The user, " + UserName.Text + " already exists, please try another.<br />";
 			}
 
-			SiteUser newUser = LongueurData.CreateUser(UserName.Text, Email.Text, Pass.Text);
+			SiteUser newUser = IndieLyricsData.CreateUser(UserName.Text, Email.Text, Pass.Text);
 
 			if (newUser == null) {
 				Session["CreateError"] += "There was an error creating your user.<br />";
