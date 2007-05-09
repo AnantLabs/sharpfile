@@ -1,12 +1,11 @@
-<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Default.master.cs" Inherits="Slog_Default" %>
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="slog.master.cs" Inherits="Slog_Default" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
     <title>Slog: Est. 1842.</title>
-    <link rel="Stylesheet" href="styles.css" type="text/css" />
-    <!--<style type="text/css" media="all">@import "styles.css";</style>-->
+	<style type="text/css" media="all">@import "styles.css";</style>
     
     <script type="text/javascript" language="javascript">
 		var height = 0;

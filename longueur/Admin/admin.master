@@ -1,0 +1,23 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="admin.master.cs" Inherits="Admin_template" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Admin</title>
+    <style type="text/css" media="all">@import "styles.css";</style>
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div id="nav">
+		<a href="errors.aspx">Errors</a> | <a href="downloads.aspx">Downloads</a>
+	</div>
+	<br />
+	
+    <div>
+        <asp:contentplaceholder id="ContentPlaceHolder" runat="server" />
+    </div>
+    </form>
+</body>
+</html>

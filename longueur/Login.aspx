@@ -9,10 +9,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-		Username: <asp:TextBox ID="txtUsername" runat="server" /><br />
-		Password: <asp:TextBox ID="txtPassword" runat="server" /><br />
-		
-		<asp:Button ID="btnSubmit" runat="server" Text="Submit" />		
+		<a:Login ID="ctlLogin" runat="server" />
     </div>
     </form>
 </body>

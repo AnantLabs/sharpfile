@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Slog/Default.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Slog_Default" Title="Untitled Page" %>
+<%@ Page Language="C#" MasterPageFile="~/Slog/slog.master" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="Slog_Default" Title="Untitled Page" %>
 <asp:Content ID="Content" ContentPlaceHolderID="ContentPlaceHolder" Runat="Server">
 	<asp:Repeater ID="rptContent" runat="server">
 		<ItemTemplate>

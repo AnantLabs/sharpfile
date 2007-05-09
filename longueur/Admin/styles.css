@@ -1,0 +1,22 @@
+﻿body { 
+	font: 11px/12px Verdana, Arial, Helvetica, sans-serif; 
+	color: #000000; 
+	background-color: #ffffff;
+	}
+	
+td { font: 11px/12px Verdana, Arial, Helvetica, sans-serif; 
+	color: #000000; 
+	}
+	
+p { font: 11px/12px Verdana, Arial, Helvetica, sans-serif; 
+	color: #000000; 
+	margin: 0px 0px 0px 0px;
+	}
+
+#nav 
+{
+	border-top: dashed 1px black;
+	border-bottom: dashed 1px black;
+	padding: 3px 3px 6px 3px;
+	text-align: center;
+}
