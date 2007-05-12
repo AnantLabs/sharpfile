@@ -15,7 +15,7 @@ public class DownloadData : Data
 	}
 
 	public static void DownloadInsert(string filename, string IP, string referrer, string userAgent,
-	string browser, string platform, string browserVersion, string hostname)
+		string browser, string platform, string browserVersion, string hostname)
 	{
 		SqlParameter[] parameters = getSqlParameters("@Filename,@IP,@Referrer,@UserAgent,@Browser,@Platform,@BrowserVersion,@HostName",
 			filename, IP, referrer, userAgent, browser, platform, browserVersion, hostname);

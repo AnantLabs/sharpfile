@@ -65,7 +65,7 @@ public class SiteUser
 			// Create a new ticket used for authentication
 			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
 			   formsAuthenticationVersion,
-			   name,
+			   id.ToString(),
 			   DateTime.Now,
 			   DateTime.Now.AddMinutes(cookieExpirationTime),
 			   persistent,

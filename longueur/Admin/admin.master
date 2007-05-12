@@ -11,7 +11,7 @@
 <body>
     <form id="form1" runat="server">
     <div id="nav">
-		<a href="errors.aspx">Errors</a> | <a href="downloads.aspx">Downloads</a>
+		<a href="errors.aspx">Errors</a> | <a href="downloads.aspx">Downloads</a> | <a href="slog.aspx">Slog</a>
 	</div>
 	<br />
 	

@@ -13,7 +13,10 @@ public partial class Slog_Default : System.Web.UI.Page
 {
 	protected void Page_Load(object sender, EventArgs e)
 	{
-		rptContent.DataSource = new DataTable();
+		// TODO: Randomize this bitch.
+		this.Title = "Slog: Est. 1842.";
+
+		rptContent.DataSource = SlogData.GetSlogs();
 		rptContent.DataBind();
 	}
 }

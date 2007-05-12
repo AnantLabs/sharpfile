@@ -81,9 +81,16 @@ function getGuid() {
 			CacheDependency cacheDependency = new CacheDependency(Server.MapPath("wittisms.xml"));
 			XmlSerializer xmlSerializer = new XmlSerializer(typeof(Wittisms));
 
-			using (TextReader tr = new StreamReader(Server.MapPath("wittisms.xml")))
+			if (File.Exists(Server.MapPath("wittisms.xml")))
 			{
-				wittisms = (Wittisms)xmlSerializer.Deserialize(tr);
+				using (TextReader tr = new StreamReader(Server.MapPath("wittisms.xml")))
+				{
+					wittisms = (Wittisms)xmlSerializer.Deserialize(tr);
+				}
+			}
+			else
+			{
+				wittisms = new Wittisms();
 			}
 
 			Cache.Add("wittisms", wittisms, cacheDependency, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Normal, null);
