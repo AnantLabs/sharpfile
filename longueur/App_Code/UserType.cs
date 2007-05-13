@@ -1,6 +1,6 @@
 public enum UserType
 {
-	NonAuthenticated,
-	User,
-	Admin
+	NonAuthenticated = 1,
+	User = 2,
+	Admin = 99
 };

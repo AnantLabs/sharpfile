@@ -17,6 +17,7 @@ public class SiteUser
 	private string guid;
 	private bool enableJs;
 	private UserType userType;
+	private DateTime dateTime;
 
 	public SiteUser()
 	{
@@ -27,8 +28,10 @@ public class SiteUser
 		this.email = string.Empty;
 		this.enableJs = false;
 		this.guid = string.Empty;
+		this.dateTime = DateTime.MinValue;
 	}
 
+	// TODO: This needs to be whacked for the DateTime to be populated correctly.
 	public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType)
 	{
 		this.id = id;
@@ -38,6 +41,18 @@ public class SiteUser
 		this.guid = System.Guid.NewGuid().ToString();
 		this.enableJs = enableJs;
 		this.userType = userType;
+	}
+
+	public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType, DateTime dateTime)
+	{
+		this.id = id;
+		this.name = name;
+		this.hashedPassword = hashedPassword;
+		this.email = email;
+		this.guid = System.Guid.NewGuid().ToString();
+		this.enableJs = enableJs;
+		this.userType = userType;
+		this.dateTime = dateTime;
 	}
 
 	public bool Login()
@@ -90,6 +105,12 @@ public class SiteUser
 		}
 
 		return false;
+	}
+
+	public bool Save()
+	{
+		// TODO: This should be a nice controller.
+		throw new Exception("This method not completed yet.");
 	}
 
 	#region Static methods
@@ -206,6 +227,11 @@ public class SiteUser
 		{ 
 			enableJs = value; 
 		}
+	}
+
+	public DateTime DateTime
+	{
+		get { return dateTime; }
 	}
 	#endregion
 }

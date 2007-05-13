@@ -1,12 +1,11 @@
 using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.Configuration;
+using System.Web.Configuration;
+using Common;
+using System.Text;
 using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 /// <summary>
 /// Summary description for AdminData
@@ -25,5 +24,18 @@ public class AdminData : Data
 	public static DataTable GetDownloads()
 	{
 		return Select("usp_DownloadGet");
+	}
+
+	public static SiteUser GetUser(int userId)
+	{
+		return getUserAdmin(userId);
+	}
+
+	public static void UpdateUser(int id, string name, string email) {
+		UpdateUser(id, name, email, string.Empty);
+	}
+
+	public static void UpdateUser(int id, string name, string email, string plainTextPassword) {
+		updateUserAdmin(id, name, email, plainTextPassword);
 	}
 }
