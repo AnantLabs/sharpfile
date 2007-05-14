@@ -1,14 +1,12 @@
-- Edit user information (almost done)
-- Ability to add new users from admin page
-- Fancy-up the gridview on the admin pages
-
-- More admin functionality for slog (delete, edit)
+- More admin functionality for slog (browse, delete, edit)
 - Randomize Slog title
 - Slog tags
 
 - Better error handling (IP, url that errored, innerexception, more of that good stuff)
 - Better error oops page (maybe should be .net). Link to referrer?
 - Log incorrect login attempts
+
+- Fancy-up the gridview on the admin pages
 
 - Update TheHillellies
 

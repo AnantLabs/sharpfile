@@ -53,7 +53,7 @@
 		</div>
     </div>
     <div id="right">
-		<img src="images/button.gif" id="bottomRightImage" />
+		<!-- <img src="images/button.gif" id="bottomRightImage" /> -->
     </div>
     </form>
 </body>
