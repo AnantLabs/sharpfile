@@ -24,16 +24,38 @@
 		</ItemTemplate>
 		<FooterTemplate>
 			</table>
-			<br />
-			
-			<div>
-				Section here to add a new user.
-			</div>
 		</FooterTemplate>
 	</asp:Repeater>
+			
+	<div id="divNewUser" runat="server" visible="true">
+		<br />
+		<br />
+		<strong>Add a new user...</strong>
+		<br />
+		
+		<strong>Name</strong><br />
+		<asp:TextBox ID="txtNewName" runat="server" />
+		<br />
+		
+		<strong>Email</strong><br />
+		<asp:TextBox ID="txtNewEmail" runat="server" />
+		<br />
+		
+		<strong>Password</strong><br />
+		<asp:TextBox ID="txtNewPassword" runat="server" />
+		<br />
+		
+		<strong>Type</strong><br />
+		<asp:DropDownList ID="ddlNewUserType" runat="server" />
+		<br />
+		
+		<asp:Button ID="btnNewSave" runat="server" Text="Save" />
+	</div>
 
 	<div id="divUserInfo" runat="server" visible="false">
+		<a href="Users.aspx">...Back</a><br />
 		<strong>Be careful doing this, it may affect wierd things. In fact, you probably shouldn't be here.</strong>
+		<br />
 		<br />
 
 		<strong>Id</strong><br />
@@ -49,7 +71,7 @@
 		<br />
 		
 		<strong>Password</strong><br />
-		<asp:TextBox ID="txtPassword" runat="server" AutoCompleteType="None" />
+		<asp:TextBox ID="txtPassword" runat="server" />
 		<br />
 		
 		<strong>Type</strong><br />

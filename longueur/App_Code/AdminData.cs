@@ -31,11 +31,15 @@ public class AdminData : Data
 		return getUserAdmin(userId);
 	}
 
-	public static void UpdateUser(int id, string name, string email) {
-		UpdateUser(id, name, email, string.Empty);
+	public static void UpdateUser(int id, string name, string email, UserType type) {
+		UpdateUser(id, name, email, string.Empty, type);
 	}
 
-	public static void UpdateUser(int id, string name, string email, string plainTextPassword) {
-		updateUserAdmin(id, name, email, plainTextPassword);
+	public static void UpdateUser(int id, string name, string email, string plainTextPassword, UserType type) {
+		updateUserAdmin(id, name, email, plainTextPassword, type);
+	}
+
+	public static void CreateUser(string name, string email, string plainTextPassword, UserType type) {
+		createUserAdmin(name, email, plainTextPassword, type);
 	}
 }

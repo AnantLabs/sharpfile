@@ -103,6 +103,26 @@ public abstract class Data {
 
 		return parameters;
 	}
+
+	protected static SqlParameter[] getSqlParameters(SqlParameter[] parameters, string parameterList, params object[] values) {
+		SqlParameter[] newParameters = getSqlParameters(parameterList, values);
+
+		int returnLength = parameters.Length + newParameters.Length;
+		SqlParameter[] returnParameters = new SqlParameter[returnLength];
+
+		for (int i = 0; i < parameters.Length; i++) {
+			returnParameters[i] = parameters[i];
+		}
+
+		int returnParameterIndex = parameters.Length;
+
+		for (int i = 0; i < newParameters.Length; i++) {
+			returnParameters[returnParameterIndex] = newParameters[i];
+			returnParameterIndex++;
+		}
+
+		return returnParameters;
+	}
 	#endregion
 
 	#region Private getters
@@ -352,27 +372,43 @@ public abstract class Data {
 		NonQuery("usp_SiteUserDelete", parameters);
 	}
 
-	public static SiteUser CreateUser(string name, string email, string userPassword) {
+	public static SiteUser CreateUser(string name, string email, string password) {
+		return CreateUser(name, email, password, UserType.User);
+	}
+
+	public static SiteUser CreateUser(string name, string email, string password, UserType type) {
 		DataTable result = new DataTable();
 
-		SqlParameter[] parameters = { new SqlParameter("@UserName", SqlDbType.VarChar, 255),
-			new SqlParameter("@UserEmail", SqlDbType.VarChar, 255),
-			new SqlParameter("@UserPassword", SqlDbType.VarChar, 255) };
+		SqlParameter[] parameters = getSqlParameters("@Name,@Email,@Password,@Type",
+			name,
+			email,
+			Security.Encrypt(password),
+			(int)type);
 
-		parameters[0].Value = name;
-		parameters[1].Value = email;
-		parameters[2].Value = Security.Encrypt(userPassword);
+		//SqlParameter[] parameters = { new SqlParameter("@UserName", SqlDbType.VarChar, 255),
+		//    new SqlParameter("@UserEmail", SqlDbType.VarChar, 255),
+		//    new SqlParameter("@UserPassword", SqlDbType.VarChar, 255) };
+
+		//parameters[0].Value = name;
+		//parameters[1].Value = email;
+		//parameters[2].Value = Security.Encrypt(userPassword);
 
 		result = Select("usp_SiteUserInsert", parameters);
+		int id = 0;
 
-		if (result.Rows.Count > 0 && General.IsInt(result.Rows[0][0].ToString())) {
-			return getUser(Convert.ToInt32(result.Rows[0][0].ToString()));
+		if (result.Rows.Count > 0 && 
+			int.TryParse(result.Rows[0][0].ToString(), out id)) {
+			return getUser(id);
 		} else {
 			return null;
 		}
 	}
 
 	private static void updateUser(int id, string name, string email, string plainTextPassword) {
+		updateUser(id, name, email, plainTextPassword, getUser(id).UserType);
+	}
+
+	private static void updateUser(int id, string name, string email, string plainTextPassword, UserType type) {
 		SqlParameter[] parameters;
 
 		if (string.IsNullOrEmpty(plainTextPassword)) {
@@ -381,6 +417,12 @@ public abstract class Data {
 		} else {
 			parameters = getSqlParameters("@Name,@Email,@Id,@Password",
 				name, email, id, Security.Encrypt(plainTextPassword));
+		}
+
+		if (type != null) {
+			parameters = getSqlParameters(parameters,
+				"@Type",
+				type);
 		}
 
 		NonQuery("usp_SiteUserUpdate", parameters);
@@ -420,11 +462,19 @@ public abstract class Data {
 		return null;
 	}
 
-	protected static void updateUserAdmin(int id, string name, string email, string plainTextPassword) {
+	protected static void updateUserAdmin(int id, string name, string email, string plainTextPassword, UserType type) {
 		if (isCurrentUserAdmin()) {
-			updateUser(id, name, email, plainTextPassword);
+			updateUser(id, name, email, plainTextPassword, type);
 		} else {
 			throw new Exception("The user attempting to update user, " + id + ",  is not an admin.");
+		}
+	}
+
+	protected static void createUserAdmin(string name, string email, string plainTextPassword, UserType type) {
+		if (isCurrentUserAdmin()) {
+			CreateUser(name, email, plainTextPassword, type);
+		} else {
+			throw new Exception("The user attempting to create user, " + name + ",  is not an admin.");
 		}
 	}
 
