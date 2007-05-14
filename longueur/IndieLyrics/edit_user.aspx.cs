@@ -35,7 +35,7 @@ public partial class edit_user : System.Web.UI.Page
 						if (NewPassword.Text.Equals(ConfirmNewPassword.Text)) {
 							if (currentUser.HashedPassword.Equals(Security.Encrypt(CurrentPassword.Text))) {
 								try {
-									SiteUser newUser = IndieLyricsData.UpdateUser(currentUser.Id, UserName.Text, Email.Text, NewPassword.Text);
+									SiteUser newUser = IndieLyricsData.UpdateUser(currentUser.Id, UserName.Text, Email.Text, CurrentPassword.Text, NewPassword.Text);
 									Session[Constants.CurrentUser] = newUser;
 									Message.Text = "The new information has been saved.";
 								} catch (Exception ex) {
@@ -51,7 +51,7 @@ public partial class edit_user : System.Web.UI.Page
 					} else if (NewPassword.Text == string.Empty && ConfirmNewPassword.Text == string.Empty) {
 						if (currentUser.HashedPassword.Equals(Security.Encrypt(CurrentPassword.Text))) {
 							try {
-								SiteUser newUser = IndieLyricsData.UpdateUser(currentUser.Id, UserName.Text, Email.Text);
+								SiteUser newUser = IndieLyricsData.UpdateUser(currentUser.Id, UserName.Text, Email.Text, CurrentPassword.Text);
 								Session[Constants.CurrentUser] = newUser;
 								Message.Text = "The new information has been saved.";
 							} catch (Exception ex) {
