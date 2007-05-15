@@ -1,5 +1,6 @@
+- Controller for User stuff. (UserSystem.Save(), UserSystem.Delete())
+
 - More admin functionality for slog (browse, delete, edit)
-- Randomize Slog title
 - Slog tags
 
 - Better error handling (IP, url that errored, innerexception, more of that good stuff)

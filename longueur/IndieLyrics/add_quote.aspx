@@ -1,5 +1,4 @@
 <%@ Page Language="C#" MasterPageFile="~/IndieLyrics/template.master" AutoEventWireup="true" CodeFile="add_quote.aspx.cs" Inherits="add" Title="IndieLyrics: Add a Lyric" %>
-<%@ Register TagPrefix="l" TagName="Authorize" Src="~/Controls/Authorize.ascx" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Content" Runat="Server">
 
@@ -108,7 +107,6 @@
 	}
 </script>
 
-<l:Authorize ID="Authorize" runat="server" Redirect="add_quote_u.aspx" UserType="User" />
 <input type="hidden" name="MultiTaskType" />
 
 <table>

@@ -26,9 +26,21 @@ public class AdminData : Data
 		return Select("usp_DownloadGet");
 	}
 
-	public static SiteUser GetUser(int userId)
+	public static SiteUser GetUser(int id)
 	{
-		return getUserAdmin(userId);
+		return getUserAdmin(id);
+	}
+
+	public static SiteUser GetUser(string name) {
+		return getUserAdmin(name);
+	}
+
+	public static DataTable GetUserData(int id) {
+		return getUserData(id);
+	}
+
+	public static DataTable GetUserData(string name) {
+		return getUserData(name);
 	}
 
 	public static void UpdateUser(int id, string name, string email, UserType type) {

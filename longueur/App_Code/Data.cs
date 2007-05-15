@@ -266,7 +266,8 @@ public abstract class Data {
 
 		if (result.Rows.Count == 1)
 		{
-			user = new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()), result.Rows[0]["Name"].ToString(), string.Empty, result.Rows[0]["Email"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString())));
+			//user = new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()), result.Rows[0]["Name"].ToString(), string.Empty, result.Rows[0]["Email"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString())));
+			user = new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()));
 		}
 
 		return user;
@@ -276,7 +277,7 @@ public abstract class Data {
 	{
 		if (ValidateUser(id, plainTextPassword))
 		{
-			return getUser(id);
+			return new SiteUser(id);
 		}
 
 		return null;
@@ -286,7 +287,7 @@ public abstract class Data {
 	{
 		if (ValidateUser(name, plainTextPassword))
 		{
-			return getUser(name);
+			return new SiteUser(name);
 		}
 
 		return null;
@@ -297,43 +298,33 @@ public abstract class Data {
 		return Select("usp_SiteUserGet");
 	}
 
-	public static bool UserExists(string name)
-	{
-		if (getUser(name) == null)
-		{
-			return false;
-		}
-		else
-		{
+	public static bool UserExists(string name) {
+		if (getUserData(name).Rows.Count > 0) {
 			return true;
-		}
-	}
-
-	public static bool ValidateUser(string name, string plainTextPassword)
-	{
-		string hashedPassword = Security.Encrypt(plainTextPassword);
-		SiteUser user = getUser(name);
-
-		if (user != null)
-		{
-			if (user.HashedPassword.Equals(hashedPassword))
-			{
-				return true;
-			}
 		}
 
 		return false;
 	}
 
+	public static bool ValidateUser(string name, string plainTextPassword)
+	{
+		SiteUser siteUser = new SiteUser(name);
+
+		return ValidateUser(siteUser, plainTextPassword);
+	}
+
 	public static bool ValidateUser(int id, string plainTextPassword)
 	{
-		string hashedPassword = Security.Encrypt(plainTextPassword);
-		SiteUser user = getUser(id);
+		SiteUser siteUser = new SiteUser(id);
 
-		if (user != null)
-		{
-			if (user.HashedPassword.Equals(hashedPassword))
-			{
+		return ValidateUser(siteUser, plainTextPassword);
+	}
+
+	public static bool ValidateUser(SiteUser siteUser, string plainTextPassword) {
+		string hashedPassword = Security.Encrypt(plainTextPassword);
+
+		if (siteUser != null) {
+			if (siteUser.HashedPassword.Equals(hashedPassword)) {
 				return true;
 			}
 		}
@@ -350,7 +341,7 @@ public abstract class Data {
 		if (ValidateUser(id, currentPassword)) {
 			updateUser(id, name, email, plainTextPassword);
 
-			return getUser(id);
+			return new SiteUser(id);
 		} else {
 			throw new Exception("The user attempting to update information does not have the correct credentials.");
 		}
@@ -361,13 +352,11 @@ public abstract class Data {
 	}
 
 	public static void DeleteUser(int id) {
-		int anonId = GetAnonymousUser().Id;
+		int anonymousId = GetAnonymousUser().Id;
 
-		SqlParameter[] parameters = { new SqlParameter("@AnonUserId", SqlDbType.Int),
-				new SqlParameter("@Id", SqlDbType.Int) };
-
-		parameters[0].Value = anonId;
-		parameters[1].Value = id;
+		SqlParameter[] parameters = getSqlParameters("@AnonUserId,@Id",
+			anonymousId,
+			id);
 
 		NonQuery("usp_SiteUserDelete", parameters);
 	}
@@ -385,27 +374,22 @@ public abstract class Data {
 			Security.Encrypt(password),
 			(int)type);
 
-		//SqlParameter[] parameters = { new SqlParameter("@UserName", SqlDbType.VarChar, 255),
-		//    new SqlParameter("@UserEmail", SqlDbType.VarChar, 255),
-		//    new SqlParameter("@UserPassword", SqlDbType.VarChar, 255) };
-
-		//parameters[0].Value = name;
-		//parameters[1].Value = email;
-		//parameters[2].Value = Security.Encrypt(userPassword);
-
 		result = Select("usp_SiteUserInsert", parameters);
 		int id = 0;
 
 		if (result.Rows.Count > 0 && 
 			int.TryParse(result.Rows[0][0].ToString(), out id)) {
-			return getUser(id);
+
+			return new SiteUser(id);
 		} else {
 			return null;
 		}
 	}
 
 	private static void updateUser(int id, string name, string email, string plainTextPassword) {
-		updateUser(id, name, email, plainTextPassword, getUser(id).UserType);
+		SiteUser siteUser = new SiteUser(id);
+
+		updateUser(id, name, email, plainTextPassword, siteUser.UserType);
 	}
 
 	private static void updateUser(int id, string name, string email, string plainTextPassword, UserType type) {
@@ -428,35 +412,33 @@ public abstract class Data {
 		NonQuery("usp_SiteUserUpdate", parameters);
 	}
 
-	private static SiteUser getUser(int id) {
+	protected static DataTable getUserData(int id) {
 		SqlParameter[] parameters = { new SqlParameter("@Id", SqlDbType.Int) };
 		parameters[0].Value = id;
-		DataTable result = Select("usp_SiteUserGetUser", parameters);
 
-		if (result.Rows.Count == 1) {
-			return new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()), result.Rows[0]["Name"].ToString(), result.Rows[0]["Password"].ToString(), result.Rows[0]["Email"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString())));
-		}
-
-		return null;
+		return Select("usp_SiteUserGetUser", parameters);
 	}
 
-	private static SiteUser getUser(string name) {
+	protected static DataTable getUserData(string name) {
 		SqlParameter[] parameters = { new SqlParameter("@Name", SqlDbType.VarChar, 255) };
 		parameters[0].Value = name;
-		DataTable result = Select("usp_SiteUserGetUser", parameters);
-
-		if (result.Rows.Count == 1) {
-			return new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()), result.Rows[0]["Name"].ToString(), result.Rows[0]["Password"].ToString(), result.Rows[0]["Email"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString())));
-		}
-
-		return null;
+		
+		return Select("usp_SiteUserGetUser", parameters);
 	}
 	#endregion
 
 	#region Admin methods
 	protected static SiteUser getUserAdmin(int id) {
 		if (isCurrentUserAdmin()) {
-			return getUser(id);
+			return new SiteUser(id);
+		}
+
+		return null;
+	}
+
+	protected static SiteUser getUserAdmin(string name) {
+		if (isCurrentUserAdmin()) {
+			return new SiteUser(name);
 		}
 
 		return null;

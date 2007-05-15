@@ -26,4 +26,17 @@ public class SlogData : Data
 	{
 		return Select("usp_SlogGet");
 	}
+
+	public static DataTable GetSlog(int id) {
+		SqlParameter[] parameters = getSqlParameters("@Id", 
+			id);
+
+		return Select("usp_SlogGetSlog", parameters);
+	}
+
+	public static void DeleteSlog(int id) {
+	}
+
+	public static void UpdateSlog(int id, int userId, string title, string content) {
+	}
 }

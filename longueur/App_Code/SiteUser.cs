@@ -1,6 +1,7 @@
 using System;
 using System.Web;
 using System.Web.Security;
+using System.Data;
 
 /// <summary>
 /// Summary description for SiteUser.
@@ -19,6 +20,8 @@ public class SiteUser
 	private UserType userType;
 	private DateTime dateTime;
 
+	private bool isPopulated = false;
+
 	public SiteUser()
 	{
 		this.id = -1;
@@ -31,29 +34,75 @@ public class SiteUser
 		this.dateTime = DateTime.MinValue;
 	}
 
+	// TODO: This should be whacked.
 	// TODO: This needs to be whacked for the DateTime to be populated correctly.
-	public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType)
-	{
-		this.id = id;
-		this.name = name;
-		this.hashedPassword = hashedPassword;
-		this.email = email;
-		this.guid = System.Guid.NewGuid().ToString();
-		this.enableJs = enableJs;
-		this.userType = userType;
+	//public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType) {
+	//    this.id = id;
+	//    this.name = name;
+	//    this.hashedPassword = hashedPassword;
+	//    this.email = email;
+	//    this.guid = System.Guid.NewGuid().ToString();
+	//    this.enableJs = enableJs;
+	//    this.userType = userType;
+	//}
+
+	// TODO: This should be whacked.
+	//public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType, DateTime dateTime) {
+	//    this.id = id;
+	//    this.name = name;
+	//    this.hashedPassword = hashedPassword;
+	//    this.email = email;
+	//    this.guid = System.Guid.NewGuid().ToString();
+	//    this.enableJs = enableJs;
+	//    this.userType = userType;
+	//    this.dateTime = dateTime;
+	//}
+
+	public SiteUser(int id) {
+		populateUser(id);
 	}
 
-	public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType, DateTime dateTime)
-	{
-		this.id = id;
-		this.name = name;
-		this.hashedPassword = hashedPassword;
-		this.email = email;
-		this.guid = System.Guid.NewGuid().ToString();
-		this.enableJs = enableJs;
-		this.userType = userType;
-		this.dateTime = dateTime;
+	public SiteUser(string name) {
+		populateUser(name);
 	}
+
+	private void populateUser(int id) {
+		DataTable userData = AdminData.GetUserData(id);
+		populateUserFromDataTable(userData);		
+	}
+
+	private void populateUser(string name) {
+		DataTable userData = AdminData.GetUserData(name);
+		populateUserFromDataTable(userData);
+	}
+
+	private void populateUserFromDataTable(DataTable userTable) {
+		if (userTable.Rows.Count > 0) {
+			this.id = int.Parse(userTable.Rows[0]["Id"].ToString());
+			this.name = userTable.Rows[0]["Name"].ToString();
+			this.hashedPassword = userTable.Rows[0]["Password"].ToString();
+			this.email = userTable.Rows[0]["Email"].ToString();
+			this.enableJs = false;
+			this.userType = (UserType)Enum.Parse(typeof(UserType), userTable.Rows[0]["TypeName"].ToString());
+
+			this.isPopulated = true;
+		} else {
+			throw new Exception("No user can be found.");
+		}
+	}
+
+	//public SiteUser(DataTable userTable) {
+	//    if (userTable.Rows.Count > 0) {
+	//        this.id = int.Parse(result.Rows[0]["Id"].ToString());
+	//        this.name = result.Rows[0]["Name"].ToString();
+	//        this.hashedPassword = result.Rows[0]["Password"].ToString();
+	//        this.email = result.Rows[0]["Email"].ToString();
+	//        this.enableJs = false;
+	//        this.userType = (UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString());
+	//    }
+
+	//    return new SiteUser();
+	//}
 
 	public bool Login()
 	{
@@ -114,53 +163,42 @@ public class SiteUser
 	}
 
 	#region Static methods
-	public static SiteUser GetCurrentUser()
-	{
-		object obj = HttpContext.Current.Session[Constants.CurrentUser];
-
-		if (obj != null
-			&& IsObjectAUser(obj))
-		{
-			return obj as SiteUser;
-		}
-
+	public static SiteUser GetAnonymousUser() {
 		return Data.GetAnonymousUser();
 	}
 
-	public static bool IsObjectAUser(object obj)
+	public static SiteUser GetCurrentUser()
 	{
-		if (obj != null)
-		{
-			SiteUser user;
+		if (HttpContext.Current != null) {
+			int id = 0;
 
-			try
-			{
-				user = (SiteUser)obj;
+			if (int.TryParse(HttpContext.Current.User.Identity.Name, out id)) {
+				return new SiteUser(id);
 			}
-			catch
-			{
-				return false;
-			}
+		}
 
-			return true;
+		return SiteUser.GetAnonymousUser();
+	}
+
+	public static bool IsUserAuthorized() {
+		if (HttpContext.Current != null) {
+
+			// TODO: This is pretty lame.
+			if (HttpContext.Current.User.IsInRole(UserType.Admin.ToString()) ||
+				HttpContext.Current.User.IsInRole(UserType.User.ToString())) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
-	public static bool IsUserAuthorized(SiteUser user)
-	{
-		return IsUserAuthorized(user, user.Id);
-	}
+	public static bool IsUserAuthorized(int id) {
+		SiteUser siteUser = new SiteUser(id);
 
-	public static bool IsUserAuthorized(SiteUser user, int id)
-	{
-		//there should be a check for cookies here? maybe the content is passed in?
-
-		if (user != null
-			&& user.UserType != UserType.NonAuthenticated
-			&& (user.Id == id || user.UserType == UserType.Admin))
-		{
+		// TODO: This is also pretty lame.
+		if (siteUser.UserType == UserType.User ||
+			siteUser.UserType == UserType.Admin) {
 			return true;
 		}
 
@@ -172,7 +210,7 @@ public class SiteUser
 	public int Id
 	{
 		get 
-		{ 
+		{
 			return id; 
 		}
 	}
@@ -180,7 +218,7 @@ public class SiteUser
 	public string Name
 	{
 		get 
-		{ 
+		{
 			return name; 
 		}
 	}
@@ -196,7 +234,7 @@ public class SiteUser
 	public string Email
 	{
 		get 
-		{ 
+		{
 			return email; 
 		}
 	}
@@ -204,7 +242,7 @@ public class SiteUser
 	public UserType UserType
 	{
 		get 
-		{ 
+		{
 			return userType;
 		}
 	}
@@ -220,7 +258,7 @@ public class SiteUser
 	public bool EnableJs
 	{
 		get 
-		{ 
+		{
 			return enableJs; 
 		}
 		set 
@@ -231,7 +269,9 @@ public class SiteUser
 
 	public DateTime DateTime
 	{
-		get { return dateTime; }
+		get {
+			return dateTime;
+		}
 	}
 	#endregion
 }
