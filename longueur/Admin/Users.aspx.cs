@@ -38,7 +38,7 @@ public partial class Admin_Users : System.Web.UI.Page
 				rptUsers.Visible = false;
 				divNewUser.Visible = false;
 
-				SiteUser siteUser = AdminData.GetUser(id);
+				SiteUser siteUser = new SiteUser(id);
 
 				if (siteUser != null)
 				{
@@ -92,10 +92,10 @@ public partial class Admin_Users : System.Web.UI.Page
 		if (authenticate()) {
 			string name = txtNewName.Text;
 
-			if (!Data.UserExists(name)) {
-				AdminData.CreateUser(txtNewName.Text, txtNewEmail.Text, txtNewPassword.Text, (UserType)Enum.Parse(typeof(UserType), ddlNewUserType.SelectedValue));
+			try {
+				SiteUser siteUser = new SiteUser(txtNewName.Text, txtNewEmail.Text, txtNewPassword.Text, (UserType)Enum.Parse(typeof(UserType), ddlNewUserType.SelectedValue));
 				Response.Redirect(pageToRedirectTo, true);
-			} else {
+			} catch (ArgumentException ex) {
 				lblMessage.Visible = true;
 				lblMessage.Text = "Oh no, looks like something went wacky-tacky.<br />That user already exists.";
 			}
@@ -107,7 +107,7 @@ public partial class Admin_Users : System.Web.UI.Page
 			int id = 0;
 
 			if (int.TryParse(Request.QueryString[_id], out id)) {
-				AdminData.UpdateUser(id, txtName.Text, txtEmail.Text, txtPassword.Text, (UserType)Enum.Parse(typeof(UserType), ddlUserType.SelectedValue));
+				SiteUser.Update(id, txtName.Text, txtEmail.Text, txtPassword.Text, (UserType)Enum.Parse(typeof(UserType), ddlUserType.SelectedValue));
 				Response.Redirect(pageToRedirectTo, true);
 			} else {
 				lblMessage.Visible = true;

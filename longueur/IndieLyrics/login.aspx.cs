@@ -24,7 +24,7 @@ public partial class login : System.Web.UI.Page
 		{
 			if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "submit")
 			{
-				SiteUser siteUser = IndieLyricsData.GetUser(user.Text, password.Text);
+				SiteUser siteUser = new SiteUser(user.Text);
 
 				if (siteUser != null)
 				{

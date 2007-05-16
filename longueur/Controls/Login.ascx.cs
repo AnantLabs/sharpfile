@@ -36,7 +36,9 @@ public partial class Controls_Login : System.Web.UI.UserControl
 
 	void lnkSubmit_Click(object sender, EventArgs e)
 	{
-		SiteUser siteUser = Data.GetUser(txtUsername.Text, txtPassword.Text);
+		//SiteUser siteUser = Data.GetUser(txtUsername.Text, txtPassword.Text);
+
+		SiteUser siteUser = new SiteUser(txtUsername.Text);
 
 		if (siteUser != null &&
 			siteUser.Login())

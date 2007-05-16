@@ -259,39 +259,30 @@ public abstract class Data {
 	#endregion
 
 	#region User methods
-	public static SiteUser GetAnonymousUser()
+	public static DataTable GetAnonymousUser()
 	{
-		SiteUser user = new SiteUser();
-		DataTable result = Select("usp_SiteUserGetAnonymous");
-
-		if (result.Rows.Count == 1)
-		{
-			//user = new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()), result.Rows[0]["Name"].ToString(), string.Empty, result.Rows[0]["Email"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString())));
-			user = new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()));
-		}
-
-		return user;
+		return Select("usp_SiteUserGetAnonymous");
 	}
 
-	public static SiteUser GetUser(int id, string plainTextPassword)
-	{
-		if (ValidateUser(id, plainTextPassword))
-		{
-			return new SiteUser(id);
-		}
+	//public static SiteUser GetUser(int id, string plainTextPassword)
+	//{
+	//    if (ValidateUser(id, plainTextPassword))
+	//    {
+	//        return new SiteUser(id);
+	//    }
 
-		return null;
-	}
+	//    return null;
+	//}
 
-	public static SiteUser GetUser(string name, string plainTextPassword)
-	{
-		if (ValidateUser(name, plainTextPassword))
-		{
-			return new SiteUser(name);
-		}
+	//public static SiteUser GetUser(string name, string plainTextPassword)
+	//{
+	//    if (ValidateUser(name, plainTextPassword))
+	//    {
+	//        return new SiteUser(name);
+	//    }
 
-		return null;
-	}
+	//    return null;
+	//}
 
 	public static DataTable GetUsers()
 	{
@@ -299,60 +290,70 @@ public abstract class Data {
 	}
 
 	public static bool UserExists(string name) {
-		if (getUserData(name).Rows.Count > 0) {
+		if (GetUserData(name).Rows.Count > 0) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public static bool ValidateUser(string name, string plainTextPassword)
-	{
-		SiteUser siteUser = new SiteUser(name);
+	//public static bool ValidateUser(string name, string plainTextPassword)
+	//{
+	//    SiteUser siteUser = new SiteUser(name);
 
-		return ValidateUser(siteUser, plainTextPassword);
-	}
+	//    return ValidateUser(siteUser, plainTextPassword);
+	//}
 
-	public static bool ValidateUser(int id, string plainTextPassword)
-	{
-		SiteUser siteUser = new SiteUser(id);
+	//public static bool ValidateUser(int id, string plainTextPassword)
+	//{
+	//    SiteUser siteUser = new SiteUser(id);
 
-		return ValidateUser(siteUser, plainTextPassword);
-	}
+	//    return ValidateUser(siteUser, plainTextPassword);
+	//}
 
-	public static bool ValidateUser(SiteUser siteUser, string plainTextPassword) {
-		string hashedPassword = Security.Encrypt(plainTextPassword);
+	//public static bool ValidateUser(SiteUser siteUser, string plainTextPassword) {
+	//    string hashedPassword = Security.Encrypt(plainTextPassword);
 
-		if (siteUser != null) {
-			if (siteUser.HashedPassword.Equals(hashedPassword)) {
-				return true;
-			}
-		}
+	//    if (siteUser != null) {
+	//        if (siteUser.HashedPassword.Equals(hashedPassword)) {
+	//            return true;
+	//        }
+	//    }
 
-		return false;
-	}
+	//    return false;
+	//}
 
-	public static SiteUser UpdateUser(int id, string name, string email, string currentPassword)
-	{
-		return UpdateUser(id, name, email, currentPassword, string.Empty);
-	}
+	//public static void UpdateUser(int id, string name, string email)
+	//{
+	//    UpdateUser(id, name, email, string.Empty);
+	//}
 
-	public static SiteUser UpdateUser(int id, string name, string email, string currentPassword, string plainTextPassword) {
-		if (ValidateUser(id, currentPassword)) {
-			updateUser(id, name, email, plainTextPassword);
+	//public static void UpdateUser(int id, string name, string email, string plainTextPassword) {
+	//}
 
-			return new SiteUser(id);
-		} else {
-			throw new Exception("The user attempting to update information does not have the correct credentials.");
-		}
-	}
+	//public static void UpdateUser(int id, string name, string email, string plainTextPassword, UserType userType) {
+	//    //if (ValidateUser(id, currentPassword)) {
+	//    //    updateUser(id, name, email, plainTextPassword);
+
+	//    //    return new SiteUser(id);
+	//    //} else {
+	//    //    throw new Exception("The user attempting to update information does not have the correct credentials.");
+	//    //}
+	//    //updateUser(id, name, email, plainTextPassword);
+	//    updateUser(id, name, email, plainTextPassword, userType);
+	//}
 
 	public static DataTable GetUserRoles() {
 		return Select("usp_UserRoleGet");
 	}
 
 	public static void DeleteUser(int id) {
-		int anonymousId = GetAnonymousUser().Id;
+		int anonymousId = -1;
+		DataTable result = GetAnonymousUser();
+
+		if (result.Rows.Count == 1) {
+			anonymousId = int.Parse(result.Rows[0]["Id"].ToString());
+		}
 
 		SqlParameter[] parameters = getSqlParameters("@AnonUserId,@Id",
 			anonymousId,
@@ -361,11 +362,11 @@ public abstract class Data {
 		NonQuery("usp_SiteUserDelete", parameters);
 	}
 
-	public static SiteUser CreateUser(string name, string email, string password) {
-		return CreateUser(name, email, password, UserType.User);
-	}
+	//public static int CreateUser(string name, string email, string password) {
+	//    return CreateUser(name, email, password, UserType.User);
+	//}
 
-	public static SiteUser CreateUser(string name, string email, string password, UserType type) {
+	public static int CreateUser(string name, string email, string password, UserType type) {
 		DataTable result = new DataTable();
 
 		SqlParameter[] parameters = getSqlParameters("@Name,@Email,@Password,@Type",
@@ -377,22 +378,20 @@ public abstract class Data {
 		result = Select("usp_SiteUserInsert", parameters);
 		int id = 0;
 
-		if (result.Rows.Count > 0 && 
-			int.TryParse(result.Rows[0][0].ToString(), out id)) {
-
-			return new SiteUser(id);
-		} else {
-			return null;
+		if (result.Rows.Count > 0) {
+			int.TryParse(result.Rows[0][0].ToString(), out id);
 		}
+
+		return id;
 	}
 
-	private static void updateUser(int id, string name, string email, string plainTextPassword) {
-		SiteUser siteUser = new SiteUser(id);
+	//private static void updateUser(int id, string name, string email, string plainTextPassword) {
+	//    SiteUser siteUser = new SiteUser(id);
 
-		updateUser(id, name, email, plainTextPassword, siteUser.UserType);
-	}
+	//    updateUser(id, name, email, plainTextPassword, siteUser.UserType);
+	//}
 
-	private static void updateUser(int id, string name, string email, string plainTextPassword, UserType type) {
+	public static void UpdateUser(int id, string name, string email, string plainTextPassword, UserType type) {
 		SqlParameter[] parameters;
 
 		if (string.IsNullOrEmpty(plainTextPassword)) {
@@ -412,45 +411,49 @@ public abstract class Data {
 		NonQuery("usp_SiteUserUpdate", parameters);
 	}
 
-	protected static DataTable getUserData(int id) {
-		SqlParameter[] parameters = { new SqlParameter("@Id", SqlDbType.Int) };
-		parameters[0].Value = id;
+	public static DataTable GetUserData(int id) {
+		SqlParameter[] parameters = getSqlParameters("@Id",
+			id);
 
-		return Select("usp_SiteUserGetUser", parameters);
+		return getUserData(parameters);
 	}
 
-	protected static DataTable getUserData(string name) {
-		SqlParameter[] parameters = { new SqlParameter("@Name", SqlDbType.VarChar, 255) };
-		parameters[0].Value = name;
-		
+	public static DataTable GetUserData(string name) {
+		SqlParameter[] parameters = getSqlParameters("@Name",
+			name);
+
+		return getUserData(parameters);
+	}
+
+	private static DataTable getUserData(SqlParameter[] parameters) {
 		return Select("usp_SiteUserGetUser", parameters);
 	}
 	#endregion
 
 	#region Admin methods
-	protected static SiteUser getUserAdmin(int id) {
-		if (isCurrentUserAdmin()) {
-			return new SiteUser(id);
-		}
+	//protected static SiteUser getUserAdmin(int id) {
+	//    if (isCurrentUserAdmin()) {
+	//        return new SiteUser(id);
+	//    }
 
-		return null;
-	}
+	//    return null;
+	//}
 
-	protected static SiteUser getUserAdmin(string name) {
-		if (isCurrentUserAdmin()) {
-			return new SiteUser(name);
-		}
+	//protected static SiteUser getUserAdmin(string name) {
+	//    if (isCurrentUserAdmin()) {
+	//        return new SiteUser(name);
+	//    }
 
-		return null;
-	}
+	//    return null;
+	//}
 
-	protected static void updateUserAdmin(int id, string name, string email, string plainTextPassword, UserType type) {
-		if (isCurrentUserAdmin()) {
-			updateUser(id, name, email, plainTextPassword, type);
-		} else {
-			throw new Exception("The user attempting to update user, " + id + ",  is not an admin.");
-		}
-	}
+	//protected static void updateUserAdmin(int id, string name, string email, string plainTextPassword, UserType type) {
+	//    if (isCurrentUserAdmin()) {
+	//        updateUser(id, name, email, plainTextPassword, type);
+	//    } else {
+	//        throw new Exception("The user attempting to update user, " + id + ",  is not an admin.");
+	//    }
+	//}
 
 	protected static void createUserAdmin(string name, string email, string plainTextPassword, UserType type) {
 		if (isCurrentUserAdmin()) {

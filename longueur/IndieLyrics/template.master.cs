@@ -47,7 +47,9 @@ public partial class template : System.Web.UI.MasterPage
 
 		Page.ClientScript.RegisterClientScriptBlock(typeof(string), "getGuid", @"
 function getGuid() {
-	return '" + siteUser.Guid + @"';
+	return 'fickle';
+	/*return '" + siteUser.Id //siteUser.Guid 
+				+ @"';*/
 }
 ", true);
 

@@ -143,8 +143,8 @@
 				<span class="text">
 					<div id='commentTextArea_<%# DataBinder.Eval(Container.DataItem, "CommentID") %>'><%# DataBinder.Eval(Container.DataItem, "CommentText") %></div>
 					<div id='editCommentTextArea_<%# DataBinder.Eval(Container.DataItem, "CommentID") %>' style="DISPLAY: none">
-						<textarea id="editedCommentText" cols="48" rows="3" runat="server" style='<%# SiteUser.IsUserAuthorized(Convert.ToInt32(DataBinder.Eval(Container.DataItem, "UserID"))) ? "" : "DISPLAY: none;" %>'><%# DataBinder.Eval(Container.DataItem, "CommentText") %></textarea>
-						<div class="actions"><asp:ImageButton ID="saveBtn" CommandArgument='<%# DataBinder.Eval(Container.DataItem, "CommentID") %>' CommandName="save" ImageUrl="~/IndieLyrics/Images/comment_save.png" AlternateText="Save Comment" ToolTip="Save Comment" runat="server" Visible='<%# SiteUser.IsUserAuthorized(Convert.ToInt32(DataBinder.Eval(Container.DataItem, "UserID"))) %>' /></div>
+						<textarea id="editedCommentText" cols="48" rows="3" runat="server" style='<%# SiteUser.IsCurrentUserAuthorized() ? "" : "DISPLAY: none;" %>'><%# DataBinder.Eval(Container.DataItem, "CommentText") %></textarea>
+						<div class="actions"><asp:ImageButton ID="saveBtn" CommandArgument='<%# DataBinder.Eval(Container.DataItem, "CommentID") %>' CommandName="save" ImageUrl="~/IndieLyrics/Images/comment_save.png" AlternateText="Save Comment" ToolTip="Save Comment" runat="server" Visible='<%# SiteUser.IsCurrentUserAuthorized() %>' /></div>
 						<p>&nbsp;</p>
 					</div>
 					<div id='refreshCommentTextArea_<%# DataBinder.Eval(Container.DataItem, "CommentID") %>' style="DISPLAY: none">

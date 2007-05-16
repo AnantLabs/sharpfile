@@ -1,4 +1,5 @@
 - Controller for User stuff. (UserSystem.Save(), UserSystem.Delete())
+- Admin functionality to delete user
 
 - More admin functionality for slog (browse, delete, edit)
 - Slog tags
@@ -15,4 +16,6 @@
 - Remember me functionality (front-end only. I think)
 
 - Forms auth on IndieLyrics
-	- use login control on the indielyrics login page
+	- use login control on the indielyrics logn page
+
+-RSS feeds

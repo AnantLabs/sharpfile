@@ -17,7 +17,8 @@ using Common;
 public partial class action : System.Web.UI.Page {
 	protected void Page_Load(object sender, EventArgs e) {
 		if (Session[Constants.CurrentUser] != null && ((SiteUser)Session[Constants.CurrentUser]).UserType != UserType.NonAuthenticated) {
-			if (Request["id"] != null && ((SiteUser)Session[Constants.CurrentUser]).Guid == Request["id"]) {
+			if(true) { //(Request["id"] != null && ((SiteUser)Session[Constants.CurrentUser]).Guid == Request["id"]) {
+				// Check the User.IsInRole() this here.
 				string result = string.Empty;
 
 				if (Request["action"] != null) {

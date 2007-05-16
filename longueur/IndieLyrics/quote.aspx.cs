@@ -247,7 +247,7 @@ public partial class quote : System.Web.UI.Page
         int userId = -1;
         int rating = -1;
 
-        if (!SiteUser.IsUserAuthorized())
+        if (!SiteUser.IsCurrentUserAuthorized())
         {
             return;
         }
@@ -287,7 +287,7 @@ public partial class quote : System.Web.UI.Page
     {
 		SiteUser siteUser = SiteUser.GetCurrentUser();
 
-        if (SiteUser.IsUserAuthorized())
+		if (SiteUser.IsCurrentUserAuthorized())
         {
             if (General.IsInt(commandArgument))
             {

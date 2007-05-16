@@ -15,7 +15,7 @@ public class SiteUser
 	private string name;
 	private string hashedPassword;
 	private string email;
-	private string guid;
+	//private string guid;
 	private bool enableJs;
 	private UserType userType;
 	private DateTime dateTime;
@@ -30,33 +30,19 @@ public class SiteUser
 		this.userType = UserType.NonAuthenticated;
 		this.email = string.Empty;
 		this.enableJs = false;
-		this.guid = string.Empty;
+		//this.guid = string.Empty;
 		this.dateTime = DateTime.MinValue;
 	}
 
-	// TODO: This should be whacked.
-	// TODO: This needs to be whacked for the DateTime to be populated correctly.
-	//public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType) {
-	//    this.id = id;
-	//    this.name = name;
-	//    this.hashedPassword = hashedPassword;
-	//    this.email = email;
-	//    this.guid = System.Guid.NewGuid().ToString();
-	//    this.enableJs = enableJs;
-	//    this.userType = userType;
-	//}
+	public SiteUser(string name, string email, string plainTextPassword) {
+		int id = SiteUser.createUser(name, email, plainTextPassword, UserType.User);
+		populateUser(id);
+	}
 
-	// TODO: This should be whacked.
-	//public SiteUser(int id, string name, string hashedPassword, string email, bool enableJs, UserType userType, DateTime dateTime) {
-	//    this.id = id;
-	//    this.name = name;
-	//    this.hashedPassword = hashedPassword;
-	//    this.email = email;
-	//    this.guid = System.Guid.NewGuid().ToString();
-	//    this.enableJs = enableJs;
-	//    this.userType = userType;
-	//    this.dateTime = dateTime;
-	//}
+	public SiteUser(string name, string email, string plainTextPassword, UserType userType) {
+		int id = SiteUser.createUser(name, email, plainTextPassword, userType);
+		populateUser(id);
+	}
 
 	public SiteUser(int id) {
 		populateUser(id);
@@ -66,59 +52,18 @@ public class SiteUser
 		populateUser(name);
 	}
 
-	private void populateUser(int id) {
-		DataTable userData = AdminData.GetUserData(id);
-		populateUserFromDataTable(userData);		
-	}
-
-	private void populateUser(string name) {
-		DataTable userData = AdminData.GetUserData(name);
-		populateUserFromDataTable(userData);
-	}
-
-	private void populateUserFromDataTable(DataTable userTable) {
-		if (userTable.Rows.Count > 0) {
-			this.id = int.Parse(userTable.Rows[0]["Id"].ToString());
-			this.name = userTable.Rows[0]["Name"].ToString();
-			this.hashedPassword = userTable.Rows[0]["Password"].ToString();
-			this.email = userTable.Rows[0]["Email"].ToString();
-			this.enableJs = false;
-			this.userType = (UserType)Enum.Parse(typeof(UserType), userTable.Rows[0]["TypeName"].ToString());
-
-			this.isPopulated = true;
-		} else {
-			throw new Exception("No user can be found.");
-		}
-	}
-
-	//public SiteUser(DataTable userTable) {
-	//    if (userTable.Rows.Count > 0) {
-	//        this.id = int.Parse(result.Rows[0]["Id"].ToString());
-	//        this.name = result.Rows[0]["Name"].ToString();
-	//        this.hashedPassword = result.Rows[0]["Password"].ToString();
-	//        this.email = result.Rows[0]["Email"].ToString();
-	//        this.enableJs = false;
-	//        this.userType = (UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString());
-	//    }
-
-	//    return new SiteUser();
-	//}
-
 	public bool Login()
 	{
 		return Login(true);
 	}
 
-	public bool Login(bool persistent)
-	{
-		if (userType != UserType.NonAuthenticated)
-		{
+	public bool Login(bool persistent) {
+		if (userType != UserType.NonAuthenticated) {
 			string roles = userType.ToString();
 
 			// Make sure our admin users are also users.
-			if (userType == UserType.Admin)
-			{
-				roles = string.Format("{0},{1}", 
+			if (userType == UserType.Admin) {
+				roles = string.Format("{0},{1}",
 					roles,
 					UserType.User.ToString());
 			}
@@ -142,11 +87,10 @@ public class SiteUser
 			HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, hashedTicket);
 
 			// Set the cookie's expiration time to the tickets expiration time
-			if (ticket.IsPersistent)cookie.Expires = ticket.Expiration;
+			if (ticket.IsPersistent) cookie.Expires = ticket.Expiration;
 
 			// Add the cookie to the list for outgoing response
-			if (HttpContext.Current != null)
-			{
+			if (HttpContext.Current != null) {
 				HttpContext.Current.Response.Cookies.Add(cookie);
 			}
 
@@ -156,15 +100,76 @@ public class SiteUser
 		return false;
 	}
 
-	public bool Save()
-	{
-		// TODO: This should be a nice controller.
-		throw new Exception("This method not completed yet.");
+	public void Update(string name, string email, string plainTextPassword) {
+		Data.UpdateUser(this.id, name, email, plainTextPassword, this.userType);
 	}
 
+	public void Update(string name, string email, string plainTextPassword, UserType userType) {
+		Data.UpdateUser(this.id, name, email, plainTextPassword, userType);
+	}
+
+#region private instance methods
+	private void populateUser(int id) {
+		DataTable userData = Data.GetUserData(id);
+		populateUserFromDataTable(userData);
+	}
+
+	private void populateUser(string name) {
+		DataTable userData = Data.GetUserData(name);
+		populateUserFromDataTable(userData);
+	}
+
+	private void populateUserFromDataTable(DataTable userTable) {
+		if (userTable.Rows.Count > 0) {
+			this.id = int.Parse(userTable.Rows[0]["Id"].ToString());
+			this.name = userTable.Rows[0]["Name"].ToString();
+			this.hashedPassword = userTable.Rows[0]["Password"].ToString();
+			this.email = userTable.Rows[0]["Email"].ToString();
+			this.enableJs = false;
+			this.userType = (UserType)Enum.Parse(typeof(UserType), userTable.Rows[0]["TypeName"].ToString());
+
+			this.isPopulated = true;
+		} else {
+			throw new Exception("No user can be found.");
+		}
+	}
+#endregion
+
 	#region Static methods
+	public static bool IsCurrentUserAuthorized() {
+		// TODO: This should be whacked for the 2nd way at some point.
+		SiteUser siteUser = GetCurrentUser();
+
+		if ((int)siteUser.UserType > (int)UserType.Admin) {
+			return true;
+		}
+
+		if (HttpContext.Current != null) {
+			if (HttpContext.Current.User.IsInRole(UserType.Admin.ToString()) ||
+				HttpContext.Current.User.IsInRole(UserType.User.ToString())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public static bool Exists(string name) {
+		return Data.UserExists(name);
+	}
+
 	public static SiteUser GetAnonymousUser() {
-		return Data.GetAnonymousUser();
+		int id = 0;
+		DataTable result = Data.GetAnonymousUser();
+
+		if (result.Rows.Count == 1) {
+			if (int.TryParse(result.Rows[0]["Id"].ToString(), out id)) {
+				//user = new SiteUser(int.Parse(result.Rows[0]["Id"].ToString()), result.Rows[0]["Name"].ToString(), string.Empty, result.Rows[0]["Email"].ToString(), false, ((UserType)Enum.Parse(typeof(UserType), result.Rows[0]["TypeName"].ToString())));
+				return new SiteUser(id);
+			}
+		}
+
+		return new SiteUser();
 	}
 
 	public static SiteUser GetCurrentUser()
@@ -180,29 +185,43 @@ public class SiteUser
 		return SiteUser.GetAnonymousUser();
 	}
 
-	public static bool IsUserAuthorized() {
-		if (HttpContext.Current != null) {
-
-			// TODO: This is pretty lame.
-			if (HttpContext.Current.User.IsInRole(UserType.Admin.ToString()) ||
-				HttpContext.Current.User.IsInRole(UserType.User.ToString())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public static bool IsUserAuthorized(int id) {
+	public static void Update(int id, string name, string email, string plainTextPassword) {
 		SiteUser siteUser = new SiteUser(id);
 
-		// TODO: This is also pretty lame.
-		if (siteUser.UserType == UserType.User ||
-			siteUser.UserType == UserType.Admin) {
-			return true;
-		}
+		Update(id, name, email, plainTextPassword, siteUser.UserType);
+	}
 
-		return false;
+	public static void Update(int id, string name, string email, string plainTextPassword, UserType userType) {
+		SiteUser siteUser = GetCurrentUser();
+
+		if (IsCurrentUserAuthorized()) {
+			Data.UpdateUser(id, name, email, plainTextPassword, userType);
+		} else {
+			throw new Exception("You don't look like an admin!");
+		}
+	}
+
+	public static void Create(string name, string email, string plainTextPassword, UserType userType) {
+		if (IsCurrentUserAuthorized()) {
+			createUser(name, email, plainTextPassword, userType);
+		} else {
+			throw new Exception("You don't look like an admin!");
+		}
+	}
+
+	public static void Delete(int id) {
+		if (IsCurrentUserAuthorized() ||
+			GetCurrentUser().Id == id) {
+			Data.DeleteUser(id);
+		}
+	}
+
+	private static int createUser(string name, string email, string plainTextPassword, UserType userType) {
+		if (!SiteUser.Exists(name)) {
+			return Data.CreateUser(name, email, plainTextPassword, userType);
+		} else {
+			throw new ArgumentException("The user, " + name + ", already exists.");
+		}
 	}
 	#endregion
 
@@ -247,13 +266,13 @@ public class SiteUser
 		}
 	}
 
-	public string Guid
-	{
-		get 
-		{
-			return guid; 
-		}
-	}
+	//public string Guid
+	//{
+	//    get 
+	//    {
+	//        return guid; 
+	//    }
+	//}
 
 	public bool EnableJs
 	{
