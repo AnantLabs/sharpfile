@@ -1,6 +1,7 @@
-- Controller for User stuff. (UserSystem.Save(), UserSystem.Delete())
+- Namespaces for data, membership classes
 - Admin functionality to delete user
 
+- Slog domain layer
 - More admin functionality for slog (browse, delete, edit)
 - Slog tags
 
