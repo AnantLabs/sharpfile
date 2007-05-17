@@ -1,14 +1,7 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using System.IO;
+using Data;
 
 public partial class Software_download : System.Web.UI.Page
 {
@@ -29,7 +22,7 @@ public partial class Software_download : System.Web.UI.Page
 				string referrer = Request.UrlReferrer != null ? Request.UrlReferrer.ToString() : string.Empty;
 				string niceFilename = filename.Substring(filename.LastIndexOf("/")+1, filename.Length - filename.LastIndexOf("/")-1);
 
-				DownloadData.DownloadInsert(filename, Request.UserHostAddress, referrer, 
+				Download.DownloadInsert(filename, Request.UserHostAddress, referrer, 
 					Request.UserAgent, Request.Browser.Browser, Request.Browser.Platform, 
 					Request.Browser.Version, Request.UserHostName);
 

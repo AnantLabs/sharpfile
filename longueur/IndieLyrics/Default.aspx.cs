@@ -4,6 +4,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using Common;
+using Membership;
 
 public partial class _default : System.Web.UI.Page {
 	protected void Page_Load(object sender, System.EventArgs e) {

@@ -16,7 +16,7 @@
 		// Get reference to the source of the exception chain.
 		Exception ex = Server.GetLastError().GetBaseException();
 
-		Data.InsertErrorLog(ex.Message, ex.StackTrace, string.Empty, ex.Source);
+		Data.Admin.InsertErrorLog(ex.Message, ex.StackTrace, string.Empty, ex.Source);
     }
 
     void Session_Start(object sender, EventArgs e) 

@@ -8,6 +8,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using Membership;
 
 public partial class Admin_Users : System.Web.UI.Page
 {
@@ -24,10 +25,12 @@ public partial class Admin_Users : System.Web.UI.Page
 
 			if (string.IsNullOrEmpty(Request.QueryString[_id]))
 			{
-				rptUsers.DataSource = Data.GetUsers();
+				//rptUsers.DataSource = Data.GetUsers();
+				rptUsers.DataSource = new SiteUsers();
 				rptUsers.DataBind();
 
-				ddlNewUserType.DataSource = Data.GetUserRoles();
+				// TODO: This should use the enum already created, not the database.
+				ddlNewUserType.DataSource = Data.User.GetUserRoles();
 				ddlNewUserType.DataTextField = _typeName;
 				ddlNewUserType.DataValueField = _type;
 				ddlNewUserType.DataBind();
@@ -47,7 +50,8 @@ public partial class Admin_Users : System.Web.UI.Page
 					lblDateTime.Text = siteUser.DateTime.ToString();
 					lblId.Text = siteUser.Id.ToString();
 
-					ddlUserType.DataSource = Data.GetUserRoles();
+					// TODO: This should use the enum already created, not the database.
+					ddlUserType.DataSource = Data.User.GetUserRoles();
 					ddlUserType.DataTextField = _typeName;
 					ddlUserType.DataValueField = _type;
 					ddlUserType.DataBind();

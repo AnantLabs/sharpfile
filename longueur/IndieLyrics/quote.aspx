@@ -1,5 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/IndieLyrics/template.master" AutoEventWireup="true" CodeFile="quote.aspx.cs" Inherits="quote" Title="IndieLyrics: Quote" ValidateRequest="false" %>
 <%@ Register TagPrefix="ajax" Namespace="MagicAjax.UI.Controls" Assembly="MagicAjax" %>
+<%@ Import Namespace="Membership" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Content" Runat="Server">
 

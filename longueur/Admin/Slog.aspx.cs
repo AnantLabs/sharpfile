@@ -1,13 +1,9 @@
 using System;
 using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
+using Membership;
+using Data;
 using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
+using System.Web;
 
 public partial class Admin_Slog : System.Web.UI.Page
 {
@@ -19,14 +15,14 @@ public partial class Admin_Slog : System.Web.UI.Page
 			int id = 0;
 
 			if (string.IsNullOrEmpty(Request.QueryString[_id])) {
-				rptSlogs.DataSource = SlogData.GetSlogs();
+				rptSlogs.DataSource = Slog.GetSlogs();
 				rptSlogs.DataBind();
 			} else if (int.TryParse(Request.QueryString[_id], out id)) {
 				divSlogInfo.Visible = true;
 				rptSlogs.Visible = false;
 				divNewEntry.Visible = false;
 
-				DataTable slogTable = SlogData.GetSlog(id);
+				DataTable slogTable = Slog.GetSlog(id);
 
 				if (slogTable.Rows.Count > 0) {
 					lblId.Text = slogTable.Rows[0]["Id"].ToString();
@@ -113,7 +109,7 @@ public partial class Admin_Slog : System.Web.UI.Page
 			int id = 0;
 
 			if (int.TryParse(((FormsIdentity)HttpContext.Current.User.Identity).Name, out id)) {
-				SlogData.InsertSlog(txtNewTitle.Text, txtNewContent.Text, id);
+				Slog.InsertSlog(txtNewTitle.Text, txtNewContent.Text, id);
 				redirect();
 			} else {
 				lblMessage.Text = "Looks like you aren't an admin user after all, jerk.";

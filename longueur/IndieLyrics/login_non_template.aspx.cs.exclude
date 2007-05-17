@@ -20,7 +20,7 @@ public partial class login_non_template : System.Web.UI.Page
 			user.Focus();
 		} else {
 			if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "submit") {
-				SiteUser siteUser = IndieLyricsData.GetUser(user.Text, password.Text);
+				SiteUser siteUser = Data.User.GetUser(user.Text, password.Text);
 
 				if (siteUser != null)
 				{

@@ -13,6 +13,8 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using Common;
+using Membership;
+using Data;
 
 public partial class action : System.Web.UI.Page {
 	protected void Page_Load(object sender, EventArgs e) {
@@ -38,7 +40,7 @@ public partial class action : System.Web.UI.Page {
 
 								if (string.IsNullOrEmpty(Request["explicit"]) || Request["explicit"].Equals("0")) {
 									if (!string.IsNullOrEmpty(artistName) && !string.IsNullOrEmpty(albumName)) {
-										DataSet albumResults = IndieLyricsData.AlbumGetDetails(artistName, albumName);
+										DataSet albumResults = IndieLyrics.AlbumGetDetails(artistName, albumName);
 
 										if (albumResults.Tables[0].Rows.Count > 0) {
 											albumResults.Tables[0].PrimaryKey = new DataColumn[] { 

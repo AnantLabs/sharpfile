@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Common;
+using Membership;
 
 public partial class edit_user : System.Web.UI.Page
 {
@@ -88,8 +89,8 @@ public partial class edit_user : System.Web.UI.Page
 				}
 			} else if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "delete") {
 				if (Session[Constants.CurrentUser] != null && ((SiteUser)Session[Constants.CurrentUser]).UserType != UserType.NonAuthenticated) {
-					IndieLyricsData.DeleteUser(((SiteUser)Session[Constants.CurrentUser]).Id);
-					Session[Constants.CurrentUser] = IndieLyricsData.GetAnonymousUser();
+					Data.User.DeleteUser(((SiteUser)Session[Constants.CurrentUser]).Id);
+					Session[Constants.CurrentUser] = Data.User.GetAnonymousUser();
 
 					Response.Clear();
 					Response.Redirect("default.aspx", true);

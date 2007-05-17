@@ -10,6 +10,8 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using Common;
+using Membership;
+using Data;
 
 public partial class quote : System.Web.UI.Page
 {
@@ -56,7 +58,7 @@ public partial class quote : System.Web.UI.Page
     {
         if (Session[Constants.QuoteID] != null)
         {
-			DataTable comments = IndieLyricsData.GetQuoteComments((int)Session[Constants.QuoteID]);
+			DataTable comments = IndieLyrics.GetQuoteComments((int)Session[Constants.QuoteID]);
 
             if (comments.Rows.Count > 0)
             {
@@ -95,7 +97,7 @@ public partial class quote : System.Web.UI.Page
             quoteId = Convert.ToInt32(Session[Constants.QuoteID]);
         }
 
-		DataTable details = IndieLyricsData.GetQuoteDetails(userId, quoteId);
+		DataTable details = IndieLyrics.GetQuoteDetails(userId, quoteId);
 
         if (details.Rows.Count == 1)
         {
@@ -123,7 +125,7 @@ public partial class quote : System.Web.UI.Page
 		if (parseComment(commentText))
 		{
 			int userId = siteUser.Id;
-			IndieLyricsData.CommentInsert((int)Session[Constants.QuoteID], userId, commentText);
+			IndieLyrics.CommentInsert((int)Session[Constants.QuoteID], userId, commentText);
 			GetComments();
 
 			CommentText.Text = string.Empty;
@@ -146,7 +148,7 @@ public partial class quote : System.Web.UI.Page
 		if (parseComment(commentText))
 		{
 			int userId = siteUser.Id;
-			IndieLyricsData.CommentUpdate(commentId, userId, commentText);
+			IndieLyrics.CommentUpdate(commentId, userId, commentText);
 			GetComments();
 		}
 		else
@@ -267,7 +269,7 @@ public partial class quote : System.Web.UI.Page
             if (selectedRatingValue == string.Empty
                 && userId > -1)
             {
-				IndieLyricsData.RatingDelete(quoteId, userId);
+				IndieLyrics.RatingDelete(quoteId, userId);
                 GetDetails();
             }
             else if (General.IsInt(selectedRatingValue))
@@ -276,7 +278,7 @@ public partial class quote : System.Web.UI.Page
 
                 if (userId > -1 && rating > -1)
                 {
-					IndieLyricsData.RatingUpsert(quoteId, userId, rating);
+					IndieLyrics.RatingUpsert(quoteId, userId, rating);
                     GetDetails();
                 }
             }
@@ -310,7 +312,7 @@ public partial class quote : System.Web.UI.Page
 
         if (e.CommandName.Equals("delete"))
         {
-			IndieLyricsData.CommentDelete(commentId, siteUser.Id);
+			IndieLyrics.CommentDelete(commentId, siteUser.Id);
             GetComments();
         }
         else if (e.CommandName.Equals("save"))
@@ -322,7 +324,7 @@ public partial class quote : System.Web.UI.Page
                     && ((HtmlTextArea)item.FindControl(_editedCommentText)) != null)
                 {
                     string commentText = ((HtmlTextArea)item.FindControl(_editedCommentText)).Value;
-					IndieLyricsData.CommentUpdate(commentId, siteUser.Id, commentText);
+					IndieLyrics.CommentUpdate(commentId, siteUser.Id, commentText);
                     GetComments();
                     break;
                 }

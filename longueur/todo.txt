@@ -1,13 +1,14 @@
-- Namespaces for data, membership classes
 - Admin functionality to delete user
-
-- Slog domain layer
-- More admin functionality for slog (browse, delete, edit)
-- Slog tags
+- Prevent people from fucking w/ people higher than themselves
+- Superuser
 
 - Better error handling (IP, url that errored, innerexception, more of that good stuff)
 - Better error oops page (maybe should be .net). Link to referrer?
 - Log incorrect login attempts
+
+- Slog domain layer
+- More admin functionality for slog (browse, delete, edit)
+- Slog tags
 
 - Fancy-up the gridview on the admin pages
 
@@ -17,6 +18,6 @@
 - Remember me functionality (front-end only. I think)
 
 - Forms auth on IndieLyrics
-	- use login control on the indielyrics logn page
+	- use login control on the indielyrics login page
 
--RSS feeds
+-RSS feeds (for everything!)

@@ -17,7 +17,7 @@
 				<td><%# DataBinder.Eval(Container.DataItem, "Id").ToString() %></td>
 				<td><%# DataBinder.Eval(Container.DataItem, "Name").ToString() %></td>
 				<td><%# DataBinder.Eval(Container.DataItem, "Email").ToString() %></td>		
-				<td><%# DataBinder.Eval(Container.DataItem, "TypeName").ToString() %></td>
+				<td><%# DataBinder.Eval(Container.DataItem, "UserType").ToString() %></td>
 				<td><%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %></td>
 				<td><a href='users.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id").ToString() %>'>Edit</a></td>
 			</tr>

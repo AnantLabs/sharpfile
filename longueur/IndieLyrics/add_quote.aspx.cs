@@ -1,14 +1,8 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using Common;
+using Membership;
+using Data;
 
 public partial class add : System.Web.UI.Page {
 	protected void Page_Load(object sender, EventArgs e) {
@@ -18,7 +12,7 @@ public partial class add : System.Web.UI.Page {
 			}
 
 			Artist.Focus();
-			Genre.DataSource = IndieLyricsData.GetGenreList();
+			Genre.DataSource = IndieLyrics.GetGenreList();
 			Genre.DataTextField = "GenreName";
 			Genre.DataValueField = "GenreID";
 			Genre.DataBind();
@@ -80,7 +74,7 @@ function getSongTextBoxId() {
 
 				if (Session["AddError"] == null) {
 					int userId = ((SiteUser)Session[Constants.CurrentUser]).Id;
-					int quoteId = IndieLyricsData.QuoteInsert(Artist.Text, Lyricist.Text, Song.Text, Album.Text, Genre.SelectedItem.Text, Quote.Text, userId);
+					int quoteId = IndieLyrics.QuoteInsert(Artist.Text, Lyricist.Text, Song.Text, Album.Text, Genre.SelectedItem.Text, Quote.Text, userId);
 
 					if (quoteId > -1) {
 						Response.Clear();

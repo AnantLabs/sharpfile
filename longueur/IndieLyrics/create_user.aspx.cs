@@ -10,6 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using Common;
+using Membership;
 
 public partial class create_user : System.Web.UI.Page {
 	protected void Page_Load(object sender, System.EventArgs e) {
@@ -55,7 +56,7 @@ public partial class create_user : System.Web.UI.Page {
 			//    Session["CreateError"] += "The user, " + UserName.Text + " already exists, please try another.<br />";
 			//}
 
-			//SiteUser newUser = IndieLyricsData.CreateUser(UserName.Text, Email.Text, Pass.Text);
+			//SiteUser newUser = IndieLyrics.CreateUser(UserName.Text, Email.Text, Pass.Text);
 			SiteUser newUser = new SiteUser();
 
 			try {

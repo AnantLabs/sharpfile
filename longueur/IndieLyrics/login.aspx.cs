@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Common;
+using Membership;
 
 public partial class login : System.Web.UI.Page
 {
