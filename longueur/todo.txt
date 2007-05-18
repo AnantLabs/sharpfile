@@ -1,4 +1,5 @@
 - The Hillellies "blog"
+- take common js out and put it into the js directory (grab height of window)
 
 - Admin functionality to delete user
 - Prevent people from fucking w/ people higher than themselves
