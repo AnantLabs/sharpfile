@@ -89,8 +89,8 @@ public partial class edit_user : System.Web.UI.Page
 				}
 			} else if (Request.Form["MultiTaskType"] != null && Request.Form["MultiTaskType"] == "delete") {
 				if (Session[Constants.CurrentUser] != null && ((SiteUser)Session[Constants.CurrentUser]).UserType != UserType.NonAuthenticated) {
-					Data.User.DeleteUser(((SiteUser)Session[Constants.CurrentUser]).Id);
-					Session[Constants.CurrentUser] = Data.User.GetAnonymousUser();
+					Data.Membership.DeleteUser(((SiteUser)Session[Constants.CurrentUser]).Id);
+					Session[Constants.CurrentUser] = Data.Membership.GetAnonymousUser();
 
 					Response.Clear();
 					Response.Redirect("default.aspx", true);

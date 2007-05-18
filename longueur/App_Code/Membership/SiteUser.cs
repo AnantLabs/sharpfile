@@ -100,21 +100,21 @@ namespace Membership {
 		}
 
 		public void Update(string name, string email, string plainTextPassword) {
-			User.UpdateUser(this.id, name, email, plainTextPassword, this.userType);
+			Data.Membership.UpdateUser(this.id, name, email, plainTextPassword, this.userType);
 		}
 
 		public void Update(string name, string email, string plainTextPassword, UserType userType) {
-			User.UpdateUser(this.id, name, email, plainTextPassword, userType);
+			Data.Membership.UpdateUser(this.id, name, email, plainTextPassword, userType);
 		}
 
 		#region private instance methods
 		private void populateUser(int id) {
-			DataTable userData = User.GetUserData(id);
+			DataTable userData = Data.Membership.GetUserData(id);
 			populateUserFromDataTable(userData);
 		}
 
 		private void populateUser(string name) {
-			DataTable userData = User.GetUserData(name);
+			DataTable userData = Data.Membership.GetUserData(name);
 			populateUserFromDataTable(userData);
 		}
 
@@ -154,12 +154,12 @@ namespace Membership {
 		}
 
 		public static bool Exists(string name) {
-			return User.UserExists(name);
+			return Data.Membership.UserExists(name);
 		}
 
 		public static SiteUser GetAnonymousUser() {
 			int id = 0;
-			DataTable result = User.GetAnonymousUser();
+			DataTable result = Data.Membership.GetAnonymousUser();
 
 			if (result.Rows.Count == 1) {
 				if (int.TryParse(result.Rows[0]["Id"].ToString(), out id)) {
@@ -193,7 +193,7 @@ namespace Membership {
 			SiteUser siteUser = GetCurrentUser();
 
 			if (IsCurrentUserAuthorized()) {
-				User.UpdateUser(id, name, email, plainTextPassword, userType);
+				Data.Membership.UpdateUser(id, name, email, plainTextPassword, userType);
 			} else {
 				throw new Exception("You don't look like an admin!");
 			}
@@ -210,13 +210,13 @@ namespace Membership {
 		public static void Delete(int id) {
 			if (IsCurrentUserAuthorized() ||
 				GetCurrentUser().Id == id) {
-				User.DeleteUser(id);
+				Data.Membership.DeleteUser(id);
 			}
 		}
 
 		private static int createUser(string name, string email, string plainTextPassword, UserType userType) {
 			if (!SiteUser.Exists(name)) {
-				return User.CreateUser(name, email, plainTextPassword, userType);
+				return Data.Membership.CreateUser(name, email, plainTextPassword, userType);
 			} else {
 				throw new ArgumentException("The user, " + name + ", already exists.");
 			}

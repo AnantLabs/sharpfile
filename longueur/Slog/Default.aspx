@@ -11,7 +11,7 @@
 			<br />
 			
 			<div class="user">
-				<%# DataBinder.Eval(Container.DataItem, "Username").ToString() %>
+				<%# DataBinder.Eval(Container.DataItem, "Name").ToString() %>
 			</div>
 			<br />
 			

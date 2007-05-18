@@ -9,8 +9,8 @@ namespace Data {
 	/// <summary>
 	/// Summary description for User
 	/// </summary>
-	public class User : Base {
-		private User() {
+	public class Membership : Base {
+		private Membership() {
 		}
 
 		public static DataTable GetAnonymousUser() {

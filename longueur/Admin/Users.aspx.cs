@@ -30,7 +30,7 @@ public partial class Admin_Users : System.Web.UI.Page
 				rptUsers.DataBind();
 
 				// TODO: This should use the enum already created, not the database.
-				ddlNewUserType.DataSource = Data.User.GetUserRoles();
+				ddlNewUserType.DataSource = Data.Membership.GetUserRoles();
 				ddlNewUserType.DataTextField = _typeName;
 				ddlNewUserType.DataValueField = _type;
 				ddlNewUserType.DataBind();
@@ -51,7 +51,7 @@ public partial class Admin_Users : System.Web.UI.Page
 					lblId.Text = siteUser.Id.ToString();
 
 					// TODO: This should use the enum already created, not the database.
-					ddlUserType.DataSource = Data.User.GetUserRoles();
+					ddlUserType.DataSource = Data.Membership.GetUserRoles();
 					ddlUserType.DataTextField = _typeName;
 					ddlUserType.DataValueField = _type;
 					ddlUserType.DataBind();
