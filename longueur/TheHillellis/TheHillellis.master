@@ -1,0 +1,51 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="TheHillellis.master.cs" Inherits="TheHillellies_Default" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+	<title></title>
+	<style type="text/css" media="all">@import "styles.css";</style>
+    
+    <script type="text/javascript" language="javascript">
+		var height = 0;
+		
+		function onLoad() 
+		{
+			// Set our global vars.
+			getSize();
+
+			// Resize the contents stuff.
+			document.getElementById('rightContent').style.height = height - 21 + 'px';
+			document.getElementById('leftContent').style.height = height - 21 + 'px';
+		}
+		
+		function getSize() {
+			// http://www.howtocreate.co.uk/tutorials/javascript/browserwindow
+			if( typeof( window.innerWidth ) == 'number' ) 
+			{
+				//Non-IE
+				height = window.innerHeight - 15;
+			} 
+			else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+				//IE 6+ in 'standards compliant mode'
+				height = document.documentElement.clientHeight - 15;
+			} 
+			else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+				//IE 4 compatible
+				height = document.body.clientHeight - 35;
+			}
+		}
+	</script>
+</head>
+<body onload="onLoad()" onresize="onLoad()">
+    <form id="form" runat="server">
+    <div id="content">
+		<div id="breadcrumb">
+			<a href="../">longueur.org</a> -> The Hillellies
+		</div>
+			    
+		<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />
+    </div>
+    </form>
+</body>
+</html>
