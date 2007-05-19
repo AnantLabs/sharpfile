@@ -1,7 +1,7 @@
 using System;
 using System.Web;
 using Common;
-using Membership;
+using Domain.Membership;
 using Data;
 
 public partial class add : System.Web.UI.Page {

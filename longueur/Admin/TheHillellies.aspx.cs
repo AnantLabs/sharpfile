@@ -1,13 +1,17 @@
 using System;
 using System.Data;
-using Membership;
+using Domain.Membership;
+using Domain.Blog;
 using Data;
 using System.Web.Security;
 using System.Web;
+using System.Web.UI;
+using Data.Blog;
 
-public partial class Admin_TheHillellies : System.Web.UI.Page
+public partial class Admin_TheHillellies : Page
 {
 	private const string _id = "id";
+	private IBlog blogDAO = new TheHillellies();
 
 	protected void Page_Load(object sender, EventArgs e)
 	{
@@ -15,14 +19,14 @@ public partial class Admin_TheHillellies : System.Web.UI.Page
 			int id = 0;
 
 			if (string.IsNullOrEmpty(Request.QueryString[_id])) {
-				rptSlogs.DataSource = Slog.GetSlogs();
+				rptSlogs.DataSource = new Entries(blogDAO);
 				rptSlogs.DataBind();
 			} else if (int.TryParse(Request.QueryString[_id], out id)) {
 				divSlogInfo.Visible = true;
 				rptSlogs.Visible = false;
 				divNewEntry.Visible = false;
 
-				DataTable slogTable = Slog.GetSlog(id);
+				DataTable slogTable = blogDAO.GetEntry(id);
 
 				if (slogTable.Rows.Count > 0) {
 					lblId.Text = slogTable.Rows[0]["Id"].ToString();
@@ -89,12 +93,11 @@ public partial class Admin_TheHillellies : System.Web.UI.Page
 
 				if (siteUser != null) {
 					try {
-						//SlogData.UpdateSlog(lblId.Text);
+						blogDAO.UpdateEntry(id, txtTitle.Text, txtContent.Text, siteUser.Id);
+						redirect();
 					} catch (Exception ex) {
 						lblMessage.Text = "There was an error: " + ex.Message + ex.StackTrace;
 					}
-
-					redirect();
 				} else {
 					lblMessage.Text = "Looks like the user you were try to add as the author doesn't exist. Weirdo.";
 				}
@@ -109,7 +112,7 @@ public partial class Admin_TheHillellies : System.Web.UI.Page
 			int id = 0;
 
 			if (int.TryParse(((FormsIdentity)HttpContext.Current.User.Identity).Name, out id)) {
-				Slog.InsertSlog(txtNewTitle.Text, txtNewContent.Text, id);
+				blogDAO.InsertEntry(txtNewTitle.Text, txtNewContent.Text, id);
 				redirect();
 			} else {
 				lblMessage.Text = "Looks like you aren't an admin user after all, jerk.";

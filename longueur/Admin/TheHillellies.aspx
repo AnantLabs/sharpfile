@@ -17,7 +17,7 @@
 				<td><%# DataBinder.Eval(Container.DataItem, "Name").ToString() %></td>
 				<td><%# DataBinder.Eval(Container.DataItem, "Title").ToString() %></td>		
 				<td><%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %></td>
-				<td><a href='Slog.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id").ToString() %>'>Edit</a></td>
+				<td><a href='TheHillellies.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id").ToString() %>'>Edit</a></td>
 			</tr>
 		</ItemTemplate>
 		<FooterTemplate>

@@ -1,5 +1,5 @@
 <%@ Page Language="C#" MasterPageFile="~/IndieLyrics/template.master" AutoEventWireup="true" CodeFile="add_quote.aspx.cs" Inherits="add" Title="IndieLyrics: Add a Lyric" %>
-<%@ Import Namespace="Membership" %>
+<%@ Import Namespace="Domain.Membership" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Content" Runat="Server">
 
 <script language="JavaScript" type="text/javascript">

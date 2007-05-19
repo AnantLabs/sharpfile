@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using Data;
-using Membership;
+using Domain.Membership;
 using Common;
 
 namespace Data {

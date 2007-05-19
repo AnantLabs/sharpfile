@@ -1,7 +1,7 @@
 ﻿body {
 	margin:0px;
 	padding:0px;
-	font: 11px/12px Verdana, Arial, Helvetica, sans-serif; 
+	font: 11px/12px Verdana, Arial, Helvetica, sans-serif;
 	color:#333;
 	background-color:white;
 	}
@@ -86,4 +86,8 @@ body {
 	background-color:#eee;
 	border:1px solid #999;
 	line-height:17px;
+}
+
+.title {
+	font-weight: bold;
 }

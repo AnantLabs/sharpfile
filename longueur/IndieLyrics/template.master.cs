@@ -14,7 +14,7 @@ using System.Xml;
 using System.Web.Caching;
 using System.Xml.Serialization;
 using System.IO;
-using Membership;
+using Domain.Membership;
 
 public partial class template : System.Web.UI.MasterPage
 {

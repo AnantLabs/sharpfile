@@ -10,7 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using Common;
-using Membership;
+using Domain.Membership;
 
 public partial class create_user : System.Web.UI.Page {
 	protected void Page_Load(object sender, System.EventArgs e) {

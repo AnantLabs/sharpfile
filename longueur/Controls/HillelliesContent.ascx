@@ -5,16 +5,15 @@
 
 <asp:Repeater ID="rptContent" runat="server">
 	<ItemTemplate>
+		<div id="tags" style="display: none">
+			Tags are going to go here.
+		</div>
+		
 		<div class="title">
 			<%# DataBinder.Eval(Container.DataItem, "Title").ToString() %>
 		</div>
 		<div class="date">
 			<%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %>
-		</div>
-		<br />
-		
-		<div class="user">
-			<%# DataBinder.Eval(Container.DataItem, "Name").ToString() %>
 		</div>
 		<br />
 		

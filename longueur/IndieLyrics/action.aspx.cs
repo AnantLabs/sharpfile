@@ -13,7 +13,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using Common;
-using Membership;
+using Domain.Membership;
 using Data;
 
 public partial class action : System.Web.UI.Page {

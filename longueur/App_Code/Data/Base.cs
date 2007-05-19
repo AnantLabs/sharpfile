@@ -5,7 +5,7 @@ using System.Configuration;
 using System.Web;
 using System.Web.Configuration;
 using Common;
-using Membership;
+using Domain.Membership;
 
 namespace Data {
 	/// <summary>
@@ -13,7 +13,10 @@ namespace Data {
 	/// </summary>
 	public abstract class Base {
 		private const string encryptConnectionStrings = "encryptConnectionStrings";
+		
 		private static SqlConnection _sqlConnection;
+
+		private static object lockObject = new object();
 
 		private static string encryptConnectionString() {
 			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
@@ -145,28 +148,30 @@ namespace Data {
 		}
 
 		protected static DataSet SelectMultiple(string sql, SqlParameter[] parameters) {
-			using (DataSet dataSet = new DataSet()) {
-				using (SqlCommand sqlCommand = getSqlCommand(sql, parameters)) {
-					using (SqlDataAdapter da = new SqlDataAdapter()) {
-						da.SelectCommand = sqlCommand;
+			lock (lockObject) {
+				using (DataSet dataSet = new DataSet()) {
+					using (SqlCommand sqlCommand = getSqlCommand(sql, parameters)) {
+						using (SqlDataAdapter da = new SqlDataAdapter()) {
+							da.SelectCommand = sqlCommand;
 
-						try {
-							sqlConnection.Open();
-							da.Fill(dataSet);
-						} catch (Exception ex) {
-							throw ex;
-						} finally {
-							sqlConnection.Close();
-						}
+							try {
+								sqlConnection.Open();
+								da.Fill(dataSet);
+							} catch (Exception ex) {
+								throw ex;
+							} finally {
+								sqlConnection.Close();
+							}
 
-						if (dataSet.Tables.Count > 0) {
-							return dataSet;
+							if (dataSet.Tables.Count > 0) {
+								return dataSet;
+							}
 						}
 					}
 				}
-			}
 
-			return null;
+				return null;
+			}
 		}
 		#endregion
 
@@ -176,14 +181,16 @@ namespace Data {
 		}
 
 		protected static void NonQuery(string sql, SqlParameter[] parameters) {
-			using (SqlCommand sqlCommand = getSqlCommand(sql, parameters)) {
-				try {
-					sqlConnection.Open();
-					sqlCommand.ExecuteNonQuery();
-				} catch (Exception ex) {
-					throw ex;
-				} finally {
-					sqlConnection.Close();
+			lock (lockObject) {
+				using (SqlCommand sqlCommand = getSqlCommand(sql, parameters)) {
+					try {
+						sqlConnection.Open();
+						sqlCommand.ExecuteNonQuery();
+					} catch (Exception ex) {
+						throw ex;
+					} finally {
+						sqlConnection.Close();
+					}
 				}
 			}
 		}

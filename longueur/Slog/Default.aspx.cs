@@ -1,5 +1,6 @@
 using System;
-using Data;
+using Data.Blog;
+using Domain.Blog;
 
 public partial class Slog_Default : System.Web.UI.Page
 {
@@ -8,7 +9,7 @@ public partial class Slog_Default : System.Web.UI.Page
 		// TODO: Randomize this bitch.
 		this.Title = "Slog: Est. 1842.";
 
-		rptContent.DataSource = Slog.GetSlogs();
+		rptContent.DataSource = new Entries(new Slog());
 		rptContent.DataBind();
 	}
 }

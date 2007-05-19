@@ -10,7 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Text.RegularExpressions;
 using Common;
-using Membership;
+using Domain.Membership;
 using Data;
 
 public partial class quote : System.Web.UI.Page

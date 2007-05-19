@@ -1,7 +1,7 @@
 using System;
 using System.Web;
 using Common;
-using Membership;
+using Domain.Membership;
 
 public partial class delete_user : System.Web.UI.Page
 {
