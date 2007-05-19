@@ -9,6 +9,15 @@
 h1 {
 	margin:0px 0px 10px 0px;
 	padding:0px;
+	font-size:16px;
+	line-height:16px;
+	font-weight:bold;
+	color:#000;
+	}
+	
+h2 {
+	margin:0px 0px 10px 0px;
+	padding:0px;
 	font-size:14px;
 	line-height:14px;
 	font-weight:bold;
@@ -50,7 +59,7 @@ body {
 	
 #leftContent {
 	width:300px;
-	padding:0px 2px 0px 2px;
+	padding:2px;
 	margin:0px 5px 0px 0px;
 	float:left;
 	background-color:#eee;
@@ -61,7 +70,7 @@ body {
 
 #rightContent {
 	width:300px;
-	padding:0px 2px 0px 2px;
+	padding:2px;
 	margin:0px 5px 0px 0px;
 	float:left;
 	background-color:#eee;
@@ -72,10 +81,10 @@ body {
 
 #archives {
 	width:172px;
-	padding:0px 2px 0px 2px;
+	padding:2px;
 	float:left;
 	background-color:#fff;
-	border:1px solid #999;
+	/*border:1px solid #999;*/
 	line-height:17px;
 	}
 
@@ -90,4 +99,20 @@ body {
 
 .title {
 	font-weight: bold;
+}
+
+.dateTime {
+	font-style: italic;
+}
+
+#title {	
+}
+
+#titleName {
+	font-size: 26px;
+	font-weight: bold;
+	text-align: center;
+}
+
+#titleImage {
 }

@@ -1,6 +1,13 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeFile="HillelliesContent.ascx.cs" Inherits="Controls_HillelliesEntry" %>
-<asp:Label ID="lblTitle" runat="server" />
-<asp:Image ID="imgTitle" runat="server" />
+
+<div id="title">
+	<div id="titleName">
+		<asp:Label ID="lblTitle" runat="server" />
+	</div>
+	<div id="titleImage">
+		<asp:Image ID="imgTitle" runat="server" />
+	</div>
+</div>
 <br />
 
 <asp:Repeater ID="rptContent" runat="server">
@@ -9,19 +16,25 @@
 			Tags are going to go here.
 		</div>
 		
-		<div class="title">
-			<%# DataBinder.Eval(Container.DataItem, "Title").ToString() %>
+		<div class="entryInformation">
+			<div class="entryTag">
+				<img src="blob.jpg" alt="" />
+			</div>
+			<div class="entryDescription">
+				<div class="title">
+					<%# DataBinder.Eval(Container.DataItem, "Title").ToString() %>
+				</div>
+				<div class="dateTime">
+					<%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %>
+				</div>
+				<br />
+			</div>
 		</div>
-		<div class="date">
-			<%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %>
-		</div>
-		<br />
 		
 		<div class="content">
 			<%# DataBinder.Eval(Container.DataItem, "Content").ToString() %>
 		</div>
 		<br />
+		<br />
 	</ItemTemplate>
 </asp:Repeater>
-
-Some content

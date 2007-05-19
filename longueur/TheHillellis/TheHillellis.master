@@ -42,6 +42,9 @@
     <div id="content">
 		<div id="breadcrumb">
 			<a href="../">longueur.org</a> -> The Hillellies
+		</div>		
+		<div id="logo">
+			logo here...
 		</div>
 			    
 		<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />
