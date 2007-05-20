@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/admin.master" AutoEventWireup="true" CodeFile="TheHillellies.aspx.cs" Inherits="Admin_TheHillellies" Title="Admin: The Hillellies" %>
+<%@ Page Language="C#" MasterPageFile="~/Admin/admin.master" AutoEventWireup="true" CodeFile="TheHillellis.aspx.cs" Inherits="Admin_TheHillellis" Title="Admin: The Hillellis" ValidateRequest="false" %>
 <asp:Content ID="Content" ContentPlaceHolderID="ContentPlaceHolder" Runat="Server">
 	<asp:Repeater ID="rptSlogs" runat="server" Visible="true">
 		<HeaderTemplate>
@@ -17,7 +17,7 @@
 				<td><%# DataBinder.Eval(Container.DataItem, "Name").ToString() %></td>
 				<td><%# DataBinder.Eval(Container.DataItem, "Title").ToString() %></td>		
 				<td><%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %></td>
-				<td><a href='TheHillellies.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id").ToString() %>'>Edit</a></td>
+				<td><a href='TheHillellis.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id").ToString() %>'>Edit</a></td>
 			</tr>
 		</ItemTemplate>
 		<FooterTemplate>
@@ -42,7 +42,7 @@
 	</div>
 	
 	<div id="divSlogInfo" runat="server" visible="false">
-		<a href="TheHillellies.aspx">...Back</a><br />
+		<a href="TheHillellis.aspx">...Back</a><br />
 		<br />
 		<br />
 

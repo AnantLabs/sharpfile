@@ -5,36 +5,36 @@ using Data;
 
 namespace Data.Blog {
 	/// <summary>
-	/// Summary description for TheHillellies
+	/// Summary description for TheHillellis
 	/// </summary>
-	public class TheHillellies : Base, IBlog {
-		public TheHillellies() {
+	public class TheHillellis : Base, IBlog {
+		public TheHillellis() {
 		}
 
 		#region IBlog Members
 		public DataTable GetEntries() {
-			return Select("usp_TheHillelliesGet");
+			return Select("usp_TheHillellisGet");
 		}
 
 		public DataTable GetEntries(int userId) {
 			SqlParameter[] parameters = getSqlParameters("@UserId",
 				userId);
 
-			return Select("usp_TheHillelliesGet", parameters);
+			return Select("usp_TheHillellisGet", parameters);
 		}
 
 		public DataTable GetEntry(int id) {
 			SqlParameter[] parameters = getSqlParameters("@Id",
 				id);
 
-			return Select("usp_TheHillelliesGetEntry", parameters);
+			return Select("usp_TheHillellisGetEntry", parameters);
 		}
 
 		public void InsertEntry(string title, string content, int userId) {
 			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title",
 				content, userId, title);
 
-			NonQuery("usp_TheHillelliesInsert", parameters);
+			NonQuery("usp_TheHillellisInsert", parameters);
 		}
 
 		public void DeleteEntry(int id) {
@@ -48,7 +48,7 @@ namespace Data.Blog {
 				userId, 
 				title);
 
-			NonQuery("usp_TheHillelliesUpdate", parameters);
+			NonQuery("usp_TheHillellisUpdate", parameters);
 		}
 		#endregion
 	}

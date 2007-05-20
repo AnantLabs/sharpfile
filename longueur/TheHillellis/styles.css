@@ -97,6 +97,18 @@ body {
 	line-height:17px;
 }
 
+#logo {
+	margin: 0px 0px 5px 0px;
+	padding: 0px 0px 0px 0px;
+	background-color:#fff;
+	border:1px solid #999;
+	text-align: center;
+}
+
+#titleImage {
+	text-align: center;
+}
+
 .title {
 	font-weight: bold;
 }
@@ -105,14 +117,9 @@ body {
 	font-style: italic;
 }
 
-#title {	
-}
-
-#titleName {
-	font-size: 26px;
-	font-weight: bold;
-	text-align: center;
-}
-
-#titleImage {
+.entryHr {
+	width: 90%; 
+	text-align: center; 
+	color: #ccc; 
+	height: 1px;
 }

@@ -1,4 +1,10 @@
-- The Hillellies "blog"
+- The Hillellis
+	- tags
+	- archives
+	- different colors?
+	
+- Abstraction of blog user controls (maybe not possible, or necessary)
+	
 - take common js out and put it into the js directory (grab height of window)
 
 - Admin functionality to delete user
@@ -18,6 +24,7 @@
 
 - Encrypt web.config
 - Remember me functionality (front-end only. I think)
+- log out funtionality
 
 - Forms auth on IndieLyrics
 	- use login control on the indielyrics login page

@@ -8,10 +8,10 @@ using System.Web;
 using System.Web.UI;
 using Data.Blog;
 
-public partial class Admin_TheHillellies : Page
+public partial class Admin_TheHillellis : Page
 {
 	private const string _id = "id";
-	private IBlog blogDAO = new TheHillellies();
+	private IBlog blogDAO = new TheHillellis();
 
 	protected void Page_Load(object sender, EventArgs e)
 	{

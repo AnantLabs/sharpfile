@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Admin/admin.master" AutoEventWireup="true" CodeFile="Slog.aspx.cs" Inherits="Admin_Slog" Title="Admin: Slog" %>
+<%@ Page Language="C#" MasterPageFile="~/Admin/admin.master" AutoEventWireup="true" CodeFile="Slog.aspx.cs" Inherits="Admin_Slog" Title="Admin: Slog" ValidateRequest="false" %>
 <asp:Content ID="Content" ContentPlaceHolderID="ContentPlaceHolder" Runat="Server">
 	<asp:Repeater ID="rptSlogs" runat="server" Visible="true">
 		<HeaderTemplate>
