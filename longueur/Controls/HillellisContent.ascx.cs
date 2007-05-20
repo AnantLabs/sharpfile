@@ -21,11 +21,11 @@ public partial class Controls_HillellisEntry : UserControl {
 
 		imgTitle.ImageUrl = titleImageUrl;
 
-		if (string.IsNullOrEmpty(titleImageAlternativeText)) {
+		if (!string.IsNullOrEmpty(titleImageAlternativeText)) {
 			imgTitle.AlternateText = titleImageAlternativeText;
 		}
 
-		if (string.IsNullOrEmpty(titleImageTooltip)) {
+		if (!string.IsNullOrEmpty(titleImageTooltip)) {
 			imgTitle.ToolTip = titleImageTooltip;
 		}
 	}

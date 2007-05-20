@@ -1,7 +1,6 @@
 - The Hillellis
 	- tags
 	- archives
-	- different colors?
 	
 - Abstraction of blog user controls (maybe not possible, or necessary)
 	
