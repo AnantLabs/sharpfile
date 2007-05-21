@@ -1,5 +1,17 @@
 <%@ Page Language="C#" MasterPageFile="~/Admin/admin.master" AutoEventWireup="true" CodeFile="TheHillellis.aspx.cs" Inherits="Admin_TheHillellis" Title="Admin: The Hillellis" ValidateRequest="false" %>
 <asp:Content ID="Content" ContentPlaceHolderID="ContentPlaceHolder" Runat="Server">
+<script type="text/javascript" src="../js/tiny_mce/tiny_mce.js"></script>
+<script language="javascript" type="text/javascript">
+// I really _want_ to use the gzipped version, but inserting an image doesn't seem to work with it. Lame.
+tinyMCE.init({
+	plugins : 'inlinepopups,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,insertdatetime,preview,media,searchreplace,print,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras',
+	themes : 'simple,advanced',
+	languages : 'en',
+	disk_cache : true,
+	mode : 'textareas'
+});
+</script>
+
 	<asp:Repeater ID="rptSlogs" runat="server" Visible="true">
 		<HeaderTemplate>
 			<table>
@@ -35,7 +47,7 @@
 		<br />
 		
 		<strong>Content</strong><br />
-		<asp:TextBox ID="txtNewContent" runat="server" TextMode="MultiLine" Width="400" Height="400" />
+		<asp:TextBox ID="txtNewContent" runat="server" TextMode="MultiLine" Width="80%" Height="600" />
 		<br />
 		
 		<asp:Button ID="btnNewSubmit" runat="server" Text="Submit" />
@@ -59,7 +71,7 @@
 		<br />
 		
 		<strong>Content</strong><br />
-		<asp:TextBox ID="txtContent" runat="server" TextMode="MultiLine" Width="400" Height="400" />
+		<asp:TextBox ID="txtContent" runat="server" TextMode="MultiLine" Width="80%" Height="600" />
 		<br />
 		
 		<strong>DateTime</strong>
