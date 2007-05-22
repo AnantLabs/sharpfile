@@ -29,9 +29,12 @@ namespace Data.Blog {
 			return Select("usp_SlogGetSlog", parameters);
 		}
 
-		public void InsertEntry(string title, string content, int userId) {
-			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title",
-				content, userId, title);
+		public void InsertEntry(string title, string content, int userId, DateTime dateTime) {
+			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title,@DateTime",
+				content, 
+				userId, 
+				title, 
+				dateTime);
 
 			NonQuery("usp_SlogInsert", parameters);
 		}

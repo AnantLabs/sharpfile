@@ -110,7 +110,7 @@ public partial class Admin_Slog : System.Web.UI.Page
 			int id = 0;
 
 			if (int.TryParse(((FormsIdentity)HttpContext.Current.User.Identity).Name, out id)) {
-				blogDAO.InsertEntry(txtName.Text, txtNewContent.Text, id);
+				blogDAO.InsertEntry(txtName.Text, txtNewContent.Text, id, DateTime.Now);
 				redirect();
 			} else {
 				lblMessage.Text = "Looks like you aren't an admin user after all, jerk.";

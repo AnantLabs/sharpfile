@@ -8,31 +8,57 @@
     
     <script type="text/javascript" language="javascript">
 		var height = 0;
+		var width = 0;
 		
 		function onLoad() 
 		{
+			var headerHeight = 130;
+			var footerHeight = 25;
+			
 			// Set our global vars.
 			getSize();
 
 			// Resize the contents stuff.
-			document.getElementById('rightContent').style.height = height - 131 + 'px';
-			document.getElementById('leftContent').style.height = height - 131 + 'px';
+			var contentHeight = (height - headerHeight - footerHeight) + 'px';
+			var contentWidth = (width - 300) + 'px';
+			var archiveWidth = (width - 305) + 'px';
+			var halfContentWidth = ((width - 321) /2) + 'px';
+			
+			var content = document.getElementById('content');
+			var rightContent = document.getElementById('rightContent');
+			var leftContent = document.getElementById('leftContent');
+			
+			// Increase the height.
+			rightContent.style.height = contentHeight;
+			leftContent.style.height = contentHeight;
+			
+			// Widen the content.
+			content.style.width = contentWidth;
+			rightContent.style.width = halfContentWidth;
+			leftContent.style.width = halfContentWidth;
+			
+			// Widen the footer.
+			var archives = document.getElementById('archives');
+			archives.style.zIndex = 0;
+			archives.style.width = archiveWidth;
 		}
 		
 		function getSize() {
 			// http://www.howtocreate.co.uk/tutorials/javascript/browserwindow
-			if( typeof( window.innerWidth ) == 'number' ) 
-			{
+			if (typeof(window.innerWidth) == 'number') {
 				//Non-IE
 				height = window.innerHeight - 15;
-			} 
-			else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+				width = window.innerWidth - 15;
+			} else if (document.documentElement && 
+				(document.documentElement.clientWidth || document.documentElement.clientHeight)) {
 				//IE 6+ in 'standards compliant mode'
 				height = document.documentElement.clientHeight - 15;
-			} 
-			else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+				width = document.documentElement.clientWidth - 15;
+			} else if (document.body && 
+				(document.body.clientWidth || document.body.clientHeight)) {
 				//IE 4 compatible
 				height = document.body.clientHeight - 35;
+				width = document.body.clientWidth - 35;
 			}
 		}
 	</script>
@@ -53,6 +79,15 @@
 		</div>
 			    
 		<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />
+		
+		<div id="archives">
+			<img src="../images/down_arrow.png" alt="" id="archiveArrow" />
+			<div id="archiveTitle">
+				Archives
+			</div>
+
+			No archives, yet.
+		</div>
     </div>
     </form>
 </body>

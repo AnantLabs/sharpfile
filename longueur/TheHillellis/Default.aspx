@@ -5,11 +5,10 @@
 	<div id="leftContent">
 		<lng:Content ID="ctlLeftContent" runat="server" />
 	</div>
+	<div id="middleSeperator">
+		&nbsp;
+	</div>
 	<div id="rightContent">
 		<lng:Content ID="ctlRightContent" runat="server" />
-	</div>
-	<div id="archives">
-		<h2>Archives</h2>
-		No archives, yet.
 	</div>
 </asp:Content>

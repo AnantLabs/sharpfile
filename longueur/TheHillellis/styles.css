@@ -1,9 +1,10 @@
-﻿body {
+body {
 	margin:0px;
 	padding:0px;
 	font: 11px/12px Verdana, Arial, Helvetica, sans-serif;
 	color:#333;
 	background-color:#FFFF99;
+	text-align:center;
 	}
 	
 h1 {
@@ -36,43 +37,48 @@ a {
 	font-weight:600;
 	font-family:verdana, arial, helvetica, sans-serif;
 	}
-a:link {color:#9966CC;}
-a:visited {color:#99CCFF;}
-a:hover {background-color:#FFFF99;}
-
-body {
-	text-align:center;
-	margin: 0;
-	padding: 0;
+	
+a:link {
+	color:#9966CC;
+	}
+	
+a:visited {
+	color:#99CCFF;
+	}
+	
+a:hover {
+	background-color:#FFFF99;
 	}
 
 #content {
 	width:800px;
-	margin-right:auto;
-	margin-left:auto;
-	margin-top:5px;
-	margin-bottom:5px;
+	margin: 5px auto 5px auto;
 	padding:0px;
 	text-align:left;
 	}
 	
 #leftContent {
-	width:300px;
+	width:389px;
 	padding:2px;
-	margin:0px 5px 0px 0px;
+	margin:0px;
 	float:left;
-	background-color:#9966CC;
+	background-color:#CC99FF;
 	border:1px solid #999;
 	line-height:17px;
 	overflow:auto;
 	overflow-x:hidden;
 	overflow-y:auto;
 	}
+	
+#middleSeperator {
+	float:left;
+	margin:0px 5px 0px 0px;
+}
 
 #rightContent {
-	width:300px;
+	width:389px;
 	padding:2px;
-	margin:0px 5px 0px 0px;
+	margin:0px;
 	float:left;
 	background-color:#99CCFF;
 	border:1px solid #999;
@@ -83,26 +89,30 @@ body {
 	}
 
 #archives {
-	width:172px;
+	width:800px;
 	padding:2px;
-	float:left;
-	/*background-color:#fff;*/
-	/*border:1px solid #999;*/
+	margin:5px 0px 5px 0px;
+	background-color:#FFFFCC;
+	border:1px solid #999;
 	line-height:17px;
+	bottom:-30px;
+	height:40px;
+	position:absolute;
+	z-index: -1;	
 	}
 
 #breadcrumb 
 {
-	margin: 0px 0px 5px 0px;
-	padding: 0px 2px 0px 2px;
+	margin:0px 0px 5px 0px;
+	padding:0px 2px 0px 2px;
 	background-color:#FFFFCC;
 	border:1px solid #999;
 	line-height:17px;
 }
 
 #logo {
-	margin: 0px 0px 5px 0px;
-	padding: 0px 0px 0px 0px;
+	margin:0px 0px 5px 0px;
+	padding:0px;
 	background-color:#FFFFCC;
 	border:1px solid #999;
 	text-align: center;
@@ -110,6 +120,17 @@ body {
 
 #titleImage {
 	text-align: center;
+}
+
+#archiveTitle {
+	font-weight:bold;
+	font-size:16px;
+	line-height:16px;
+}
+
+#archiveArrow {
+	float:left; 
+	padding-right:2px;
 }
 
 .title {
