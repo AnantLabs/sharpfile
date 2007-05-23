@@ -2,12 +2,16 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using Data;
+using System.Configuration;
+using System.Web.Configuration;
 
 namespace Data.Blog {
 	/// <summary>
 	/// Summary description for TheHillellis
 	/// </summary>
 	public class TheHillellis : Base, IBlog {
+		private const string timezoneDifference = "timezoneDifference";
+
 		public TheHillellis() {
 		}
 
@@ -31,11 +35,18 @@ namespace Data.Blog {
 		}
 
 		public void InsertEntry(string title, string content, int userId, DateTime dateTime) {
+			int timezoneDifference = 0;
+			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
+
+			if (configuration.AppSettings.Settings[encryptConnectionStrings] != null) {
+				dateTime.AddHours(timezoneDifference);
+			}
+
 			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title,@DateTime",
 				content, 
 				userId, 
 				title, 
-				dateTime);
+				dateTime.AddHours(timezoneDifference));
 
 			NonQuery("usp_TheHillellisInsert", parameters);
 		}

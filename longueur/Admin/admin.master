@@ -17,6 +17,7 @@
 		<a href="slog.aspx">Slog</a> |
 		<a href="TheHillellis.aspx">The Hillellis</a> | 
 		<a href="users.aspx">Users</a>
+		<div style="text-align:right"><asp:LinkButton ID="lnkLogout" runat="server" Text="Logout!" /></div>
 	</div>
 	<br />
 	

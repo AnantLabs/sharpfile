@@ -9,14 +9,14 @@ namespace Domain.Membership {
 	/// Summary description for SiteUser.
 	/// </summary>
 	public class SiteUser {
+		private const string anonymousName = "Anonymous";
 		private const int formsAuthenticationVersion = 1;
-		private const int cookieExpirationTime = 30;
+		private const int cookieExpirationTime = 60 * 24;
 
 		private int id;
 		private string name;
 		private string hashedPassword;
 		private string email;
-		//private string guid;
 		private bool enableJs;
 		private UserType userType;
 		private DateTime dateTime;
@@ -25,12 +25,11 @@ namespace Domain.Membership {
 
 		public SiteUser() {
 			this.id = -1;
-			this.name = "Anonymous";
+			this.name = anonymousName;
 			this.hashedPassword = string.Empty;
 			this.userType = UserType.NonAuthenticated;
 			this.email = string.Empty;
 			this.enableJs = false;
-			//this.guid = string.Empty;
 			this.dateTime = DateTime.MinValue;
 		}
 
@@ -85,8 +84,10 @@ namespace Domain.Membership {
 
 				HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, hashedTicket);
 
-				// Set the cookie's expiration time to the tickets expiration time
-				if (ticket.IsPersistent) cookie.Expires = ticket.Expiration;
+				// Set the cookie's expiration time to the tickets expiration time.
+				if (ticket.IsPersistent) {
+					cookie.Expires = ticket.Expiration;
+				}
 
 				// Add the cookie to the list for outgoing response
 				if (HttpContext.Current != null) {
@@ -97,6 +98,19 @@ namespace Domain.Membership {
 			}
 
 			return false;
+		}
+
+		public void Logout() {
+			try {
+				if (HttpContext.Current != null) {
+					if (HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName] != null) {
+						HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddYears(-30);
+						HttpContext.Current.Response.Redirect(HttpContext.Current.Request.Url.PathAndQuery, true);
+					}
+				}
+			} catch (Exception ex) {
+				Data.Admin.InsertErrorLog(ex);
+			}
 		}
 
 		public void Update(string name, string email, string plainTextPassword) {

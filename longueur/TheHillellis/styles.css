@@ -43,7 +43,7 @@ a:link {
 	}
 	
 a:visited {
-	color:#99CCFF;
+	color:#9999FF;
 	}
 	
 a:hover {
@@ -88,19 +88,6 @@ a:hover {
 	overflow-y:auto;
 	}
 
-#archives {
-	width:800px;
-	padding:2px;
-	margin:5px 0px 5px 0px;
-	background-color:#FFFFCC;
-	border:1px solid #999;
-	line-height:17px;
-	bottom:-30px;
-	height:40px;
-	position:absolute;
-	z-index: -1;	
-	}
-
 #breadcrumb 
 {
 	margin:0px 0px 5px 0px;
@@ -122,6 +109,20 @@ a:hover {
 	text-align: center;
 }
 
+#archives {
+	width:550px;
+	padding:2px;
+	margin:5px 0px 5px 0px;
+	background-color:#FFFFCC;
+	border:1px solid #999;
+	line-height:17px;
+	bottom:-30px;
+	height:40px;
+	position:absolute;
+	z-index: -1;
+	text-align: left;
+	}
+
 #archiveTitle {
 	font-weight:bold;
 	font-size:16px;
@@ -131,6 +132,32 @@ a:hover {
 #archiveArrow {
 	float:left; 
 	padding-right:2px;
+}
+
+#contact {
+	width:250px;
+	padding:2px;
+	margin:5px 0px 5px 0px;
+	background-color:#FFFFCC;
+	border:1px solid #999;
+	line-height:17px;
+	bottom:-30px;
+	height:40px;
+	position:absolute;
+	z-index: -1;
+	text-align:right;
+	}
+
+#contactTitle {
+	font-weight:bold;
+	font-size:16px;
+	line-height:16px;
+	padding-right:2px;
+}
+
+#contactArrow {
+	padding-left:2px;
+	float:right;
 }
 
 .title {

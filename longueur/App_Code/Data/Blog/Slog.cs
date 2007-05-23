@@ -10,6 +10,8 @@ namespace Data.Blog {
 	/// Summary description for SlogData
 	/// </summary>
 	public class Slog : Base, IBlog {
+		private const string timezoneDifference = "timezoneDifference";
+
 		public Slog() {
 		}
 
@@ -30,6 +32,13 @@ namespace Data.Blog {
 		}
 
 		public void InsertEntry(string title, string content, int userId, DateTime dateTime) {
+			int timezoneDifference = 0;
+			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
+
+			if (configuration.AppSettings.Settings[encryptConnectionStrings] != null) {
+				dateTime.AddHours(timezoneDifference);
+			}
+
 			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title,@DateTime",
 				content, 
 				userId, 
