@@ -1,14 +1,16 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeFile="HillellisContent.ascx.cs" Inherits="Controls_HillellisEntry" %>
 
-<div id="titleImage">
-	<asp:Image ID="imgTitle" runat="server" />
-</div>
-<br />
+<asp:PlaceHolder ID="phTopHat" runat="server">
+	<div id="titleImage">
+		<asp:Image ID="imgTitle" runat="server" />
+	</div>
+	<br />
 
-<div id="tags" style="display: none">
-	Tags are going to go here.
-</div>
-<br />
+	<div id="tags" style="display: none">
+		Tags are going to go here.
+	</div>
+	<br />
+</asp:PlaceHolder>
 
 <asp:Repeater ID="rptContent" runat="server">
 	<ItemTemplate>
@@ -37,3 +39,5 @@
 		<br />
 	</ItemTemplate>
 </asp:Repeater>
+
+<asp:Label ID="lblMessage" runat="server" Visible="false" />

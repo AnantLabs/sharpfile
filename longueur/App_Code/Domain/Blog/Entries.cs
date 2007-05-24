@@ -11,6 +11,10 @@ namespace Domain.Blog {
 	public class Entries : List<Entry> {
 		private IBlog blogDAO;
 
+		public Entries()
+			: base() {
+		}
+
 		public Entries(IBlog blogDAO)
 			: base() {
 			this.blogDAO = blogDAO;
@@ -27,14 +31,6 @@ namespace Domain.Blog {
 
 			populateList(entryTable);
 		}
-
-		//public Entries(IBlog blogDAO, int userId)
-		//    : base() {
-		//    this.blogDAO = blogDAO;
-		//    DataTable entryTable = blogDAO.GetEntries(userId);
-
-		//    populateList(entryTable);
-		//}
 
 		private void populateList(DataTable entryTable) {
 			foreach (DataRow row in entryTable.Rows) {

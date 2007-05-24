@@ -87,6 +87,20 @@ a:hover {
 	overflow-x:hidden;
 	overflow-y:auto;
 	}
+	
+#permalinkContent {
+	/* This should be 800px, but I don't want to resize everything right now. */
+	width: 795px;
+	padding: 2px;
+	margin: 0px;
+	float: left;
+	background-color: #99CCFF;
+	border: 1px solid #999;
+	line-height: 17px;
+	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
 
 #breadcrumb 
 {
@@ -95,6 +109,8 @@ a:hover {
 	background-color:#FFFFCC;
 	border:1px solid #999;
 	line-height:17px;
+	/* This should be 800px, but I don't want to resize everything right now. */
+	/*width: 800px;*/
 }
 
 #logo {
@@ -103,6 +119,8 @@ a:hover {
 	background-color:#FFFFCC;
 	border:1px solid #999;
 	text-align: center;
+	/* This should be 800px, but I don't want to resize everything right now. */
+	/*width: 800px;*/
 }
 
 #titleImage {

@@ -10,7 +10,7 @@ namespace Data.Blog {
 	/// Summary description for SlogData
 	/// </summary>
 	public class Slog : Base, IBlog {
-		private const string timezoneDifference = "timezoneDifference";
+		private const string timezoneDifferenceSetting = "timezoneDifference";
 
 		public Slog() {
 		}
@@ -35,7 +35,7 @@ namespace Data.Blog {
 			int timezoneDifference = 0;
 			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
 
-			if (configuration.AppSettings.Settings[encryptConnectionStrings] != null) {
+			if (configuration.AppSettings.Settings[timezoneDifferenceSetting] != null) {
 				dateTime.AddHours(timezoneDifference);
 			}
 
