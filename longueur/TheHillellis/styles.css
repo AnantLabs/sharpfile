@@ -8,10 +8,9 @@ body {
 	}
 	
 h1 {
-	margin:0px 0px 10px 0px;
+	margin:0px 0px 2px 0px;
 	padding:0px;
-	font-size:16px;
-	line-height:16px;
+	font-size:13px;	
 	font-weight:bold;
 	color:#000;
 	}
@@ -89,7 +88,6 @@ a:hover {
 	}
 	
 #permalinkContent {
-	/* This should be 800px, but I don't want to resize everything right now. */
 	width: 795px;
 	padding: 2px;
 	margin: 0px;
@@ -104,23 +102,19 @@ a:hover {
 
 #breadcrumb 
 {
-	margin:0px 0px 5px 0px;
-	padding:0px 2px 0px 2px;
-	background-color:#FFFFCC;
-	border:1px solid #999;
-	line-height:17px;
-	/* This should be 800px, but I don't want to resize everything right now. */
-	/*width: 800px;*/
+	margin: 0px 0px 5px 0px;
+	padding: 0px 2px 0px 2px;
+	background-color: #FFFFCC;
+	border: 1px solid #999;
+	line-height: 17px;
 }
 
 #logo {
-	margin:0px 0px 5px 0px;
-	padding:0px;
-	background-color:#FFFFCC;
-	border:1px solid #999;
+	margin: 0px 0px 5px 0px;
+	padding: 0px 2px 0px 2px;
+	background-color: #FFFFCC;
+	border: 1px solid #999;
 	text-align: center;
-	/* This should be 800px, but I don't want to resize everything right now. */
-	/*width: 800px;*/
 }
 
 #titleImage {
@@ -191,4 +185,8 @@ a:hover {
 	text-align: center; 
 	color: #000000; 
 	height: 1px;
+}
+
+.permalink {
+	text-align: right;
 }

@@ -1,6 +1,18 @@
 ﻿var height = 0;
 var width = 0;
 
+function addListener(element, event, listener, bubble) {
+	if(element.addEventListener) {
+		if(typeof(bubble) == 'undefined') {
+			bubble = false;
+		} 
+		
+		element.addEventListener(event, listener, bubble);
+	} else if(this.attachEvent) {
+		element.attachEvent('on' + event, listener);
+	}
+}
+
 function onLoad() 
 {
 	var px = 'px';

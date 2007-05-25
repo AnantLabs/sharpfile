@@ -39,7 +39,9 @@ namespace Data.Blog {
 			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
 
 			if (configuration.AppSettings.Settings[timezoneDifferenceSetting] != null) {
-				dateTime.AddHours(timezoneDifference);
+				if (int.TryParse(configuration.AppSettings.Settings[timezoneDifferenceSetting].Value, out timezoneDifference)) {
+					dateTime.AddHours(timezoneDifference);
+				}
 			}
 
 			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title,@DateTime",

@@ -20,9 +20,7 @@
 					<img src="blob.jpg" alt="" />
 				</div>
 				<div class="entryDescription">
-					<div class="title">
-						<%# DataBinder.Eval(Container.DataItem, "Title").ToString() %>
-					</div>
+					<h1><a href='../TheHillellis/Permalink.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "Title") %></a></h1>
 					<div class="dateTime">
 						<%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %>
 					</div>
