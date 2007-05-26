@@ -30,6 +30,17 @@ namespace Domain.Blog {
 			}
 		}
 
+		public Entry(DataRow entryRow) {
+			if (entryRow != null) {
+				this.id = int.Parse(entryRow["Id"].ToString());
+				this.userId = int.Parse(entryRow["UserId"].ToString());
+				this.title = entryRow["Title"].ToString();
+				this.content = entryRow["Content"].ToString();
+				this.name = entryRow["Name"].ToString();
+				this.dateTime = DateTime.Parse(entryRow["DateTime"].ToString());
+			}
+		}
+
 		public int Id { get { return id; } set { id = value; } }
 		public string Title { get { return title; } set { title = value; } }
 		public string Content { get { return content; } set { content = value; } }

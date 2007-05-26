@@ -20,7 +20,7 @@
 					<img src="blob.jpg" alt="" />
 				</div>
 				<div class="entryDescription">
-					<h1><a href='../TheHillellis/Permalink.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "Title") %></a></h1>
+					<h2><%# DataBinder.Eval(Container.DataItem, "Title") %></h2>
 					<div class="dateTime">
 						<%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %>
 					</div>
@@ -31,10 +31,13 @@
 			<div class="content">
 				<%# DataBinder.Eval(Container.DataItem, "Content").ToString() %>
 			</div>
-			<br />
-			<hr class="entryHr" style='<%# (int.Parse(DataBinder.Eval(Container.DataItem, "Id").ToString()) == getLastId()) ? "display: none" : "" %>' />
+			<div class="permalink">
+				<a href='../TheHillellis/Permalink.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'>Permalink</a>
+			</div>
+			<div style='<%# (int.Parse(DataBinder.Eval(Container.DataItem, "Id").ToString()) == getLastId()) ? "display: none" : "" %>'>
+				<br /><br />
+			</div>
 		</div>
-		<br />
 	</ItemTemplate>
 </asp:Repeater>
 

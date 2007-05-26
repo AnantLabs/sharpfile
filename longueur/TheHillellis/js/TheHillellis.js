@@ -13,6 +13,13 @@ function addListener(element, event, listener, bubble) {
 	}
 }
 
+function changeBackgroundColor(elementId, color) {
+	if (document.getElementById(elementId) != null) {
+		var element = document.getElementById(elementId);
+		element.style.backgroundColor = color;
+	}
+}
+
 function onLoad() 
 {
 	var px = 'px';

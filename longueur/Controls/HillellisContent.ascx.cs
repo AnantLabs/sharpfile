@@ -9,29 +9,27 @@ public partial class Controls_HillellisEntry : UserControl {
 	private string titleImageUrl;
 	private string titleImageTooltip;
 	private string titleImageAlternativeText;
+
+	// Used for permalink entries.
+	private string backgroundColor = "";
 	private int entryId = 0;
 
-	private Entries entries;
+	private BaseEntries entries;
 	private int lastEntryId = 0;
 
 	protected void Page_Load(object sender, EventArgs e) {
 		TheHillellis theHillellisData = new TheHillellis();
 
 		if (entryId > 0) {
-			entries = new Entries();
-			Entry entry = new Entry(theHillellisData, entryId);
+			entries = EntriesFactory.GetEntries(theHillellisData, entryId);
 
-			if (entry.Name == "lynn") {
-				titleImageUrl = "~/TheHillellis/Images/cupcake_t.png";
-			} else if (entry.Name == "adam") {
-				titleImageUrl = "~/TheHillellis/Images/puppup_t.png";
-			}
+			string backgroundColor = entries.BackgroundColor;
+			titleImageUrl = entries.TitleImageUrl;
 
-			entries.Add(entry);
+			this.Page.ClientScript.RegisterStartupScript(typeof(string), "changeBackgroundColor", "changeBackgroundColor('permalinkContent', '" + backgroundColor + "');", true);
 		} else if (!string.IsNullOrEmpty(userName)) {
-			entries = new Entries(theHillellisData, userName);
+			entries = EntriesFactory.GetEntries(theHillellisData, userName);
 		} else {
-			entries = new Entries();
 			rptContent.Visible = false;
 			phTopHat.Visible = false;
 
@@ -88,5 +86,10 @@ public partial class Controls_HillellisEntry : UserControl {
 	public string TitleImageAlternativeText { 
 		get { return titleImageAlternativeText; } 
 		set { titleImageAlternativeText = value; } 
+	}
+
+	public string BackgroundColor { 
+		get { return backgroundColor; } 
+		set { backgroundColor = value; } 
 	}
 }
