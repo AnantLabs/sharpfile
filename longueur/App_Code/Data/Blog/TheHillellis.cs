@@ -66,6 +66,10 @@ namespace Data.Blog {
 
 			NonQuery("usp_TheHillellisUpdate", parameters);
 		}
+
+		public DataTable GetArchives() {
+			return Select("usp_TheHillellisGetArchives");
+		}
 		#endregion
 	}
 }

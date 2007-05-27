@@ -57,6 +57,10 @@ namespace Data.Blog {
 		public void UpdateEntry(int id, string title, string content, int userId) {
 			throw new Exception("The method or operation is not implemented.");
 		}
+
+		public DataTable GetArchives() {
+			throw new Exception("The method or operation is not implemented.");
+		}
 		#endregion
 	}
 }

@@ -30,7 +30,17 @@
 				Archives
 			</div>
 
-			No archives, yet.
+			<asp:Repeater ID="rptArchives" runat="server">
+				<HeaderTemplate>
+					<ul>
+				</HeaderTemplate>
+				<ItemTemplate>
+					<li><a href='archives.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "StartDate") %> - <%# DataBinder.Eval(Container.DataItem, "EndDate") %></a></li>
+				</ItemTemplate>
+				<FooterTemplate>
+					</ul>
+				</FooterTemplate>
+			</asp:Repeater>
 		</div>
 		<div id="contact">
 			<img src="../images/down_arrow.png" alt="" id="contactArrow" />

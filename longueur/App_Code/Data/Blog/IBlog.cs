@@ -12,5 +12,6 @@ namespace Data.Blog {
 		void InsertEntry(string title, string content, int userId, DateTime dateTime);
 		void DeleteEntry(int id);
 		void UpdateEntry(int id, string title, string content, int userId);
+		DataTable GetArchives();
 	}
 }
