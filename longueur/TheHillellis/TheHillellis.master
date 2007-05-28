@@ -35,12 +35,14 @@
 					<ul>
 				</HeaderTemplate>
 				<ItemTemplate>
-					<li><a href='archives.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "StartDate") %> - <%# DataBinder.Eval(Container.DataItem, "EndDate") %></a></li>
+					<li><a href='Archive.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "StartDate") %> - <%# DataBinder.Eval(Container.DataItem, "EndDate") %></a> (<%# DataBinder.Eval(Container.DataItem, "Name") %>)</li>
 				</ItemTemplate>
 				<FooterTemplate>
 					</ul>
 				</FooterTemplate>
 			</asp:Repeater>
+			
+			<asp:Label ID="lblNoArchives" runat="server" Visible="false" Text="No archive, yet." />
 		</div>
 		<div id="contact">
 			<img src="../images/down_arrow.png" alt="" id="contactArrow" />

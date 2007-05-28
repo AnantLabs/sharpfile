@@ -17,7 +17,7 @@
 		<div class="entry">
 			<div class="entryInformation">
 				<div class="entryTag" style="display: none">
-					<img src="blob.jpg" alt="" />
+					<img src="../TheHillellis/images/cupcake_t.png" alt="" />
 				</div>
 				<div class="entryDescription">
 					<h2><%# DataBinder.Eval(Container.DataItem, "Title") %></h2>

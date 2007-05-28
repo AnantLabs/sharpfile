@@ -13,5 +13,6 @@ namespace Data.Blog {
 		void DeleteEntry(int id);
 		void UpdateEntry(int id, string title, string content, int userId);
 		DataTable GetArchives();
+		DataTable GetArchiveEntries(int archiveId);
 	}
 }

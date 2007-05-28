@@ -79,7 +79,10 @@ function onLoad() {
 		filename == 'default.aspx') {
 		resizeDefaultContent();
 	} else if (filename == 'permalink.aspx') {
-		resizePermalinkContent();
+		//resizePermalinkContent();
+		resizeOneContentBox('permalinkContent');
+	} else if (filename == 'archive.aspx') {
+		resizeOneContentBox('archiveContent');
 	}
 }
 
@@ -99,6 +102,18 @@ function resizeDefaultContent() {
 	leftContent.style.width = halfContentWidth - 1 + px;
 }
 
+function resizeOneContentBox(contentId) {
+	// Get our elements.
+	var content = document.getElementById(contentId);
+	
+	// Increase the height.
+	content.style.height = contentHeight + px;
+	
+	// Widen the content.
+	content.style.width = (contentWidth - 6) + px;
+}
+
+/*
 function resizePermalinkContent() {
 	// Get our elements.
 	var permalinkContent = document.getElementById('permalinkContent');
@@ -109,6 +124,7 @@ function resizePermalinkContent() {
 	// Widen the content.
 	permalinkContent.style.width = (contentWidth - 6) + px;
 }
+*/
 
 function getSize() {
 	// http://www.howtocreate.co.uk/tutorials/javascript/browserwindow

@@ -1,16 +1,15 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 
 public partial class TheHillellis_Archive : System.Web.UI.Page {
 	protected void Page_Load(object sender, EventArgs e) {
+		if (Request.QueryString["id"] != null) {
+			int id = 0;
 
+			if (int.TryParse(Request["id"], out id)) {
+				if (id > 0) {
+					this.ctlContent.ArchiveId = id;
+				}
+			}
+		}
 	}
 }

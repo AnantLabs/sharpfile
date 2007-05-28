@@ -34,4 +34,17 @@ public static class EntriesFactory {
 
 		return null;
 	}
+
+	public static BaseEntries GetArchiveEntries(IBlog blogDAO, int archiveId) {
+		DataTable entriesTable = blogDAO.GetArchiveEntries(archiveId);
+		string username = entriesTable.Rows[0]["Name"].ToString();
+
+		if (username.Equals("lynn")) {
+			return new LynnEntries(entriesTable);
+		} else if (username.Equals("adam")) {
+			return new AdamEntries(entriesTable);
+		}
+
+		return null;
+	}
 }

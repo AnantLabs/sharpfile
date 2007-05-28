@@ -23,8 +23,9 @@ public class Archives : List<Archive> {
 				int id = int.Parse(row["Id"].ToString());
 				DateTime startDate = DateTime.Parse(row["StartDate"].ToString());
 				DateTime endDate = DateTime.Parse(row["EndDate"].ToString());
+				string name = row["Name"].ToString();
 
-				Archive archive = new Archive(id, startDate, endDate);
+				Archive archive = new Archive(id, startDate, endDate, name);
 				this.Add(archive);
 			}
 		}

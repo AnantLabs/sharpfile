@@ -11,8 +11,10 @@ public partial class Controls_HillellisEntry : UserControl {
 	private string titleImageAlternativeText;
 
 	// Used for permalink entries.
-	private string backgroundColor = "";
 	private int entryId = 0;
+
+	// Used for archive entries.
+	private int archiveId = 0;
 
 	private BaseEntries entries;
 	private int lastEntryId = 0;
@@ -20,13 +22,22 @@ public partial class Controls_HillellisEntry : UserControl {
 	protected void Page_Load(object sender, EventArgs e) {
 		TheHillellis theHillellisData = new TheHillellis();
 
-		if (entryId > 0) {
-			entries = EntriesFactory.GetEntries(theHillellisData, entryId);
+		if (entryId > 0 || 
+			archiveId > 0) {
+			string elementId = string.Empty;
+
+			if (entryId > 0) {
+				entries = EntriesFactory.GetEntries(theHillellisData, entryId);
+				elementId = "permalinkContent";
+			} else if (archiveId > 0) {
+				entries = EntriesFactory.GetArchiveEntries(theHillellisData, archiveId);
+				elementId = "archiveContent";
+			}
 
 			string backgroundColor = entries.BackgroundColor;
 			titleImageUrl = entries.TitleImageUrl;
 
-			this.Page.ClientScript.RegisterStartupScript(typeof(string), "changeBackgroundColor", "changeBackgroundColor('permalinkContent', '" + backgroundColor + "');", true);
+			this.Page.ClientScript.RegisterStartupScript(typeof(string), "changeBackgroundColor", "changeBackgroundColor('" + elementId + "', '" + backgroundColor + "');", true);
 		} else if (!string.IsNullOrEmpty(userName)) {
 			entries = EntriesFactory.GetEntries(theHillellisData, userName);
 		} else {
@@ -88,8 +99,8 @@ public partial class Controls_HillellisEntry : UserControl {
 		set { titleImageAlternativeText = value; } 
 	}
 
-	public string BackgroundColor { 
-		get { return backgroundColor; } 
-		set { backgroundColor = value; } 
+	public int ArchiveId { 
+		get { return archiveId; } 
+		set { archiveId = value; } 
 	}
 }

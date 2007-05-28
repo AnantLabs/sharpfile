@@ -70,6 +70,13 @@ namespace Data.Blog {
 		public DataTable GetArchives() {
 			return Select("usp_TheHillellisGetArchives");
 		}
+
+		public DataTable GetArchiveEntries(int archiveId) {
+			SqlParameter[] parameters = getSqlParameters("@ArchiveId", 
+				archiveId);
+
+			return Select("usp_TheHillellisGetArchiveEntries", parameters);
+		}
 		#endregion
 	}
 }
