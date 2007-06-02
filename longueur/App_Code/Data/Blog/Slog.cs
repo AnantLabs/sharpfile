@@ -69,6 +69,10 @@ namespace Data.Blog {
 		public DataTable GetArchiveEntries(int archiveId) {
 			throw new Exception("The method or operation is not implemented.");
 		}
+
+		public DataTable GetEntriesLimited(int rowcount) {
+			throw new Exception("The method or operation is not implemented.");
+		}
 		#endregion
 	}
 }

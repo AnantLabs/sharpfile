@@ -35,6 +35,12 @@ public static class EntriesFactory {
 		return null;
 	}
 
+	public static AdamEntries GetEntriesLimited(IBlog blogDAO, int rowcount) {
+		DataTable entryTable = blogDAO.GetEntriesLimited(rowcount);
+
+		return new AdamEntries(entryTable);
+	}
+
 	public static BaseEntries GetArchiveEntries(IBlog blogDAO, int archiveId) {
 		DataTable entriesTable = blogDAO.GetArchiveEntries(archiveId);
 		string username = entriesTable.Rows[0]["Name"].ToString();

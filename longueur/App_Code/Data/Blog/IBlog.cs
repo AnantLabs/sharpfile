@@ -15,5 +15,6 @@ namespace Data.Blog {
 		DataTable GetArchives();
 		DataTable GetArchives(string name);
 		DataTable GetArchiveEntries(int archiveId);
+		DataTable GetEntriesLimited(int rowcount);
 	}
 }

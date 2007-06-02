@@ -27,6 +27,13 @@ namespace Data.Blog {
 			return Select("usp_TheHillellisGet", parameters);
 		}
 
+		public DataTable GetEntriesLimited(int rowcount) {
+			SqlParameter[] parameters = getSqlParameters("@Rowcount",
+				rowcount);
+
+			return Select("usp_TheHillellisGet", parameters);
+		}
+
 		public DataTable GetEntry(int id) {
 			SqlParameter[] parameters = getSqlParameters("@Id",
 				id);
