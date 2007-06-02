@@ -16,7 +16,8 @@
     <form id="form" runat="server">
     <div id="content">
 		<div id="breadcrumb">
-			<a href="../">longueur.org</a> -> The Hillellis
+			<a href="feed.ashx" title="Read the hilarity without even showing up!"><img src="images/rss.png" style="float:right; padding-top: 1px; border: 0px;" alt="" /></a>
+			<a href="../">longueur.org</a> -> The Hillellis			
 		</div>
 		<div id="logo">
 			<!-- This image actually gets replaced in the javascript that is run onload. -->
