@@ -25,37 +25,6 @@ namespace Domain.Blog {
 			: base(blogDAO, userName) {
 		}
 
-		//public LynnEntries(DataTable entryTable)
-		//    : base() {
-
-		//    populateList(entryTable);
-		//}
-
-		//public LynnEntries(IBlog blogDAO)
-		//    : base() {
-		//    this.blogDAO = blogDAO;
-		//    DataTable entryTable = blogDAO.GetEntries();
-
-		//    populateList(entryTable);
-		//}
-
-		//public LynnEntries(IBlog blogDAO, int entryId)
-		//    : base() {
-		//    this.blogDAO = blogDAO;
-		//    DataTable entryTable = blogDAO.GetEntry(entryId);
-
-		//    populateList(entryTable);
-		//}
-
-		//public LynnEntries(IBlog blogDAO, string userName)
-		//    : base() {
-		//    this.blogDAO = blogDAO;
-		//    int userId = SiteUser.GetId(userName);
-		//    DataTable entryTable = blogDAO.GetEntries(userId);
-
-		//    populateList(entryTable);
-		//}
-
 		protected override void setCustomAttributes() {
 			titleImageUrl = "~/TheHillellis/Images/cupcake_t.png";
 			backgroundColor = "#CC99FF";

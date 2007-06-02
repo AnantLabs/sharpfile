@@ -71,6 +71,13 @@ namespace Data.Blog {
 			return Select("usp_TheHillellisGetArchives");
 		}
 
+		public DataTable GetArchives(string name) {
+			SqlParameter[] parameters = getSqlParameters("@Name",
+				name);
+
+			return Select("usp_TheHillellisGetArchives", parameters);
+		}
+
 		public DataTable GetArchiveEntries(int archiveId) {
 			SqlParameter[] parameters = getSqlParameters("@ArchiveId", 
 				archiveId);

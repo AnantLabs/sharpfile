@@ -15,17 +15,34 @@ public class Archives : List<Archive> {
 		populate();
 	}
 
+	public Archives(IBlog blogDAO, string name) {
+		this.blogDAO = blogDAO;
+
+		populate(name);
+	}
+
 	private void populate() {
+		populate(null);
+	}
+
+	private void populate(string name) {
 		if (blogDAO != null) {
-			DataTable archiveTable = blogDAO.GetArchives();
+			DataTable archiveTable;
+
+			if (!string.IsNullOrEmpty(name)) {
+				archiveTable = blogDAO.GetArchives(name);
+			} else {
+				archiveTable = blogDAO.GetArchives();
+			}
 
 			foreach (DataRow row in archiveTable.Rows) {
 				int id = int.Parse(row["Id"].ToString());
 				DateTime startDate = DateTime.Parse(row["StartDate"].ToString());
 				DateTime endDate = DateTime.Parse(row["EndDate"].ToString());
-				string name = row["Name"].ToString();
+				string userName = row["Name"].ToString();
+				int count = int.Parse(row["Count"].ToString());
 
-				Archive archive = new Archive(id, startDate, endDate, name);
+				Archive archive = new Archive(id, startDate, endDate, userName, count);
 				this.Add(archive);
 			}
 		}

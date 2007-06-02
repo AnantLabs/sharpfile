@@ -67,17 +67,12 @@ a:hover {
 	overflow-x:hidden;
 	overflow-y:auto;
 	}
-	
-#middleSeperator {
-	float:left;
-	margin:0px 5px 0px 0px;
-}
 
 #rightContent {
 	width:389px;
 	padding:2px;
 	margin:0px;
-	float:left;
+	float:right;
 	background-color:#99CCFF;
 	border:1px solid #999;
 	line-height:17px;
@@ -133,8 +128,8 @@ a:hover {
 	text-align: center;
 }
 
-#archives {
-	width:550px;
+#rightArchives {
+	width:250px;
 	padding:2px;
 	margin:5px 0px 5px 0px;
 	background-color:#FFFFCC;
@@ -146,20 +141,58 @@ a:hover {
 	z-index: -1;
 	text-align: left;
 	}
+	
+#rightArchives ul {
+	list-style-type: square;
+	margin-left: 0px;
+	padding-left: 15px;
+	}
+	
+#rightArchiveTitle {
+	font-weight:bold;
+	font-size:16px;
+	line-height:16px;
+	text-align: right;
+}
 
-#archiveTitle {
+#rightArchiveArrow {
+	padding-left:2px;
+	float:right;
+}
+
+#leftArchives {
+	width:250px;
+	padding:2px;
+	margin:5px 0px 5px 0px;
+	background-color:#FFFFCC;
+	border:1px solid #999;
+	line-height:17px;
+	bottom:-30px;
+	height: 40px;
+	position:absolute;
+	z-index: -1;
+	text-align: left;
+	}
+	
+#leftArchives ul {
+	list-style-type: square;
+	margin-left: 0px;
+	padding-left: 15px;
+}
+	
+#leftArchiveTitle {
 	font-weight:bold;
 	font-size:16px;
 	line-height:16px;
 }
 
-#archiveArrow {
-	float:left; 
+#leftArchiveArrow {
+	float:left;
 	padding-right:2px;
 }
 
 #contact {
-	width:250px;
+	width:300px;
 	padding:2px;
 	margin:5px 0px 5px 0px;
 	background-color:#FFFFCC;
@@ -169,7 +202,7 @@ a:hover {
 	height:40px;
 	position:absolute;
 	z-index: -1;
-	text-align:right;
+	text-align:center;
 	}
 
 #contactTitle {
@@ -177,11 +210,6 @@ a:hover {
 	font-size:16px;
 	line-height:16px;
 	padding-right:2px;
-}
-
-#contactArrow {
-	padding-left:2px;
-	float:right;
 }
 
 .title {

@@ -17,35 +17,21 @@
     <div id="content">
 		<div id="breadcrumb">
 			<a href="../">longueur.org</a> -> The Hillellis
-		</div>		
+		</div>
 		<div id="logo">
+			<!-- This image actually gets replaced in the javascript that is run onload. -->
 			<img src="images/logo.png" alt="logo" title="Wherein we make fun of lots of random stuff." />
 		</div>
 			    
 		<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />
 		
-		<div id="archives">
-			<img src="../images/down_arrow.png" alt="" id="archiveArrow" />
-			<div id="archiveTitle">
-				Archives
-			</div>
-
-			<asp:Repeater ID="rptArchives" runat="server">
-				<HeaderTemplate>
-					<ul>
-				</HeaderTemplate>
-				<ItemTemplate>
-					<li><a href='Archive.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "StartDate") %> - <%# DataBinder.Eval(Container.DataItem, "EndDate") %></a> (<%# DataBinder.Eval(Container.DataItem, "Name") %>)</li>
-				</ItemTemplate>
-				<FooterTemplate>
-					</ul>
-				</FooterTemplate>
-			</asp:Repeater>
-			
-			<asp:Label ID="lblNoArchives" runat="server" Visible="false" Text="No archive, yet." />
+		<div id="leftArchives">
+			<lng:archives ID="ctlLeftArchives" runat="server" name="lynn" title="Lynn's Archives" />
+		</div>
+		<div id="rightArchives">
+			<lng:archives ID="ctlRightArchives" runat="server" name="adam" title="Adam's Archives" />
 		</div>
 		<div id="contact">
-			<img src="../images/down_arrow.png" alt="" id="contactArrow" />
 			<div id="contactTitle">
 				Contact
 			</div>

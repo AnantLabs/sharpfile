@@ -62,6 +62,10 @@ namespace Data.Blog {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
+		public DataTable GetArchives(string name) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
 		public DataTable GetArchiveEntries(int archiveId) {
 			throw new Exception("The method or operation is not implemented.");
 		}

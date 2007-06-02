@@ -3,10 +3,13 @@ var height = 0;
 var width = 0;
 var contentHeight = 0;
 var contentWidth = 0;
-var numberOfArchives = 1;
+var numberOfArchives = 2;
+var calculatedFooterHeight = 0;
+var calculatedFooterBottom = 0;
+var archiveWidth = 0;
 
 // These are dependant on the browser being used.
-var heightOfArchiveItems = 18;
+var heightOfArchiveItems = 36;
 var yPositionOfContent = 0;
 
 function addListener(element, event, listener, bubble) {
@@ -29,43 +32,55 @@ function changeBackgroundColor(elementId, color) {
 }
 
 function onLoad() {
-	var headerHeight = 130;
+	var headerHeight;
 	var footerHeight = 25;
 	var marginWidth = 300;
 	
 	// Set our global vars.
 	getSize();
 	
+	// Set our header height base don the width.
+	if (width < 850) {
+		document.getElementById('logo').innerHTML = '<img src=\'images/logo_t.png\' alt=\'logo\' title=\'Wherein we make fun of lots of random stuff.\' />';
+		headerHeight = 65;
+	} else {
+		document.getElementById('logo').innerHTML = '<img src=\'images/logo.png\' alt=\'logo\' title=\'Wherein we make fun of lots of random stuff.\' />';
+		headerHeight = 90;
+	}
+	
 	// Resize the content.
 	var content = document.getElementById('content');
-	contentHeight = (height - headerHeight - footerHeight);
+	contentHeight = (height - headerHeight - footerHeight) + 3;
 	contentWidth = (width - marginWidth);
 	content.style.width = contentWidth + px;
 	
 	// Calculate the footer's correct height.
-	var calculatedFooterHeight = footerHeight + (numberOfArchives * heightOfArchiveItems);
-	var calculatedFooterBottom = '-' + (calculatedFooterHeight - 10);
+	calculatedFooterHeight = footerHeight + (numberOfArchives * heightOfArchiveItems);
+	calculatedFooterBottom = '-' + (calculatedFooterHeight - 10);
 	
 	// Define how wide the contact box is (need for to calculate the archive info).
-	var contactWidth = 250;
+	var contact = document.getElementById('contact');
+	var rightArchivesLeftPosition;
+	
+	// Show the contact footer and size it and position it based on the window width.
+	if (width < 915) {
+		archiveWidth = (contentWidth - 15) / 2;
+		rightArchivesLeftPosition = yPositionOfContent + 10 + archiveWidth;
+		
+		resizeContactElement(contentWidth - 5, yPositionOfContent, calculatedFooterBottom - calculatedFooterHeight - 10);
+	} else {
+		var contactWidth = 250;
+		archiveWidth = (contentWidth - contactWidth - 15) / 2;
+		
+		var contactPosition = yPositionOfContent + archiveWidth + 10;
+		rightArchivesLeftPosition = contactPosition + contactWidth;
+		
+		resizeContactElement(contactWidth - 10, contactPosition, calculatedFooterBottom);		
+	}
 	
 	// Show the archive footer and size it.
-	var archives = document.getElementById('archives');
-	var archiveWidth = contentWidth - contactWidth - 15;
-	archives.style.zIndex = 0;
-	archives.style.width = archiveWidth + px;
-	archives.style.left = yPositionOfContent + px;
-	archives.style.height = calculatedFooterHeight + px;
-	archives.style.bottom = calculatedFooterBottom + px;
-	
-	// Show the contact footer and size it and position it.
-	var contact = document.getElementById('contact');
-	var contactPosition = yPositionOfContent + archiveWidth;
-	contact.style.zIndex = 0;
-	contact.style.width = contactWidth;
-	contact.style.left = contactPosition + 10 + px;
-	contact.style.height = calculatedFooterHeight + px;
-	contact.style.bottom = calculatedFooterBottom + px;
+	resizeFooterElement('leftArchives', yPositionOfContent);
+	resizeFooterElement('rightArchives', rightArchivesLeftPosition);
 	
 	var url = location.href;
 	var filename = url.substring(url.lastIndexOf('/') + 1, url.length).toLowerCase();
@@ -79,15 +94,32 @@ function onLoad() {
 		filename == 'default.aspx') {
 		resizeDefaultContent();
 	} else if (filename == 'permalink.aspx') {
-		//resizePermalinkContent();
 		resizeOneContentBox('permalinkContent');
 	} else if (filename == 'archive.aspx') {
 		resizeOneContentBox('archiveContent');
 	}
 }
 
+function resizeFooterElement(elementId, leftPosition) {
+	var element = document.getElementById(elementId);
+	element.style.zIndex = 0;
+	element.style.width = archiveWidth + px;
+	element.style.height = calculatedFooterHeight + px;
+	element.style.bottom = calculatedFooterBottom + px;
+	element.style.left = leftPosition + px;	
+}
+
+function resizeContactElement(width, leftPosition, bottom) {
+	var contact = document.getElementById('contact');
+	contact.style.zIndex = 0;
+	contact.style.width = width + px;
+	contact.style.height = calculatedFooterHeight + px;
+	contact.style.bottom = bottom + px;
+	contact.style.left = leftPosition + px;
+}
+
 function resizeDefaultContent() {
-	var halfContentWidth = ((contentWidth - 21) / 2);
+	var halfContentWidth = ((contentWidth - 16) / 2);
 	
 	// Get our elements.
 	var rightContent = document.getElementById('rightContent');
@@ -113,19 +145,6 @@ function resizeOneContentBox(contentId) {
 	content.style.width = (contentWidth - 6) + px;
 }
 
-/*
-function resizePermalinkContent() {
-	// Get our elements.
-	var permalinkContent = document.getElementById('permalinkContent');
-	
-	// Increase the height.
-	permalinkContent.style.height = contentHeight + px;
-	
-	// Widen the content.
-	permalinkContent.style.width = (contentWidth - 6) + px;
-}
-*/
-
 function getSize() {
 	// http://www.howtocreate.co.uk/tutorials/javascript/browserwindow
 	if (typeof(window.innerWidth) == 'number') {
@@ -138,8 +157,8 @@ function getSize() {
 		//IE 6+ in 'standards compliant mode'
 		height = document.documentElement.clientHeight - 15;
 		width = document.documentElement.clientWidth - 15;
-		yPositionOfContent = 155;
-		heightOfArchiveItems = 21;
+		yPositionOfContent = 156;
+		heightOfArchiveItems = 42;
 	} else if (document.body && 
 		(document.body.clientWidth || document.body.clientHeight)) {
 		//IE 4 compatible

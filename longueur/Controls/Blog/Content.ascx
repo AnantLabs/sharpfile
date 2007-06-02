@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeFile="HillellisContent.ascx.cs" Inherits="Controls_HillellisEntry" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeFile="Content.ascx.cs" Inherits="Controls_HillellisEntry" %>
 
 <asp:PlaceHolder ID="phTopHat" runat="server">
 	<div id="titleImage">
