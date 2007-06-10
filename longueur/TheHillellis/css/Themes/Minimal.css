@@ -1,0 +1,73 @@
+﻿body {
+	color:#333333;
+	background-color:#FFFFFF;
+	}
+	
+h1 {
+	color:#000000;
+	}
+	
+a {
+	color:#000000;
+}
+	
+a:link {
+	color:#000000;
+	}
+	
+a:visited {
+	color:#000000;
+	}
+	
+a:hover {
+	background-color:#999999;
+	}
+
+#leftContent {
+	background-color:#EEEEEE;
+	}
+
+#rightContent {
+	background-color:#EEEEEE;
+	}
+	
+#permalinkContent {
+	background-color: #EEEEEE;
+}
+
+#archiveContent {
+	background-color: #EEEEEE;
+}
+
+#breadcrumb 
+{
+	background-color: #EEEEEE;
+}
+
+#logo {
+	background-color: #EEEEEE;
+}
+
+#rightArchives {
+	background-color:#EEEEEE;
+}
+	
+#rightArchives ul {
+	list-style-type: square;
+	}
+
+#leftArchives {
+	background-color:#EEEEEE;
+	}
+	
+#leftArchives ul {
+	list-style-type: square;
+}
+	
+#contact {
+	background-color:#EEEEEE;
+}
+
+.entryHr {
+	color: #000000;
+}

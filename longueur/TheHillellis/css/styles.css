@@ -61,7 +61,7 @@ a:hover {
 	margin:0px;
 	float:left;
 	background-color:#CC99FF;
-	border:1px solid #999;
+	border:1px solid #999999;
 	line-height:17px;
 	overflow:auto;
 	overflow-x:hidden;
@@ -74,7 +74,7 @@ a:hover {
 	margin:0px;
 	float:right;
 	background-color:#99CCFF;
-	border:1px solid #999;
+	border:1px solid #999999;
 	line-height:17px;
 	overflow:auto;
 	overflow-x:hidden;

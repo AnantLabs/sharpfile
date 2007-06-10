@@ -9,6 +9,9 @@ using System.Configuration;
 public partial class TheHillellis_Default : MasterPage
 {
 	protected void Page_Load(object sender, EventArgs e) {
+		if (false) {
+			styles.InnerHtml += "@import \"css/themes/minimal.css\";";
+		}
 	}
 
 	protected override void OnPreRender(EventArgs e) {

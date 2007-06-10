@@ -34,7 +34,7 @@ function changeBackgroundColor(elementId, color) {
 function onLoad() {
 	var headerHeight;
 	var footerHeight = 25;
-	var marginWidth = 300;
+	var marginWidth = 299;
 	
 	// Set our global vars.
 	getSize();
