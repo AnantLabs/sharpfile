@@ -16,12 +16,15 @@
     <form id="form" runat="server">
     <div id="content">
 		<div id="breadcrumb">
-			<a href="feed.ashx" title="Read the hilarity without even showing up!"><img src="images/rss.png" style="float:right; padding-top: 1px; border: 0px;" alt="" /></a>
+			<a href="feed.ashx" title="Read the hilarity without even showing up!"><img src="images/rss.png" style="float:right; margin-top: 1px; border: 0px;" alt="" /></a>
+			<div style="float:right; margin-right: 2px;">
+				<asp:DropDownList ID="ddlThemes" runat="server" height="16" AutoPostBack="true" style="font-size: xx-small; font-family: Verdana" />
+			</div>
 			<a href="../">longueur.org</a> -> The Hillellis			
 		</div>
 		<div id="logo">
 			<!-- This image actually gets replaced in the javascript that is run onload. -->
-			<img src="images/logo.png" alt="logo" title="Wherein we make fun of lots of random stuff." />
+			<!--<img src="images/logo.png" alt="logo" title="Wherein we make fun of lots of random stuff." />-->
 		</div>
 			    
 		<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />

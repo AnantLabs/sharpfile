@@ -5,25 +5,47 @@ using Data.Blog;
 using System.Web.Caching;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Collections.Generic;
+using System.Web;
 
-public partial class TheHillellis_Default : MasterPage
-{
+public partial class TheHillellis_Default : MasterPage {
 	protected void Page_Load(object sender, EventArgs e) {
-		if (false) {
-			styles.InnerHtml += "@import \"css/themes/minimal.css\";";
+		if (!IsPostBack) {
+			// This should use the enum defined.
+			Dictionary<string, int> themes = new Dictionary<string, int>(2);
+			themes.Add("Spring", 1);
+			themes.Add("Minimal", 2);
+
+			ddlThemes.DataSource = themes;
+			ddlThemes.DataTextField = "Key";
+			ddlThemes.DataValueField = "Value";
+			ddlThemes.DataBind();
+
+			if (this.Request.Cookies["TheHillellis"] != null &&
+				!string.IsNullOrEmpty(this.Request.Cookies["TheHillellis"]["Theme"])) {
+				ThemeType theme = (ThemeType)Enum.Parse(typeof(ThemeType), this.Request.Cookies["TheHillellis"]["Theme"]);
+				ddlThemes.SelectedValue = ((int)theme).ToString();
+				styles.InnerHtml += "@import \"css/themes/" + theme.ToString() + ".css\";";
+			}
+		} else {
+			HttpCookie cookie = new HttpCookie("TheHillellis");
+			cookie.Values["Theme"] = ddlThemes.SelectedValue;
+			cookie.Expires = DateTime.Now.AddYears(30);
+			this.Response.Cookies.Add(cookie);
+
+			ThemeType theme = (ThemeType)Enum.Parse(typeof(ThemeType), ddlThemes.SelectedValue);
+			styles.InnerHtml += "@import \"css/themes/" + theme.ToString() + ".css\";";
 		}
 	}
 
 	protected override void OnPreRender(EventArgs e) {
 		base.OnPreRender(e);
 
-		if (!IsPostBack) {
-			string onLoadJavascript = @"
+		string onLoadJavascript = @"
 addListener(this, 'load', function() { numberOfArchives = " + ctlLeftArchives.Count + @"; onLoad(); });
 addListener(this, 'resize', function() { onLoad(); });
 ";
 
-			this.Page.ClientScript.RegisterClientScriptBlock(typeof(string), "onLoad", onLoadJavascript, true);
-		}
+		this.Page.ClientScript.RegisterClientScriptBlock(typeof(string), "onLoad", onLoadJavascript, true);
 	}
 }

@@ -21,16 +21,22 @@ public partial class Controls_HillellisEntry : UserControl {
 
 	protected void Page_Load(object sender, EventArgs e) {
 		TheHillellis theHillellisData = new TheHillellis();
+		ThemeType themeType = ThemeType.Spring;
+
+		if (this.Request.Cookies["TheHillellis"] != null &&
+			!string.IsNullOrEmpty(this.Request.Cookies["TheHillellis"]["Theme"])) {
+			themeType = (ThemeType)Enum.Parse(typeof(ThemeType), this.Request.Cookies["TheHillellis"]["Theme"]);
+		}
 
 		if (entryId > 0 || 
 			archiveId > 0) {
 			string elementId = string.Empty;
 
 			if (entryId > 0) {
-				entries = EntriesFactory.GetEntries(theHillellisData, entryId);
+				entries = EntriesFactory.GetEntries(themeType, theHillellisData, entryId);
 				elementId = "permalinkContent";
 			} else if (archiveId > 0) {
-				entries = EntriesFactory.GetArchiveEntries(theHillellisData, archiveId);
+				entries = EntriesFactory.GetArchiveEntries(themeType, theHillellisData, archiveId);
 				elementId = "archiveContent";
 			}
 
@@ -39,7 +45,7 @@ public partial class Controls_HillellisEntry : UserControl {
 
 			this.Page.ClientScript.RegisterStartupScript(typeof(string), "changeBackgroundColor", "changeBackgroundColor('" + elementId + "', '" + backgroundColor + "');", true);
 		} else if (!string.IsNullOrEmpty(userName)) {
-			entries = EntriesFactory.GetEntries(theHillellisData, userName);
+			entries = EntriesFactory.GetEntries(themeType, theHillellisData, userName);
 		} else {
 			rptContent.Visible = false;
 			phTopHat.Visible = false;

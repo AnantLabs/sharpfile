@@ -19,7 +19,7 @@ public partial class Admin_TheHillellis : Page
 			int id = 0;
 
 			if (string.IsNullOrEmpty(Request.QueryString[_id])) {
-				rptSlogs.DataSource = EntriesFactory.GetEntries(blogDAO);
+				rptSlogs.DataSource = EntriesFactory.GetEntries(ThemeType.Minimal, blogDAO);
 				rptSlogs.DataBind();
 			} else if (int.TryParse(Request.QueryString[_id], out id)) {
 				divSlogInfo.Visible = true;

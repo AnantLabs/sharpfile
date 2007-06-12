@@ -9,25 +9,33 @@ namespace Domain.Blog {
 	/// Summary description for Entries
 	/// </summary>
 	public class LynnEntries : BaseEntries {
-		public LynnEntries(DataTable entryTable)
-			: base(entryTable) {
+		public LynnEntries(ThemeType themeType, DataTable entryTable)
+			: base(themeType, entryTable) {
 		}
 
-		public LynnEntries(IBlog blogDAO)
-			: base(blogDAO) {
+		public LynnEntries(ThemeType themeType, IBlog blogDAO)
+			: base(themeType, blogDAO) {
 		}
 
-		public LynnEntries(IBlog blogDAO, int entryId)
-			: base(blogDAO, entryId) {
+		public LynnEntries(ThemeType themeType, IBlog blogDAO, int entryId)
+			: base(themeType, blogDAO, entryId) {
 		}
 
-		public LynnEntries(IBlog blogDAO, string userName)
-			: base(blogDAO, userName) {
+		public LynnEntries(ThemeType themeType, IBlog blogDAO, string userName)
+			: base(themeType, blogDAO, userName) {
 		}
 
 		protected override void setCustomAttributes() {
 			titleImageUrl = "~/TheHillellis/Images/cupcake_t.png";
-			backgroundColor = "#CC99FF";
+
+			switch (themeType) {
+				case ThemeType.Spring:
+					backgroundColor = "#CC99FF";
+					break;
+				case ThemeType.Minimal:
+					backgroundColor = "#EEEEEE";
+					break;
+			}
 		}
 	}
 }

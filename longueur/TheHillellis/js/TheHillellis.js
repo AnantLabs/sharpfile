@@ -41,11 +41,17 @@ function onLoad() {
 	
 	// Set our header height base don the width.
 	if (width < 850) {
-		document.getElementById('logo').innerHTML = '<img src=\'images/logo_t.png\' alt=\'logo\' title=\'Wherein we make fun of lots of random stuff.\' />';
-		headerHeight = 65;
+		headerHeight = 23;
+		document.getElementById('logo').style.display = 'none';
+		//document.getElementById('logo').innerHTML = '<img src=\'images/logo_t.png\' alt=\'logo\' title=\'Wherein we make fun of lots of random stuff.\' />';
+		//document.getElementById('logo').style.height = headerHeight - 30 + px;
+		//document.getElementById('logo').style.backgroundImage = 'url(\'\')';
+		
 	} else {
-		document.getElementById('logo').innerHTML = '<img src=\'images/logo.png\' alt=\'logo\' title=\'Wherein we make fun of lots of random stuff.\' />';
 		headerHeight = 90;
+		document.getElementById('logo').style.display = '';
+		document.getElementById('logo').innerHTML = '';
+		document.getElementById('logo').style.height = headerHeight - 30 + px;
 	}
 	
 	// Resize the content.

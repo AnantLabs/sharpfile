@@ -57,7 +57,7 @@ public class Feed : IHttpHandler {
 			xml.WriteElementString("description", "Latest entries from the Hillellis!");
 			xml.WriteElementString("ttl", "60");
 
-			List<Entry> entries = EntriesFactory.GetEntriesLimited(new TheHillellis(), numberOfEntries);
+			List<Entry> entries = EntriesFactory.GetEntriesLimited(ThemeType.Minimal, new TheHillellis(), numberOfEntries);
 
 			foreach (Entry entry in entries) {
 				xml.WriteStartElement("item");

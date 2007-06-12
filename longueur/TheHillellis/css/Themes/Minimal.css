@@ -45,7 +45,7 @@ a:hover {
 }
 
 #logo {
-	background-color: #EEEEEE;
+	background: #EEEEEE url('../../images/logo_minimal.png') repeat-x;
 }
 
 #rightArchives {
