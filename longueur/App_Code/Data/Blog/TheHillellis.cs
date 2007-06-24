@@ -4,6 +4,8 @@ using System.Data.SqlClient;
 using Data;
 using System.Configuration;
 using System.Web.Configuration;
+using System.IO;
+using System.Web;
 
 namespace Data.Blog {
 	/// <summary>
@@ -46,16 +48,18 @@ namespace Data.Blog {
 			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
 
 			if (configuration.AppSettings.Settings[timezoneDifferenceSetting] != null) {
-				if (int.TryParse(configuration.AppSettings.Settings[timezoneDifferenceSetting].Value, out timezoneDifference)) {
-					dateTime.AddHours(timezoneDifference);
-				}
+                int.TryParse(configuration.AppSettings.Settings[timezoneDifferenceSetting].Value, out timezoneDifference);
 			}
+
+            DateTime adjustedDateTime = dateTime.AddHours(timezoneDifference);
+
+            backupEntry(title, content, adjustedDateTime, userId, false);
 
 			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title,@DateTime",
 				content, 
 				userId, 
 				title, 
-				dateTime.AddHours(timezoneDifference));
+				adjustedDateTime);
 
 			NonQuery("usp_TheHillellisInsert", parameters);
 		}
@@ -65,6 +69,8 @@ namespace Data.Blog {
 		}
 
 		public void UpdateEntry(int id, string title, string content, int userId) {
+            backupEntry(title, content, DateTime.Now, userId, true);
+
 			SqlParameter[] parameters = getSqlParameters("@Id,@Content,@UserId,@Title",
 				id, 
 				content, 
@@ -92,5 +98,32 @@ namespace Data.Blog {
 			return Select("usp_TheHillellisGetArchiveEntries", parameters);
 		}
 		#endregion
+
+        private void backupEntry(string title, string content, DateTime dateTime, int userId, bool isUpdatedEntry)
+        {
+            try
+            {
+                string physicalPath = string.Format("{0}/Admin/TheHillellis/{1}_{2}",
+                    HttpContext.Current.Request.MapPath(HttpContext.Current.Request.ApplicationPath),
+                    dateTime.ToString("MMddyyyy_HHmmss"),
+                    userId);
+
+                if (isUpdatedEntry)
+                {
+                    physicalPath += "_u";
+                }
+
+                using (StreamWriter sw = File.CreateText(physicalPath + ".txt"))
+                {
+                    sw.WriteLine(title);
+                    sw.WriteLine(content);
+                    sw.Flush();
+                }
+            }
+            catch (Exception ex)
+            {
+                Data.Admin.InsertErrorLog(ex);
+            }
+        }
 	}
 }

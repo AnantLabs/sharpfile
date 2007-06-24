@@ -14,9 +14,17 @@
     { 
         // Code that runs when an unhandled error occurs.
 		// Get reference to the source of the exception chain.
+        try
+        {
 		Exception exception = Server.GetLastError().GetBaseException();
-
 		Data.Admin.InsertErrorLog(exception);
+        }
+        catch (Exception ex)
+        {
+			try {
+				Data.Admin.InsertErrorLog("There was an exception getting the base exception.", "Logging the error.");
+			} catch { }
+        }
     }
 
     void Session_Start(object sender, EventArgs e) 

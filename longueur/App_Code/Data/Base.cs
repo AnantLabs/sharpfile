@@ -19,6 +19,7 @@ namespace Data {
 		private static object lockObject = new object();
 
 		private static string encryptConnectionString() {
+			try {
 			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
 			ConfigurationSection section = configuration.GetSection(Constants.ConnectionStrings);
 
@@ -34,6 +35,9 @@ namespace Data {
 						}
 					}
 				}
+			}
+			} catch { 
+				// Can't log this error, so don't really do anything right here.
 			}
 
 			return ConfigurationManager.ConnectionStrings[Constants.LongueurConnectionString].ConnectionString;

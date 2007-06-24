@@ -1,6 +1,5 @@
 - The Hillellis
 	- tags
-	- archives
 	
 - Abstraction of blog user controls (maybe not possible, or necessary)
 	
@@ -27,7 +26,5 @@
 
 - Forms auth on IndieLyrics
 	- use login control on the indielyrics login page
-
--RSS feeds (for everything!)
 
 - don't count a configuration IP address (mine!) from being logged in downloads
