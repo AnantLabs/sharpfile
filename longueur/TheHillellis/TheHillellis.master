@@ -36,11 +36,16 @@
 			<lng:archives ID="ctlRightArchives" runat="server" name="adam" title="Adam's Archives" />
 		</div>
 		<div id="contact">
-			<div id="contactTitle">
-				Contact
-			</div>
-
-			thehillellis__AT__gmail__DOT__com
+			<asp:Repeater ID="rptLinks" runat="server">
+				<HeaderTemplate>
+					<div id="contactTitle">
+						Links
+					</div>
+				</HeaderTemplate>
+				<ItemTemplate>
+					<a href='<%# DataBinder.Eval(Container.DataItem, "Href").ToString() %>'><%# DataBinder.Eval(Container.DataItem, "Description").ToString() %></a><br />
+				</ItemTemplate>
+			</asp:Repeater>
 		</div>
     </div>
     </form>

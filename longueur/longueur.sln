@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\#source_code\longueur\", ".", "{18450D84-58E6-4206-8CEE-4E0B0CAEAEBD}"
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\#source_code\Longueur\", ".", "{18450D84-58E6-4206-8CEE-4E0B0CAEAEBD}"
 	ProjectSection(WebsiteProperties) = preProject
 		SccProjectName = ""
 		SccAuxPath = ""
 		SccLocalPath = ""
 		SccProvider = ""
-		ProjectReferences = "{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}|Common.dll;"
+		ProjectReferences = ""
 		Debug.AspNetCompiler.VirtualPath = "/longueur"
 		Debug.AspNetCompiler.PhysicalPath = "..\longueur\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\longueur\"
@@ -24,8 +24,6 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "C:\#source_code\longueur\",
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "1468"
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\Common\Common.csproj", "{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}"
 EndProject
 Project("{4F174C21-8C12-11D0-8340-0000F80270F8}") = "Sql", "Sql\Sql.dbp", "{09B8DA0B-91DC-4DA4-8077-B2A9B4139278}"
 EndProject
@@ -49,16 +47,6 @@ Global
 		{18450D84-58E6-4206-8CEE-4E0B0CAEAEBD}.Release|Any CPU.ActiveCfg = Debug|.NET
 		{18450D84-58E6-4206-8CEE-4E0B0CAEAEBD}.Release|Mixed Platforms.ActiveCfg = Debug|.NET
 		{18450D84-58E6-4206-8CEE-4E0B0CAEAEBD}.Release|Mixed Platforms.Build.0 = Debug|.NET
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Release|.NET.ActiveCfg = Release|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Release|Any CPU.Build.0 = Release|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

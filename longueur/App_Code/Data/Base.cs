@@ -16,7 +16,7 @@ namespace Data {
 		
 		private static SqlConnection _sqlConnection;
 
-		private static object lockObject = new object();
+		protected static object lockObject = new object();
 
 		private static string encryptConnectionString() {
 			try {
@@ -117,7 +117,7 @@ namespace Data {
 		#endregion
 
 		#region Private getters
-		private static SqlConnection sqlConnection {
+		protected static SqlConnection sqlConnection {
 			get {
 				if (_sqlConnection == null) {
 					string connectionString = encryptConnectionString();

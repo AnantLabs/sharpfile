@@ -27,6 +27,10 @@ public partial class TheHillellis_Default : MasterPage {
 				ddlThemes.SelectedValue = ((int)theme).ToString();
 				styles.InnerHtml += "@import \"css/themes/" + theme.ToString() + ".css\";";
 			}
+
+			Data.Blog.TheHillellis t = new TheHillellis();
+			rptLinks.DataSource = t.GetLinks();
+			rptLinks.DataBind();
 		} else {
 			HttpCookie cookie = new HttpCookie("TheHillellis");
 			cookie.Values["Theme"] = ddlThemes.SelectedValue;

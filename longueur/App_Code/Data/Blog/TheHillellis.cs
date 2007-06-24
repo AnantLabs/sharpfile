@@ -1,11 +1,13 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using Data;
 using System.Configuration;
 using System.Web.Configuration;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
+using Data;
+using Data.DAL;
 
 namespace Data.Blog {
 	/// <summary>
@@ -98,6 +100,10 @@ namespace Data.Blog {
 			return Select("usp_TheHillellisGetArchiveEntries", parameters);
 		}
 		#endregion
+
+		public List<Link> GetLinks() {
+			return DBHelper.ReadCollection<Link>("usp_TheHillellisGetLinks");
+		}
 
         private void backupEntry(string title, string content, DateTime dateTime, int userId, bool isUpdatedEntry)
         {
