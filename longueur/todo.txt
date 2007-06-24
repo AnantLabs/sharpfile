@@ -1,3 +1,9 @@
+- Links admin page
+- Push link-ified master page out to live
+
+- Re-write /SOftware in .NET (domain layer, DAL, repeater, admin page)
+	- Add ExchangeReader
+
 - The Hillellis
 	- tags
 	
@@ -22,7 +28,6 @@
 
 - Encrypt web.config
 - Remember me functionality (front-end only. I think)
-- log out funtionality
 
 - Forms auth on IndieLyrics
 	- use login control on the indielyrics login page
