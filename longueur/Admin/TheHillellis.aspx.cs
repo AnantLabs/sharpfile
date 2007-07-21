@@ -110,6 +110,7 @@ public partial class Admin_TheHillellis : Page
 	void btnNewSubmit_Click(object sender, EventArgs e) {
 		if (authenticate()) {
 			int id = 0;
+			Session["ArchiveCount"] = null;
 
 			if (int.TryParse(((FormsIdentity)HttpContext.Current.User.Identity).Name, out id)) {
 				blogDAO.InsertEntry(txtNewTitle.Text, txtNewContent.Text, id, DateTime.Now);

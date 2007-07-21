@@ -13,7 +13,8 @@ public partial class Controls_Blog_Archives : System.Web.UI.UserControl {
 
 	protected void Page_Load(object sender, EventArgs e) {
 		if (!IsPostBack) {
-			Archives archives = getArchivesFromCache();
+			//Archives archives = getArchivesFromCache();
+			Archives archives = new Archives(new TheHillellis(), name);
 
 			rptArchives.DataSource = archives;
 			rptArchives.DataBind();
@@ -35,22 +36,22 @@ public partial class Controls_Blog_Archives : System.Web.UI.UserControl {
 		}
 	}
 
-	private Archives getArchivesFromCache() {
-		if (Cache[archivesCacheKey + "_" + name] == null) {
-			Archives archives = new Archives(new TheHillellis(), name);
-			string connectionString = ConfigurationManager.ConnectionStrings[Constants.LongueurConnectionString].ConnectionString;
+	//private Archives getArchivesFromCache() {
+	//    if (Cache[archivesCacheKey + "_" + name] == null) {
+	//        Archives archives = new Archives(new TheHillellis(), name);
+	//        string connectionString = ConfigurationManager.ConnectionStrings[Constants.LongueurConnectionString].ConnectionString;
 
-			Cache.Add(archivesCacheKey + "_" + name,
-				archives,
-				new SqlCacheDependency(new SqlCommand("SELECT * FROM Archive", new SqlConnection(connectionString))),
-				Cache.NoAbsoluteExpiration,
-				new TimeSpan(1, 0, 0, 0),
-				CacheItemPriority.Normal,
-				null);
-		}
+	//        Cache.Add(archivesCacheKey + "_" + name,
+	//            archives,
+	//            new SqlCacheDependency(new SqlCommand("SELECT * FROM Archive", new SqlConnection(connectionString))),
+	//            Cache.NoAbsoluteExpiration,
+	//            new TimeSpan(1, 0, 0, 0),
+	//            CacheItemPriority.Normal,
+	//            null);
+	//    }
 
-		return (Archives)Cache[archivesCacheKey + "_" + name];
-	}
+	//    return (Archives)Cache[archivesCacheKey + "_" + name];
+	//}
 
 	public int Count {
 		get {
@@ -58,13 +59,13 @@ public partial class Controls_Blog_Archives : System.Web.UI.UserControl {
 		}
 	}
 
-	public string Name { 
-		get { 
-			return name; 
-		} 
-		set { 
-			name = value; 
-		} 
+	public string Name {
+		get {
+			return name;
+		}
+		set {
+			name = value;
+		}
 	}
 
 	public string Title { 

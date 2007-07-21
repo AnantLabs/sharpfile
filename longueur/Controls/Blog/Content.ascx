@@ -1,4 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeFile="Content.ascx.cs" Inherits="Controls_HillellisEntry" %>
+<%@ OutputCache Duration="60" Shared="false" VaryByParam="id" VaryByCustom="Theme" %>
 
 <asp:PlaceHolder ID="phTopHat" runat="server">
 	<div id="titleImage">

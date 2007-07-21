@@ -44,9 +44,27 @@ public partial class TheHillellis_Default : MasterPage {
 
 	protected override void OnPreRender(EventArgs e) {
 		base.OnPreRender(e);
+		int archiveCount = 0;
+
+		if (ctlLeftArchives != null && ctlRightArchives != null) {
+			int leftCount = ctlLeftArchives.Count;
+			int rightCount = ctlRightArchives.Count;
+
+			if (leftCount == rightCount) {
+				archiveCount = leftCount;
+			} else if (leftCount < rightCount) {
+				archiveCount = rightCount;
+			} else {
+				archiveCount = leftCount;
+			}
+
+			Session.Add("ArchiveCount", archiveCount);
+		} else if (Session["ArchiveCount"] != null) {
+			archiveCount = (int)Session["ArchiveCount"];
+		}
 
 		string onLoadJavascript = @"
-addListener(this, 'load', function() { numberOfArchives = " + ctlLeftArchives.Count + @"; onLoad(); });
+addListener(this, 'load', function() { numberOfArchives = " + archiveCount + @"; onLoad(); });
 addListener(this, 'resize', function() { onLoad(); });
 ";
 
