@@ -7,6 +7,7 @@ var numberOfArchives = 2;
 var calculatedFooterHeight = 0;
 var calculatedFooterBottom = 0;
 var archiveWidth = 0;
+var marginWidth = 100;
 
 // These are dependant on the browser being used.
 var heightOfArchiveItems = 36;
@@ -34,24 +35,24 @@ function changeBackgroundColor(elementId, color) {
 function onLoad() {
 	var headerHeight;
 	var footerHeight = 25;
-	var marginWidth = 299;
 	
 	// Set our global vars.
 	getSize();
 	
-	// Set our header height base don the width.
+	var logo = document.getElementById('logo');
+	
+	// Set our header height based on the width.
 	if (width < 850) {
 		headerHeight = 23;
-		document.getElementById('logo').style.display = 'none';
+		logo.style.display = 'none';
 		//document.getElementById('logo').innerHTML = '<img src=\'images/logo_t.png\' alt=\'logo\' title=\'Wherein we make fun of lots of random stuff.\' />';
 		//document.getElementById('logo').style.height = headerHeight - 30 + px;
 		//document.getElementById('logo').style.backgroundImage = 'url(\'\')';
-		
 	} else {
 		headerHeight = 90;
-		document.getElementById('logo').style.display = '';
-		document.getElementById('logo').innerHTML = '';
-		document.getElementById('logo').style.height = headerHeight - 30 + px;
+		logo.style.display = '';
+		logo.innerHTML = '';
+		logo.style.height = headerHeight - 30 + px;
 	}
 	
 	// Resize the content.
@@ -63,8 +64,8 @@ function onLoad() {
 	// Calculate the footer's correct height.
 	calculatedFooterHeight = footerHeight + (numberOfArchives * heightOfArchiveItems);
 	calculatedFooterBottom = '-' + (calculatedFooterHeight - 10);
-	
-	// Define how wide the contact box is (need for to calculate the archive info).
+
+	// Define how wide the contact box is (needed to calculate the archive widths).
 	var contact = document.getElementById('contact');
 	var rightArchivesLeftPosition;
 	
@@ -80,7 +81,6 @@ function onLoad() {
 		
 		var contactPosition = yPositionOfContent + archiveWidth + 10;
 		rightArchivesLeftPosition = contactPosition + contactWidth;
-		
 		resizeContactElement(contactWidth - 10, contactPosition, calculatedFooterBottom);		
 	}
 	
@@ -110,7 +110,7 @@ function resizeFooterElement(elementId, leftPosition) {
 	var element = document.getElementById(elementId);
 	element.style.zIndex = 0;
 	element.style.width = archiveWidth + px;
-	element.style.height = calculatedFooterHeight + px;
+	element.style.height = calculatedFooterHeight + px;	
 	element.style.bottom = calculatedFooterBottom + px;
 	element.style.left = leftPosition + px;	
 }
@@ -157,14 +157,14 @@ function getSize() {
 		//Non-IE
 		height = window.innerHeight - 15;
 		width = window.innerWidth - 15;
-		yPositionOfContent = 148;
+		yPositionOfContent = (marginWidth / 2) - 1;
 	} else if (document.documentElement && 
 		(document.documentElement.clientWidth || document.documentElement.clientHeight)) {
 		//IE 6+ in 'standards compliant mode'
 		height = document.documentElement.clientHeight - 15;
 		width = document.documentElement.clientWidth - 15;
-		yPositionOfContent = 156;
-		heightOfArchiveItems = 42;
+		yPositionOfContent = (marginWidth / 2) + 7;
+		heightOfArchiveItems = 63;
 	} else if (document.body && 
 		(document.body.clientWidth || document.body.clientHeight)) {
 		//IE 4 compatible
@@ -172,4 +172,3 @@ function getSize() {
 		width = document.body.clientWidth - 35;
 	}
 }
-

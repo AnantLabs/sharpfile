@@ -22,9 +22,7 @@
 			</div>
 			<a href="../">longueur.org</a> -> The Hillellis			
 		</div>
-		<div id="logo">
-			<!-- This image actually gets replaced in the javascript that is run onload. -->
-			<!--<img src="images/logo.png" alt="logo" title="Wherein we make fun of lots of random stuff." />-->
+		<div id="logo" style="display:none">
 		</div>
 			    
 		<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />

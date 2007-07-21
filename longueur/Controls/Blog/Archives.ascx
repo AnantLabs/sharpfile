@@ -19,7 +19,7 @@
 		<ul>
 	</HeaderTemplate>
 	<ItemTemplate>
-		<li><a href='Archive.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "StartDate") %> -<br /><%# DataBinder.Eval(Container.DataItem, "EndDate") %></a> (<%# DataBinder.Eval(Container.DataItem, "Count") %>)</li>
+		<li><a href='Archive.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "StartDate") %> - <%# DataBinder.Eval(Container.DataItem, "EndDate") %></a> (<%# DataBinder.Eval(Container.DataItem, "Count") %>)</li>
 	</ItemTemplate>
 	<FooterTemplate>
 		</ul>
