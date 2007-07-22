@@ -63,6 +63,9 @@ public partial class TheHillellis_Default : MasterPage {
 			archiveCount = (int)Session["ArchiveCount"];
 		}
 
+        // TODO: Get a count of links to resize that correctly in the event that the window size 
+        // is 800x600 and links are in their own box below the archives.
+
 		string onLoadJavascript = @"
 addListener(this, 'load', function() { numberOfArchives = " + archiveCount + @"; onLoad(); });
 addListener(this, 'resize', function() { onLoad(); });

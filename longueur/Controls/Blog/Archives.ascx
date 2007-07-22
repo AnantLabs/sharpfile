@@ -1,5 +1,5 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeFile="Archives.ascx.cs" Inherits="Controls_Blog_Archives" %>
-<%@ OutputCache Duration="900" Shared="false" VaryByParam="none" VaryByCustom="Theme" %>
+<%@ OutputCache Duration="60" Shared="false" VaryByParam="none" VaryByCustom="Theme" %>
 
 <div id="divLeftArchive" runat="server">
 	<img src="../images/down_arrow.png" alt="" id="leftArchiveArrow" />
