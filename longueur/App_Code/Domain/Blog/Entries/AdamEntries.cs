@@ -9,8 +9,8 @@ namespace Domain.Blog {
 	/// Summary description for Entries
 	/// </summary>
 	public class AdamEntries : BaseEntries {
-		public AdamEntries(ThemeType themeType, DataTable entryTable)
-			: base(themeType, entryTable) {
+		public AdamEntries(ThemeType themeType, IBlog blogDAO, DataTable entryTable)
+			: base(themeType, blogDAO, entryTable) {
 		}
 
 		public AdamEntries(ThemeType themeType, IBlog blogDAO)

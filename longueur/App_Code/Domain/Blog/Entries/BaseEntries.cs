@@ -14,9 +14,10 @@ namespace Domain.Blog {
 		protected string titleImageUrl;
 		protected ThemeType themeType;
 
-		public BaseEntries(ThemeType themeType, DataTable entryTable)
+		public BaseEntries(ThemeType themeType, IBlog blogDAO, DataTable entryTable)
 			: base(entryTable.Rows.Count) {
 
+			this.blogDAO = blogDAO;
 			this.themeType = themeType;
 			populateList(entryTable);
 			setCustomAttributes();
@@ -58,6 +59,13 @@ namespace Domain.Blog {
 				Entry entry = new Entry(row);
 
 				if (entry != null) {
+					List<Tag> tags = new List<Tag>();
+					tags = blogDAO.GetEntryTags(entry.Id);
+
+					if (tags != null) {
+						entry.Tags = tags;
+					}
+
 					this.Add(entry);
 				}
 			}

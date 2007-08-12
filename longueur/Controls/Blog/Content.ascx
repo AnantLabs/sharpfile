@@ -6,10 +6,6 @@
 		<asp:Image ID="imgTitle" runat="server" />
 	</div>
 	<br />
-
-	<div id="tags" style="display: none">
-		Tags are going to go here.
-	</div>
 	<br />
 </asp:PlaceHolder>
 
@@ -17,14 +13,18 @@
 	<ItemTemplate>
 		<div class="entry">
 			<div class="entryInformation">
-				<div class="entryTag" style="display: none">
-					<img src="../TheHillellis/images/cupcake_t.png" alt="" />
-				</div>
 				<div class="entryDescription">
 					<h2><%# DataBinder.Eval(Container.DataItem, "Title") %></h2>
 					<div class="dateTime">
 						<%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %>
 					</div>
+					<div class="entryTag">
+					    <asp:Repeater ID="rptTags" runat="server">
+		                    <ItemTemplate>
+		                        <a href='Tagged.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "Name") %></a>
+		                    </ItemTemplate>
+		                </asp:Repeater>
+				    </div>
 					<br />
 				</div>
 			</div>

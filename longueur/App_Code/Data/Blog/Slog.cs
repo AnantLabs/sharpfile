@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Web.Configuration;
+using System.Collections.Generic;
 using Common;
 
 namespace Data.Blog {
@@ -71,6 +72,18 @@ namespace Data.Blog {
 		}
 
 		public DataTable GetEntriesLimited(int rowcount) {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public List<Link> GetLinks() {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public List<Tag> GetTags() {
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public List<Tag> GetEntryTags(int entryId) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 		#endregion

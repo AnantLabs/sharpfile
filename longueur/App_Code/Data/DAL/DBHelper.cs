@@ -120,10 +120,14 @@ namespace Data.DAL {
 		}
 
 		public static List<T> ReadCollection<T>(string sql) where T : class {
+			return ReadCollection<T>(sql, new SqlParameter[] { });
+		}
+
+		public static List<T> ReadCollection<T>(string sql, SqlParameter[] sqlParameters) where T : class {
 			List<T> collection = new List<T>();
 
 			lock (lockObject) {
-				using (SqlCommand sqlCommand = getSqlCommand(sql)) {
+				using (SqlCommand sqlCommand = getSqlCommand(sql, sqlParameters)) {
 					try {
 						sqlConnection.Open();
 						using (IDataReader reader = sqlCommand.ExecuteReader()) {

@@ -99,11 +99,20 @@ namespace Data.Blog {
 
 			return Select("usp_TheHillellisGetArchiveEntries", parameters);
 		}
-		#endregion
 
 		public List<Link> GetLinks() {
 			return DBHelper.ReadCollection<Link>("usp_TheHillellisGetLinks");
 		}
+
+		public List<Tag> GetTags() {
+			return DBHelper.ReadCollection<Tag>("usp_TheHillellisGetTags");
+		}
+
+		public List<Tag> GetEntryTags(int entryId) {
+			SqlParameter[] sqlParameters = getSqlParameters("@EntryId", entryId);
+			return DBHelper.ReadCollection<Tag>("usp_TheHillellisGetEntryTags", sqlParameters);
+		}
+		#endregion
 
         private void backupEntry(string title, string content, DateTime dateTime, int userId, bool isUpdatedEntry)
         {

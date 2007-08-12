@@ -9,8 +9,8 @@ namespace Domain.Blog {
 	/// Summary description for Entries
 	/// </summary>
 	public class LynnEntries : BaseEntries {
-		public LynnEntries(ThemeType themeType, DataTable entryTable)
-			: base(themeType, entryTable) {
+		public LynnEntries(ThemeType themeType, IBlog blogDAO, DataTable entryTable)
+			: base(themeType, blogDAO, entryTable) {
 		}
 
 		public LynnEntries(ThemeType themeType, IBlog blogDAO)

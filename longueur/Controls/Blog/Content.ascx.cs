@@ -3,6 +3,7 @@ using System.Web.UI;
 using Data.Blog;
 using Domain.Blog;
 using Data;
+using System.Web.UI.WebControls;
 
 public partial class Controls_HillellisEntry : UserControl {
 	private string userName;
@@ -78,6 +79,27 @@ public partial class Controls_HillellisEntry : UserControl {
 		}
 
 		return lastEntryId;
+	}
+
+	protected override void OnInit(EventArgs e) {
+		InitializeComponents();
+		base.OnInit(e);
+	}
+
+	private void InitializeComponents() {
+		this.rptContent.ItemDataBound += new RepeaterItemEventHandler(rptContent_ItemDataBound);
+	}
+
+	void rptContent_ItemDataBound(object sender, RepeaterItemEventArgs e) {
+		RepeaterItem item = e.Item;
+
+		if (item.ItemType == ListItemType.AlternatingItem ||
+			item.ItemType == ListItemType.Item) {
+			Repeater rptTags = (Repeater)item.FindControl("rptTags");
+
+			rptTags.DataSource = ((Entry)item.DataItem).Tags;
+			rptTags.DataBind();
+		}
 	}
 
 	public int EntryId {

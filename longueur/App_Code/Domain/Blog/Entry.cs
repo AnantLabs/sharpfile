@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Collections.Generic;
 using Data.Blog;
 
 namespace Domain.Blog {
@@ -13,6 +14,7 @@ namespace Domain.Blog {
 		private int userId;
 		private string name;
 		private DateTime dateTime;
+		private List<Tag> tags = new List<Tag>();
 
 		private IBlog blogDAO;
 
@@ -47,5 +49,6 @@ namespace Domain.Blog {
 		public int UserId { get { return userId; } set { userId = value; } }
 		public string Name { get { return name; } set { name = value; } }
 		public DateTime DateTime { get { return dateTime; } set { dateTime = value; } }
+		public List<Tag> Tags { get { return tags; } set { tags = value; } }
 	}
 }

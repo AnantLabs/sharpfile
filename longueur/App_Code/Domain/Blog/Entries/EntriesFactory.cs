@@ -17,9 +17,9 @@ public static class EntriesFactory {
 		string username = entryTable.Rows[0]["Name"].ToString();
 
 		if (username.Equals("lynn")) {
-			return new LynnEntries(themeType, entryTable);
+			return new LynnEntries(themeType, blogDAO, entryTable);
 		} else if (username.Equals("adam")) {
-			return new AdamEntries(themeType, entryTable);
+			return new AdamEntries(themeType, blogDAO, entryTable);
 		}
 
 		return null;
@@ -38,7 +38,7 @@ public static class EntriesFactory {
 	public static AdamEntries GetEntriesLimited(ThemeType themeType, IBlog blogDAO, int rowcount) {
 		DataTable entryTable = blogDAO.GetEntriesLimited(rowcount);
 
-		return new AdamEntries(themeType, entryTable);
+		return new AdamEntries(themeType, blogDAO, entryTable);
 	}
 
 	public static BaseEntries GetArchiveEntries(ThemeType themeType, IBlog blogDAO, int archiveId) {
@@ -46,9 +46,9 @@ public static class EntriesFactory {
 		string username = entriesTable.Rows[0]["Name"].ToString();
 
 		if (username.Equals("lynn")) {
-			return new LynnEntries(themeType, entriesTable);
+			return new LynnEntries(themeType, blogDAO, entriesTable);
 		} else if (username.Equals("adam")) {
-			return new AdamEntries(themeType, entriesTable);
+			return new AdamEntries(themeType, blogDAO, entriesTable);
 		}
 
 		return null;

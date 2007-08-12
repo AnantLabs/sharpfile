@@ -1,5 +1,6 @@
-using System.Data;
 using System;
+using System.Data;
+using System.Collections.Generic;
 
 namespace Data.Blog {
 	/// <summary>
@@ -16,5 +17,8 @@ namespace Data.Blog {
 		DataTable GetArchives(string name);
 		DataTable GetArchiveEntries(int archiveId);
 		DataTable GetEntriesLimited(int rowcount);
+		List<Tag> GetTags();
+		List<Tag> GetEntryTags(int entryId);
+		List<Link> GetLinks();
 	}
 }

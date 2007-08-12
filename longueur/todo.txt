@@ -1,35 +1,41 @@
-- Links admin page
-- Push link-ified master page out to live
-
-- Re-write /SOftware in .NET (domain layer, DAL, repeater, admin page)
-	- Add ExchangeReader
-
 - The Hillellis
 	- tags
-	
-- Abstraction of blog user controls (maybe not possible, or necessary)
-	
-- take common js out and put it into the js directory (grab height of window)
+		- GetEntriesByTag (tagged.aspx)
+		- Show weight of tags on front page
+		- tag images
+	- links
+		- link description
+		- Push link-ified master page out to live (I think has been done)
+	- show last 10 (?) entries
+	- take common js out and put it into the js directory (grab height of window)
 
-- Admin functionality to delete user
-- Prevent people from fucking w/ people higher than themselves
-- Superuser
+- Software 
+	- Convert to .NET (domain layer, DAL, repeater, admin page)
+	- Add ExchangeReader
 
-- Better error handling (IP, url that errored, innerexception, more of that good stuff)
-- Better error oops page (maybe should be .net). Link to referrer?
-- Log correct/incorrect login attempts
-- Block 3 bad login attempts (both by checking IP and/or keeping track in the page)
+- Admin
+	- delete user
+	- Links admin page
+	- Prevent people from messing w/ people higher than themselves
+	- Superuser
+	- Fancy-up the gridview
 
-- Slog domain layer
-- More admin functionality for slog (browse, delete, edit)
-- Slog tags
+- Error handling
+	- IP, url that errored, innerexception
+	- Better error oops page (maybe should be .net). Link to referrer?
+	- Log correct/incorrect login attempts
+	- Block 3 bad login attempts (both by checking IP and/or keeping track in the page)
 
-- Fancy-up the gridview on the admin pages
+- Slog
+	- domain layer
+	- admin functionality for slog (browse, delete, edit)
+	- tags
 
-- Encrypt web.config
-- Remember me functionality (front-end only. I think)
+- Infrastructure
+	- Encrypt web.config
+	- Remember me functionality (front-end only. I think)
+	- don't count a configuration IP address (mine!) from being logged in downloads
 
-- Forms auth on IndieLyrics
+- IndieLyrics
+	- Forms auth on IndieLyrics
 	- use login control on the indielyrics login page
-
-- don't count a configuration IP address (mine!) from being logged in downloads
