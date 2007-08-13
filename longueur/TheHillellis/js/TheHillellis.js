@@ -40,26 +40,46 @@ function onLoad() {
 	getSize();
 	
 	var logo = document.getElementById('logo');
+	var tags = document.getElementById('tags');
+	var recent = document.getElementById('recent');
+	
+	// Resize the content.
+	var content = document.getElementById('content');
+	contentWidth = (width - marginWidth);
+	content.style.width = contentWidth + px;
 	
 	// Set our header height based on the width.
 	if (width < 850) {
 		headerHeight = 23;
 		logo.style.display = 'none';
+		recent.style.display = 'none';
+		tags.style.display = 'none';
 		//document.getElementById('logo').innerHTML = '<img src=\'images/logo_t.png\' alt=\'logo\' title=\'Wherein we make fun of lots of random stuff.\' />';
 		//document.getElementById('logo').style.height = headerHeight - 30 + px;
 		//document.getElementById('logo').style.backgroundImage = 'url(\'\')';
 	} else {
 		headerHeight = 90;
+		var logoHeight = headerHeight - 30;
+		var xPositionOfLogo = 29;
 		logo.style.display = '';
-		logo.innerHTML = '';
-		logo.style.height = headerHeight - 30 + px;
+		logo.style.height = logoHeight + px;
+
+        var recentWidth = (contentWidth - 226) / 2;
+        recent.style.display = '';
+		recent.style.height = logoHeight + px;
+		recent.style.width = recentWidth + px;
+		recent.style.left = yPositionOfContent + 210 + px;
+		recent.style.top = xPositionOfLogo + px;
+
+		tags.style.display = '';
+		tags.style.height = logoHeight + px;
+		tags.style.width = recentWidth + px;
+		tags.style.left = yPositionOfContent + 220 + recentWidth + px;
+		tags.style.top = xPositionOfLogo + px;
 	}
 	
-	// Resize the content.
-	var content = document.getElementById('content');
+	// Get the content height.	
 	contentHeight = (height - headerHeight - footerHeight) + 3;
-	contentWidth = (width - marginWidth);
-	content.style.width = contentWidth + px;
 	
 	// Calculate the footer's correct height.
 	calculatedFooterHeight = footerHeight + (numberOfArchives * heightOfArchiveItems);

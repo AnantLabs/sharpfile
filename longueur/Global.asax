@@ -64,10 +64,11 @@
 	public override string GetVaryByCustomString(HttpContext context, string custom) {
 		if (custom.ToLower().Equals("theme")) {
 			HttpCookie cookie = context.Request.Cookies["TheHillellis"];
-			//We have no cookie ?
-			if (cookie != null)
-				//Return what is contained inside the cookie
-				return context.Request.Cookies["TheHillellis"]["Theme"];
+
+            if (cookie != null) {
+                // Return what is contained inside the cookie.
+                return context.Request.Cookies["TheHillellis"]["Theme"];
+            }
 		}
 		
 		return base.GetVaryByCustomString(context, custom);

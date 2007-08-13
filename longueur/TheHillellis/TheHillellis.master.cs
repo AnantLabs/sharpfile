@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Web;
+using System.Web.UI.WebControls;
 
 public partial class TheHillellis_Default : MasterPage {
 	protected void Page_Load(object sender, EventArgs e) {
@@ -26,11 +27,34 @@ public partial class TheHillellis_Default : MasterPage {
 				ThemeType theme = (ThemeType)Enum.Parse(typeof(ThemeType), this.Request.Cookies["TheHillellis"]["Theme"]);
 				ddlThemes.SelectedValue = ((int)theme).ToString();
 				styles.InnerHtml += "@import \"css/themes/" + theme.ToString() + ".css\";";
+			} else {
+				styles.InnerHtml += "@import \"css/themes/Spring.css\";";
 			}
 
 			Data.Blog.TheHillellis t = new TheHillellis();
 			rptLinks.DataSource = t.GetLinks();
 			rptLinks.DataBind();
+
+			if (rptLinks.Items.Count == 0) {
+				rptLinks.Controls.Clear();
+				rptLinks.Controls.Add(new LiteralControl("No links for now."));
+			}
+
+			rptTags.DataSource = t.GetTags();
+			rptTags.DataBind();
+
+			if (rptTags.Items.Count == 0) {
+				rptTags.Controls.Clear();
+				rptTags.Controls.Add(new LiteralControl("No tags for now."));
+			}
+
+			rptRecent.DataSource = t.GetEntriesLimited(5);
+			rptRecent.DataBind();
+
+			if (rptRecent.Items.Count == 0) {
+				rptRecent.Controls.Clear();
+				rptRecent.Controls.Add(new LiteralControl("No recent entries for now."));
+			}
 		} else {
 			HttpCookie cookie = new HttpCookie("TheHillellis");
 			cookie.Values["Theme"] = ddlThemes.SelectedValue;
@@ -40,6 +64,26 @@ public partial class TheHillellis_Default : MasterPage {
 			ThemeType theme = (ThemeType)Enum.Parse(typeof(ThemeType), ddlThemes.SelectedValue);
 			styles.InnerHtml += "@import \"css/themes/" + theme.ToString() + ".css\";";
 		}
+	}
+
+	protected string getRecentDelimiter(RepeaterItem item) {
+		string delimiter = string.Empty;
+
+		if (item.ItemIndex < ((DataTable)rptRecent.DataSource).Rows.Count-1) {
+			delimiter = ",";
+		}
+
+		return delimiter;
+	}
+
+	protected string getTagDelimiter(RepeaterItem item) {
+		string delimiter = string.Empty;
+
+		if (item.ItemIndex < ((List<Tag>)rptTags.DataSource).Count - 1) {
+			delimiter = ",";
+		}
+
+		return delimiter;
 	}
 
 	protected override void OnPreRender(EventArgs e) {
@@ -65,7 +109,6 @@ public partial class TheHillellis_Default : MasterPage {
 
         // TODO: Get a count of links to resize that correctly in the event that the window size 
         // is 800x600 and links are in their own box below the archives.
-
 		string onLoadJavascript = @"
 addListener(this, 'load', function() { numberOfArchives = " + archiveCount + @"; onLoad(); });
 addListener(this, 'resize', function() { onLoad(); });

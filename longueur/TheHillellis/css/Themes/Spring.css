@@ -45,7 +45,15 @@ a:hover {
 }
 
 #logo {
-	background: #FFFFCC url('../../images/logo.png') no-repeat center;
+	background: #FFFFCC url('../../images/logo_2.png') no-repeat center;
+}
+
+#tags {
+	background-color:#FFFFCC;
+}
+
+#recent {
+	background-color:#FFFFCC;
 }
 
 #rightArchives {

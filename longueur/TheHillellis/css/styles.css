@@ -119,9 +119,29 @@ a:hover {
 #logo {
 	margin: 0px 0px 5px 0px;
 	padding: 0px 2px 0px 2px;
-	background: #FFFFCC url('../images/logo.png') no-repeat center;
 	border: 1px solid #999;
 	text-align: center;
+	width: 200px;
+}
+
+#tags {
+	margin: 0px 0px 5px 0px;
+	padding: 0px 2px 0px 2px;
+	border: 1px solid #999;
+	position: absolute;
+	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#recent {
+	margin: 0px 0px 5px 0px;
+	padding: 0px 2px 0px 2px;
+	border: 1px solid #999;
+	position: absolute;
+	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 #titleImage {

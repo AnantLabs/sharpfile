@@ -24,6 +24,26 @@
 		</div>
 		<div id="logo" style="display:none">
 		</div>
+		<div id="recent" style="display:none">
+		    <asp:Repeater ID="rptRecent" runat="server">
+		        <HeaderTemplate>
+		            Recent entries:
+		        </HeaderTemplate>
+		        <ItemTemplate>
+		            <a href='Permalink.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "Title") %></a><%# getRecentDelimiter(Container) %>
+		        </ItemTemplate>
+		    </asp:Repeater>
+		</div>
+		<div id="tags" style="display:none">
+		    <asp:Repeater ID="rptTags" runat="server">
+		        <HeaderTemplate>
+		            Tags:
+		        </HeaderTemplate>
+		        <ItemTemplate>
+		            <a href='Tagged.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'><%# DataBinder.Eval(Container.DataItem, "Name") %></a><%# getTagDelimiter(Container) %>
+		        </ItemTemplate>
+		    </asp:Repeater>
+		</div>		
 			    
 		<asp:contentplaceholder id="ContentPlaceHolder" runat="server" />
 		

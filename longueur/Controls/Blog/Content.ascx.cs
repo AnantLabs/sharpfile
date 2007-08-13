@@ -17,6 +17,9 @@ public partial class Controls_HillellisEntry : UserControl {
 	// Used for archive entries.
 	private int archiveId = 0;
 
+	// Used for tagged entries.
+	private int tagId = 0;
+
 	private BaseEntries entries;
 	private int lastEntryId = 0;
 
@@ -30,7 +33,8 @@ public partial class Controls_HillellisEntry : UserControl {
 		}
 
 		if (entryId > 0 || 
-			archiveId > 0) {
+			archiveId > 0 ||
+			tagId > 0) {
 			string elementId = string.Empty;
 
 			if (entryId > 0) {
@@ -39,6 +43,9 @@ public partial class Controls_HillellisEntry : UserControl {
 			} else if (archiveId > 0) {
 				entries = EntriesFactory.GetArchiveEntries(themeType, theHillellisData, archiveId);
 				elementId = "archiveContent";
+			} else if (tagId > 0) {
+				entries = EntriesFactory.GetTagEntries(themeType, theHillellisData, tagId);
+				elementId = "tagContent";
 			}
 
 			string backgroundColor = entries.BackgroundColor;
@@ -130,5 +137,10 @@ public partial class Controls_HillellisEntry : UserControl {
 	public int ArchiveId { 
 		get { return archiveId; } 
 		set { archiveId = value; } 
+	}
+
+	public int TagId {
+		get { return tagId; }
+		set { tagId = value; }
 	}
 }

@@ -13,8 +13,7 @@ public partial class Controls_Blog_Archives : System.Web.UI.UserControl {
 
 	protected void Page_Load(object sender, EventArgs e) {
 		if (!IsPostBack) {
-			//Archives archives = getArchivesFromCache();
-			Archives archives = new Archives(new TheHillellis(), name);
+			Archives archives = getArchivesFromCache();
 
 			rptArchives.DataSource = archives;
 			rptArchives.DataBind();
@@ -36,22 +35,23 @@ public partial class Controls_Blog_Archives : System.Web.UI.UserControl {
 		}
 	}
 
-	//private Archives getArchivesFromCache() {
-	//    if (Cache[archivesCacheKey + "_" + name] == null) {
-	//        Archives archives = new Archives(new TheHillellis(), name);
-	//        string connectionString = ConfigurationManager.ConnectionStrings[Constants.LongueurConnectionString].ConnectionString;
+	private Archives getArchivesFromCache() {
+		string uniqueArchivesCacheKey = archivesCacheKey + "_" + name;
 
-	//        Cache.Add(archivesCacheKey + "_" + name,
-	//            archives,
-	//            new SqlCacheDependency(new SqlCommand("SELECT * FROM Archive", new SqlConnection(connectionString))),
-	//            Cache.NoAbsoluteExpiration,
-	//            new TimeSpan(1, 0, 0, 0),
-	//            CacheItemPriority.Normal,
-	//            null);
-	//    }
+		if (Cache[uniqueArchivesCacheKey] == null) {
+			Archives archives = new Archives(new TheHillellis(), name);
 
-	//    return (Archives)Cache[archivesCacheKey + "_" + name];
-	//}
+			Cache.Add(uniqueArchivesCacheKey,
+				archives,
+				null,
+				Cache.NoAbsoluteExpiration,
+				new TimeSpan(0, 0, 60),
+				CacheItemPriority.Normal,
+				null);
+		}
+
+		return (Archives)Cache[uniqueArchivesCacheKey];
+	}
 
 	public int Count {
 		get {

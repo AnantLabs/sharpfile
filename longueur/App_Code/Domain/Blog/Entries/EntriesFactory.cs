@@ -53,4 +53,17 @@ public static class EntriesFactory {
 
 		return null;
 	}
+
+	public static BaseEntries GetTagEntries(ThemeType themeType, IBlog blogDAO, int tagId) {
+		DataTable entriesTable = blogDAO.GetTagEntries(tagId);
+		string username = entriesTable.Rows[0]["Name"].ToString();
+
+		if (username.Equals("lynn")) {
+			return new LynnEntries(themeType, blogDAO, entriesTable);
+		} else if (username.Equals("adam")) {
+			return new AdamEntries(themeType, blogDAO, entriesTable);
+		}
+
+		return null;
+	}
 }

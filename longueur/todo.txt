@@ -35,6 +35,8 @@
 	- Encrypt web.config
 	- Remember me functionality (front-end only. I think)
 	- don't count a configuration IP address (mine!) from being logged in downloads
+	- cookie wrapper
+	- Theme wrapper
 
 - IndieLyrics
 	- Forms auth on IndieLyrics
