@@ -10,10 +10,10 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT	t.Id, t.[Name]
+	SELECT	t.Id, t.[Name], t.[Image]
 	FROM	TheHillellis_Tag tht
 	JOIN	Tag t ON tht.TagId = t.Id
 	WHERE	tht.EntryId = @EntryId
 	ORDER BY t.[Name] DESC
     
-END 
+END

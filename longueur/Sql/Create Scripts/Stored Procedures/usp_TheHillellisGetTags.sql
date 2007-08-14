@@ -7,9 +7,12 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT	t.Id, t.[Name], 
-		(SELECT COUNT(tht.Id) FROM TheHillelis_Tag tht WHERE t.Id = tht.Id) AS 'Count'
+	SELECT	t.Id, t.[Name], t.[Image], COUNT(ht.TagId) AS TagCount
 	FROM	Tag t
-	ORDER BY t.[Name] DESC
+	JOIN	TheHillellis_Tag ht ON t.Id = ht.TagId
+	WHERE t.Id IN (SELECT TagId FROM TheHillellis_Tag)
+	GROUP BY t.Id, t.Name, t.Image
+	ORDER BY COUNT(ht.TagId) DESC, t.[Name] ASC
     
-END 
+END
+

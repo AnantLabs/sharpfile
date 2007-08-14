@@ -35,25 +35,20 @@ public partial class TheHillellis_Default : MasterPage {
 			rptLinks.DataSource = t.GetLinks();
 			rptLinks.DataBind();
 
-			if (rptLinks.Items.Count == 0) {
-				rptLinks.Controls.Clear();
-				rptLinks.Controls.Add(new LiteralControl("No links for now."));
-			}
-
 			rptTags.DataSource = t.GetTags();
 			rptTags.DataBind();
 
 			if (rptTags.Items.Count == 0) {
 				rptTags.Controls.Clear();
-				rptTags.Controls.Add(new LiteralControl("No tags for now."));
+				rptTags.Controls.Add(new LiteralControl("Tags: None for now."));
 			}
 
-			rptRecent.DataSource = t.GetEntriesLimited(5);
+			rptRecent.DataSource = t.GetEntriesLimited(10);
 			rptRecent.DataBind();
 
 			if (rptRecent.Items.Count == 0) {
 				rptRecent.Controls.Clear();
-				rptRecent.Controls.Add(new LiteralControl("No recent entries for now."));
+				rptRecent.Controls.Add(new LiteralControl("Recent entries: None for now."));
 			}
 		} else {
 			HttpCookie cookie = new HttpCookie("TheHillellis");
@@ -69,7 +64,7 @@ public partial class TheHillellis_Default : MasterPage {
 	protected string getRecentDelimiter(RepeaterItem item) {
 		string delimiter = string.Empty;
 
-		if (item.ItemIndex < ((DataTable)rptRecent.DataSource).Rows.Count-1) {
+		if (item.ItemIndex < ((DataTable)rptRecent.DataSource).Rows.Count - 1) {
 			delimiter = ",";
 		}
 

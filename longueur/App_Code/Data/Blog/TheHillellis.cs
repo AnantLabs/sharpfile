@@ -112,6 +112,13 @@ namespace Data.Blog {
 			SqlParameter[] sqlParameters = getSqlParameters("@EntryId", entryId);
 			return DBHelper.ReadCollection<Tag>("usp_TheHillellisGetEntryTags", sqlParameters);
 		}
+
+		public DataSet GetTagEntries(int tagId) {
+			SqlParameter[] parameters = getSqlParameters("@TagId",
+				tagId);
+
+			return SelectMultiple("usp_TheHillellisGetTagEntries", parameters);
+		}
 		#endregion
 
         private void backupEntry(string title, string content, DateTime dateTime, int userId, bool isUpdatedEntry)

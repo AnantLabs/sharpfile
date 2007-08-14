@@ -3,7 +3,6 @@ body {
 	padding:0px;
 	font: 11px/12px Verdana, Arial, Helvetica, sans-serif;
 	color:#333;
-	background-color:#FFFF99;
 	text-align:center;
 	}
 	
@@ -60,7 +59,6 @@ a:hover {
 	padding:2px;
 	margin:0px;
 	float:left;
-	background-color:#CC99FF;
 	border:1px solid #999999;
 	line-height:17px;
 	overflow:auto;
@@ -73,7 +71,6 @@ a:hover {
 	padding:2px;
 	margin:0px;
 	float:right;
-	background-color:#99CCFF;
 	border:1px solid #999999;
 	line-height:17px;
 	overflow:auto;
@@ -86,7 +83,18 @@ a:hover {
 	padding: 2px;
 	margin: 0px;
 	float: left;
-	background-color: #99CCFF;
+	border: 1px solid #999;
+	line-height: 17px;
+	overflow: auto;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#tagContent {
+	width: 795px;
+	padding: 2px;
+	margin: 0px;
+	float: left;
 	border: 1px solid #999;
 	line-height: 17px;
 	overflow: auto;
@@ -99,7 +107,6 @@ a:hover {
 	padding: 2px;
 	margin: 0px;
 	float: left;
-	background-color: #99CCFF;
 	border: 1px solid #999;
 	line-height: 17px;
 	overflow: auto;
@@ -111,7 +118,6 @@ a:hover {
 {
 	margin: 0px 0px 5px 0px;
 	padding: 0px 2px 0px 2px;
-	background-color: #FFFFCC;
 	border: 1px solid #999;
 	line-height: 17px;
 }
@@ -152,7 +158,6 @@ a:hover {
 	width:250px;
 	padding:2px;
 	margin:5px 0px 5px 0px;
-	background-color:#FFFFCC;
 	border:1px solid #999;
 	line-height:17px;
 	bottom:-30px;
@@ -184,7 +189,6 @@ a:hover {
 	width:250px;
 	padding:2px;
 	margin:5px 0px 5px 0px;
-	background-color:#FFFFCC;
 	border:1px solid #999;
 	line-height:17px;
 	bottom:-30px;
@@ -215,7 +219,6 @@ a:hover {
 	width:300px;
 	padding:2px;
 	margin:5px 0px 5px 0px;
-	background-color:#FFFFCC;
 	border:1px solid #999;
 	line-height:17px;
 	bottom:-30px;
@@ -243,7 +246,7 @@ a:hover {
 .entryHr {
 	width: 90%; 
 	text-align: center; 
-	color: #000000; 
+	color: #000000;
 	height: 1px;
 }
 

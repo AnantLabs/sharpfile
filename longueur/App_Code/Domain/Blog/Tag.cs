@@ -7,15 +7,15 @@ using Data.DAL;
 public class Tag {
 	private int id;
 	private string name;
-	private int count;
+	private string image;
 
 	public Tag() {
 	}
 
-	public Tag(int id, string name, int count) {
+	public Tag(int id, string name, string image) {
 		this.id = id;
 		this.name = name;
-		this.count = count;
+		this.image = image;
 	}
 
 	[DBField("Id"), DBParameter("@Id")]
@@ -29,9 +29,10 @@ public class Tag {
 		get { return name; }
 		set { name = value; }
 	}
-	
-	public int Count {
-		get { return count; }
-		set { count = value; }
+
+	[DBField("Image"), DBParameter("@Image")]
+	public string Image {
+		get { return image; }
+		set { image = value; }
 	}
 }

@@ -11,6 +11,10 @@
 		_uacct = "UA-247760-1";
 		//urchinTracker();
 	</script>
+	
+	<!--[if lt IE 7.]>
+    <script defer type="text/javascript" src="js/fixpng.js"></script>
+    <![endif]-->
 </head>
 <body>
     <form id="form" runat="server">
@@ -22,8 +26,10 @@
 			</div>
 			<a href="../">longueur.org</a> -> The Hillellis			
 		</div>
-		<div id="logo" style="display:none">
-		</div>
+		<a href="Default.aspx">
+		    <div id="logo" style="display:none">
+		    </div>
+		</a>
 		<div id="recent" style="display:none">
 		    <asp:Repeater ID="rptRecent" runat="server">
 		        <HeaderTemplate>

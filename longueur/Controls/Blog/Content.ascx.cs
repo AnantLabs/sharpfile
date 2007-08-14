@@ -10,6 +10,7 @@ public partial class Controls_HillellisEntry : UserControl {
 	private string titleImageUrl;
 	private string titleImageTooltip;
 	private string titleImageAlternativeText;
+	private bool setTitle = true;
 
 	// Used for permalink entries.
 	private int entryId = 0;
@@ -44,14 +45,21 @@ public partial class Controls_HillellisEntry : UserControl {
 				entries = EntriesFactory.GetArchiveEntries(themeType, theHillellisData, archiveId);
 				elementId = "archiveContent";
 			} else if (tagId > 0) {
-				entries = EntriesFactory.GetTagEntries(themeType, theHillellisData, tagId);
+				Tag tag;
+				entries = EntriesFactory.GetTagEntries(themeType, theHillellisData, tagId, out tag);
 				elementId = "tagContent";
+
+				setTitle = false;
+				phTopHat.Controls.Clear();
+				phTopHat.Controls.Add(new LiteralControl("<em>" + tag.Name + "</em> entries<br /><br />"));
 			}
 
-			string backgroundColor = entries.BackgroundColor;
-			titleImageUrl = entries.TitleImageUrl;
+			if (setTitle) {
+				string backgroundColor = entries.BackgroundColor;
+				titleImageUrl = entries.TitleImageUrl;
 
-			this.Page.ClientScript.RegisterStartupScript(typeof(string), "changeBackgroundColor", "changeBackgroundColor('" + elementId + "', '" + backgroundColor + "');", true);
+				this.Page.ClientScript.RegisterStartupScript(typeof(string), "changeBackgroundColor", "changeBackgroundColor('" + elementId + "', '" + backgroundColor + "');", true);
+			}
 		} else if (!string.IsNullOrEmpty(userName)) {
 			entries = EntriesFactory.GetEntries(themeType, theHillellisData, userName);
 		} else {

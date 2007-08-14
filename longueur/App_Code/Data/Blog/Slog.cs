@@ -86,6 +86,10 @@ namespace Data.Blog {
 		public List<Tag> GetEntryTags(int entryId) {
 			throw new Exception("The method or operation is not implemented.");
 		}
+
+		public DataSet GetTagEntries(int tagId) {
+			throw new Exception("The method or operation is not implemented.");
+		}
 		#endregion
 	}
 }

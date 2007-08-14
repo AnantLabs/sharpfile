@@ -54,8 +54,16 @@ public static class EntriesFactory {
 		return null;
 	}
 
-	public static BaseEntries GetTagEntries(ThemeType themeType, IBlog blogDAO, int tagId) {
-		DataTable entriesTable = blogDAO.GetTagEntries(tagId);
+	public static BaseEntries GetTagEntries(ThemeType themeType, IBlog blogDAO, int tagId, out Tag tag) {
+		DataSet dataSet = blogDAO.GetTagEntries(tagId);
+		DataTable entriesTable = dataSet.Tables[0];
+		DataTable tagTable = dataSet.Tables[1];
+
+		int id = int.Parse(tagTable.Rows[0]["Id"].ToString());
+		string name = tagTable.Rows[0]["Name"].ToString();
+		string image = tagTable.Rows[0]["Image"].ToString();
+		tag = new Tag(id, name, image);
+
 		string username = entriesTable.Rows[0]["Name"].ToString();
 
 		if (username.Equals("lynn")) {

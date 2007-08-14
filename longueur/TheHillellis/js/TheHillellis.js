@@ -123,6 +123,8 @@ function onLoad() {
 		resizeOneContentBox('permalinkContent');
 	} else if (filename == 'archive.aspx') {
 		resizeOneContentBox('archiveContent');
+	} else if (filename == 'tagged.aspx') {
+	    resizeOneContentBox('tagContent');
 	}
 }
 

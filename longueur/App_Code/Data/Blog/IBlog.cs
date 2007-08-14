@@ -20,5 +20,6 @@ namespace Data.Blog {
 		List<Tag> GetTags();
 		List<Tag> GetEntryTags(int entryId);
 		List<Link> GetLinks();
+		DataSet GetTagEntries(int tagId);
 	}
 }
