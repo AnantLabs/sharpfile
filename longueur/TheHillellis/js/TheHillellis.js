@@ -68,7 +68,7 @@ function onLoad() {
         recent.style.display = '';
 		recent.style.height = logoHeight + px;
 		recent.style.width = recentWidth + px;
-		recent.style.left = yPositionOfContent + 210 + px;
+		recent.style.left = yPositionOfContent + 205 + px;
 		recent.style.top = xPositionOfLogo + px;
 
 		tags.style.display = '';
