@@ -199,30 +199,5 @@ namespace Data {
 			}
 		}
 		#endregion
-
-		#region Insert
-		protected static int Insert(string sql) {
-			int ident = -1;
-
-			if (sql.TrimEnd().EndsWith(";")) {
-				sql = string.Format("{0} SELECT SCOPE_IDENTITY();",
-					sql.Trim());
-			} else {
-				sql = string.Format("{0}; SELECT SCOPE_IDENTITY();",
-					sql.Trim());
-			}
-
-			using (DataTable dataTable = Select(sql)) {
-				if (dataTable != null &&
-					dataTable.Rows.Count > 0 &&
-					dataTable.Rows[0][0] != null &&
-					General.IsInt(dataTable.Rows[0][0].ToString())) {
-					ident = int.Parse(dataTable.Rows[0][0].ToString());
-				}
-			}
-
-			return ident;
-		}
-		#endregion
 	}
 }

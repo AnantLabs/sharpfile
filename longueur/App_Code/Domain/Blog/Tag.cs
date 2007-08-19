@@ -18,7 +18,7 @@ public class Tag {
 		this.image = image;
 	}
 
-	[DBField("Id"), DBParameter("@Id")]
+	[DBField("Id")]
 	public int Id {
 		get { return id; }
 		set { id = value; }

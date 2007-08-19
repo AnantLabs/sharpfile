@@ -5,6 +5,7 @@ using Data;
 using System.Web.Security;
 using System.Web;
 using Data.Blog;
+using System.Collections.Generic;
 
 public partial class Admin_Slog : System.Web.UI.Page
 {
@@ -110,7 +111,7 @@ public partial class Admin_Slog : System.Web.UI.Page
 			int id = 0;
 
 			if (int.TryParse(((FormsIdentity)HttpContext.Current.User.Identity).Name, out id)) {
-				blogDAO.InsertEntry(txtName.Text, txtNewContent.Text, id, DateTime.Now);
+				blogDAO.InsertEntry(txtName.Text, txtNewContent.Text, id, DateTime.Now, string.Empty);
 				redirect();
 			} else {
 				lblMessage.Text = "Looks like you aren't an admin user after all, jerk.";

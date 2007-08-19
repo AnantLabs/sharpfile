@@ -7,6 +7,8 @@ using System.Web.Security;
 using System.Web;
 using System.Web.UI;
 using Data.Blog;
+using System.Collections.Generic;
+using System.Text;
 
 public partial class Admin_TheHillellis : Page
 {
@@ -26,18 +28,29 @@ public partial class Admin_TheHillellis : Page
 				rptSlogs.Visible = false;
 				divNewEntry.Visible = false;
 
-				DataTable slogTable = blogDAO.GetEntry(id);
+				Entry entry = EntriesFactory.GetEntries(ThemeType.Minimal, blogDAO, id)[0];
 
-				if (slogTable.Rows.Count > 0) {
-					lblId.Text = slogTable.Rows[0]["Id"].ToString();
-					txtName.Text = slogTable.Rows[0]["Name"].ToString();
-					txtTitle.Text = slogTable.Rows[0]["Title"].ToString();
-					txtContent.Text = slogTable.Rows[0]["Content"].ToString();
-					lblDateTime.Text = slogTable.Rows[0]["DateTime"].ToString();
+				if (entry != null) {
+					lblId.Text = entry.Id.ToString();
+					txtName.Text = entry.Name;
+					txtTitle.Text = entry.Title;
+					txtContent.Text = entry.Content;
+					lblDateTime.Text = entry.DateTime.ToString();
+
+					StringBuilder tagIdStringBuilder = new StringBuilder();
+					entry.Tags.ForEach(delegate(Tag t) {
+						tagIdStringBuilder.AppendFormat("{0} ",
+							t.Name);
+					});
+
+					txtTags.Text = tagIdStringBuilder.ToString();
 				} else {
 					lblMessage.Text = "Oh no, looks like something went wacky-tacky.<br />That emtry doesn't seem to exist.";
 				}
 			}
+
+			rptTags.DataSource = blogDAO.GetTags();
+			rptTags.DataBind();
 		}
 	}
 
@@ -93,7 +106,8 @@ public partial class Admin_TheHillellis : Page
 
 				if (siteUser != null) {
 					try {
-						blogDAO.UpdateEntry(id, txtTitle.Text, txtContent.Text, siteUser.Id);
+						string tagIds = getTagIds(txtNewTags.Text);
+						blogDAO.UpdateEntry(id, txtTitle.Text, txtContent.Text, siteUser.Id, tagIds);
 						redirect();
 					} catch (Exception ex) {
 						lblMessage.Text = "There was an error: " + ex.Message + ex.StackTrace;
@@ -113,8 +127,15 @@ public partial class Admin_TheHillellis : Page
 			Session["ArchiveCount"] = null;
 
 			if (int.TryParse(((FormsIdentity)HttpContext.Current.User.Identity).Name, out id)) {
-				blogDAO.InsertEntry(txtNewTitle.Text, txtNewContent.Text, id, DateTime.Now);
-				redirect();
+				// Grab the tag id from it's name in the textbox for tags.
+				string tagIds = getTagIds(txtNewTags.Text);
+
+				try {
+					blogDAO.InsertEntry(txtNewTitle.Text, txtNewContent.Text, id, DateTime.Now, tagIds);
+					redirect();
+				} catch (Exception ex) {
+					lblMessage.Text = ex.Message + ex.StackTrace;
+				}
 			} else {
 				lblMessage.Text = "Looks like you aren't an admin user after all, jerk.";
 			}
@@ -123,5 +144,30 @@ public partial class Admin_TheHillellis : Page
 		if (!string.IsNullOrEmpty(lblMessage.Text)) {
 			lblMessage.Visible = true;
 		}
+	}
+
+	private string getTagIds(string tagText) {
+		List<Tag> tags = blogDAO.GetTags();
+		List<string> tagNames = new List<string>(tagText.Trim().Split(' '));
+		StringBuilder tagIdStringBuilder = new StringBuilder();
+
+		foreach (string tagName in tagNames) {
+			Tag tag = tags.Find(delegate(Tag t) {
+				return t.Name == tagName;
+			});
+
+			if (tag != null) {
+				tagIdStringBuilder.AppendFormat("{0},",
+					tag.Id);
+			} else {
+				// TODO: Insert the tag here and then append the newly inserted tag's id to the sb.
+			}
+		}
+
+		if (tagIdStringBuilder.Length > 0) {
+			tagIdStringBuilder.Remove(tagIdStringBuilder.Length - 1, 1);
+		}
+
+		return tagIdStringBuilder.ToString();
 	}
 }

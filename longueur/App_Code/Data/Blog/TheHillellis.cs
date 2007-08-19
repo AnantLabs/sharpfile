@@ -8,6 +8,7 @@ using System.IO;
 using System.Web;
 using Data;
 using Data.DAL;
+using System.Text;
 
 namespace Data.Blog {
 	/// <summary>
@@ -45,7 +46,7 @@ namespace Data.Blog {
 			return Select("usp_TheHillellisGetEntry", parameters);
 		}
 
-		public void InsertEntry(string title, string content, int userId, DateTime dateTime) {
+		public void InsertEntry(string title, string content, int userId, DateTime dateTime, string tagIds) {
 			int timezoneDifference = 0;
 			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
 
@@ -57,11 +58,12 @@ namespace Data.Blog {
 
             backupEntry(title, content, adjustedDateTime, userId, false);
 
-			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title,@DateTime",
+			SqlParameter[] parameters = getSqlParameters("@Content,@UserId,@Title,@DateTime,@TagIds",
 				content, 
 				userId, 
 				title, 
-				adjustedDateTime);
+				adjustedDateTime,
+				tagIds);
 
 			NonQuery("usp_TheHillellisInsert", parameters);
 		}
@@ -70,14 +72,15 @@ namespace Data.Blog {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public void UpdateEntry(int id, string title, string content, int userId) {
+		public void UpdateEntry(int id, string title, string content, int userId, string tagIds) {
             backupEntry(title, content, DateTime.Now, userId, true);
 
-			SqlParameter[] parameters = getSqlParameters("@Id,@Content,@UserId,@Title",
+			SqlParameter[] parameters = getSqlParameters("@Id,@Content,@UserId,@Title,@TagIds",
 				id, 
 				content, 
 				userId, 
-				title);
+				title,
+				tagIds);
 
 			NonQuery("usp_TheHillellisUpdate", parameters);
 		}
@@ -118,6 +121,9 @@ namespace Data.Blog {
 				tagId);
 
 			return SelectMultiple("usp_TheHillellisGetTagEntries", parameters);
+		}
+
+		public void InsertTag(Tag tag) {
 		}
 		#endregion
 

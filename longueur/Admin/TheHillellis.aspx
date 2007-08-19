@@ -1,7 +1,38 @@
 <%@ Page Language="C#" MasterPageFile="~/Admin/admin.master" AutoEventWireup="true" CodeFile="TheHillellis.aspx.cs" Inherits="Admin_TheHillellis" Title="Admin: The Hillellis" ValidateRequest="false" %>
 <asp:Content ID="Content" ContentPlaceHolderID="ContentPlaceHolder" Runat="Server">
+<script type="text/javascript" language="javascript">
+    function addTag(tagId, newTagId, tag) {
+        var txtTags = document.getElementById(tagId);
+        var txtNewTags = document.getElementById(newTagId);
+        
+        if (txtTags != null) {
+            if (txtTags.value.indexOf(tag) < 0) {  
+                if (txtTags.value != '') {
+                    tag = ' ' + tag;
+                }
+                
+                txtTags.value += tag;
+            } else {
+                alert('You are trying to add the same tag, ' + tag + ', twice. That doesn\'t make much sense.');
+            }            
+        } else if (txtNewTags != null) {
+            if (txtNewTags.value.indexOf(tag) < 0) {  
+                if (txtNewTags.value != '') {
+                    tag = ' ' + tag;
+                }
+            
+                txtNewTags.value += tag;
+            } else {
+                alert('You are trying to add the same tag, ' + tag + ', twice. That doesn\'t make much sense.');
+            }
+        }
+    }
+</script>
+
 	<asp:Repeater ID="rptSlogs" runat="server" Visible="true">
 		<HeaderTemplate>
+		    <strong>Entries:</strong>
+		    <div style="overflow: auto; overflow-y: auto; overflow-x: hidden; height: 200px; border: solid 1px black; margin: 5px; padding: 5px">
 			<table>
 			<tr>
 				<td style="font-weight: bold">Id</td>
@@ -13,16 +44,25 @@
 		</HeaderTemplate>
 		<ItemTemplate>
 			<tr>
-				<td><%# DataBinder.Eval(Container.DataItem, "Id").ToString() %></td>
-				<td><%# DataBinder.Eval(Container.DataItem, "Name").ToString() %></td>
-				<td><%# DataBinder.Eval(Container.DataItem, "Title").ToString() %></td>		
-				<td><%# DataBinder.Eval(Container.DataItem, "DateTime").ToString() %></td>
-				<td><a href='TheHillellis.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id").ToString() %>'>Edit</a></td>
+				<td><%# DataBinder.Eval(Container.DataItem, "Id") %></td>
+				<td><%# DataBinder.Eval(Container.DataItem, "Name") %></td>
+				<td><%# DataBinder.Eval(Container.DataItem, "Title") %></td>		
+				<td><%# DataBinder.Eval(Container.DataItem, "DateTime") %></td>
+				<td><a href='TheHillellis.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'>Edit</a></td>
 			</tr>
 		</ItemTemplate>
 		<FooterTemplate>
 			</table>
+			</div>
 		</FooterTemplate>
+	</asp:Repeater>
+	
+	<asp:Repeater ID="rptTags" runat="server">
+	    <HeaderTemplate><strong>Available Tags:</strong>
+	    </HeaderTemplate>
+	    <ItemTemplate>
+	        <a href="javascript:addTag('<%# txtTags.ClientID %>','<%# txtNewTags.ClientID %>','<%# DataBinder.Eval(Container.DataItem, "Name") %>')"><%# DataBinder.Eval(Container.DataItem, "Name") %></a>
+	    </ItemTemplate>
 	</asp:Repeater>
 
 	<div id="divNewEntry" runat="server">
@@ -31,7 +71,11 @@
 		<strong>Add new entry...</strong><br />
 		
 		<strong>Title</strong><br />
-		<asp:TextBox ID="txtNewTitle" runat="server" />
+		<asp:TextBox ID="txtNewTitle" runat="server" MaxLength="256" Width="80%" />
+		<br />
+		
+		<strong>Tags</strong> (seperate different tags with a space)<br />
+		<asp:TextBox ID="txtNewTags" runat="server" MaxLength="500" Width="80%" />
 		<br />
 		
 		<strong>Content</strong><br />
@@ -56,6 +100,10 @@
 		
 		<strong>Title</strong><br />
 		<asp:TextBox ID="txtTitle" runat="server" />
+		<br />
+		
+		<strong>Tags</strong> (tags are seperated with a space)<br />
+		<asp:TextBox ID="txtTags" runat="server" MaxLength="500" Width="80%" />
 		<br />
 		
 		<strong>Content</strong><br />

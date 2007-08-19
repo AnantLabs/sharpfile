@@ -1,7 +1,5 @@
 - The Hillellis
 	- tags
-		- GetEntriesByTag (tagged.aspx)
-		- Show weight of tags on front page
 		- tag images
 	- links
 		- link description
@@ -14,6 +12,8 @@
 	- Add ExchangeReader
 
 - Admin
+	- add new tags
+	- delete entry
 	- delete user
 	- Links admin page
 	- Prevent people from messing w/ people higher than themselves

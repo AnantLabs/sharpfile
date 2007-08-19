@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Collections;
 using System.Data.SqlClient;
 
+// http://www.codeproject.com/cs/database/Lightweight_DAL_in_NET_2.asp.
 namespace Data.DAL {
 	public class DBHelper : Data.Base {
 		/// <summary>
@@ -208,6 +209,39 @@ namespace Data.DAL {
 			command.ExecuteNonQuery();
 		}
 
+		public static void SaveObject(object obj, string sql) {
+			SaveObject(obj, sql, null);
+		}
+
+		public static void SaveObject(object obj, string sql, SqlParameter[] sqlParameters) {
+			lock (lockObject) {
+				using (SqlCommand sqlCommand = getSqlCommand(sql, sqlParameters)) {
+					try {
+						sqlConnection.Open();
+
+						Type type = obj.GetType();
+						PropertyInfo[] properties = type.GetProperties();
+
+						foreach (PropertyInfo property in properties) {
+							// for each property declared in the type provided check if the property is
+							// decorated with the DBField attribute
+							if (Attribute.IsDefined(property, typeof(DBParameterAttribute))) {
+								DBParameterAttribute attrib = (DBParameterAttribute)Attribute.GetCustomAttribute(property, typeof(DBParameterAttribute));
+								IDataParameter param = (IDataParameter)sqlCommand.Parameters[attrib.ParameterName]; // get parameter
+								param.Value = property.GetValue(obj, null); // set parameter value
+							}
+						}
+
+						sqlCommand.ExecuteNonQuery();
+					} catch (Exception ex) {
+						throw ex;
+					} finally {
+						sqlConnection.Close();
+					}
+				}
+			}
+		}
+
 		public static void SaveCollection(IList collection, IDbCommand command) {
 			foreach (object item in collection) {
 				SaveObject(item, command);
@@ -218,6 +252,16 @@ namespace Data.DAL {
 			foreach (object item in collection) {
 				SaveObject(item, command, mappingInfo);
 			}
+		}
+
+		public static void SaveCollection(IList collection, string sql, SqlParameter[] sqlParameters) {
+			foreach (object item in collection) {
+				SaveObject(item, sql, sqlParameters);
+			}
+		}
+
+		public static void SaveCollection(IList collection, string sql) {
+			SaveCollection(collection, sql, null);
 		}
 	}
 }

@@ -32,7 +32,7 @@ namespace Data.Blog {
 			return Select("usp_SlogGetSlog", parameters);
 		}
 
-		public void InsertEntry(string title, string content, int userId, DateTime dateTime) {
+		public void InsertEntry(string title, string content, int userId, DateTime dateTime, string tagIds) {
 			int timezoneDifference = 0;
 			Configuration configuration = WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Request.ApplicationPath);
 
@@ -55,7 +55,7 @@ namespace Data.Blog {
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public void UpdateEntry(int id, string title, string content, int userId) {
+		public void UpdateEntry(int id, string title, string content, int userId, string tagIds) {
 			throw new Exception("The method or operation is not implemented.");
 		}
 

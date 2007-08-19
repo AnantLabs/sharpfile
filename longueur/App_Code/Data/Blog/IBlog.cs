@@ -10,9 +10,9 @@ namespace Data.Blog {
 		DataTable GetEntries();
 		DataTable GetEntries(int userId);
 		DataTable GetEntry(int id);
-		void InsertEntry(string title, string content, int userId, DateTime dateTime);
+		void InsertEntry(string title, string content, int userId, DateTime dateTime, string tagIds);
 		void DeleteEntry(int id);
-		void UpdateEntry(int id, string title, string content, int userId);
+		void UpdateEntry(int id, string title, string content, int userId, string tagIds);
 		DataTable GetArchives();
 		DataTable GetArchives(string name);
 		DataTable GetArchiveEntries(int archiveId);
