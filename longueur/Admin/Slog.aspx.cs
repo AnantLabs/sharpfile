@@ -92,7 +92,7 @@ public partial class Admin_Slog : System.Web.UI.Page
 
 				if (siteUser != null) {
 					try {
-						blogDAO.UpdateEntry(id, txtTitle.Text, txtContent.Text, siteUser.Id);
+						blogDAO.UpdateEntry(id, txtTitle.Text, txtContent.Text, siteUser.Id, string.Empty);
 						redirect();
 					} catch (Exception ex) {
 						lblMessage.Text = "There was an error: " + ex.Message + ex.StackTrace;

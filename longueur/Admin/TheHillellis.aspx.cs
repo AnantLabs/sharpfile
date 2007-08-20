@@ -43,7 +43,7 @@ public partial class Admin_TheHillellis : Page
 							t.Name);
 					});
 
-					txtTags.Text = tagIdStringBuilder.ToString();
+					txtTags.Text = tagIdStringBuilder.ToString().Trim();
 				} else {
 					lblMessage.Text = "Oh no, looks like something went wacky-tacky.<br />That emtry doesn't seem to exist.";
 				}
@@ -106,9 +106,9 @@ public partial class Admin_TheHillellis : Page
 
 				if (siteUser != null) {
 					try {
-						string tagIds = getTagIds(txtNewTags.Text);
+						string tagIds = getTagIds(txtTags.Text);
 						blogDAO.UpdateEntry(id, txtTitle.Text, txtContent.Text, siteUser.Id, tagIds);
-						redirect();
+						//redirect();
 					} catch (Exception ex) {
 						lblMessage.Text = "There was an error: " + ex.Message + ex.StackTrace;
 					}
@@ -152,15 +152,17 @@ public partial class Admin_TheHillellis : Page
 		StringBuilder tagIdStringBuilder = new StringBuilder();
 
 		foreach (string tagName in tagNames) {
-			Tag tag = tags.Find(delegate(Tag t) {
-				return t.Name == tagName;
-			});
+			if (tagName != string.Empty) {
+				Tag tag = tags.Find(delegate(Tag t) {
+					return t.Name == tagName;
+				});
 
-			if (tag != null) {
-				tagIdStringBuilder.AppendFormat("{0},",
-					tag.Id);
-			} else {
-				// TODO: Insert the tag here and then append the newly inserted tag's id to the sb.
+				if (tag != null) {
+					tagIdStringBuilder.AppendFormat("{0},",
+						tag.Id);
+				} else {
+					// TODO: Insert the tag here and then append the newly inserted tag's id to the sb.
+				}
 			}
 		}
 
