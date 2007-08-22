@@ -11,8 +11,8 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
-	SELECT	l.Id, l.Href, l.Description
+	SELECT	l.Id, l.Href, l.Title, l.Description
 	FROM	Link l
-	ORDER BY l.Id ASC
+	ORDER BY l.Title ASC
     
 END

@@ -8,17 +8,19 @@ public class Link {
 	private int id;
 	private string href;
 	private string description;
+	private string title;
 
 	public Link() {
 	}
 
-	public Link(int id, string href, string description) {
+	public Link(int id, string href, string title, string description) {
 		this.id = id;
 		this.href = href;
+		this.title = title;
 		this.description = description;
 	}
 
-	[DBField("Id"), DBParameter("@Id")]
+	[DBField("Id")]
 	public int Id {
 		get { return id; }
 		set { id = value; }
@@ -28,6 +30,12 @@ public class Link {
 	public string Href {
 		get { return href; }
 		set { href = value; }
+	}
+
+	[DBField("Title"), DBParameter("@Title")]
+	public string Title {
+		get { return title; }
+		set { title = value; }
 	}
 
 	[DBField("Description"), DBParameter("@Description")]

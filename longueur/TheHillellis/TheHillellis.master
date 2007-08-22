@@ -67,7 +67,7 @@
 					</div>
 				</HeaderTemplate>
 				<ItemTemplate>
-					<a href='<%# DataBinder.Eval(Container.DataItem, "Href").ToString() %>'><%# DataBinder.Eval(Container.DataItem, "Description").ToString() %></a><br />
+					<a href='<%# DataBinder.Eval(Container.DataItem, "Href").ToString() %>' title="<%# DataBinder.Eval(Container.DataItem, "Description").ToString() %>"><%# DataBinder.Eval(Container.DataItem, "Title").ToString() %></a><br />
 				</ItemTemplate>
 			</asp:Repeater>
 		</div>
