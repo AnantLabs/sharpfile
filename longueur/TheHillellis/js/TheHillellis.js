@@ -115,11 +115,12 @@ function onLoad() {
 		filename = filename.substring(0, filename.lastIndexOf('?'));
 	}
 	
+	var numericRegex = /\d+/;
 	// This seems pretty lame, but I need a way to resize the content based on different url's.
 	if (filename == '' ||
 		filename == 'default.aspx') {
 		resizeDefaultContent();
-	} else if (filename == 'permalink.aspx') {
+	} else if (filename == 'permalink.aspx' || numericRegex.test(filename)) {
 		resizeOneContentBox('permalinkContent');
 	} else if (filename == 'archive.aspx') {
 		resizeOneContentBox('archiveContent');

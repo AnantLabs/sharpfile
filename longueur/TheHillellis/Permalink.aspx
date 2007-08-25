@@ -4,4 +4,3 @@
 		<lng:content ID="ctlContent" runat="server" />
 	</div>
 </asp:Content>
-
