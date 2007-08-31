@@ -33,7 +33,7 @@
 				<%# DataBinder.Eval(Container.DataItem, "Content").ToString() %>
 			</div>
 			<div class="permalink">
-				<a href='../TheHillellis/Permalink.aspx?id=<%# DataBinder.Eval(Container.DataItem, "Id") %>'>Permalink</a>
+				<a href='../TheHillellis/<%# DataBinder.Eval(Container.DataItem, "Id") %>.aspx'>Permalink</a>
 			</div>
 			<div style='<%# (int.Parse(DataBinder.Eval(Container.DataItem, "Id").ToString()) == getLastId()) ? "display: none" : "" %>'>
 				<br /><br />

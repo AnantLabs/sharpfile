@@ -9,12 +9,12 @@
     }
 
     void Application_BeginRequest(object sender, EventArgs e) {
-        foreach (RuleElement rule in SettingsSingleton.Instance.Rewrites) {
-            if (rule.Url.IsMatch(HttpContext.Current.Request.Path)) {
-                string url = rule.Url.Replace(HttpContext.Current.Request.Path, rule.Rewrite);
-                HttpContext.Current.RewritePath(url);
-            }
-        }
+        //foreach (RuleElement rule in SettingsSingleton.Instance.Rewrites) {
+        //    if (rule.Url.IsMatch(HttpContext.Current.Request.Path)) {
+        //        string url = rule.Url.Replace(HttpContext.Current.Request.Path, rule.Rewrite);
+        //        HttpContext.Current.RewritePath(url);
+        //    }
+        //}
     }
 
     void Application_Error(object sender, EventArgs e) {

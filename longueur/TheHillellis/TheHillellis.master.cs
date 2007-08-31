@@ -58,6 +58,7 @@ public partial class TheHillellis_Default : MasterPage {
 
 			ThemeType theme = (ThemeType)Enum.Parse(typeof(ThemeType), ddlThemes.SelectedValue);
 			styles.InnerHtml += "@import \"css/themes/" + theme.ToString() + ".css\";";
+			this.Response.Redirect(this.Request.Url.PathAndQuery);
 		}
 	}
 

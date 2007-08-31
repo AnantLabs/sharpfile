@@ -63,7 +63,7 @@ public class Feed : IHttpHandler {
 				xml.WriteStartElement("item");
 				xml.WriteElementString("title", entry.Title);
 				xml.WriteElementString("description", entry.Content);
-				xml.WriteElementString("link", "http://www.longueur.org/TheHillellis/Permalink.aspx?id=" + entry.Id.ToString());
+				xml.WriteElementString("link", "http://www.longueur.org/TheHillellis/" + entry.Id.ToString() + ".aspx");
 				xml.WriteElementString("pubDate", entry.DateTime.ToString("R"));
 				xml.WriteEndElement();
 			}
