@@ -6,29 +6,45 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<title>CSS Layout - 100% height</title>
+	<title>Photos</title>
 	<link rel="stylesheet" type="text/css" href="styles.css" />
 </head>
 <body>
+<form id="frm" runat="server">
 	<div id="header">
-		Photos
+		<a href="../default.aspx">longueur.org</a> >> Photos
 	</div>
 	
 	<div id="sidebar">
 			<asp:Repeater ID="rptPhotos" runat="server">
 				<ItemTemplate>
-					<img src='<%# Eval("ThumbnailUrl") %>' /><br />
+					<asp:ImageButton ID="imgThumbnail" runat="server" 
+						AlternateText='<%# Eval("Title") %>' ToolTip='<%# Eval("Title") %>' 
+						ImageUrl='<%# Eval("ThumbnailUrl") %>' CommandArgument='<%# Eval("PhotoId") %>' 
+						OnClick="imgThumbnail_OnClick" style="margin-bottom: 5px; border: solid 1px #000" />
+					<br />
 				</ItemTemplate>
 			</asp:Repeater>
 	</div>
 	<div id="container">
+		<div id="titlebar">
+			<div id="title">
+				<asp:Literal ID="ltlTitle" runat="server" />
+			</div>
+		</div>
 		<div id="content">
-			<asp:Image ID="imgCurrent" runat="server" />
+			<asp:HyperLink ID="hypCurrent" runat="server" Target="_blank"><asp:Image ID="imgCurrent" 
+				runat="server" style="border: solid 1px #000" /></asp:HyperLink>
+		</div>
+		<div id="navigation">
+			<div id="previous">
+				<asp:LinkButton ID="lnkPrevious" Text="<< Previous" runat="server" />
+			</div>
+			<div id="next">
+				<asp:LinkButton ID="lnkNext" Text="Next >>" runat="server" />
+			</div>		
 		</div>
 	</div>
-	
-	<div id="footer">
-		Stuff here.
-	</div>
 </body>
+</form>
 </html>

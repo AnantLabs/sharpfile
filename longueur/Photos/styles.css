@@ -2,7 +2,7 @@
  * 100% height layout with header and footer
  * ----------------------------------------------
  * Feel free to copy/use/change/improve
- * http://www.xs4all.nl/~peterned/examples/csslayout1.html.
+ * http://www.xs4all.nl/~peterned/examples/csslayout1.html
  */
 
 html,body {
@@ -42,7 +42,7 @@ div#sidebar {
 	margin-left: 5px;
 	width:150px;
 	background:#f0f0f0;
-	padding: 5px;
+	padding: 5px 5px 0px 5px;
 	
 	height:auto !important; /* real browsers */
 	height:100%; /* IE6: treaded as min-height*/
@@ -70,47 +70,70 @@ div#container {
 	height:100%; /* IE6: treaded as min-height*/
 	min-height:100%; /* real browsers */
 	
-	
 }
 
-div#content {
+div#content 
+{
 	position:relative; /* needed for footer positioning*/
 	margin:0 auto; /* center, not in IE5 */
 	left: 170px;
-	padding: 5px;
+	padding:5px;
 	padding-right: 175px;
 	margin-right: 175px;
+	margin-top: 32px;
 	
 	background:#f0f0f0;
-	
-	height:auto !important; /* real browsers */
-	height:100%; /* IE6: treaded as min-height*/
-	min-height:100%; /* real browsers */
-	
 	text-align: center;
 }
 
+div#titlebar
+{
+	position: absolute;
+	background:#f0f0f0;
+	border-bottom:6px double gray;
+	left: 175px;
+	margin-right: 180px;
+	padding:5px;
+	background:#f0f0f0;
+}
+
+div#title
+{
+	background:#f0f0f0;
+	float:right;
+	
+}
+
+div#navigation 
+{
+	position: absolute;
+	background:#f0f0f0;
+	border-top:6px double gray;
+	left: 175px;
+	margin-right: 180px;
+	padding:5px;
+}
+
+div#previous 
+{
+	background:#f0f0f0;
+	float: left;
+}
+
+div#next
+{
+	background:#f0f0f0;
+	float: right;
+}
+
 div#header {
-	padding:1em;
-	background:#ddd url("../csslayout.gif") 98% 10px no-repeat;
+	padding:5px;
+	background-color:#ddd;
 	border-bottom:6px double gray;
 }
 
 div#header p {
 	font-style:italic;
 	font-size:1.1em;
-	margin:0;
-}
-
-div#footer {
-	position:absolute;
-	width:100%;
-	bottom:0; /* stick to bottom */
-	background:#ddd;
-	border-top:6px double gray;
-}
-
-div#footer p {
-	padding:1em;
 	margin:0;
 }
