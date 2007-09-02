@@ -8,7 +8,6 @@
 html,body {
 	margin:0;
 	padding:0;
-	height:100%; /* needed for container min-height */
 	background:gray;
 	
 	font-family:arial,sans-serif;
@@ -35,94 +34,63 @@ p {
 	margin:0 0 1em;
 }
 
-div#sidebar {
-	position:relative; /* needed for footer positioning*/
-	margin:0 auto; /* center, not in IE5 */
-	margin-right: 5px;
-	margin-left: 5px;
-	width:150px;
+div#thumbnails {
+	width: 98%;
 	background:#f0f0f0;
-	padding: 5px 5px 0px 5px;
-	
-	height:auto !important; /* real browsers */
-	height:100%; /* IE6: treaded as min-height*/
-	min-height:100%; /* real browsers */
-	
-	float: left;
-	text-align: center;
+	padding: 5px;
 	
 	overflow: hidden;
-	overflow-x: hidden;
-	overflow-y: auto;
+	overflow-x: auto;
+	overflow-y: hidden;
+	margin: 0 auto;
 }
 
-div#container {
-	position:relative; /* needed for footer positioning*/
-	margin:0 auto; /* center, not in IE5 */
-	left: 170px;
-	padding: 5px;
-	padding-right: 175px;
-	margin-right: 175px;
-	
-	/*background:#f0f0f0;*/
-	
-	height:auto !important; /* real browsers */
-	height:100%; /* IE6: treaded as min-height*/
-	min-height:100%; /* real browsers */
-	
+div#container 
+{
+	margin:0 auto;
+	padding: 3px 0px 0px 0px;
 }
 
 div#content 
 {
-	position:relative; /* needed for footer positioning*/
-	margin:0 auto; /* center, not in IE5 */
-	left: 170px;
-	padding:5px;
-	padding-right: 175px;
-	margin-right: 175px;
-	margin-top: 32px;
-	
-	background:#f0f0f0;
+	margin:0 auto;
 	text-align: center;
+	width: 98%;
 }
 
 div#titlebar
 {
-	position: absolute;
+	margin:0 auto;
+	height: 16px;
 	background:#f0f0f0;
 	border-bottom:6px double gray;
-	left: 175px;
-	margin-right: 180px;
-	padding:5px;
-	background:#f0f0f0;
+	padding: 5px;
+	width: 98%;
 }
 
 div#title
 {
 	background:#f0f0f0;
 	float:right;
-	
 }
 
 div#navigation 
 {
-	position: absolute;
+	margin:0 auto;
+	width: 98%;
+	height: 16px;
 	background:#f0f0f0;
 	border-top:6px double gray;
-	left: 175px;
-	margin-right: 180px;
 	padding:5px;
 }
 
 div#previous 
 {
-	background:#f0f0f0;
 	float: left;
 }
 
 div#next
 {
-	background:#f0f0f0;
 	float: right;
 }
 

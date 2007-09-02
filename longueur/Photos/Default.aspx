@@ -15,14 +15,13 @@
 		<a href="../default.aspx">longueur.org</a> >> Photos
 	</div>
 	
-	<div id="sidebar">
+	<div id="thumbnails">
 			<asp:Repeater ID="rptPhotos" runat="server">
 				<ItemTemplate>
 					<asp:ImageButton ID="imgThumbnail" runat="server" 
 						AlternateText='<%# Eval("Title") %>' ToolTip='<%# Eval("Title") %>' 
 						ImageUrl='<%# Eval("ThumbnailUrl") %>' CommandArgument='<%# Eval("PhotoId") %>' 
-						OnClick="imgThumbnail_OnClick" style="margin-bottom: 5px; border: solid 1px #000" />
-					<br />
+						OnClick="imgThumbnail_OnClick" style="border: solid 1px #000" />
 				</ItemTemplate>
 			</asp:Repeater>
 	</div>
@@ -33,8 +32,9 @@
 			</div>
 		</div>
 		<div id="content">
-			<asp:HyperLink ID="hypCurrent" runat="server" Target="_blank"><asp:Image ID="imgCurrent" 
-				runat="server" style="border: solid 1px #000" /></asp:HyperLink>
+			<asp:HyperLink ID="hypCurrent" runat="server" Target="_blank">
+				<asp:Image ID="imgCurrent" runat="server" style="border: solid 1px #000" />
+			</asp:HyperLink>
 		</div>
 		<div id="navigation">
 			<div id="previous">

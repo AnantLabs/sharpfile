@@ -2,6 +2,7 @@ using System;
 using FlickrNet;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using System.Web.Configuration;
 
 public partial class Photos_Default : System.Web.UI.Page {
 	private List<Photo> photos;
@@ -31,16 +32,23 @@ public partial class Photos_Default : System.Web.UI.Page {
 
 	#region Helper Methods
 	private void loadPhotos() {
-		Flickr flickr = new Flickr();
+		if (Cache["flickrResults"] == null) {
+			Flickr flickr = new Flickr();
 
-		PhotoSearchOptions options = new PhotoSearchOptions();
-		options.UserId = "10086551@N05";
-		options.PerPage = 100;
-		options.Tags = "Phlog";
-		options.SortOrder = PhotoSearchSortOrder.DatePostedDesc;
+			PhotoSearchOptions options = new PhotoSearchOptions();
+			options.UserId = WebConfigurationManager.AppSettings["flickrUid"];
+			options.PerPage = int.Parse(WebConfigurationManager.AppSettings["flickrPerPage"]);
+			options.Tags = WebConfigurationManager.AppSettings["flickrTag"];
+			options.SortOrder = PhotoSearchSortOrder.DatePostedDesc;
 
-		Photo[] photoArray = flickr.PhotosSearch(options).PhotoCollection;
-		photos = new List<Photo>(photoArray);
+			Photo[] photoArray = flickr.PhotosSearch(options).PhotoCollection;
+
+			Cache.Insert("flickrResults", new List<Photo>(photoArray), null, 
+				System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(0, 1, 0), 
+				System.Web.Caching.CacheItemPriority.Normal, null);
+		}
+
+		photos = (List<Photo>)Cache["flickrResults"];
 	}
 
 	private void loadPhoto(string photoId) {
@@ -50,11 +58,11 @@ public partial class Photos_Default : System.Web.UI.Page {
 
 		if (photo != null) {
 			imgCurrent.ImageUrl = photo.MediumUrl;
-			hypCurrent.NavigateUrl = photo.WebUrl;
+			hypCurrent.NavigateUrl = photo.LargeUrl;
 			ltlTitle.Text = photo.Title;
 
 			int photoIndex = photos.IndexOf(photo);
-			lnkNext.Enabled = !(photoIndex == photos.Count - 1); //photos[photoIndex + 1] != null
+			lnkNext.Enabled = !(photoIndex == (photos.Count - 1)); //photos[photoIndex + 1] != null
 			lnkPrevious.Enabled = !(photoIndex == 0);
 
 			if (lnkNext.Enabled) {
