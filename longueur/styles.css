@@ -1,0 +1,29 @@
+﻿body {
+}
+
+#container
+{
+	margin: 0 auto;
+	border: dashed 1px black;
+	width: 300px;
+	padding: 5px;
+}
+
+#links
+{
+	width: 100px;
+}
+
+#description
+{
+	position: absolute;
+	width: 200px;
+	top: 65px;
+	margin-left: 100px;
+}
+
+#title 
+{
+	height: 50px;
+	font-weight: bold;
+}

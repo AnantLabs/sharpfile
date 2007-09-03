@@ -8,6 +8,13 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>Photos</title>
 	<link rel="stylesheet" type="text/css" href="styles.css" />
+
+	<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+	</script>
+	<script type="text/javascript">
+	_uacct = "UA-247760-1";
+	//urchinTracker();
+</script>
 </head>
 <body>
 <form id="frm" runat="server">
@@ -16,14 +23,15 @@
 	</div>
 	
 	<div id="thumbnails">
-			<asp:Repeater ID="rptPhotos" runat="server">
-				<ItemTemplate>
-					<asp:ImageButton ID="imgThumbnail" runat="server" 
-						AlternateText='<%# Eval("Title") %>' ToolTip='<%# Eval("Title") %>' 
-						ImageUrl='<%# Eval("ThumbnailUrl") %>' CommandArgument='<%# Eval("PhotoId") %>' 
-						OnClick="imgThumbnail_OnClick" style="border: solid 1px #000" />
-				</ItemTemplate>
-			</asp:Repeater>
+		<asp:Repeater ID="rptPhotos" runat="server">
+			<ItemTemplate>
+				<input type="hidden" id="inpId" runat="server" value='<%# Eval("Id") %>' />
+				<asp:ImageButton ID="imgThumbnail" runat="server" 
+					AlternateText='<%# Eval("Title") %>' ToolTip='<%# Eval("Title") %>' 
+					ImageUrl='<%# Eval("ThumbnailUrl") %>' CommandArgument='<%# Eval("Id") %>' 
+					OnClick="imgThumbnail_OnClick" CssClass="photo" />
+			</ItemTemplate>
+		</asp:Repeater>
 	</div>
 	<div id="container">
 		<div id="titlebar">
@@ -35,6 +43,9 @@
 			<asp:HyperLink ID="hypCurrent" runat="server" Target="_blank">
 				<asp:Image ID="imgCurrent" runat="server" style="border: solid 1px #000" />
 			</asp:HyperLink>
+		</div>
+		<div id="divDescription" class="description" runat="server">
+			<asp:Literal ID="ltlDescription" runat="server" />
 		</div>
 		<div id="navigation">
 			<div id="previous">

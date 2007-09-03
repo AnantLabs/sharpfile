@@ -82,6 +82,7 @@ div#navigation
 	background:#f0f0f0;
 	border-top:6px double gray;
 	padding:5px;
+	margin-bottom: 5px;
 }
 
 div#previous 
@@ -104,4 +105,23 @@ div#header p {
 	font-style:italic;
 	font-size:1.1em;
 	margin:0;
+}
+
+.description
+{
+	margin:0 auto;
+	width: 98%;
+	background:#f0f0f0;
+	border-top:6px double gray;
+	padding:5px;
+}
+
+.photo
+{
+	 border: solid 1px #000 !important;
+}
+
+.selectedPhoto 
+{
+	border: solid 1px orange !important;
 }
