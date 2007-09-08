@@ -3,8 +3,6 @@
 		- tag images
 	- links
 		- link description
-		- Push link-ified master page out to live (I think has been done)
-	- show last 10 (?) entries
 	- take common js out and put it into the js directory (grab height of window)
 
 - Software 
