@@ -48,9 +48,12 @@
       <DependentUpon>Child.cs</DependentUpon>
     </Compile>
     <Compile Include="DataInfo\DirectoryInfo.cs" />
+    <Compile Include="DataInfo\DriveInfo.cs" />
+    <Compile Include="DataInfo\DriveType.cs" />
     <Compile Include="DataInfo\FileInfo.cs" />
-    <Compile Include="DriveInfo.cs" />
     <Compile Include="DataInfo\DataInfo.cs" />
+    <Compile Include="DataInfo\ParentDirectoryInfo.cs" />
+    <Compile Include="DataInfo\RootInfo.cs" />
     <Compile Include="Infrastructure.cs" />
     <Compile Include="Parent.cs">
       <SubType>Form</SubType>
@@ -86,6 +89,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Settings.cs" />
+    <Compile Include="UnitDisplayType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -10,13 +10,15 @@ namespace SharpFile
 {
     public partial class Parent : Form
     {
-        private int childFormNumber = 0;
-
         public Parent()
         {
             InitializeComponent();
 
             ShowNewForm(null, EventArgs.Empty);
+
+			if (this.MdiChildren.Length == 1) {
+				this.MdiChildren[0].WindowState = FormWindowState.Maximized;
+			}
         }
 
         private void ShowNewForm(object sender, EventArgs e)
@@ -26,12 +28,12 @@ namespace SharpFile
 
             // Make it a child of this MDI form before showing it.
             childForm.MdiParent = this;
-            childForm.Text = "Window " + childFormNumber++;
             childForm.Show();
 
             // Update the list view.
             childForm.UpdateDriveListing();
             childForm.UpdateFileListing(@"c:\");
+			
         }
 
         private void OpenFile(object sender, EventArgs e)
