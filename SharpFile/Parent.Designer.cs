@@ -81,6 +81,7 @@ namespace SharpFile
 			this.helpToolStripButton = new System.Windows.Forms.ToolStripButton();
 			this.statusStrip = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
+			this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.menuStrip.SuspendLayout();
 			this.toolStrip.SuspendLayout();
@@ -513,7 +514,8 @@ namespace SharpFile
 			// statusStrip
 			// 
 			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatus});
+            this.toolStripStatus,
+            this.toolStripProgressBar});
 			this.statusStrip.Location = new System.Drawing.Point(0, 431);
 			this.statusStrip.Name = "statusStrip";
 			this.statusStrip.Size = new System.Drawing.Size(632, 22);
@@ -524,6 +526,11 @@ namespace SharpFile
 			// 
 			this.toolStripStatus.Name = "toolStripStatus";
 			this.toolStripStatus.Size = new System.Drawing.Size(0, 17);
+			// 
+			// toolStripProgressBar
+			// 
+			this.toolStripProgressBar.Name = "toolStripProgressBar";
+			this.toolStripProgressBar.Size = new System.Drawing.Size(100, 16);
 			// 
 			// Parent
 			// 
@@ -602,6 +609,7 @@ namespace SharpFile
         private System.Windows.Forms.ToolStripButton printPreviewToolStripButton;
         private System.Windows.Forms.ToolStripButton helpToolStripButton;
         private System.Windows.Forms.ToolTip ToolTip;
+		private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
     }
 }
 

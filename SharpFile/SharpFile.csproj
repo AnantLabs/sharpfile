@@ -49,11 +49,13 @@
     </Compile>
     <Compile Include="DataInfo\DirectoryInfo.cs" />
     <Compile Include="DataInfo\DriveInfo.cs" />
-    <Compile Include="DataInfo\DriveType.cs" />
     <Compile Include="DataInfo\FileInfo.cs" />
     <Compile Include="DataInfo\DataInfo.cs" />
     <Compile Include="DataInfo\ParentDirectoryInfo.cs" />
     <Compile Include="DataInfo\RootInfo.cs" />
+    <Compile Include="DriveType.cs" />
+    <Compile Include="FileGrabber.cs" />
+    <Compile Include="IconHelper.cs" />
     <Compile Include="Infrastructure.cs" />
     <Compile Include="Parent.cs">
       <SubType>Form</SubType>
@@ -91,6 +93,9 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="UnitDisplayType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ChangeLog.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

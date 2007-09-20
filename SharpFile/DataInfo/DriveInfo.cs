@@ -5,9 +5,9 @@ namespace SharpFile {
 		private string description;
 		private string providerName;
 		private long freeSpace;
-		private int driveType;
+		private DriveType driveType;
 
-		public DriveInfo(string name, string providerName, int driveType, string description,
+		public DriveInfo(string name, string providerName, DriveType driveType, string description,
 			long size, long freeSpace) {
 			this.name = name;
 			this.providerName = providerName;
@@ -23,8 +23,7 @@ namespace SharpFile {
 			}
 		}
 
-		// TODO: This should be an enum.
-		public int DriveType {
+		public DriveType DriveType {
 			get {
 				return driveType;
 			}

@@ -27,7 +27,7 @@ namespace SharpFile
 				dataInfos.Add(new ParentDirectoryInfo(directoryInfo.Parent));
 			}
 
-            System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
+			System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
             dataInfos.AddRange(
 				Array.ConvertAll<System.IO.DirectoryInfo, DataInfo>(directoryInfos, delegate(System.IO.DirectoryInfo di)
                 {
@@ -66,13 +66,16 @@ namespace SharpFile
 
         public static IEnumerable<DriveInfo> GetDrives()
         {
-            foreach (ManagementObject managementObject in GetManagementObjects("Win32_LogicalDisk"))
+			foreach (ManagementObject managementObject in GetManagementObjects("Win32_LogicalDisk"))
             {
-                if (int.Parse(managementObject["DriveType"].ToString()) >= 3 && 
-                    int.Parse(managementObject["DriveType"].ToString()) <= 4)
+				int driveType_i = managementObject["DriveType"] != null ?
+					int.Parse(managementObject["DriveType"].ToString()) : 0;
+
+				if (driveType_i >= 2 &&
+					driveType_i <= 6)
                 {
                     string name = managementObject["Name"].ToString();
-                    int driveType = int.Parse(managementObject["DriveType"].ToString());
+					DriveType driveType = (DriveType)Enum.Parse(typeof(DriveType), driveType_i.ToString());
                     string description = managementObject["Description"] != null ? 
                         managementObject["Description"].ToString() : string.Empty;
                     string providerName = managementObject["ProviderName"] != null ? 

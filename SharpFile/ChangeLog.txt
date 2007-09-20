@@ -1,0 +1,10 @@
+0.2
+	Textbox for specific path retrieval
+	Wildcard pattern filtering on files
+	Asynchronous retrieval of files/folders
+
+0.1
+	Proof of concept MDI application
+	Retrieves drives
+	Retrieves files and folders
+	Root/parent custom files
