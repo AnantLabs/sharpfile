@@ -55,7 +55,6 @@
     <Compile Include="DataInfo\RootInfo.cs" />
     <Compile Include="DriveType.cs" />
     <Compile Include="IconHelper.cs" />
-    <Compile Include="FileIcon\IconListManager.cs" />
     <Compile Include="Infrastructure.cs" />
     <Compile Include="Parent.cs">
       <SubType>Form</SubType>
@@ -96,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ChangeLog.txt" />
+    <Content Include="Todo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

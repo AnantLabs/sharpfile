@@ -535,7 +535,7 @@ namespace SharpFile
 			// 
 			// imageList
 			// 
-			this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
 			this.imageList.ImageSize = new System.Drawing.Size(16, 16);
 			this.imageList.TransparentColor = System.Drawing.Color.Transparent;
 			// 

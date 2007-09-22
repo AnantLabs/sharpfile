@@ -11,6 +11,8 @@ using System.Drawing;
 namespace SharpFile {
 	public static class Infrastructure {
 		private const string allFilesPattern = "*.*";
+		private const string openFolderKey = ":OPEN_FOLDER:";
+		private const string closedFolderKey = ":CLOSED_FOLDER:";
 
 		private static object lockObject = new object();
 
@@ -97,38 +99,46 @@ namespace SharpFile {
 		public static int GetImageIndex(DataInfo dataInfo, ImageList imageList) {
 			lock (lockObject) {
 				int imageIndex = imageList.Images.Count;
-				string fullPath = string.Empty;
-				string extension = string.Empty;
+				string fullPath = dataInfo.FullPath;
 
 				if (dataInfo is FileInfo) {
-					fullPath = ((FileInfo)dataInfo).FullPath.ToLower();
-					extension = ((FileInfo)dataInfo).Extension.ToLower();
+					string extension = ((FileInfo)dataInfo).Extension;
+
+					// TODO: Specify the extensions to grab the images from in a config file.
+					if (extension.Equals(".exe") ||
+						extension.Equals(".lnk") ||
+						extension.Equals(".dll") ||
+						extension.Equals(".ps") ||
+						extension.Equals(".scr") ||
+						extension.Equals(".ico") ||
+						extension.Equals(".icn") ||
+						extension.Equals(string.Empty)) {
+						// Add the full name of the file if it is an executable into the the ImageList.
+						if (!imageList.Images.ContainsKey(fullPath)) {
+							Icon icon = IconReader.GetFileIcon(fullPath, IconReader.IconSize.Small, false);
+							imageList.Images.Add(fullPath, icon);
+						}
+
+						imageIndex = imageList.Images.IndexOfKey(fullPath);
+					} else {
+						// Add the extension into the ImageList.
+						if (!imageList.Images.ContainsKey(extension)) {
+							Icon icon = IconReader.GetFileIcon(fullPath, IconReader.IconSize.Small, false);
+							imageList.Images.Add(extension, icon);
+						}
+
+						imageIndex = imageList.Images.IndexOfKey(extension);
+					}
 				} else if (dataInfo is DirectoryInfo) {
-					fullPath = ((DirectoryInfo)dataInfo).FullPath.ToLower();
-					extension = ((DirectoryInfo)dataInfo).FullPath.ToLower();
+					// Add the directory information into the ImageList.
+					if (!imageList.Images.ContainsKey(closedFolderKey)) {
+						Icon icon = IconReader.GetFolderIcon(IconReader.IconSize.Small, IconReader.FolderType.Closed);
+						imageList.Images.Add(closedFolderKey, icon);
+					}
+
+					imageIndex = imageList.Images.IndexOfKey(closedFolderKey);
 				} else {
 					throw new ArgumentException("The object, " + dataInfo.GetType() + ", is not supported.");
-				}
-
-				if (extension.Equals(".exe") ||
-					extension.Equals(".lnk") ||
-					extension.Equals(".dll") ||
-					extension.Equals(string.Empty)) {
-					// Add the full name of the file if it is an executable into the the ImageList.
-					if (!imageList.Images.ContainsKey(fullPath)) {
-						Icon icon = IconReader.GetFileIcon(fullPath, IconReader.IconSize.Small, false);
-						imageList.Images.Add(fullPath, icon);
-					}
-
-					imageIndex = imageList.Images.IndexOfKey(fullPath);
-				} else {
-					// Add the extension into the ImageList.
-					if (!imageList.Images.ContainsKey(extension)) {
-						Icon icon = IconReader.GetFileIcon(fullPath, IconReader.IconSize.Small, false);
-						imageList.Images.Add(extension, icon);
-					}
-
-					imageIndex = imageList.Images.IndexOfKey(extension);
 				}
 
 				return imageIndex;
