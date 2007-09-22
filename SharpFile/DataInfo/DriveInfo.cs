@@ -15,6 +15,7 @@ namespace SharpFile {
 			this.description = description;
 			this.size = size;
 			this.freeSpace = freeSpace;
+			this.fullPath = name;
 		}
 
 		public string ProviderName {

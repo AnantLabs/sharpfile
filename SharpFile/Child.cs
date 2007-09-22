@@ -10,12 +10,16 @@ using System.ComponentModel;
 
 namespace SharpFile {
 	public partial class Child : Form {
-		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
 		private string _path;
 		private string _pattern;
+		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
 		private IList<string> selectedFiles = new List<string>();
 
-		public event EventHandler OnUpdateStatus;
+		public delegate void OnUpdateStatusDelegate(int value);
+		public event OnUpdateStatusDelegate OnUpdateStatus;
+
+		public delegate int OnGetImageIndexDelegate(DataInfo dataInfo);
+		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		public Child() {
 			InitializeComponent();
@@ -24,7 +28,15 @@ namespace SharpFile {
 
 		protected void UpdateStatus(int value) {
 			if (OnUpdateStatus != null)
-				OnUpdateStatus(value, EventArgs.Empty);
+				OnUpdateStatus(value);
+		}
+
+		protected int GetImageIndex(DataInfo dataInfo) {
+			if (OnGetImageIndex != null) {
+				return OnGetImageIndex(dataInfo);
+			}
+
+			return -1;
 		}
 
 		#region Private methods
@@ -169,6 +181,10 @@ namespace SharpFile {
 		}
 
 		private void updateFileListing(string path, string pattern) {
+			if (listView.SmallImageList == null) {
+				listView.SmallImageList = ((Parent)this.MdiParent).ImageList;
+			}
+
 			if (path.Equals(_path) &&
 				pattern.Equals(_pattern)) {
 				return;
@@ -215,8 +231,8 @@ namespace SharpFile {
 					foreach (DataInfo dataInfo in dataInfos) {
 						double size;
 						ListViewItem item = new ListViewItem(dataInfo.DisplayName);
-						//Etier.IconHelper.IconReader.GetFileIcon
-						item.ImageIndex = 1; //Data.GetImageIndex(theFile, imageList, imageHash);
+						int imageIndex = OnGetImageIndex(dataInfo);
+						item.ImageIndex = imageIndex;
 
 						switch (unitDisplay) {
 							case UnitDisplay.KiloBytes:

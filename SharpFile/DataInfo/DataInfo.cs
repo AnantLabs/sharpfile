@@ -9,6 +9,7 @@ namespace SharpFile
     {
 		protected string displayName;
         protected string name;
+		protected string fullPath;
         protected long size;
         protected DateTime lastWriteTime;
         protected Image image;
@@ -46,5 +47,11 @@ namespace SharpFile
                 return lastWriteTime;
             }
         }
+
+		public string FullPath {
+			get {
+				return fullPath;
+			}
+		}
     }
 }

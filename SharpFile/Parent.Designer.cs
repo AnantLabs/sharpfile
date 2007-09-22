@@ -83,6 +83,7 @@ namespace SharpFile
 			this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.menuStrip.SuspendLayout();
 			this.toolStrip.SuspendLayout();
 			this.statusStrip.SuspendLayout();
@@ -532,6 +533,12 @@ namespace SharpFile
 			this.toolStripProgressBar.Name = "toolStripProgressBar";
 			this.toolStripProgressBar.Size = new System.Drawing.Size(100, 16);
 			// 
+			// imageList
+			// 
+			this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+			this.imageList.ImageSize = new System.Drawing.Size(16, 16);
+			this.imageList.TransparentColor = System.Drawing.Color.Transparent;
+			// 
 			// Parent
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -610,6 +617,7 @@ namespace SharpFile
         private System.Windows.Forms.ToolStripButton helpToolStripButton;
         private System.Windows.Forms.ToolTip ToolTip;
 		private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar;
+		private System.Windows.Forms.ImageList imageList;
     }
 }
 

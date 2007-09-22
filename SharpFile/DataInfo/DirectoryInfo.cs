@@ -9,6 +9,7 @@ namespace SharpFile
             this.name = directoryInfo.Name;
             this.size = 0;
             this.lastWriteTime = directoryInfo.LastWriteTime;
+			this.fullPath = directoryInfo.FullName;
         }
 
         public long GetSize(System.IO.DirectoryInfo directoryInfo)

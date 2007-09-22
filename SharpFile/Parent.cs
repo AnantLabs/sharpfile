@@ -8,8 +8,7 @@ using System.Windows.Forms;
 
 namespace SharpFile {
 	public partial class Parent : Form {
-		public delegate void UpdateStatus(string status);
-		//public event UpdateStatusDelegate UpdateStatus;
+		private static object lockObject = new object();
 
 		public Parent() {
 			InitializeComponent();
@@ -29,13 +28,22 @@ namespace SharpFile {
 			// Make it a child of this MDI form before showing it.
 			childForm.MdiParent = this;
 			childForm.Show();
-			childForm.OnUpdateStatus += delegate(object updateSender, EventArgs updateEventArgs) {
-				toolStripProgressBar.Value = (int)updateSender;
+			childForm.OnUpdateStatus += delegate(int value) {
+				toolStripProgressBar.Value = value;
+			};
+
+			childForm.OnGetImageIndex += delegate(DataInfo dataInfo) {
+				return Infrastructure.GetImageIndex(dataInfo, imageList);
 			};
 
 			// Update the list view.
 			childForm.UpdateDriveListing();
-			//childForm.ExecuteOrUpdate(@"c:\");
+		}
+
+		public ImageList ImageList {
+			get {
+				return imageList;
+			}
 		}
 
 		private void OpenFile(object sender, EventArgs e) {

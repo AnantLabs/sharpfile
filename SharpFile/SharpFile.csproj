@@ -54,8 +54,8 @@
     <Compile Include="DataInfo\ParentDirectoryInfo.cs" />
     <Compile Include="DataInfo\RootInfo.cs" />
     <Compile Include="DriveType.cs" />
-    <Compile Include="FileGrabber.cs" />
     <Compile Include="IconHelper.cs" />
+    <Compile Include="FileIcon\IconListManager.cs" />
     <Compile Include="Infrastructure.cs" />
     <Compile Include="Parent.cs">
       <SubType>Form</SubType>
@@ -81,6 +81,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -91,7 +92,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Settings.cs" />
     <Compile Include="UnitDisplayType.cs" />
   </ItemGroup>
   <ItemGroup>
