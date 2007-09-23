@@ -7,6 +7,10 @@ namespace SharpFile
     {
 		private string extension;
 
+		public FileInfo(string fileName)
+			: this(new System.IO.FileInfo(fileName)) {
+		}
+
         public FileInfo(System.IO.FileInfo fileInfo)
         {
             this.name = fileInfo.Name;

@@ -7,6 +7,10 @@ namespace SharpFile
     {
 		private System.IO.DirectoryInfo directoryInfo;
 
+		public DirectoryInfo(string path)
+			: this(new System.IO.DirectoryInfo(path)) {
+		}
+
         public DirectoryInfo(System.IO.DirectoryInfo directoryInfo)
         {
 			this.size = 0;

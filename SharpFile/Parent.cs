@@ -10,6 +10,7 @@ using SharpFile.FileSystem;
 namespace SharpFile {
 	public partial class Parent : Form {
 		private static object lockObject = new object();
+		private Timer timer = new Timer();
 
 		public Parent() {
 			InitializeComponent();
@@ -20,6 +21,11 @@ namespace SharpFile {
 			if (this.MdiChildren.Length == 1) {
 				this.MdiChildren[0].WindowState = FormWindowState.Maximized;
 			}
+
+			timer.Enabled = true;
+			timer.Tick += delegate(object sender, EventArgs e) {
+				progressDisk.Value = (progressDisk.Value + 1) % 12;
+			};
 		}
 
 		private void ShowNewForm(object sender, EventArgs e) {
@@ -29,8 +35,21 @@ namespace SharpFile {
 			// Make it a child of this MDI form before showing it.
 			childForm.MdiParent = this;
 			childForm.Show();
-			childForm.OnUpdateStatus += delegate(int value) {
-				toolStripProgressBar.Value = value;
+
+			childForm.OnUpdateStatus += delegate(string status) {
+				toolStripStatus.Text = status;
+			};
+
+			childForm.OnUpdateProgress += delegate(int value) {
+				if (value < 100) {
+					if (!timer.Enabled) {
+						timer.Enabled = true;
+					}
+				} else if (value == 100) {
+					if (timer.Enabled) {
+						timer.Enabled = false;
+					}
+				}
 			};
 
 			childForm.OnGetImageIndex += delegate(FileSystemInfo dataInfo) {
@@ -39,6 +58,12 @@ namespace SharpFile {
 
 			// Update the list view.
 			childForm.UpdateDriveListing();
+		}
+
+		protected override void OnResize(EventArgs e) {
+			base.OnResize(e);
+
+			this.progressDisk.Location = new Point(base.Width - 45, base.Height - 45);
 		}
 
 		public ImageList ImageList {

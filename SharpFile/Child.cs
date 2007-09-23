@@ -14,10 +14,13 @@ namespace SharpFile {
 		private string _path;
 		private string _pattern;
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
-		private IList<string> selectedFiles = new List<string>();
+		private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
 
-		public delegate void OnUpdateStatusDelegate(int value);
+		public delegate void OnUpdateStatusDelegate(string status);
 		public event OnUpdateStatusDelegate OnUpdateStatus;
+
+		public delegate void OnUpdateProgressDelegate(int value);
+		public event OnUpdateProgressDelegate OnUpdateProgress;
 
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo dataInfo);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
@@ -32,12 +35,21 @@ namespace SharpFile {
 
 		#region Delegate methods
 		/// <summary>
+		/// Passes the status to any listening events.
+		/// </summary>
+		/// <param name="status">Status to show.</param>
+		protected void UpdateStatus(string status) {
+			if (OnUpdateStatus != null)
+				OnUpdateStatus(status);
+		}
+
+		/// <summary>
 		/// Passes the value to any listening events.
 		/// </summary>
 		/// <param name="value">Percentage value for status.</param>
-		protected void UpdateStatus(int value) {
-			if (OnUpdateStatus != null)
-				OnUpdateStatus(value);
+		protected void UpdateProgress(int value) {
+			if (OnUpdateProgress != null)
+				OnUpdateProgress(value);
 		}
 
 		/// <summary>
@@ -173,11 +185,13 @@ namespace SharpFile {
 			if (e.KeyCode == Keys.Space) {
 				if (listView.SelectedItems.Count > 0) {
 					ListViewItem item = listView.SelectedItems[0];
-					string fileName = item.Name;
+					string path = item.Name;
 
-					if (!selectedFiles.Contains(fileName)) {
+					FileSystemInfo fileSystemInfo = FileSystemInfoFactory.GetFileSystemInfo(path);
+
+					if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
 						item.ForeColor = Color.Red;
-						selectedFiles.Add(fileName);
+						selectedFileSystemInfos.Add(fileSystemInfo);
 
 						int sizeIndex = 0;
 						foreach (ColumnHeader columnHeader in item.ListView.Columns) {
@@ -188,18 +202,36 @@ namespace SharpFile {
 
 						if (sizeIndex > 0) {
 							if (item.SubItems[sizeIndex].Text.Equals(string.Empty)) {
-								// TODO: Make this asynchronous. 
-								if (System.IO.Directory.Exists(fileName)) {
-									DirectoryInfo directoryInfo = new DirectoryInfo(new System.IO.DirectoryInfo(fileName));
+								if (fileSystemInfo is DirectoryInfo) {
+									using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+										backgroundWorker.WorkerReportsProgress = true;
 
-									long size = directoryInfo.GetSize();
-									item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size);
+										backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
+											backgroundWorker.ReportProgress(50);
+											eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
+											backgroundWorker.ReportProgress(100);
+										};
+
+										backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
+											UpdateProgress(eventArgs.ProgressPercentage);
+										};
+
+										backgroundWorker.RunWorkerCompleted += delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+											if (eventArgs.Error == null &&
+												eventArgs.Result != null) {
+												long size = (long)eventArgs.Result;
+												item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size);
+											}
+										};
+
+										backgroundWorker.RunWorkerAsync(fileSystemInfo);
+									}
 								}
 							}
 						}
 					} else {
 						item.ForeColor = Color.Black;
-						selectedFiles.Remove(fileName);
+						selectedFileSystemInfos.Remove(fileSystemInfo);
 					}
 				}
 			}
@@ -333,7 +365,7 @@ namespace SharpFile {
 
 				// Anonymous method that updates the status to the parent form.
 				backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
-					UpdateStatus(e.ProgressPercentage);
+					UpdateProgress(e.ProgressPercentage);
 				};
 
 				backgroundWorker.RunWorkerAsync();
@@ -355,6 +387,8 @@ namespace SharpFile {
 				e.Result != null &&
 				e.Result is IEnumerable<FileSystemInfo>) {
 				IEnumerable<FileSystemInfo> dataInfos = (IEnumerable<FileSystemInfo>)e.Result;
+				int fileCount = 0;
+				int folderCount = 0;
 
 				try {
 					listView.BeginUpdate();
@@ -384,8 +418,10 @@ namespace SharpFile {
 							}
 
 							item.SubItems.Add(General.GetHumanReadableSize(size));
+							fileCount++;
 						} else {
 							item.SubItems.Add(string.Empty);
+							folderCount++;
 						}
 
 						item.SubItems.Add(dataInfo.LastWriteTime.ToShortDateString());
@@ -396,6 +432,9 @@ namespace SharpFile {
 
 					// Basic stuff that should happen everytime files are shown.
 					listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+					UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+						folderCount-2,
+						fileCount));
 				} catch (System.UnauthorizedAccessException) {
 					listView.BeginUpdate();
 					listView.Items.Add("Unauthorized Access");

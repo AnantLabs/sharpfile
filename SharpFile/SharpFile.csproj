@@ -51,6 +51,7 @@
     <Compile Include="FileSystem\DriveInfo.cs" />
     <Compile Include="FileSystem\FileInfo.cs" />
     <Compile Include="FileSystem\FileSystemInfo.cs" />
+    <Compile Include="FileSystem\FileSystemInfoFactory.cs" />
     <Compile Include="FileSystem\ParentDirectoryInfo.cs" />
     <Compile Include="FileSystem\RootDirectoryInfo.cs" />
     <Compile Include="DriveType.cs" />
@@ -63,6 +64,12 @@
       <DependentUpon>Parent.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressDisk.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProgressDisk.Designer.cs">
+      <DependentUpon>ProgressDisk.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Child.resx">
       <SubType>Designer</SubType>
@@ -95,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ChangeLog.txt" />
+    <Content Include="Thanks.txt" />
     <Content Include="Todo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
