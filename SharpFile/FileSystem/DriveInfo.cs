@@ -1,7 +1,8 @@
 using System;
+using SharpFile.FileSystem;
 
 namespace SharpFile {
-	public class DriveInfo : DataInfo {
+	public class DriveInfo : FileSystemInfo {
 		private string description;
 		private string providerName;
 		private long freeSpace;
@@ -15,7 +16,8 @@ namespace SharpFile {
 			this.description = description;
 			this.size = size;
 			this.freeSpace = freeSpace;
-			this.fullPath = name;
+			this.fullPath = name + @"\";
+			this.displayName = fullPath + " <" + driveType.ToString() + ">";
 		}
 
 		public string ProviderName {

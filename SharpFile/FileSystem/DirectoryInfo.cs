@@ -1,8 +1,9 @@
 using System;
+using SharpFile.FileSystem;
 
 namespace SharpFile
 {
-    public class DirectoryInfo : DataInfo
+	public class DirectoryInfo : FileSystemInfo
     {
         public DirectoryInfo(System.IO.DirectoryInfo directoryInfo)
         {

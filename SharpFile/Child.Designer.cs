@@ -44,6 +44,8 @@ namespace SharpFile
 			// 
 			// ddlDrives
 			// 
+			this.ddlDrives.BackColor = System.Drawing.SystemColors.Window;
+			this.ddlDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ddlDrives.FormattingEnabled = true;
 			this.ddlDrives.Location = new System.Drawing.Point(3, 5);
 			this.ddlDrives.Name = "ddlDrives";
@@ -52,6 +54,8 @@ namespace SharpFile
 			// 
 			// txtPath
 			// 
+			this.txtPath.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.txtPath.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
 			this.txtPath.Location = new System.Drawing.Point(131, 5);
 			this.txtPath.Name = "txtPath";
 			this.txtPath.Size = new System.Drawing.Size(100, 20);

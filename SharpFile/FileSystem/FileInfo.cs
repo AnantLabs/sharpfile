@@ -1,8 +1,9 @@
 using System;
+using SharpFile.FileSystem;
 
 namespace SharpFile
 {
-    public class FileInfo : DataInfo
+	public class FileInfo : FileSystemInfo
     {
 		private string extension;
 

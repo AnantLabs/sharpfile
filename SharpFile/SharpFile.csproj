@@ -47,12 +47,12 @@
     <Compile Include="Child.Designer.cs">
       <DependentUpon>Child.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataInfo\DirectoryInfo.cs" />
-    <Compile Include="DataInfo\DriveInfo.cs" />
-    <Compile Include="DataInfo\FileInfo.cs" />
-    <Compile Include="DataInfo\DataInfo.cs" />
-    <Compile Include="DataInfo\ParentDirectoryInfo.cs" />
-    <Compile Include="DataInfo\RootInfo.cs" />
+    <Compile Include="FileSystem\DirectoryInfo.cs" />
+    <Compile Include="FileSystem\DriveInfo.cs" />
+    <Compile Include="FileSystem\FileInfo.cs" />
+    <Compile Include="FileSystem\FileSystemInfo.cs" />
+    <Compile Include="FileSystem\ParentDirectoryInfo.cs" />
+    <Compile Include="FileSystem\RootInfo.cs" />
     <Compile Include="DriveType.cs" />
     <Compile Include="IconHelper.cs" />
     <Compile Include="Infrastructure.cs" />

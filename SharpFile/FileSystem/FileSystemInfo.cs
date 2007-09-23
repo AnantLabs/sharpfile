@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
-namespace SharpFile
+namespace SharpFile.FileSystem
 {
-    public abstract class DataInfo
+    public abstract class FileSystemInfo
     {
 		protected string displayName;
         protected string name;

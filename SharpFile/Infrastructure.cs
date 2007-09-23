@@ -16,12 +16,12 @@ namespace SharpFile {
 
 		private static object lockObject = new object();
 
-		public static IEnumerable<DataInfo> GetFiles(System.IO.DirectoryInfo directoryInfo) {
+		public static IEnumerable<FileSystem.FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo) {
 			return GetFiles(directoryInfo, allFilesPattern);
 		}
 
-		public static IEnumerable<DataInfo> GetFiles(System.IO.DirectoryInfo directoryInfo, string pattern) {
-			List<DataInfo> dataInfos = new List<DataInfo>();
+		public static IEnumerable<FileSystem.FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo, string pattern) {
+			List<FileSystem.FileSystemInfo> dataInfos = new List<FileSystem.FileSystemInfo>();
 
 			if (directoryInfo.Root.Equals(directoryInfo.FullName)) {
 				dataInfos.Add(new RootInfo(directoryInfo.Root));
@@ -33,14 +33,14 @@ namespace SharpFile {
 
 			System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
 			dataInfos.AddRange(
-				Array.ConvertAll<System.IO.DirectoryInfo, DataInfo>(directoryInfos, delegate(System.IO.DirectoryInfo di) {
+				Array.ConvertAll<System.IO.DirectoryInfo, FileSystem.FileSystemInfo>(directoryInfos, delegate(System.IO.DirectoryInfo di) {
 				return new DirectoryInfo(di);
 			})
 			);
 
 			System.IO.FileInfo[] fileInfos = getFilteredFiles(directoryInfo, pattern);
 			dataInfos.AddRange(
-				Array.ConvertAll<System.IO.FileInfo, DataInfo>(fileInfos, delegate(System.IO.FileInfo fi) {
+				Array.ConvertAll<System.IO.FileInfo, FileSystem.FileSystemInfo>(fileInfos, delegate(System.IO.FileInfo fi) {
 				return new FileInfo(fi);
 			})
 			);
@@ -96,7 +96,7 @@ namespace SharpFile {
 			return managementObjectCollection;
 		}
 
-		public static int GetImageIndex(DataInfo dataInfo, ImageList imageList) {
+		public static int GetImageIndex(FileSystem.FileSystemInfo dataInfo, ImageList imageList) {
 			lock (lockObject) {
 				int imageIndex = imageList.Images.Count;
 				string fullPath = dataInfo.FullPath;

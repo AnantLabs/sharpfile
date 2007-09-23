@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using SharpFile.FileSystem;
 
 namespace SharpFile {
 	public partial class Parent : Form {
@@ -32,7 +33,7 @@ namespace SharpFile {
 				toolStripProgressBar.Value = value;
 			};
 
-			childForm.OnGetImageIndex += delegate(DataInfo dataInfo) {
+			childForm.OnGetImageIndex += delegate(FileSystemInfo dataInfo) {
 				return Infrastructure.GetImageIndex(dataInfo, imageList);
 			};
 

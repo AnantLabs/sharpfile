@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using System.IO;
+//using System.IO;
 using System.Diagnostics;
 using Common;
 using System.ComponentModel;
+using SharpFile.FileSystem;
 
 namespace SharpFile {
 	public partial class Child : Form {
@@ -18,7 +19,7 @@ namespace SharpFile {
 		public delegate void OnUpdateStatusDelegate(int value);
 		public event OnUpdateStatusDelegate OnUpdateStatus;
 
-		public delegate int OnGetImageIndexDelegate(DataInfo dataInfo);
+		public delegate int OnGetImageIndexDelegate(FileSystemInfo dataInfo);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		public Child() {
@@ -31,7 +32,7 @@ namespace SharpFile {
 				OnUpdateStatus(value);
 		}
 
-		protected int GetImageIndex(DataInfo dataInfo) {
+		protected int GetImageIndex(FileSystemInfo dataInfo) {
 			if (OnGetImageIndex != null) {
 				return OnGetImageIndex(dataInfo);
 			}
@@ -49,9 +50,7 @@ namespace SharpFile {
 			this.listView.DoubleClick += new EventHandler(listView_DoubleClick);
 			this.listView.KeyDown += new KeyEventHandler(listView_KeyDown);
 			this.txtPath.KeyDown += new KeyEventHandler(txtPath_KeyDown);
-			this.txtPath.Leave += new EventHandler(txtPath_Leave);
 			this.txtPattern.KeyDown += new KeyEventHandler(txtPattern_KeyDown);
-			this.txtPattern.Leave += new EventHandler(txtPattern_Leave);
 			this.ddlDrives.SelectedIndexChanged += new EventHandler(ddlDrives_SelectedIndexChanged);
 
 			resizeControls();
@@ -73,12 +72,8 @@ namespace SharpFile {
 			txtPattern.Text = "*.*";
 		}
 
-		void ddlDrives_SelectedIndexChanged(object sender, EventArgs e) {
-			ExecuteOrUpdate(ddlDrives.SelectedItem.ToString());
-		}
-
 		private void resizeControls() {
-			ddlDrives.Size = new Size(50, ddlDrives.Height);
+			ddlDrives.Size = new Size(150, ddlDrives.Height);
 			txtPath.Left = ddlDrives.Right + 5;
 			txtPattern.Left = txtPath.Right + 5;
 
@@ -93,8 +88,8 @@ namespace SharpFile {
 		#endregion
 
 		#region Events
-		void txtPath_Leave(object sender, EventArgs e) {
-			ExecuteOrUpdate();
+		void Child_Shown(object sender, EventArgs e) {
+			resizeControls();
 		}
 
 		void txtPath_KeyDown(object sender, KeyEventArgs e) {
@@ -104,13 +99,11 @@ namespace SharpFile {
 		}
 
 		void listView_DoubleClick(object sender, EventArgs e) {
-			string path = txtPath.Text + listView.SelectedItems[0].Text;
-			ExecuteOrUpdate(path);
-		}
-
-		void Child_Shown(object sender, EventArgs e) {
-			resizeControls();
-		}
+			if (listView.SelectedItems.Count > 0) {
+				string path = txtPath.Text + listView.SelectedItems[0].Text;
+				ExecuteOrUpdate(path);
+			}
+		}		
 
 		void listView_ClientSizeChanged(object sender, EventArgs e) {
 			resizeControls();
@@ -133,36 +126,45 @@ namespace SharpFile {
 			}
 		}
 
-		void txtPattern_Leave(object sender, EventArgs e) {
-			ExecuteOrUpdate();
-		}
-
 		void txtPattern_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
 		}
+
+		void ddlDrives_SelectedIndexChanged(object sender, EventArgs e) {
+			ExecuteOrUpdate(((DriveInfo)ddlDrives.SelectedItem).FullPath);
+		}
 		#endregion
 
 		#region Public methods
 		public void UpdateDriveListing() {
-			IEnumerable<DriveInfo> drives = Infrastructure.GetDrives();
-			int count = 0;
+			// Set up a new background worker to delegate the asynchronous retrieval.
+			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+				// Anonymous method that grabs the drive information.
+				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
+					e.Result = Infrastructure.GetDrives();
+				};
 
-			ddlDrives.Items.Clear();
-			foreach (DriveInfo driveInfo in drives) {
-				ddlDrives.Items.Add(driveInfo.Name + @"\");
+				// Anonymous method to be run when after the drives are retrieved.
+				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
+					List<DriveInfo> drives = new List<DriveInfo>((IEnumerable<DriveInfo>)e.Result);
 
-				if (ddlDrives.SelectedIndex <= 0 &&
-					driveInfo.DriveType == DriveType.LocalDisk) {
-					ddlDrives.SelectedIndex = count;
-				}
+					ddlDrives.Items.Clear();
+					ddlDrives.DataSource = drives;
+					ddlDrives.DisplayMember = "DisplayName";
+					ddlDrives.ValueMember = "FullPath";
 
-				count++;
-			}
+					DriveInfo localDisk = drives.Find(delegate(DriveInfo di) {
+						return di.DriveType == DriveType.LocalDisk;
+					});
 
-			if (ddlDrives.SelectedIndex > -1) {
-				ExecuteOrUpdate(ddlDrives.SelectedItem.ToString());
+					if (localDisk != null) {
+						ddlDrives.SelectedItem = localDisk;
+					}
+				};
+
+				backgroundWorker.RunWorkerAsync();
 			}
 		}
 
@@ -171,15 +173,16 @@ namespace SharpFile {
 		}
 
 		public void ExecuteOrUpdate(string path) {
-			if (File.Exists(path)) {
+			if (System.IO.File.Exists(path)) {
 				Process.Start(path);
-			} else if (Directory.Exists(path)) {
+			} else if (System.IO.Directory.Exists(path)) {
 				updateFileListing(path, txtPattern.Text);
 			} else {
 				MessageBox.Show("The path, " + path + " looks like it is incorrect.");
 			}
 		}
 
+		#region UpdateFileListing
 		private void updateFileListing(string path, string pattern) {
 			if (listView.SmallImageList == null) {
 				listView.SmallImageList = ((Parent)this.MdiParent).ImageList;
@@ -200,35 +203,36 @@ namespace SharpFile {
 				directoryPath,
 				directoryPath.EndsWith(@"\") ? string.Empty : @"\");
 
-			listView.Items.Clear();
+			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
+					listView.Items.Clear();
+					// If this was split out differently, this might make more sense.
+					// Maybe get directories first, then files. Then filter them. Or something.
+					backgroundWorker.ReportProgress(50);
+					e.Result = Infrastructure.GetFiles(directoryInfo, pattern);
+					backgroundWorker.ReportProgress(100);
+				};
 
-			BackgroundWorker backgroundWorker = new BackgroundWorker();
-			backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-				// If this was split out differently, this might make more sense.
-				// Maybe get directories first, then files. Then filter them. Or something.
-				backgroundWorker.ReportProgress(50);
-				e.Result = Infrastructure.GetFiles(directoryInfo, pattern);
-				backgroundWorker.ReportProgress(100);
-			};
+				backgroundWorker.WorkerReportsProgress = true;
+				backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
+				backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
+					UpdateStatus(e.ProgressPercentage);
+				};
 
-			backgroundWorker.WorkerReportsProgress = true;
-			backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
-			backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
-				UpdateStatus(e.ProgressPercentage);
-			};
+				backgroundWorker.RunWorkerAsync();
+			}
 
-			backgroundWorker.RunWorkerAsync();
 			this.Text = directoryPath;
 		}
 
 		void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			if (e.Error == null && 
 				e.Result != null &&
-				e.Result is IEnumerable<DataInfo>) {
-				IEnumerable<DataInfo> dataInfos = (IEnumerable<DataInfo>)e.Result;
+				e.Result is IEnumerable<FileSystemInfo>) {
+				IEnumerable<FileSystemInfo> dataInfos = (IEnumerable<FileSystemInfo>)e.Result;
 
 				try {
-					foreach (DataInfo dataInfo in dataInfos) {
+					foreach (FileSystemInfo dataInfo in dataInfos) {
 						double size;
 						ListViewItem item = new ListViewItem(dataInfo.DisplayName);
 						int imageIndex = OnGetImageIndex(dataInfo);
@@ -271,6 +275,7 @@ namespace SharpFile {
 				}
 			}
 		}
+		#endregion
 		#endregion
 	}
 }
