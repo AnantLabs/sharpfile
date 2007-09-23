@@ -8,6 +8,7 @@ using System.Diagnostics;
 using Common;
 using System.ComponentModel;
 using SharpFile.FileSystem;
+using System.Collections;
 
 namespace SharpFile {
 	public partial class Child : Form {
@@ -46,18 +47,17 @@ namespace SharpFile {
 
 			// Attach to some events.
 			this.ClientSizeChanged += new EventHandler(listView_ClientSizeChanged);
-			this.Shown += new EventHandler(Child_Shown);
 			this.listView.DoubleClick += new EventHandler(listView_DoubleClick);
 			this.listView.KeyDown += new KeyEventHandler(listView_KeyDown);
 			this.txtPath.KeyDown += new KeyEventHandler(txtPath_KeyDown);
 			this.txtPattern.KeyDown += new KeyEventHandler(txtPattern_KeyDown);
 			this.ddlDrives.SelectedIndexChanged += new EventHandler(ddlDrives_SelectedIndexChanged);
+			this.ddlDrives.DataSourceChanged += new EventHandler(ddlDrives_DataSourceChanged);
 
 			resizeControls();
 
-			// Set some options ont he listview.
+			// Set some options on the listview.
 			listView.View = View.Details;
-			//listView.CheckBoxes = true;
 
 			List<string> columns = new List<string>();
 			columns.Add("Filename");
@@ -72,8 +72,11 @@ namespace SharpFile {
 			txtPattern.Text = "*.*";
 		}
 
+		void ddlDrives_DataSourceChanged(object sender, EventArgs e) {
+			resizeDropDown(ddlDrives);
+		}
+
 		private void resizeControls() {
-			ddlDrives.Size = new Size(150, ddlDrives.Height);
 			txtPath.Left = ddlDrives.Right + 5;
 			txtPattern.Left = txtPath.Right + 5;
 
@@ -88,10 +91,6 @@ namespace SharpFile {
 		#endregion
 
 		#region Events
-		void Child_Shown(object sender, EventArgs e) {
-			resizeControls();
-		}
-
 		void txtPath_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
@@ -100,7 +99,7 @@ namespace SharpFile {
 
 		void listView_DoubleClick(object sender, EventArgs e) {
 			if (listView.SelectedItems.Count > 0) {
-				string path = txtPath.Text + listView.SelectedItems[0].Text;
+				string path = listView.SelectedItems[0].Name;
 				ExecuteOrUpdate(path);
 			}
 		}		
@@ -111,18 +110,18 @@ namespace SharpFile {
 
 		void listView_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Space) {
-				//foreach (ListViewItem item in listView.SelectedItems) {
-				ListViewItem item = listView.SelectedItems[0];
-				string fileName = _path + item.Text;
+				if (listView.SelectedItems.Count > 0) {
+					ListViewItem item = listView.SelectedItems[0];
+					string fileName = item.Name;
 
-				if (!selectedFiles.Contains(fileName)) {
-					item.ForeColor = Color.Red;
-					selectedFiles.Add(fileName);
-				} else {
-					item.ForeColor = Color.Black;
-					selectedFiles.Remove(fileName);
+					if (!selectedFiles.Contains(fileName)) {
+						item.ForeColor = Color.Red;
+						selectedFiles.Add(fileName);
+					} else {
+						item.ForeColor = Color.Black;
+						selectedFiles.Remove(fileName);
+					}
 				}
-				//}
 			}
 		}
 
@@ -182,12 +181,40 @@ namespace SharpFile {
 			}
 		}
 
+		private void resizeDropDown(ComboBox cmbBox) {
+			if (!cmbBox.IsHandleCreated || !(cmbBox.DataSource is IList)) {
+				return;
+			}
+
+			using (Graphics g = cmbBox.CreateGraphics()) {
+				int maxLength = 0;
+				IList list = cmbBox.DataSource as IList;
+
+				int numItems = Math.Min(list.Count, cmbBox.MaxDropDownItems);
+
+				// Find the longest string in the first MaxDropDownItems
+				for (int i = 0; i < numItems; i++)
+					maxLength = Math.Max(maxLength,
+					(int)g.MeasureString(cmbBox.GetItemText(list[i]), cmbBox.Font).Width);
+
+				maxLength += 20; // Add a little buffer for the scroll bar
+
+				// Make sure we are inbounds of the screen
+				int left = this.PointToScreen(new Point(0, this.Left)).X;
+				if (maxLength > Screen.PrimaryScreen.WorkingArea.Width - left)
+					maxLength = Screen.PrimaryScreen.WorkingArea.Width - left;
+
+				cmbBox.DropDownWidth = Math.Max(maxLength, cmbBox.Width);
+			}
+		}
+
 		#region UpdateFileListing
 		private void updateFileListing(string path, string pattern) {
 			if (listView.SmallImageList == null) {
 				listView.SmallImageList = ((Parent)this.MdiParent).ImageList;
 			}
 
+			// Prevents the retrieval of file information if unneccessary.
 			if (path.Equals(_path) &&
 				pattern.Equals(_pattern)) {
 				return;
@@ -197,15 +224,15 @@ namespace SharpFile {
 			_pattern = pattern;
 
 			System.IO.DirectoryInfo directoryInfo = new System.IO.DirectoryInfo(path);
-
 			string directoryPath = directoryInfo.FullName;
-			txtPath.Text = string.Format("{0}{1}",
+			directoryPath = string.Format("{0}{1}",
 				directoryPath,
 				directoryPath.EndsWith(@"\") ? string.Empty : @"\");
 
+			listView.Items.Clear();
+
 			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
 				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-					listView.Items.Clear();
 					// If this was split out differently, this might make more sense.
 					// Maybe get directories first, then files. Then filter them. Or something.
 					backgroundWorker.ReportProgress(50);
@@ -222,6 +249,7 @@ namespace SharpFile {
 				backgroundWorker.RunWorkerAsync();
 			}
 
+			txtPath.Text = directoryPath;
 			this.Text = directoryPath;
 		}
 
@@ -232,9 +260,11 @@ namespace SharpFile {
 				IEnumerable<FileSystemInfo> dataInfos = (IEnumerable<FileSystemInfo>)e.Result;
 
 				try {
+					listView.BeginUpdate();
 					foreach (FileSystemInfo dataInfo in dataInfos) {
 						double size;
 						ListViewItem item = new ListViewItem(dataInfo.DisplayName);
+						item.Name = dataInfo.FullPath;
 						int imageIndex = OnGetImageIndex(dataInfo);
 						item.ImageIndex = imageIndex;
 
@@ -258,11 +288,9 @@ namespace SharpFile {
 
 						item.SubItems.Add(dataInfo.LastWriteTime.ToShortDateString());
 						item.SubItems.Add(dataInfo.LastWriteTime.ToShortTimeString());
-
-						listView.BeginUpdate();
 						listView.Items.Add(item);
-						listView.EndUpdate();
 					}
+					listView.EndUpdate();
 
 					// Basic stuff that should happen everytime files are shown.
 					listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);

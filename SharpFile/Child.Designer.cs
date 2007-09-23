@@ -46,6 +46,7 @@ namespace SharpFile
 			// 
 			this.ddlDrives.BackColor = System.Drawing.SystemColors.Window;
 			this.ddlDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ddlDrives.DropDownWidth = 50;
 			this.ddlDrives.FormattingEnabled = true;
 			this.ddlDrives.Location = new System.Drawing.Point(3, 5);
 			this.ddlDrives.Name = "ddlDrives";

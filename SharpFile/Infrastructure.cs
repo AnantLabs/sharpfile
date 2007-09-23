@@ -23,8 +23,8 @@ namespace SharpFile {
 		public static IEnumerable<FileSystem.FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo, string pattern) {
 			List<FileSystem.FileSystemInfo> dataInfos = new List<FileSystem.FileSystemInfo>();
 
-			if (directoryInfo.Root.Equals(directoryInfo.FullName)) {
-				dataInfos.Add(new RootInfo(directoryInfo.Root));
+			if (!directoryInfo.Root.Name.Equals(directoryInfo.FullName)) {
+				dataInfos.Add(new RootDirectoryInfo(directoryInfo.Root));
 			}
 
 			if (directoryInfo.Parent != null) {
@@ -34,15 +34,15 @@ namespace SharpFile {
 			System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
 			dataInfos.AddRange(
 				Array.ConvertAll<System.IO.DirectoryInfo, FileSystem.FileSystemInfo>(directoryInfos, delegate(System.IO.DirectoryInfo di) {
-				return new DirectoryInfo(di);
-			})
+					return new DirectoryInfo(di);
+				})
 			);
 
 			System.IO.FileInfo[] fileInfos = getFilteredFiles(directoryInfo, pattern);
 			dataInfos.AddRange(
 				Array.ConvertAll<System.IO.FileInfo, FileSystem.FileSystemInfo>(fileInfos, delegate(System.IO.FileInfo fi) {
-				return new FileInfo(fi);
-			})
+					return new FileInfo(fi);
+				})
 			);
 
 			return dataInfos;

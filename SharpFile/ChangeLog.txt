@@ -1,5 +1,12 @@
 0.25
 	Icon retrieval for files and directories.
+	Show root directory shortcut.
+	Correct implementation of root/parent directory behavior.
+	Asynchronous retrieval of drive information.
+	Resize drive information box correctly.
+	Updating the filesytem objects in the listbox should be slightly faster because of enhancements.
+	FIX: Sometimes selecting a filesytem object would throw an exception.
+	FIX: Cross-thread issues when updating the listbox.
 
 0.2
 	Textbox for specific path retrieval.

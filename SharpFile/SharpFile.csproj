@@ -52,7 +52,7 @@
     <Compile Include="FileSystem\FileInfo.cs" />
     <Compile Include="FileSystem\FileSystemInfo.cs" />
     <Compile Include="FileSystem\ParentDirectoryInfo.cs" />
-    <Compile Include="FileSystem\RootInfo.cs" />
+    <Compile Include="FileSystem\RootDirectoryInfo.cs" />
     <Compile Include="DriveType.cs" />
     <Compile Include="IconHelper.cs" />
     <Compile Include="Infrastructure.cs" />

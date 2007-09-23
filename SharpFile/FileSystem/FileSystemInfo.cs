@@ -10,7 +10,6 @@ namespace SharpFile.FileSystem
 		protected string fullPath;
         protected long size;
         protected DateTime lastWriteTime;
-        protected Image image;
 
 		public string DisplayName {
 			get {
