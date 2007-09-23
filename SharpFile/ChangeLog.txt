@@ -5,6 +5,7 @@
 	Asynchronous retrieval of drive information.
 	Resize drive information box correctly.
 	Updating the filesytem objects in the listbox should be slightly faster because of enhancements.
+	Calculate the folder size on selection.
 	FIX: Sometimes selecting a filesytem object would throw an exception.
 	FIX: Cross-thread issues when updating the listbox.
 

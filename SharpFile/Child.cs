@@ -1,14 +1,13 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-//using System.IO;
 using System.Diagnostics;
-using Common;
 using System.ComponentModel;
-using SharpFile.FileSystem;
 using System.Collections;
+using System.Collections.Generic;
+using Common;
+using SharpFile.FileSystem;
 
 namespace SharpFile {
 	public partial class Child : Form {
@@ -23,16 +22,29 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo dataInfo);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
+		/// <summary>
+		/// Child ctor.
+		/// </summary>
 		public Child() {
 			InitializeComponent();
 			setup();
 		}
 
+		#region Delegate methods
+		/// <summary>
+		/// Passes the value to any listening events.
+		/// </summary>
+		/// <param name="value">Percentage value for status.</param>
 		protected void UpdateStatus(int value) {
 			if (OnUpdateStatus != null)
 				OnUpdateStatus(value);
 		}
 
+		/// <summary>
+		/// Passes the filesystem info to any listening events.
+		/// </summary>
+		/// <param name="dataInfo">Filesystem information.</param>
+		/// <returns>The index of the image in the master ImageList.</returns>
 		protected int GetImageIndex(FileSystemInfo dataInfo) {
 			if (OnGetImageIndex != null) {
 				return OnGetImageIndex(dataInfo);
@@ -40,8 +52,12 @@ namespace SharpFile {
 
 			return -1;
 		}
+		#endregion
 
 		#region Private methods
+		/// <summary>
+		/// Sets the child up.
+		/// </summary>
 		private void setup() {
 			this.DoubleBuffered = true;
 
@@ -58,6 +74,7 @@ namespace SharpFile {
 
 			// Set some options on the listview.
 			listView.View = View.Details;
+			txtPattern.Text = "*.*";
 
 			List<string> columns = new List<string>();
 			columns.Add("Filename");
@@ -68,14 +85,12 @@ namespace SharpFile {
 			foreach (string column in columns) {
 				listView.Columns.Add(column);
 			}
-
-			txtPattern.Text = "*.*";
 		}
 
-		void ddlDrives_DataSourceChanged(object sender, EventArgs e) {
-			resizeDropDown(ddlDrives);
-		}
-
+		#region Resize methods
+		/// <summary>
+		/// Resizes the controls correctly.
+		/// </summary>
 		private void resizeControls() {
 			txtPath.Left = ddlDrives.Right + 5;
 			txtPattern.Left = txtPath.Right + 5;
@@ -88,26 +103,72 @@ namespace SharpFile {
 
 			listView.Height = this.Height - 60;
 		}
+
+		/// <summary>
+		/// Resizes a dropdown based on it's contents.
+		/// <remarks>http://weblogs.asp.net/eporter/archive/2004/09/27/234773.aspx</remarks>
+		/// </summary>
+		/// <param name="cmbBox">DropDown to resize.</param>
+		private void resizeDropDown(ComboBox cmbBox) {
+			if (!cmbBox.IsHandleCreated || !(cmbBox.DataSource is IList)) {
+				return;
+			}
+
+			using (Graphics g = cmbBox.CreateGraphics()) {
+				int maxLength = 0;
+				IList list = cmbBox.DataSource as IList;
+
+				int numItems = Math.Min(list.Count, cmbBox.MaxDropDownItems);
+
+				// Find the longest string in the first MaxDropDownItems.
+				for (int i = 0; i < numItems; i++)
+					maxLength = Math.Max(maxLength,
+					(int)g.MeasureString(cmbBox.GetItemText(list[i]), cmbBox.Font).Width);
+
+				// Add a little buffer for the scroll bar.
+				maxLength += 20;
+
+				// Make sure we are inbounds of the screen.
+				int left = this.PointToScreen(new Point(0, this.Left)).X;
+				if (maxLength > Screen.PrimaryScreen.WorkingArea.Width - left)
+					maxLength = Screen.PrimaryScreen.WorkingArea.Width - left;
+
+				cmbBox.DropDownWidth = Math.Max(maxLength, cmbBox.Width);
+			}
+		}
+		#endregion
 		#endregion
 
 		#region Events
+		/// <summary>
+		/// Refreshes the listview when Enter is pressed in the path textbox.
+		/// </summary>
 		void txtPath_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
 		}
 
+		/// <summary>
+		/// Refreshes the listview when a file/directory is double-clicked in the listview.
+		/// </summary>
 		void listView_DoubleClick(object sender, EventArgs e) {
 			if (listView.SelectedItems.Count > 0) {
 				string path = listView.SelectedItems[0].Name;
 				ExecuteOrUpdate(path);
 			}
-		}		
+		}
 
+		/// <summary>
+		/// Resizes the controls when the listview changes size.
+		/// </summary>
 		void listView_ClientSizeChanged(object sender, EventArgs e) {
 			resizeControls();
 		}
 
+		/// <summary>
+		/// Selects an item in the listview when the Space bar is hit.
+		/// </summary>
 		void listView_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Space) {
 				if (listView.SelectedItems.Count > 0) {
@@ -117,6 +178,25 @@ namespace SharpFile {
 					if (!selectedFiles.Contains(fileName)) {
 						item.ForeColor = Color.Red;
 						selectedFiles.Add(fileName);
+
+						int sizeIndex = 0;
+						foreach (ColumnHeader columnHeader in item.ListView.Columns) {
+							if (columnHeader.Text.Equals("Size")) {
+								sizeIndex = columnHeader.Index;
+							}
+						}
+
+						if (sizeIndex > 0) {
+							if (item.SubItems[sizeIndex].Text.Equals(string.Empty)) {
+								// TODO: Make this asynchronous. 
+								if (System.IO.Directory.Exists(fileName)) {
+									DirectoryInfo directoryInfo = new DirectoryInfo(new System.IO.DirectoryInfo(fileName));
+
+									long size = directoryInfo.GetSize();
+									item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size);
+								}
+							}
+						}
 					} else {
 						item.ForeColor = Color.Black;
 						selectedFiles.Remove(fileName);
@@ -125,18 +205,34 @@ namespace SharpFile {
 			}
 		}
 
+		/// <summary>
+		/// Refreshes the listview when Enter is pressed in the pattern textbox.
+		/// </summary>
 		void txtPattern_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
 		}
 
+		/// <summary>
+		/// Refreshes the listview when a different drive is selected.
+		/// </summary>
 		void ddlDrives_SelectedIndexChanged(object sender, EventArgs e) {
 			ExecuteOrUpdate(((DriveInfo)ddlDrives.SelectedItem).FullPath);
+		}
+
+		/// <summary>
+		/// Resizes the drive dropdown when the datasource is refreshed.
+		/// </summary>
+		void ddlDrives_DataSourceChanged(object sender, EventArgs e) {
+			resizeDropDown(ddlDrives);
 		}
 		#endregion
 
 		#region Public methods
+		/// <summary>
+		/// Update the drive information contained in the drive dropdown asynchronously.
+		/// </summary>
 		public void UpdateDriveListing() {
 			// Set up a new background worker to delegate the asynchronous retrieval.
 			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
@@ -145,7 +241,7 @@ namespace SharpFile {
 					e.Result = Infrastructure.GetDrives();
 				};
 
-				// Anonymous method to be run when after the drives are retrieved.
+				// Anonymous method to run after the drives are retrieved.
 				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
 					List<DriveInfo> drives = new List<DriveInfo>((IEnumerable<DriveInfo>)e.Result);
 
@@ -154,6 +250,7 @@ namespace SharpFile {
 					ddlDrives.DisplayMember = "DisplayName";
 					ddlDrives.ValueMember = "FullPath";
 
+					// Set the selected drive to be the first local drive found.
 					DriveInfo localDisk = drives.Find(delegate(DriveInfo di) {
 						return di.DriveType == DriveType.LocalDisk;
 					});
@@ -167,48 +264,33 @@ namespace SharpFile {
 			}
 		}
 
+		/// <summary>
+		/// Executes the file, or refreshes the listview for the selected directory in the path textbox.
+		/// </summary>
 		public void ExecuteOrUpdate() {
 			ExecuteOrUpdate(txtPath.Text);
 		}
 
+		/// <summary>
+		/// Executes the provided file, or refreshes the listview for the provided directory.
+		/// </summary>
+		/// <param name="path"></param>
 		public void ExecuteOrUpdate(string path) {
 			if (System.IO.File.Exists(path)) {
 				Process.Start(path);
 			} else if (System.IO.Directory.Exists(path)) {
 				updateFileListing(path, txtPattern.Text);
 			} else {
-				MessageBox.Show("The path, " + path + " looks like it is incorrect.");
-			}
-		}
-
-		private void resizeDropDown(ComboBox cmbBox) {
-			if (!cmbBox.IsHandleCreated || !(cmbBox.DataSource is IList)) {
-				return;
-			}
-
-			using (Graphics g = cmbBox.CreateGraphics()) {
-				int maxLength = 0;
-				IList list = cmbBox.DataSource as IList;
-
-				int numItems = Math.Min(list.Count, cmbBox.MaxDropDownItems);
-
-				// Find the longest string in the first MaxDropDownItems
-				for (int i = 0; i < numItems; i++)
-					maxLength = Math.Max(maxLength,
-					(int)g.MeasureString(cmbBox.GetItemText(list[i]), cmbBox.Font).Width);
-
-				maxLength += 20; // Add a little buffer for the scroll bar
-
-				// Make sure we are inbounds of the screen
-				int left = this.PointToScreen(new Point(0, this.Left)).X;
-				if (maxLength > Screen.PrimaryScreen.WorkingArea.Width - left)
-					maxLength = Screen.PrimaryScreen.WorkingArea.Width - left;
-
-				cmbBox.DropDownWidth = Math.Max(maxLength, cmbBox.Width);
+				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
 		}
 
 		#region UpdateFileListing
+		/// <summary>
+		/// Updates the listview with the specified path and pattern.
+		/// </summary>
+		/// <param name="path">Path to get information about.</param>
+		/// <param name="pattern">Pattern to filter the information.</param>
 		private void updateFileListing(string path, string pattern) {
 			if (listView.SmallImageList == null) {
 				listView.SmallImageList = ((Parent)this.MdiParent).ImageList;
@@ -218,20 +300,26 @@ namespace SharpFile {
 			if (path.Equals(_path) &&
 				pattern.Equals(_pattern)) {
 				return;
+			} else {
+				_path = path;
+				_pattern = pattern;
 			}
 
-			_path = path;
-			_pattern = pattern;
-
+			// Get the directory information.
 			System.IO.DirectoryInfo directoryInfo = new System.IO.DirectoryInfo(path);
 			string directoryPath = directoryInfo.FullName;
 			directoryPath = string.Format("{0}{1}",
 				directoryPath,
 				directoryPath.EndsWith(@"\") ? string.Empty : @"\");
 
+			// Clear the listview.
 			listView.Items.Clear();
 
+			// Create another thread to get the file information asynchronously.
 			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+				backgroundWorker.WorkerReportsProgress = true;
+
+				// Anonymous method that retrieves the file information.
 				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
 					// If this was split out differently, this might make more sense.
 					// Maybe get directories first, then files. Then filter them. Or something.
@@ -239,9 +327,11 @@ namespace SharpFile {
 					e.Result = Infrastructure.GetFiles(directoryInfo, pattern);
 					backgroundWorker.ReportProgress(100);
 				};
-
-				backgroundWorker.WorkerReportsProgress = true;
+				
+				// Method that runs when the DoWork method is finished.
 				backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
+
+				// Anonymous method that updates the status to the parent form.
 				backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
 					UpdateStatus(e.ProgressPercentage);
 				};
@@ -249,11 +339,18 @@ namespace SharpFile {
 				backgroundWorker.RunWorkerAsync();
 			}
 
+			// Update some information about the current directory.
 			txtPath.Text = directoryPath;
 			this.Text = directoryPath;
 		}
 
+		/// <summary>
+		/// Event that gets fired when all of the file/directory information has been retrieved.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+			// Make sure we got back good information.
 			if (e.Error == null && 
 				e.Result != null &&
 				e.Result is IEnumerable<FileSystemInfo>) {
@@ -262,25 +359,30 @@ namespace SharpFile {
 				try {
 					listView.BeginUpdate();
 					foreach (FileSystemInfo dataInfo in dataInfos) {
-						double size;
+						// Create a new listview item with the display name.
 						ListViewItem item = new ListViewItem(dataInfo.DisplayName);
 						item.Name = dataInfo.FullPath;
+
+						// Get the image index for this filesystem object from the parent's ImageList.
 						int imageIndex = OnGetImageIndex(dataInfo);
 						item.ImageIndex = imageIndex;
 
-						switch (unitDisplay) {
-							case UnitDisplay.KiloBytes:
-								size = Math.Round(Convert.ToDouble(dataInfo.Size), 2) / 1024;
-								break;
-							case UnitDisplay.MegaBytes:
-								size = Math.Round(Convert.ToDouble(dataInfo.Size), 2) / 1024 / 1024;
-								break;
-							default:
-								size = dataInfo.Size;
-								break;
-						}
-
 						if (dataInfo is FileInfo) {
+							// Calculate the correct size of the object.
+							// TODO: This should be done in the FileInfo/DirectoryInfo object.
+							double size;
+							switch (unitDisplay) {
+								case UnitDisplay.KiloBytes:
+									size = Math.Round(Convert.ToDouble(dataInfo.Size), 2) / 1024;
+									break;
+								case UnitDisplay.MegaBytes:
+									size = Math.Round(Convert.ToDouble(dataInfo.Size), 2) / 1024 / 1024;
+									break;
+								default:
+									size = dataInfo.Size;
+									break;
+							}
+
 							item.SubItems.Add(General.GetHumanReadableSize(size));
 						} else {
 							item.SubItems.Add(string.Empty);

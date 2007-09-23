@@ -1,6 +1,5 @@
 - Automatic refresh of viewed directory
 - Status information about current directory
-- Information about drive in dropdown
 - Image of drive type of dropdown
 - Refresh button
 - Sorting of listview
