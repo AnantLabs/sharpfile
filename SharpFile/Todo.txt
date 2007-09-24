@@ -1,5 +1,4 @@
 - Automatic refresh of viewed directory
-- Status information about current directory
 - Image of drive type of dropdown
 - Refresh button
 - Sorting of listview
@@ -13,5 +12,3 @@ BUG
 - Get rid of folder icon for root and parent directories
 - Get human readable gets "00" instead of "0"
 - Wrong paths (pick D:\ should revert the dropdown to the correct path)
-
-- Helper class that implements Icon storage and retrieval

@@ -1,7 +1,4 @@
-using System;
-using SharpFile.FileSystem;
-
-namespace SharpFile {
+namespace SharpFile.IO {
 	public class DriveInfo : FileSystemInfo {
 		private string description;
 		private string providerName;

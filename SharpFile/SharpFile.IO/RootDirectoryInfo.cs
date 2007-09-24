@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SharpFile {
+namespace SharpFile.IO {
 	public class RootDirectoryInfo : DirectoryInfo {
 		public RootDirectoryInfo(System.IO.DirectoryInfo directoryInfo)
 			: base(directoryInfo) {

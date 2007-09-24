@@ -1,5 +1,7 @@
 0.30
 	Show progress on long-running operations.
+	Re-organization of code. Split out non-UI assemblies from the UI.
+	FIX: Prevent extra filesystem retrieval when populating the drives.
 
 0.25
 	Icon retrieval for files and directories.

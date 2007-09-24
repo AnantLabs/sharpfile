@@ -28,10 +28,13 @@ namespace SharpFile
         /// </summary>
         private void InitializeComponent()
         {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Child));
 			this.listView = new System.Windows.Forms.ListView();
-			this.ddlDrives = new System.Windows.Forms.ComboBox();
-			this.txtPath = new System.Windows.Forms.TextBox();
-			this.txtPattern = new System.Windows.Forms.TextBox();
+			this.toolStrip = new System.Windows.Forms.ToolStrip();
+			this.tlsDrives = new System.Windows.Forms.ToolStripDropDownButton();
+			this.tlsPath = new System.Windows.Forms.ToolStripTextBox();
+			this.tlsPattern = new System.Windows.Forms.ToolStripTextBox();
+			this.toolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// listView
@@ -42,44 +45,50 @@ namespace SharpFile
 			this.listView.TabIndex = 0;
 			this.listView.UseCompatibleStateImageBehavior = false;
 			// 
-			// ddlDrives
+			// toolStrip
 			// 
-			this.ddlDrives.BackColor = System.Drawing.SystemColors.Window;
-			this.ddlDrives.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.ddlDrives.DropDownWidth = 50;
-			this.ddlDrives.FormattingEnabled = true;
-			this.ddlDrives.Location = new System.Drawing.Point(3, 5);
-			this.ddlDrives.Name = "ddlDrives";
-			this.ddlDrives.Size = new System.Drawing.Size(121, 21);
-			this.ddlDrives.TabIndex = 1;
+			this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tlsDrives,
+            this.tlsPath,
+            this.tlsPattern});
+			this.toolStrip.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip.Name = "toolStrip";
+			this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.toolStrip.Size = new System.Drawing.Size(497, 25);
+			this.toolStrip.TabIndex = 4;
+			this.toolStrip.Text = "toolStrip1";
 			// 
-			// txtPath
+			// tlsDrives
 			// 
-			this.txtPath.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-			this.txtPath.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
-			this.txtPath.Location = new System.Drawing.Point(131, 5);
-			this.txtPath.Name = "txtPath";
-			this.txtPath.Size = new System.Drawing.Size(100, 20);
-			this.txtPath.TabIndex = 2;
+			this.tlsDrives.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tlsDrives.Image = ((System.Drawing.Image)(resources.GetObject("tlsDrives.Image")));
+			this.tlsDrives.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tlsDrives.Name = "tlsDrives";
+			this.tlsDrives.Size = new System.Drawing.Size(29, 22);
+			this.tlsDrives.Text = "toolStripDropDownButton1";
 			// 
-			// txtPattern
+			// tlsPath
 			// 
-			this.txtPattern.Location = new System.Drawing.Point(238, 5);
-			this.txtPattern.Name = "txtPattern";
-			this.txtPattern.Size = new System.Drawing.Size(100, 20);
-			this.txtPattern.TabIndex = 3;
+			this.tlsPath.Name = "tlsPath";
+			this.tlsPath.Size = new System.Drawing.Size(100, 25);
+			// 
+			// tlsPattern
+			// 
+			this.tlsPattern.Name = "tlsPattern";
+			this.tlsPattern.Size = new System.Drawing.Size(100, 25);
 			// 
 			// Child
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(497, 379);
-			this.Controls.Add(this.txtPattern);
-			this.Controls.Add(this.txtPath);
-			this.Controls.Add(this.ddlDrives);
+			this.Controls.Add(this.toolStrip);
 			this.Controls.Add(this.listView);
 			this.Name = "Child";
 			this.Text = "Child";
+			this.toolStrip.ResumeLayout(false);
+			this.toolStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -88,8 +97,9 @@ namespace SharpFile
         #endregion
 
         private System.Windows.Forms.ListView listView;
-        private System.Windows.Forms.ComboBox ddlDrives;
-		private System.Windows.Forms.TextBox txtPath;
-		private System.Windows.Forms.TextBox txtPattern;
+		private System.Windows.Forms.ToolStrip toolStrip;
+		private System.Windows.Forms.ToolStripDropDownButton tlsDrives;
+		private System.Windows.Forms.ToolStripTextBox tlsPath;
+		private System.Windows.Forms.ToolStripTextBox tlsPattern;
     }
 }

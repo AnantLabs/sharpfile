@@ -1,4 +1,4 @@
-namespace SharpFile {
+namespace SharpFile.IO {
 	public enum DriveType {
 		Unknown = 0,
 		NoRootDirectory = 1,

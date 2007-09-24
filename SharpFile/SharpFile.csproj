@@ -37,9 +37,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Child.cs">
@@ -48,16 +46,6 @@
     <Compile Include="Child.Designer.cs">
       <DependentUpon>Child.cs</DependentUpon>
     </Compile>
-    <Compile Include="FileSystem\DirectoryInfo.cs" />
-    <Compile Include="FileSystem\DriveInfo.cs" />
-    <Compile Include="FileSystem\FileInfo.cs" />
-    <Compile Include="FileSystem\FileSystemInfo.cs" />
-    <Compile Include="FileSystem\FileSystemInfoFactory.cs" />
-    <Compile Include="FileSystem\ParentDirectoryInfo.cs" />
-    <Compile Include="FileSystem\RootDirectoryInfo.cs" />
-    <Compile Include="DriveType.cs" />
-    <Compile Include="IconHelper.cs" />
-    <Compile Include="Infrastructure.cs" />
     <Compile Include="Parent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +93,16 @@
     <Content Include="ChangeLog.txt" />
     <Content Include="Thanks.txt" />
     <Content Include="Todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="SharpFile.Infrastructure\SharpFile.Infrastructure.csproj">
+      <Project>{96C1D4FB-2A4F-4746-A9C0-C28E491CBB8B}</Project>
+      <Name>SharpFile.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="SharpFile.IO\SharpFile.IO.csproj">
+      <Project>{F9F8A1B7-00C8-411C-8063-987C1F720956}</Project>
+      <Name>SharpFile.IO</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

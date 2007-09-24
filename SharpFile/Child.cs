@@ -6,11 +6,11 @@ using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
 using Common;
-using SharpFile.FileSystem;
+using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile {
 	public partial class Child : Form {
-		private bool isDrivesDataBinding = true;
 		private string _path;
 		private string _pattern;
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
@@ -77,16 +77,15 @@ namespace SharpFile {
 			this.ClientSizeChanged += new EventHandler(listView_ClientSizeChanged);
 			this.listView.DoubleClick += new EventHandler(listView_DoubleClick);
 			this.listView.KeyDown += new KeyEventHandler(listView_KeyDown);
-			this.txtPath.KeyDown += new KeyEventHandler(txtPath_KeyDown);
-			this.txtPattern.KeyDown += new KeyEventHandler(txtPattern_KeyDown);
-			this.ddlDrives.SelectedIndexChanged += new EventHandler(ddlDrives_SelectedIndexChanged);
-			this.ddlDrives.DataSourceChanged += new EventHandler(ddlDrives_DataSourceChanged);
+			this.tlsPath.KeyDown += new KeyEventHandler(tlsPath_KeyDown);
+			this.tlsPattern.KeyDown += new KeyEventHandler(tlsPattern_KeyDown);
+			this.tlsDrives.DropDownItemClicked += new ToolStripItemClickedEventHandler(tlsDrives_DropDownItemClicked);
 
 			resizeControls();
 
 			// Set some options on the listview.
 			listView.View = View.Details;
-			txtPattern.Text = "*.*";
+			tlsPattern.Text = "*.*";
 
 			List<string> columns = new List<string>();
 			columns.Add("Filename");
@@ -104,9 +103,6 @@ namespace SharpFile {
 		/// Resizes the controls correctly.
 		/// </summary>
 		private void resizeControls() {
-			txtPath.Left = ddlDrives.Right + 5;
-			txtPattern.Left = txtPath.Right + 5;
-
 			if (this.WindowState == FormWindowState.Maximized) {
 				listView.Width = this.Width - 13;
 			} else {
@@ -115,39 +111,6 @@ namespace SharpFile {
 
 			listView.Height = this.Height - 60;
 		}
-
-		/// <summary>
-		/// Resizes a dropdown based on it's contents.
-		/// <remarks>http://weblogs.asp.net/eporter/archive/2004/09/27/234773.aspx</remarks>
-		/// </summary>
-		/// <param name="cmbBox">DropDown to resize.</param>
-		private void resizeDropDown(ComboBox cmbBox) {
-			if (!cmbBox.IsHandleCreated || !(cmbBox.DataSource is IList)) {
-				return;
-			}
-
-			using (Graphics g = cmbBox.CreateGraphics()) {
-				int maxLength = 0;
-				IList list = cmbBox.DataSource as IList;
-
-				int numItems = Math.Min(list.Count, cmbBox.MaxDropDownItems);
-
-				// Find the longest string in the first MaxDropDownItems.
-				for (int i = 0; i < numItems; i++)
-					maxLength = Math.Max(maxLength,
-					(int)g.MeasureString(cmbBox.GetItemText(list[i]), cmbBox.Font).Width);
-
-				// Add a little buffer for the scroll bar.
-				maxLength += 20;
-
-				// Make sure we are inbounds of the screen.
-				int left = this.PointToScreen(new Point(0, this.Left)).X;
-				if (maxLength > Screen.PrimaryScreen.WorkingArea.Width - left)
-					maxLength = Screen.PrimaryScreen.WorkingArea.Width - left;
-
-				cmbBox.DropDownWidth = Math.Max(maxLength, cmbBox.Width);
-			}
-		}
 		#endregion
 		#endregion
 
@@ -155,7 +118,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the listview when Enter is pressed in the path textbox.
 		/// </summary>
-		void txtPath_KeyDown(object sender, KeyEventArgs e) {
+		void tlsPath_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
@@ -240,7 +203,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the listview when Enter is pressed in the pattern textbox.
 		/// </summary>
-		void txtPattern_KeyDown(object sender, KeyEventArgs e) {
+		void tlsPattern_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
@@ -249,19 +212,9 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the listview when a different drive is selected.
 		/// </summary>
-		void ddlDrives_SelectedIndexChanged(object sender, EventArgs e) {
-			// Prevent grabbing file/directory information when the drive dropdown is getting populated.
-			if (!isDrivesDataBinding)
-			{
-				ExecuteOrUpdate(((DriveInfo) ddlDrives.SelectedItem).FullPath);
-			}
-		}
-
-		/// <summary>
-		/// Resizes the drive dropdown when the datasource is refreshed.
-		/// </summary>
-		void ddlDrives_DataSourceChanged(object sender, EventArgs e) {
-			resizeDropDown(ddlDrives);
+		void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+			e.ClickedItem.Select();
+			ExecuteOrUpdate(e.ClickedItem.Name);
 		}
 		#endregion
 
@@ -270,39 +223,38 @@ namespace SharpFile {
 		/// Update the drive information contained in the drive dropdown asynchronously.
 		/// </summary>
 		public void UpdateDriveListing() {
-			isDrivesDataBinding = true;
-
 			// Set up a new background worker to delegate the asynchronous retrieval.
 			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
 				// Anonymous method that grabs the drive information.
 				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-					e.Result = Infrastructure.GetDrives();
+					e.Result = FileSystem.GetDrives();
 				};
 
 				// Anonymous method to run after the drives are retrieved.
 				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
 					List<DriveInfo> drives = new List<DriveInfo>((IEnumerable<DriveInfo>)e.Result);
 
-					ddlDrives.Items.Clear();
-					ddlDrives.DataSource = drives;
-					ddlDrives.DisplayMember = "DisplayName";
-					ddlDrives.ValueMember = "FullPath";
+					tlsDrives.DropDownItems.Clear();
+					bool isLocalDiskFound = false;
 
-					// Set the selected drive to be the first local drive found.
-					DriveInfo localDisk = drives.Find(delegate(DriveInfo di) {
-						return di.DriveType == DriveType.LocalDisk;
-					});
+					foreach (DriveInfo driveInfo in drives) {
+						ToolStripMenuItem item = new ToolStripMenuItem();
+						item.Text = driveInfo.DisplayName;
+						item.Name = driveInfo.FullPath;
 
-					if (localDisk != null) {
-						ddlDrives.SelectedItem = localDisk;
+						int imageIndex = IconManager.GetImageIndex(driveInfo, ((Parent)this.MdiParent).ImageList);
+						item.Image = ((Parent)this.MdiParent).ImageList.Images[imageIndex];
+						
+						tlsDrives.DropDownItems.Add(item);
+
+						if (!isLocalDiskFound) {
+							if (driveInfo.DriveType == DriveType.LocalDisk) {
+								isLocalDiskFound = true;
+								item.Select();
+								ExecuteOrUpdate(driveInfo.FullPath);
+							}
+						}
 					}
-
-					if (ddlDrives.SelectedItem != null)
-					{
-						ExecuteOrUpdate(((DriveInfo)ddlDrives.SelectedItem).FullPath);
-					}
-
-					isDrivesDataBinding = false;
 				};
 
 				backgroundWorker.RunWorkerAsync();
@@ -313,7 +265,7 @@ namespace SharpFile {
 		/// Executes the file, or refreshes the listview for the selected directory in the path textbox.
 		/// </summary>
 		public void ExecuteOrUpdate() {
-			ExecuteOrUpdate(txtPath.Text);
+			ExecuteOrUpdate(tlsPath.Text);
 		}
 
 		/// <summary>
@@ -324,7 +276,7 @@ namespace SharpFile {
 			if (System.IO.File.Exists(path)) {
 				Process.Start(path);
 			} else if (System.IO.Directory.Exists(path)) {
-				updateFileListing(path, txtPattern.Text);
+				updateFileListing(path, tlsPattern.Text);
 			} else {
 				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
@@ -369,7 +321,7 @@ namespace SharpFile {
 					// If this was split out differently, this might make more sense.
 					// Maybe get directories first, then files. Then filter them. Or something.
 					backgroundWorker.ReportProgress(50);
-					e.Result = Infrastructure.GetFiles(directoryInfo, pattern);
+					e.Result = FileSystem.GetFiles(directoryInfo, pattern);
 					backgroundWorker.ReportProgress(100);
 				};
 				
@@ -385,7 +337,7 @@ namespace SharpFile {
 			}
 
 			// Update some information about the current directory.
-			txtPath.Text = directoryPath;
+			tlsPath.Text = directoryPath;
 			this.Text = directoryPath;
 		}
 

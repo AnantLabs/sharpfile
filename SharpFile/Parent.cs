@@ -1,7 +1,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SharpFile.FileSystem;
+using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile {
 	public partial class Parent : Form {
@@ -51,7 +52,7 @@ namespace SharpFile {
 			};
 
 			childForm.OnGetImageIndex += delegate(FileSystemInfo dataInfo) {
-				return Infrastructure.GetImageIndex(dataInfo, imageList);
+				return IconManager.GetImageIndex(dataInfo, imageList);
 			};
 
 			// Update the list view.
