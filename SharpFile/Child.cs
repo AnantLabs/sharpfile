@@ -242,8 +242,8 @@ namespace SharpFile {
 						item.Text = driveInfo.DisplayName;
 						item.Name = driveInfo.FullPath;
 
-						int imageIndex = IconManager.GetImageIndex(driveInfo, ((Parent)this.MdiParent).ImageList);
-						item.Image = ((Parent)this.MdiParent).ImageList.Images[imageIndex];
+						int imageIndex = IconManager.GetImageIndex(driveInfo, ImageList);
+						item.Image = ImageList.Images[imageIndex];
 						
 						tlsDrives.DropDownItems.Add(item);
 
@@ -290,7 +290,7 @@ namespace SharpFile {
 		/// <param name="pattern">Pattern to filter the information.</param>
 		private void updateFileListing(string path, string pattern) {
 			if (listView.SmallImageList == null) {
-				listView.SmallImageList = ((Parent)this.MdiParent).ImageList;
+				listView.SmallImageList = ImageList;
 			}
 
 			// Prevents the retrieval of file information if unneccessary.
@@ -411,5 +411,11 @@ namespace SharpFile {
 		}
 		#endregion
 		#endregion
+
+		public ImageList ImageList {
+			get {
+				return ((Parent)this.MdiParent).ImageList;
+			}
+		}
 	}
 }
