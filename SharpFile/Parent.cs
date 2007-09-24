@@ -44,10 +44,12 @@ namespace SharpFile {
 				if (value < 100) {
 					if (!timer.Enabled) {
 						timer.Enabled = true;
+						spinningProgress.Enabled = true;
 					}
 				} else if (value == 100) {
 					if (timer.Enabled) {
 						timer.Enabled = false;
+						spinningProgress.Enabled = false;
 					}
 				}
 			};

@@ -84,6 +84,7 @@ namespace SharpFile
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.progressDisk = new ProgressDisk.ProgressDisk();
+			this.spinningProgress = new CircularProgress.SpinningProgress.SpinningProgress();
 			this.menuStrip.SuspendLayout();
 			this.toolStrip.SuspendLayout();
 			this.statusStrip.SuspendLayout();
@@ -548,11 +549,22 @@ namespace SharpFile
 			this.progressDisk.TabIndex = 4;
 			this.progressDisk.Value = 9;
 			// 
+			// spinningProgress
+			// 
+			this.spinningProgress.AutoIncrementFrequency = 100;
+			this.spinningProgress.BehindTransistionSegmentIsActive = false;
+			this.spinningProgress.Location = new System.Drawing.Point(558, 435);
+			this.spinningProgress.Name = "spinningProgress";
+			this.spinningProgress.Size = new System.Drawing.Size(16, 16);
+			this.spinningProgress.TabIndex = 6;
+			this.spinningProgress.TransistionSegment = 1;
+			// 
 			// Parent
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(632, 453);
+			this.Controls.Add(this.spinningProgress);
 			this.Controls.Add(this.progressDisk);
 			this.Controls.Add(this.statusStrip);
 			this.Controls.Add(this.toolStrip);
@@ -628,6 +640,7 @@ namespace SharpFile
 		private System.Windows.Forms.ToolTip ToolTip;
 		private System.Windows.Forms.ImageList imageList;
 		private ProgressDisk.ProgressDisk progressDisk;
+		private CircularProgress.SpinningProgress.SpinningProgress spinningProgress;
     }
 }
 

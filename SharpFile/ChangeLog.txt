@@ -1,3 +1,6 @@
+0.30
+	Show progress on long-running operations.
+
 0.25
 	Icon retrieval for files and directories.
 	Show root directory shortcut.
