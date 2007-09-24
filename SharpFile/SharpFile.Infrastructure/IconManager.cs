@@ -19,6 +19,10 @@ namespace SharpFile.Infrastructure {
 			return IconReader.GetFolderIcon(IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
+		//private static Icon getDriveIcon() {
+			//Icon icon = new Icon();
+		//}
+
 		public static int GetImageIndex(FileSystemInfo fileSystemInfo, ImageList imageList) {
 			lock (lockObject) {
 				int imageIndex = imageList.Images.Count;

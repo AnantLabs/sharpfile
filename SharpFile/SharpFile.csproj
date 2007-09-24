@@ -91,6 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ChangeLog.txt" />
+    <None Include="Icons\XP Drive 3.5.ico" />
+    <None Include="Icons\XP Drive CDROM.ico" />
+    <None Include="Icons\XP Drive Network.ico" />
     <Content Include="Thanks.txt" />
     <Content Include="Todo.txt" />
   </ItemGroup>
