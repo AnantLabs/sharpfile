@@ -99,12 +99,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="SpinningProgress.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="SpinningProgress.Designer.cs">
-      <DependentUpon>SpinningProgress.cs</DependentUpon>
-    </Compile>
     <Compile Include="UnitDisplayType.cs" />
   </ItemGroup>
   <ItemGroup>

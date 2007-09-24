@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -11,6 +10,7 @@ using SharpFile.FileSystem;
 
 namespace SharpFile {
 	public partial class Child : Form {
+		private bool isDrivesDataBinding = true;
 		private string _path;
 		private string _pattern;
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
@@ -250,7 +250,11 @@ namespace SharpFile {
 		/// Refreshes the listview when a different drive is selected.
 		/// </summary>
 		void ddlDrives_SelectedIndexChanged(object sender, EventArgs e) {
-			ExecuteOrUpdate(((DriveInfo)ddlDrives.SelectedItem).FullPath);
+			// Prevent grabbing file/directory information when the drive dropdown is getting populated.
+			if (!isDrivesDataBinding)
+			{
+				ExecuteOrUpdate(((DriveInfo) ddlDrives.SelectedItem).FullPath);
+			}
 		}
 
 		/// <summary>
@@ -266,6 +270,8 @@ namespace SharpFile {
 		/// Update the drive information contained in the drive dropdown asynchronously.
 		/// </summary>
 		public void UpdateDriveListing() {
+			isDrivesDataBinding = true;
+
 			// Set up a new background worker to delegate the asynchronous retrieval.
 			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
 				// Anonymous method that grabs the drive information.
@@ -290,6 +296,13 @@ namespace SharpFile {
 					if (localDisk != null) {
 						ddlDrives.SelectedItem = localDisk;
 					}
+
+					if (ddlDrives.SelectedItem != null)
+					{
+						ExecuteOrUpdate(((DriveInfo)ddlDrives.SelectedItem).FullPath);
+					}
+
+					isDrivesDataBinding = false;
 				};
 
 				backgroundWorker.RunWorkerAsync();

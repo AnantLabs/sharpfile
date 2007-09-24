@@ -1,15 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using SharpFile.FileSystem;
 
 namespace SharpFile {
 	public partial class Parent : Form {
-		private static object lockObject = new object();
 		private Timer timer = new Timer();
 
 		public Parent() {
@@ -23,7 +18,7 @@ namespace SharpFile {
 			}
 
 			timer.Enabled = true;
-			timer.Tick += delegate(object sender, EventArgs e) {
+			timer.Tick += delegate {
 				progressDisk.Value = (progressDisk.Value + 1) % 12;
 			};
 		}
@@ -43,13 +38,14 @@ namespace SharpFile {
 			childForm.OnUpdateProgress += delegate(int value) {
 				if (value < 100) {
 					if (!timer.Enabled) {
+						progressDisk.Value = 4;
+						progressDisk.Visible = true;
 						timer.Enabled = true;
-						spinningProgress.Enabled = true;
 					}
 				} else if (value == 100) {
 					if (timer.Enabled) {
+						progressDisk.Visible = false;
 						timer.Enabled = false;
-						spinningProgress.Enabled = false;
 					}
 				}
 			};

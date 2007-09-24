@@ -4,7 +4,6 @@ using System.Management;
 using System;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Collections;
 using Etier.IconHelper;
 using System.Drawing;
 
@@ -14,7 +13,7 @@ namespace SharpFile {
 		private const string openFolderKey = ":OPEN_FOLDER:";
 		private const string closedFolderKey = ":CLOSED_FOLDER:";
 
-		private static object lockObject = new object();
+		private readonly static object lockObject = new object();
 
 		public static IEnumerable<FileSystem.FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo) {
 			return GetFiles(directoryInfo, allFilesPattern);
