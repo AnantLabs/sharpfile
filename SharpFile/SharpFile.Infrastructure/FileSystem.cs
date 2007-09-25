@@ -1,5 +1,4 @@
 using System;
-using System.Management;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SharpFile.IO;
@@ -59,33 +58,17 @@ namespace SharpFile.Infrastructure {
 		}
 
 		public static IEnumerable<DriveInfo> GetDrives() {
-			foreach (ManagementObject managementObject in GetManagementObjects("Win32_LogicalDisk")) {
-				int driveType_i = managementObject["DriveType"] != null ?
-					int.Parse(managementObject["DriveType"].ToString()) : 0;
+			foreach (System.IO.DriveInfo di in System.IO.DriveInfo.GetDrives())
+			{
+				string name = di.Name;
+				string providerName = string.Empty;
+				string description = string.Empty;
+				long size = 0;
+				long freeSpace = 0;
 
-				if (driveType_i >= 2 &&
-					driveType_i <= 6) {
-					string name = managementObject["Name"].ToString();
-					DriveType driveType = (DriveType)Enum.Parse(typeof(DriveType), driveType_i.ToString());
-					string description = managementObject["Description"] != null ?
-						managementObject["Description"].ToString() : string.Empty;
-					string providerName = managementObject["ProviderName"] != null ?
-						managementObject["ProviderName"].ToString() : "";
-					long freeSpace = managementObject["FreeSpace"] != null ?
-						long.Parse(managementObject["FreeSpace"].ToString()) : 0;
-					long size = managementObject["Size"] != null ?
-						long.Parse(managementObject["Size"].ToString()) : 0;
-
-					DriveInfo driveInfo = new DriveInfo(name, providerName, driveType, description, size, freeSpace);
-					yield return driveInfo;
-				}
+				DriveInfo driveInfo = new DriveInfo(name, providerName, di.DriveType, description, size, freeSpace);
+				yield return driveInfo;
 			}
-		}
-
-		public static ManagementObjectCollection GetManagementObjects(string path) {
-			ManagementClass managementClass = new ManagementClass(path);
-			ManagementObjectCollection managementObjectCollection = managementClass.GetInstances();
-			return managementObjectCollection;
 		}
 	}
 }

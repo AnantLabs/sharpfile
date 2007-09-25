@@ -35,7 +35,6 @@
   <ItemGroup>
     <Compile Include="DirectoryInfo.cs" />
     <Compile Include="DriveInfo.cs" />
-    <Compile Include="DriveType.cs" />
     <Compile Include="FileInfo.cs" />
     <Compile Include="FileSystemInfo.cs" />
     <Compile Include="FileSystemInfoFactory.cs" />

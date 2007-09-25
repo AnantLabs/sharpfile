@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace SharpFile.IO {
 	public class DriveInfo : FileSystemInfo {
 		private string description;

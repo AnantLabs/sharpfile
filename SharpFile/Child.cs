@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
@@ -8,6 +9,10 @@ using System.Collections.Generic;
 using Common;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
+using DirectoryInfo = SharpFile.IO.DirectoryInfo;
+using DriveInfo = SharpFile.IO.DriveInfo;
+using FileInfo = SharpFile.IO.FileInfo;
+using FileSystemInfo = SharpFile.IO.FileSystemInfo;
 
 namespace SharpFile {
 	public partial class Child : Form {
@@ -248,7 +253,7 @@ namespace SharpFile {
 						tlsDrives.DropDownItems.Add(item);
 
 						if (!isLocalDiskFound) {
-							if (driveInfo.DriveType == DriveType.LocalDisk) {
+							if (driveInfo.DriveType == DriveType.Fixed) {
 								isLocalDiskFound = true;
 								item.Select();
 								ExecuteOrUpdate(driveInfo.FullPath);
