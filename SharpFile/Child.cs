@@ -115,6 +115,8 @@ namespace SharpFile {
 			}
 
 			listView.Height = this.Height - 60;
+
+			tlsPath.Size = new Size(base.Width - 15 - (tlsPattern.Width + tlsDrives.Width), tlsPath.Height);// .Width = 100; //base.Width - (tlsPattern.Width + tlsDrives.Width) + 100;
 		}
 		#endregion
 		#endregion

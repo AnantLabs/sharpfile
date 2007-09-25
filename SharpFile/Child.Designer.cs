@@ -65,18 +65,23 @@ namespace SharpFile
 			this.tlsDrives.Image = ((System.Drawing.Image)(resources.GetObject("tlsDrives.Image")));
 			this.tlsDrives.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.tlsDrives.Name = "tlsDrives";
-			this.tlsDrives.Size = new System.Drawing.Size(29, 22);
+			this.tlsDrives.Padding = new System.Windows.Forms.Padding(5, 0, 0, 0);
+			this.tlsDrives.Size = new System.Drawing.Size(34, 22);
 			this.tlsDrives.Text = "toolStripDropDownButton1";
 			// 
 			// tlsPath
 			// 
+			this.tlsPath.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.tlsPath.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystem;
 			this.tlsPath.Name = "tlsPath";
-			this.tlsPath.Size = new System.Drawing.Size(100, 25);
+			this.tlsPath.Size = new System.Drawing.Size(300, 25);
 			// 
 			// tlsPattern
 			// 
+			this.tlsPattern.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.tlsPattern.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
 			this.tlsPattern.Name = "tlsPattern";
-			this.tlsPattern.Size = new System.Drawing.Size(100, 25);
+			this.tlsPattern.Size = new System.Drawing.Size(55, 25);
 			// 
 			// Child
 			// 
