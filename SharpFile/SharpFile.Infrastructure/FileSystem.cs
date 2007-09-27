@@ -58,16 +58,8 @@ namespace SharpFile.Infrastructure {
 		}
 
 		public static IEnumerable<DriveInfo> GetDrives() {
-			foreach (System.IO.DriveInfo di in System.IO.DriveInfo.GetDrives())
-			{
-				string name = di.Name;
-				string providerName = string.Empty;
-				string description = string.Empty;
-				long size = 0;
-				long freeSpace = 0;
-
-				DriveInfo driveInfo = new DriveInfo(name, providerName, di.DriveType, description, size, freeSpace);
-				yield return driveInfo;
+			foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
+				yield return new DriveInfo(driveInfo);
 			}
 		}
 	}

@@ -28,10 +28,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common, Version=0.4.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Common.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -98,6 +94,10 @@
     <Content Include="Todo.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="SharpFile.Infrastructure\SharpFile.Infrastructure.csproj">
       <Project>{96C1D4FB-2A4F-4746-A9C0-C28E491CBB8B}</Project>
       <Name>SharpFile.Infrastructure</Name>

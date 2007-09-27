@@ -1,14 +1,11 @@
 - Automatic refresh of viewed directory
-- Image of drive type of dropdown
+- Image of drive type in dropdown
 - Refresh button
 - Sorting of listview
 - Specifying columns to show in listview
 - Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
-- Go button after textboxes -- get rid OnLeaveTextBox
 - Full row select
-- Calculate size of directories on selection (and files and add up total somewhere in status)
+- Able to cancel long-running operations
 
 BUG
 - Get rid of folder icon for root and parent directories
-- Get human readable gets "00" instead of "0"
-- Wrong paths (pick D:\ should revert the dropdown to the correct path)

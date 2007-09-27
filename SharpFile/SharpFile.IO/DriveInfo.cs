@@ -1,27 +1,53 @@
 using System.IO;
+using Common;
 
 namespace SharpFile.IO {
 	public class DriveInfo : FileSystemInfo {
-		private string description;
-		private string providerName;
-		private long freeSpace;
+		private string label;
+		private string format;
+		private long availableFreeSpace;
 		private DriveType driveType;
+		private bool isReady;
 
-		public DriveInfo(string name, string providerName, DriveType driveType, string description,
-			long size, long freeSpace) {
+		public DriveInfo(System.IO.DriveInfo driveInfo) {
+			this.name = driveInfo.Name;
+			this.driveType = driveInfo.DriveType;
+			this.fullPath = name;
+			this.isReady = driveInfo.IsReady;
+
+			if (driveInfo.IsReady) {
+				this.label = driveInfo.VolumeLabel;
+				this.format = driveInfo.DriveFormat;
+				this.size = driveInfo.TotalSize;
+				this.availableFreeSpace = driveInfo.AvailableFreeSpace;
+			}
+
+			this.displayName = string.Format("{0} <{1}>",
+				fullPath,
+				Common.General.GetHumanReadableSize(availableFreeSpace.ToString())); //string.Format("{0:0,0}", availableFreeSpace));
+		}
+
+		public DriveInfo(string name, string label, DriveType driveType, string format,
+			long size, long availableFreeSpace) {
 			this.name = name;
-			this.providerName = providerName;
+			this.label = label;
 			this.driveType = driveType;
-			this.description = description;
+			this.format = format;
 			this.size = size;
-			this.freeSpace = freeSpace;
+			this.availableFreeSpace = availableFreeSpace;
 			this.fullPath = name + @"\";
 			this.displayName = fullPath + " <" + driveType.ToString() + ">";
 		}
 
-		public string ProviderName {
+		public bool IsReady {
 			get {
-				return providerName;
+				return isReady;
+			}
+		}
+
+		public string Label {
+			get {
+				return label;
 			}
 		}
 
@@ -31,9 +57,15 @@ namespace SharpFile.IO {
 			}
 		}
 
-		public long FreeSpace {
+		public long AvailableFreeSpace {
 			get {
-				return freeSpace;
+				return availableFreeSpace;
+			}
+		}
+
+		public string Format {
+			get {
+				return format;
 			}
 		}
 	}

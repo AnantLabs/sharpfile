@@ -19,7 +19,9 @@ namespace SharpFile {
 		private string _path;
 		private string _pattern;
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
+
 		private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
+		private long totalSelectedSize = 0;
 
 		public delegate void OnUpdateStatusDelegate(string status);
 		public event OnUpdateStatusDelegate OnUpdateStatus;
@@ -171,32 +173,37 @@ namespace SharpFile {
 						}
 
 						if (sizeIndex > 0) {
-							if (item.SubItems[sizeIndex].Text.Equals(string.Empty)) {
-								if (fileSystemInfo is DirectoryInfo) {
-									using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-										backgroundWorker.WorkerReportsProgress = true;
+							long size = 0;
 
-										backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
-											backgroundWorker.ReportProgress(50);
-											eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
-											backgroundWorker.ReportProgress(100);
-										};
+							if (item.SubItems[sizeIndex].Text.Equals(string.Empty) ||
+								fileSystemInfo is DirectoryInfo) {
+								using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+									backgroundWorker.WorkerReportsProgress = true;
 
-										backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-											UpdateProgress(eventArgs.ProgressPercentage);
-										};
+									backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
+										backgroundWorker.ReportProgress(50);
+										eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
+										backgroundWorker.ReportProgress(100);
+									};
 
-										backgroundWorker.RunWorkerCompleted += delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-											if (eventArgs.Error == null &&
-												eventArgs.Result != null) {
-												long size = (long)eventArgs.Result;
-												item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size);
-											}
-										};
+									backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
+										UpdateProgress(eventArgs.ProgressPercentage);
+									};
 
-										backgroundWorker.RunWorkerAsync(fileSystemInfo);
-									}
+									backgroundWorker.RunWorkerCompleted += delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+										if (eventArgs.Error == null &&
+											eventArgs.Result != null) {
+											size = (long)eventArgs.Result;
+
+											item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
+											updateSelectedTotalSize(size);
+										}
+									};
+
+									backgroundWorker.RunWorkerAsync(fileSystemInfo);
 								}
+							} else {
+								updateSelectedTotalSize(fileSystemInfo.Size);
 							}
 						}
 					} else {
@@ -255,7 +262,8 @@ namespace SharpFile {
 						tlsDrives.DropDownItems.Add(item);
 
 						if (!isLocalDiskFound) {
-							if (driveInfo.DriveType == DriveType.Fixed) {
+							if (driveInfo.DriveType == DriveType.Fixed &&
+								driveInfo.IsReady) {
 								isLocalDiskFound = true;
 								item.Select();
 								ExecuteOrUpdate(driveInfo.FullPath);
@@ -287,6 +295,13 @@ namespace SharpFile {
 			} else {
 				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
+		}
+
+		private void updateSelectedTotalSize(long size) {
+			totalSelectedSize += size;
+
+			UpdateStatus(string.Format("Selected items: {0}",
+									General.GetHumanReadableSize(totalSelectedSize.ToString())));
 		}
 
 		#region UpdateFileListing
@@ -374,22 +389,7 @@ namespace SharpFile {
 						item.ImageIndex = imageIndex;
 
 						if (dataInfo is FileInfo) {
-							// Calculate the correct size of the object.
-							// TODO: This should be done in the FileInfo/DirectoryInfo object.
-							double size;
-							switch (unitDisplay) {
-								case UnitDisplay.KiloBytes:
-									size = Math.Round(Convert.ToDouble(dataInfo.Size), 2) / 1024;
-									break;
-								case UnitDisplay.MegaBytes:
-									size = Math.Round(Convert.ToDouble(dataInfo.Size), 2) / 1024 / 1024;
-									break;
-								default:
-									size = dataInfo.Size;
-									break;
-							}
-
-							item.SubItems.Add(General.GetHumanReadableSize(size));
+							item.SubItems.Add(General.GetHumanReadableSize(dataInfo.Size.ToString()));
 							fileCount++;
 						} else {
 							item.SubItems.Add(string.Empty);
