@@ -1,6 +1,9 @@
 0.30
 	Show progress on long-running operations.
 	Re-organization of code. Split out non-UI assemblies from the UI.
+	Automatic refresh of current directory.
+	Less flicker when updating the listview.
+	Re-implemented drive retrieval code.
 	FIX: Prevent extra filesystem retrieval when populating the drives.
 
 0.25
@@ -12,7 +15,7 @@
 	Updating the filesytem objects in the listbox should be slightly faster because of enhancements.
 	Calculate the folder size on selection.
 	FIX: Sometimes selecting a filesytem object would throw an exception.
-	FIX: Cross-thread issues when updating the listbox.
+	FIX: Cross-thread issues when updating the listview.
 
 0.2
 	Textbox for specific path retrieval.

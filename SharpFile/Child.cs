@@ -32,6 +32,8 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo dataInfo);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
+		public SharpFile.Infrastructure.FileSystemWatcher fileSystemWatcher;
+
 		/// <summary>
 		/// Child ctor.
 		/// </summary>
@@ -103,6 +105,11 @@ namespace SharpFile {
 			foreach (string column in columns) {
 				listView.Columns.Add(column);
 			}
+
+			fileSystemWatcher = new SharpFile.Infrastructure.FileSystemWatcher(this, 5000);
+			fileSystemWatcher.Changed += delegate {
+				updateFileListing(true);
+			};
 		}
 
 		#region Resize methods
@@ -305,18 +312,27 @@ namespace SharpFile {
 		}
 
 		#region UpdateFileListing
+		private void updateFileListing(bool forceUpdate) {
+			updateFileListing(tlsPath.Text, tlsPattern.Text, forceUpdate);
+		}
+
+		private void updateFileListing(string path, string pattern) {
+			updateFileListing(path, pattern, false);
+		}
+
 		/// <summary>
 		/// Updates the listview with the specified path and pattern.
 		/// </summary>
 		/// <param name="path">Path to get information about.</param>
 		/// <param name="pattern">Pattern to filter the information.</param>
-		private void updateFileListing(string path, string pattern) {
+		private void updateFileListing(string path, string pattern, bool forceUpdate) {
 			if (listView.SmallImageList == null) {
 				listView.SmallImageList = ImageList;
 			}
 
 			// Prevents the retrieval of file information if unneccessary.
-			if (path.Equals(_path) &&
+			if (!forceUpdate &&
+				path.Equals(_path) &&
 				pattern.Equals(_pattern)) {
 				return;
 			} else {
@@ -331,17 +347,13 @@ namespace SharpFile {
 				directoryPath,
 				directoryPath.EndsWith(@"\") ? string.Empty : @"\");
 
-			// Clear the listview.
-			listView.Items.Clear();
-
 			// Create another thread to get the file information asynchronously.
 			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
 				backgroundWorker.WorkerReportsProgress = true;
 
 				// Anonymous method that retrieves the file information.
 				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-					// If this was split out differently, this might make more sense.
-					// Maybe get directories first, then files. Then filter them. Or something.
+					// Grab the files and report the progress to the parent.
 					backgroundWorker.ReportProgress(50);
 					e.Result = FileSystem.GetFiles(directoryInfo, pattern);
 					backgroundWorker.ReportProgress(100);
@@ -361,6 +373,11 @@ namespace SharpFile {
 			// Update some information about the current directory.
 			tlsPath.Text = directoryPath;
 			this.Text = directoryPath;
+
+			// Set up the watcher.
+			fileSystemWatcher.Path = path;
+			fileSystemWatcher.Filter = pattern;
+			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 
 		/// <summary>
@@ -379,6 +396,10 @@ namespace SharpFile {
 
 				try {
 					listView.BeginUpdate();
+
+					// Clear the listview.
+					listView.Items.Clear();
+
 					foreach (FileSystemInfo dataInfo in dataInfos) {
 						// Create a new listview item with the display name.
 						ListViewItem item = new ListViewItem(dataInfo.DisplayName);

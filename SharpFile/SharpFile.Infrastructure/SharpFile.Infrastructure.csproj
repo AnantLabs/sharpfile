@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileSystem.cs" />
+    <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="IconHelper.cs" />
     <Compile Include="IconManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

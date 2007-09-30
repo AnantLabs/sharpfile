@@ -1,11 +1,14 @@
-- Automatic refresh of viewed directory
+- Selection of current drive in dropdown
+- Refresh of drive listing when new drives are entered
 - Image of drive type in dropdown
 - Refresh button
 - Sorting of listview
-- Specifying columns to show in listview
-- Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
 - Full row select
 - Able to cancel long-running operations
 
+- Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
+- Specifying columns to show in listview
+
 BUG
 - Get rid of folder icon for root and parent directories
+- When refresh occurs of directory, listview scrolls to the top
