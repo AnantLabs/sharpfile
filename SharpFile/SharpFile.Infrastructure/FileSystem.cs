@@ -5,13 +5,13 @@ using SharpFile.IO;
 
 namespace SharpFile.Infrastructure {
 	public static class FileSystem {
-		private const string allFilesPattern = "*.*";
+		private const string allFilesFilter = "*.*";
 
 		public static IEnumerable<FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo) {
-			return GetFiles(directoryInfo, allFilesPattern);
+			return GetFiles(directoryInfo, allFilesFilter);
 		}
 
-		public static IEnumerable<FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo, string pattern) {
+		public static IEnumerable<FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo, string filter) {
 			List<FileSystemInfo> dataInfos = new List<FileSystemInfo>();
 
 			if (!directoryInfo.Root.Name.Equals(directoryInfo.FullName)) {
@@ -29,7 +29,7 @@ namespace SharpFile.Infrastructure {
 			})
 			);
 
-			System.IO.FileInfo[] fileInfos = getFilteredFiles(directoryInfo, pattern);
+			System.IO.FileInfo[] fileInfos = getFilteredFiles(directoryInfo, filter);
 			dataInfos.AddRange(
 				Array.ConvertAll<System.IO.FileInfo, FileSystemInfo>(fileInfos, delegate(System.IO.FileInfo fi) {
 				return new FileInfo(fi);
@@ -39,21 +39,21 @@ namespace SharpFile.Infrastructure {
 			return dataInfos;
 		}
 
-		private static System.IO.FileInfo[] getFilteredFiles(System.IO.DirectoryInfo directoryInfo, string pattern) {
-			if (pattern.Equals(allFilesPattern)) {
+		private static System.IO.FileInfo[] getFilteredFiles(System.IO.DirectoryInfo directoryInfo, string filter) {
+			if (filter.Equals(allFilesFilter)) {
 				return directoryInfo.GetFiles();
 			} else {
-				return directoryInfo.GetFiles(pattern, System.IO.SearchOption.TopDirectoryOnly);
+				return directoryInfo.GetFiles(filter, System.IO.SearchOption.TopDirectoryOnly);
 			}
 		}
 
 		/// <summary>
 		/// Get files based on a regex. Not currently used.
 		/// </summary>
-		private static System.IO.FileInfo[] getFilteredFiles(System.IO.DirectoryInfo directoryInfo, Regex pattern) {
+		private static System.IO.FileInfo[] getFilteredFiles(System.IO.DirectoryInfo directoryInfo, Regex filter) {
 			return Array.FindAll<System.IO.FileInfo>(directoryInfo.GetFiles("*.*", System.IO.SearchOption.TopDirectoryOnly),
 				delegate(System.IO.FileInfo fi) {
-					return pattern.IsMatch(fi.Name);
+					return filter.IsMatch(fi.Name);
 				});
 		}
 

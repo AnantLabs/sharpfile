@@ -33,7 +33,7 @@ namespace SharpFile
 			this.toolStrip = new System.Windows.Forms.ToolStrip();
 			this.tlsDrives = new System.Windows.Forms.ToolStripDropDownButton();
 			this.tlsPath = new System.Windows.Forms.ToolStripTextBox();
-			this.tlsPattern = new System.Windows.Forms.ToolStripTextBox();
+			this.tlsFilter = new System.Windows.Forms.ToolStripTextBox();
 			this.toolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -51,7 +51,7 @@ namespace SharpFile
 			this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tlsDrives,
             this.tlsPath,
-            this.tlsPattern});
+            this.tlsFilter});
 			this.toolStrip.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip.Name = "toolStrip";
 			this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
@@ -76,12 +76,12 @@ namespace SharpFile
 			this.tlsPath.Name = "tlsPath";
 			this.tlsPath.Size = new System.Drawing.Size(300, 25);
 			// 
-			// tlsPattern
+			// tlsFilter
 			// 
-			this.tlsPattern.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-			this.tlsPattern.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
-			this.tlsPattern.Name = "tlsPattern";
-			this.tlsPattern.Size = new System.Drawing.Size(55, 25);
+			this.tlsFilter.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.tlsFilter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
+			this.tlsFilter.Name = "tlsFilter";
+			this.tlsFilter.Size = new System.Drawing.Size(55, 25);
 			// 
 			// Child
 			// 
@@ -105,6 +105,6 @@ namespace SharpFile
 		private System.Windows.Forms.ToolStrip toolStrip;
 		private System.Windows.Forms.ToolStripDropDownButton tlsDrives;
 		private System.Windows.Forms.ToolStripTextBox tlsPath;
-		private System.Windows.Forms.ToolStripTextBox tlsPattern;
+		private System.Windows.Forms.ToolStripTextBox tlsFilter;
     }
 }

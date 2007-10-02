@@ -7,5 +7,11 @@ http://weblogs.asp.net/eporter/archive/2004/09/27/234773.aspx
 ProgressDisk - Amr Elsehemy
 http://www.codeproject.com/cs/miscctrl/ProgressDisk.asp
 
-Maybe should look at:
-http://www.codeproject.com/vb/net/sql2005circularprogress.asp
+ShellContextMenu (C++) - Roman Engels
+http://www.codeproject.com/shell/shellcontextmenu.asp
+
+ShellContextMenu (VB.NET) - Andrew Vos
+http://www.andrewvos.com/?p=190
+
+For a full-featured Explorer-clone (which I didn't realize was already done when I started) - Stephen Roberts
+http://www.codeproject.com/cs/miscctrl/FileBrowser.asp

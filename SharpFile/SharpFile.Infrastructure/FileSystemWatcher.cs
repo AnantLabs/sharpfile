@@ -40,9 +40,14 @@ namespace SharpFile.Infrastructure {
 			fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName |
 				NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Security | NotifyFilters.Size;
 
-			fileSystemWatcher.Changed += delegate {
-				stack.Push(OnChanged);
-			};
+			fileSystemWatcher.Created += fileSystemWatcher_Event;
+			fileSystemWatcher.Changed += fileSystemWatcher_Event;
+			fileSystemWatcher.Deleted += fileSystemWatcher_Event;
+			fileSystemWatcher.Renamed += fileSystemWatcher_Event;
+		}
+
+		void fileSystemWatcher_Event(object sender, FileSystemEventArgs e) {
+			stack.Push(OnChanged);
 		}
 
 		public void OnChanged(object sender, FileSystemEventArgs e) {

@@ -12,6 +12,9 @@ namespace SharpFile {
 			InitializeComponent();
 			this.DoubleBuffered = true;
 
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
 			ShowNewForm(null, EventArgs.Empty);
 
 			if (this.MdiChildren.Length == 1) {

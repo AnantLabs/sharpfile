@@ -13,11 +13,12 @@ using DirectoryInfo = SharpFile.IO.DirectoryInfo;
 using DriveInfo = SharpFile.IO.DriveInfo;
 using FileInfo = SharpFile.IO.FileInfo;
 using FileSystemInfo = SharpFile.IO.FileSystemInfo;
+using System.Runtime.InteropServices;
 
 namespace SharpFile {
 	public partial class Child : Form {
 		private string _path;
-		private string _pattern;
+		private string _filter;
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
 
 		private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
@@ -39,6 +40,10 @@ namespace SharpFile {
 		/// </summary>
 		public Child() {
 			InitializeComponent();
+
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
 			setup();
 		}
 
@@ -87,14 +92,15 @@ namespace SharpFile {
 			this.listView.DoubleClick += new EventHandler(listView_DoubleClick);
 			this.listView.KeyDown += new KeyEventHandler(listView_KeyDown);
 			this.tlsPath.KeyDown += new KeyEventHandler(tlsPath_KeyDown);
-			this.tlsPattern.KeyDown += new KeyEventHandler(tlsPattern_KeyDown);
+			this.tlsFilter.KeyDown += new KeyEventHandler(tlsFilter_KeyDown);
 			this.tlsDrives.DropDownItemClicked += new ToolStripItemClickedEventHandler(tlsDrives_DropDownItemClicked);
+			this.listView.MouseUp += new MouseEventHandler(listView_MouseUp);
 
 			resizeControls();
 
 			// Set some options on the listview.
 			listView.View = View.Details;
-			tlsPattern.Text = "*.*";
+			tlsFilter.Text = "*.*";
 
 			List<string> columns = new List<string>();
 			columns.Add("Filename");
@@ -125,7 +131,7 @@ namespace SharpFile {
 
 			listView.Height = this.Height - 60;
 
-			tlsPath.Size = new Size(base.Width - 15 - (tlsPattern.Width + tlsDrives.Width), tlsPath.Height);// .Width = 100; //base.Width - (tlsPattern.Width + tlsDrives.Width) + 100;
+			tlsPath.Size = new Size(base.Width - 15 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
 		}
 		#endregion
 		#endregion
@@ -222,9 +228,9 @@ namespace SharpFile {
 		}
 
 		/// <summary>
-		/// Refreshes the listview when Enter is pressed in the pattern textbox.
+		/// Refreshes the listview when Enter is pressed in the filter textbox.
 		/// </summary>
-		void tlsPattern_KeyDown(object sender, KeyEventArgs e) {
+		void tlsFilter_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
@@ -236,6 +242,33 @@ namespace SharpFile {
 		void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			e.ClickedItem.Select();
 			ExecuteOrUpdate(e.ClickedItem.Name);
+		}
+
+		void listView_MouseUp(object sender, MouseEventArgs e) {
+			if (e.Button == MouseButtons.Right) {
+				ShellContextMenu m = new ShellContextMenu();
+				ShellContextMenu.ContextMenuResult contextMenuResult;
+
+				if (listView.SelectedItems.Count > 1) {
+					ListViewItem[] itemArray = new ListViewItem[listView.SelectedItems.Count];
+					listView.SelectedItems.CopyTo(itemArray, 0);
+					string[] nameArray = Array.ConvertAll<ListViewItem, string>(itemArray, delegate(ListViewItem item) {
+						return item.Name;
+					});
+
+					contextMenuResult = m.PopupMenu(new List<string>(nameArray), this.Handle);
+				} else if (listView.SelectedItems.Count == 1) {
+					contextMenuResult = m.PopupMenu(listView.SelectedItems[0].Name, this.Handle);
+				} else {
+					contextMenuResult = m.PopupMenu(Path, this.Handle);
+				}
+
+				// Update the file listing.
+				if (contextMenuResult != ShellContextMenu.ContextMenuResult.NoUserFeedback &&
+					contextMenuResult != ShellContextMenu.ContextMenuResult.ContextMenuError) {
+					updateFileListing(true);
+				}
+			}
 		}
 		#endregion
 
@@ -298,7 +331,7 @@ namespace SharpFile {
 			if (System.IO.File.Exists(path)) {
 				Process.Start(path);
 			} else if (System.IO.Directory.Exists(path)) {
-				updateFileListing(path, tlsPattern.Text);
+				updateFileListing(path, tlsFilter.Text);
 			} else {
 				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
@@ -313,19 +346,19 @@ namespace SharpFile {
 
 		#region UpdateFileListing
 		private void updateFileListing(bool forceUpdate) {
-			updateFileListing(tlsPath.Text, tlsPattern.Text, forceUpdate);
+			updateFileListing(tlsPath.Text, tlsFilter.Text, forceUpdate);
 		}
 
-		private void updateFileListing(string path, string pattern) {
-			updateFileListing(path, pattern, false);
+		private void updateFileListing(string path, string filter) {
+			updateFileListing(path, filter, false);
 		}
 
 		/// <summary>
-		/// Updates the listview with the specified path and pattern.
+		/// Updates the listview with the specified path and filter.
 		/// </summary>
 		/// <param name="path">Path to get information about.</param>
-		/// <param name="pattern">Pattern to filter the information.</param>
-		private void updateFileListing(string path, string pattern, bool forceUpdate) {
+		/// <param name="filter">Pattern to filter the information.</param>
+		private void updateFileListing(string path, string filter, bool forceUpdate) {
 			if (listView.SmallImageList == null) {
 				listView.SmallImageList = ImageList;
 			}
@@ -333,11 +366,11 @@ namespace SharpFile {
 			// Prevents the retrieval of file information if unneccessary.
 			if (!forceUpdate &&
 				path.Equals(_path) &&
-				pattern.Equals(_pattern)) {
+				filter.Equals(_filter)) {
 				return;
 			} else {
 				_path = path;
-				_pattern = pattern;
+				_filter = filter;
 			}
 
 			// Get the directory information.
@@ -355,7 +388,7 @@ namespace SharpFile {
 				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
 					// Grab the files and report the progress to the parent.
 					backgroundWorker.ReportProgress(50);
-					e.Result = FileSystem.GetFiles(directoryInfo, pattern);
+					e.Result = FileSystem.GetFiles(directoryInfo, filter);
 					backgroundWorker.ReportProgress(100);
 				};
 				
@@ -376,7 +409,7 @@ namespace SharpFile {
 
 			// Set up the watcher.
 			fileSystemWatcher.Path = path;
-			fileSystemWatcher.Filter = pattern;
+			fileSystemWatcher.Filter = filter;
 			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 
@@ -443,6 +476,18 @@ namespace SharpFile {
 		public ImageList ImageList {
 			get {
 				return ((Parent)this.MdiParent).ImageList;
+			}
+		}
+
+		public string Path {
+			get {
+				return _path;
+			}
+		}
+
+		public string Filter {
+			get {
+				return _filter;
 			}
 		}
 	}
