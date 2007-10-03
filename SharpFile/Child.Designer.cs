@@ -39,6 +39,7 @@ namespace SharpFile
 			// 
 			// listView
 			// 
+			this.listView.AllowDrop = true;
 			this.listView.Location = new System.Drawing.Point(3, 31);
 			this.listView.Name = "listView";
 			this.listView.Size = new System.Drawing.Size(492, 346);

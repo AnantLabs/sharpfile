@@ -4,7 +4,15 @@
 - Refresh button
 - Sorting of listview
 - Full row select
-- Able to cancel long-running operations
+- Able to cancel long-running operations (esc?)
+- Drag-and-drop support for links (both ways)
+- Get icons in a background thread (add icon to imagelist, retrieval, etc.)
+- thumbnail files when possible
+- show an icon of the file being dragged around
+- Explore using SystemImageList class instead of iconmanager
+- Clean up menus and icons at top (some don't apply)
+- Make sure that all code in UI (child) is neccessary and couldn't be moved to infrastructure/IO
+- true dual-pane mode, as opposed to hacky MDI mode
 
 - Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
 - Specifying columns to show in listview

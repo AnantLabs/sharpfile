@@ -1,7 +1,7 @@
 IconReader - Paul Ingles
 http://www.codeproject.com/cs/files/fileicon.asp
 
-Eric Porter/Wes for resizing dropdown boxes on the fly.
+Resizing dropdown boxes on the fly - Eric Porter/Wes
 http://weblogs.asp.net/eporter/archive/2004/09/27/234773.aspx
 
 ProgressDisk - Amr Elsehemy
@@ -13,5 +13,12 @@ http://www.codeproject.com/shell/shellcontextmenu.asp
 ShellContextMenu (VB.NET) - Andrew Vos
 http://www.andrewvos.com/?p=190
 
-For a full-featured Explorer-clone (which I didn't realize was already done when I started) - Stephen Roberts
+Drag-and-drop operations - Paul Tallett
+http://www.codeproject.com/csharp/Explorer_Drag_Drop.asp
+
+Full-featured, plug-in-able Explorer-clone (which I didn't realize was already done when I started) - Stephen Roberts
 http://www.codeproject.com/cs/miscctrl/FileBrowser.asp
+
+Plus, many others made silent contributions along the way including the Commander clones 
+(Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
+other articles, tips and tricks.

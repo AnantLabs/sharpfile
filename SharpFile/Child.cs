@@ -17,10 +17,14 @@ using System.Runtime.InteropServices;
 
 namespace SharpFile {
 	public partial class Child : Form {
+		private const int ALT = 32;
+		private const int CTRL = 8;
+		private const int SHIFT = 4;
+
 		private string _path;
 		private string _filter;
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
-
+		private SharpFile.Infrastructure.FileSystemWatcher fileSystemWatcher;
 		private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
 		private long totalSelectedSize = 0;
 
@@ -33,8 +37,6 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo dataInfo);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
-		public SharpFile.Infrastructure.FileSystemWatcher fileSystemWatcher;
-
 		/// <summary>
 		/// Child ctor.
 		/// </summary>
@@ -44,7 +46,7 @@ namespace SharpFile {
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
-			setup();
+			initializeComponent();
 		}
 
 		#region Delegate methods
@@ -84,7 +86,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Sets the child up.
 		/// </summary>
-		private void setup() {
+		private void initializeComponent() {
 			this.DoubleBuffered = true;
 
 			// Attach to some events.
@@ -95,6 +97,9 @@ namespace SharpFile {
 			this.tlsFilter.KeyDown += new KeyEventHandler(tlsFilter_KeyDown);
 			this.tlsDrives.DropDownItemClicked += new ToolStripItemClickedEventHandler(tlsDrives_DropDownItemClicked);
 			this.listView.MouseUp += new MouseEventHandler(listView_MouseUp);
+			this.listView.ItemDrag += new ItemDragEventHandler(listView_ItemDrag);
+			this.listView.DragOver += new DragEventHandler(listView_DragOver);
+			this.listView.DragDrop += new DragEventHandler(listView_DragDrop);
 
 			resizeControls();
 
@@ -118,7 +123,30 @@ namespace SharpFile {
 			};
 		}
 
-		#region Resize methods
+		private void updateSelectedTotalSize(long size) {
+			totalSelectedSize += size;
+
+			UpdateStatus(string.Format("Selected items: {0}",
+									General.GetHumanReadableSize(totalSelectedSize.ToString())));
+		}
+
+		/// <summary>
+		/// Gets the selected paths.
+		/// </summary>
+		private List<string> getSelectedPaths() {
+			if (listView.SelectedItems.Count == 0) {
+				return new List<string>(0);
+			}
+
+			ListViewItem[] itemArray = new ListViewItem[listView.SelectedItems.Count];
+			listView.SelectedItems.CopyTo(itemArray, 0);
+			string[] nameArray = Array.ConvertAll<ListViewItem, string>(itemArray, delegate(ListViewItem item) {
+				return item.Name;
+			});
+
+			return new List<string>(nameArray);
+		}
+
 		/// <summary>
 		/// Resizes the controls correctly.
 		/// </summary>
@@ -134,13 +162,12 @@ namespace SharpFile {
 			tlsPath.Size = new Size(base.Width - 15 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
 		}
 		#endregion
-		#endregion
 
 		#region Events
 		/// <summary>
 		/// Refreshes the listview when Enter is pressed in the path textbox.
 		/// </summary>
-		void tlsPath_KeyDown(object sender, KeyEventArgs e) {
+		private void tlsPath_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
@@ -149,7 +176,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the listview when a file/directory is double-clicked in the listview.
 		/// </summary>
-		void listView_DoubleClick(object sender, EventArgs e) {
+		private void listView_DoubleClick(object sender, EventArgs e) {
 			if (listView.SelectedItems.Count > 0) {
 				string path = listView.SelectedItems[0].Name;
 				ExecuteOrUpdate(path);
@@ -159,69 +186,70 @@ namespace SharpFile {
 		/// <summary>
 		/// Resizes the controls when the listview changes size.
 		/// </summary>
-		void listView_ClientSizeChanged(object sender, EventArgs e) {
+		private void listView_ClientSizeChanged(object sender, EventArgs e) {
 			resizeControls();
 		}
 
 		/// <summary>
 		/// Selects an item in the listview when the Space bar is hit.
 		/// </summary>
-		void listView_KeyDown(object sender, KeyEventArgs e) {
+		private void listView_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Space) {
-				if (listView.SelectedItems.Count > 0) {
-					ListViewItem item = listView.SelectedItems[0];
-					string path = item.Name;
+				if (listView.SelectedItems != null &&
+					listView.SelectedItems.Count > 0) {
+					foreach (ListViewItem item in listView.SelectedItems) {
+						string path = item.Name;
+						FileSystemInfo fileSystemInfo = FileSystemInfoFactory.GetFileSystemInfo(path);
 
-					FileSystemInfo fileSystemInfo = FileSystemInfoFactory.GetFileSystemInfo(path);
+						if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
+							item.ForeColor = Color.Red;
+							selectedFileSystemInfos.Add(fileSystemInfo);
 
-					if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
-						item.ForeColor = Color.Red;
-						selectedFileSystemInfos.Add(fileSystemInfo);
-
-						int sizeIndex = 0;
-						foreach (ColumnHeader columnHeader in item.ListView.Columns) {
-							if (columnHeader.Text.Equals("Size")) {
-								sizeIndex = columnHeader.Index;
-							}
-						}
-
-						if (sizeIndex > 0) {
-							long size = 0;
-
-							if (item.SubItems[sizeIndex].Text.Equals(string.Empty) ||
-								fileSystemInfo is DirectoryInfo) {
-								using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-									backgroundWorker.WorkerReportsProgress = true;
-
-									backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
-										backgroundWorker.ReportProgress(50);
-										eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
-										backgroundWorker.ReportProgress(100);
-									};
-
-									backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-										UpdateProgress(eventArgs.ProgressPercentage);
-									};
-
-									backgroundWorker.RunWorkerCompleted += delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-										if (eventArgs.Error == null &&
-											eventArgs.Result != null) {
-											size = (long)eventArgs.Result;
-
-											item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
-											updateSelectedTotalSize(size);
-										}
-									};
-
-									backgroundWorker.RunWorkerAsync(fileSystemInfo);
+							int sizeIndex = 0;
+							foreach (ColumnHeader columnHeader in item.ListView.Columns) {
+								if (columnHeader.Text.Equals("Size")) {
+									sizeIndex = columnHeader.Index;
 								}
-							} else {
-								updateSelectedTotalSize(fileSystemInfo.Size);
 							}
+
+							if (sizeIndex > 0) {
+								long size = 0;
+
+								if (item.SubItems[sizeIndex].Text.Equals(string.Empty) ||
+									fileSystemInfo is DirectoryInfo) {
+									using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+										backgroundWorker.WorkerReportsProgress = true;
+
+										backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
+											backgroundWorker.ReportProgress(50);
+											eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
+											backgroundWorker.ReportProgress(100);
+										};
+
+										backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
+											UpdateProgress(eventArgs.ProgressPercentage);
+										};
+
+										backgroundWorker.RunWorkerCompleted += delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+											if (eventArgs.Error == null &&
+												eventArgs.Result != null) {
+												size = (long)eventArgs.Result;
+
+												item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
+												updateSelectedTotalSize(size);
+											}
+										};
+
+										backgroundWorker.RunWorkerAsync(fileSystemInfo);
+									}
+								} else {
+									updateSelectedTotalSize(fileSystemInfo.Size);
+								}
+							}
+						} else {
+							item.ForeColor = Color.Black;
+							selectedFileSystemInfos.Remove(fileSystemInfo);
 						}
-					} else {
-						item.ForeColor = Color.Black;
-						selectedFileSystemInfos.Remove(fileSystemInfo);
 					}
 				}
 			}
@@ -230,7 +258,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the listview when Enter is pressed in the filter textbox.
 		/// </summary>
-		void tlsFilter_KeyDown(object sender, KeyEventArgs e) {
+		private void tlsFilter_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
@@ -239,24 +267,20 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the listview when a different drive is selected.
 		/// </summary>
-		void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			e.ClickedItem.Select();
 			ExecuteOrUpdate(e.ClickedItem.Name);
 		}
 
-		void listView_MouseUp(object sender, MouseEventArgs e) {
+		private void listView_MouseUp(object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Right) {
 				ShellContextMenu m = new ShellContextMenu();
 				ShellContextMenu.ContextMenuResult contextMenuResult;
 
 				if (listView.SelectedItems.Count > 1) {
-					ListViewItem[] itemArray = new ListViewItem[listView.SelectedItems.Count];
-					listView.SelectedItems.CopyTo(itemArray, 0);
-					string[] nameArray = Array.ConvertAll<ListViewItem, string>(itemArray, delegate(ListViewItem item) {
-						return item.Name;
-					});
+					List<string> paths = getSelectedPaths();
 
-					contextMenuResult = m.PopupMenu(new List<string>(nameArray), this.Handle);
+					contextMenuResult = m.PopupMenu(paths, this.Handle);
 				} else if (listView.SelectedItems.Count == 1) {
 					contextMenuResult = m.PopupMenu(listView.SelectedItems[0].Name, this.Handle);
 				} else {
@@ -268,6 +292,96 @@ namespace SharpFile {
 					contextMenuResult != ShellContextMenu.ContextMenuResult.ContextMenuError) {
 					updateFileListing(true);
 				}
+			}
+		}
+
+		private void listView_DragDrop(object sender, DragEventArgs e) {
+			// Can only drop files, so check
+			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+				return;
+			}
+
+			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+			foreach (string file in files) {
+				string dest = Path + "\\" + System.IO.Path.GetFileName(file);
+
+				bool isFolder = Directory.Exists(file);
+				bool isFile = File.Exists(file);
+				
+				// Ignore if it doesn't exist
+				if (!isFolder && !isFile)
+					continue;
+
+				try {
+					switch (e.Effect) {
+						case DragDropEffects.Copy:
+							// TODO: Need to handle folders.
+							if (isFile)
+								File.Copy(file, dest, false);
+							break;
+						case DragDropEffects.Move:
+							// TODO: Need to handle folders.
+							if (isFile)
+								File.Move(file, dest);
+							break;
+						case DragDropEffects.Link:
+							// TODO: Need to handle links.
+							break;
+					}
+				} catch (IOException ex) {
+					MessageBox.Show(this, "Failed to perform the specified operation:\n\n" + ex.Message, "File operation failed", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+				}
+			}
+
+			updateFileListing(true);
+		}
+
+		private void listView_DragOver(object sender, DragEventArgs e) {
+			// Determine whether file data exists in the drop data. If not, then
+			// the drop effect reflects that the drop cannot occur.
+			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
+				e.Effect = DragDropEffects.None;
+				return;
+			}
+
+			// Set the effect based upon the KeyState.
+			// Can't get links to work - Use of Ole1 services requiring DDE windows is disabled.
+			/*
+			if ((e.KeyState & (CTRL | ALT)) == (CTRL | ALT) &&
+				(e.AllowedEffect & DragDropEffects.Link) == DragDropEffects.Link) {
+				e.Effect = DragDropEffects.Link;
+			} else if ((e.KeyState & ALT) == ALT &&
+				(e.AllowedEffect & DragDropEffects.Link) == DragDropEffects.Link) {
+				e.Effect = DragDropEffects.Link;
+			} else*/
+			if ((e.KeyState & SHIFT) == SHIFT &&
+				(e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move) {
+				e.Effect = DragDropEffects.Move;
+			} else if ((e.KeyState & CTRL) == CTRL &&
+				(e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
+				e.Effect = DragDropEffects.Copy;
+			} else if ((e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move) {
+				// By default, the drop action should be move, if allowed.
+				e.Effect = DragDropEffects.Move;
+
+				// Implement the rather strange behaviour of explorer that if the disk
+				// is different, then default to a COPY operation
+				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+				if (files.Length > 0 && !files[0].ToUpper().StartsWith(Path) &&
+				(e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
+					e.Effect = DragDropEffects.Copy;
+			} else {
+				e.Effect = DragDropEffects.None;
+			}
+		}
+
+		private void listView_ItemDrag(object sender, ItemDragEventArgs e) {
+			List<string> paths = getSelectedPaths();
+
+			if (paths.Count > 0) {
+				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
+				updateFileListing(true);
 			}
 		}
 		#endregion
@@ -296,7 +410,7 @@ namespace SharpFile {
 						item.Text = driveInfo.DisplayName;
 						item.Name = driveInfo.FullPath;
 
-						int imageIndex = IconManager.GetImageIndex(driveInfo, ImageList);
+						int imageIndex = OnGetImageIndex(driveInfo);
 						item.Image = ImageList.Images[imageIndex];
 						
 						tlsDrives.DropDownItems.Add(item);
@@ -335,13 +449,6 @@ namespace SharpFile {
 			} else {
 				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
-		}
-
-		private void updateSelectedTotalSize(long size) {
-			totalSelectedSize += size;
-
-			UpdateStatus(string.Format("Selected items: {0}",
-									General.GetHumanReadableSize(totalSelectedSize.ToString())));
 		}
 
 		#region UpdateFileListing
@@ -418,7 +525,7 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+		private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			// Make sure we got back good information.
 			if (e.Error == null && 
 				e.Result != null &&
