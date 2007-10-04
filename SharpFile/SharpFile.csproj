@@ -115,4 +115,9 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>$(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
