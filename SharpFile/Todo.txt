@@ -12,7 +12,16 @@
 - Explore using SystemImageList class instead of iconmanager
 - Clean up menus and icons at top (some don't apply)
 - Make sure that all code in UI (child) is neccessary and couldn't be moved to infrastructure/IO
+- Prevent drag-and-drop operation if it is completed in less than some arbitrary time limit (200 ms?)
+- Prevent flicker in toolstrip when resizing
+- Validate rename before-hand and throw up tooltip or something
+- Second selection to rename
+- Rename directories
+
 - true dual-pane mode, as opposed to hacky MDI mode
+- Tabbed MDI interface
+
+- use the ListViewItem.Tag property to store the filesysteminfo, instead of re-creating it from the ListViewItem.Name
 
 - Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
 - Specifying columns to show in listview

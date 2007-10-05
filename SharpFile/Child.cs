@@ -42,10 +42,6 @@ namespace SharpFile {
 		/// </summary>
 		public Child() {
 			InitializeComponent();
-
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-
 			initializeComponent();
 		}
 
@@ -90,22 +86,24 @@ namespace SharpFile {
 			this.DoubleBuffered = true;
 
 			// Attach to some events.
-			this.ClientSizeChanged += new EventHandler(listView_ClientSizeChanged);
+			this.ClientSizeChanged += new EventHandler(this_ClientSizeChanged);
 			this.listView.DoubleClick += new EventHandler(listView_DoubleClick);
 			this.listView.KeyDown += new KeyEventHandler(listView_KeyDown);
 			this.tlsPath.KeyDown += new KeyEventHandler(tlsPath_KeyDown);
-			this.tlsFilter.KeyDown += new KeyEventHandler(tlsFilter_KeyDown);
+			this.tlsFilter.KeyUp += new KeyEventHandler(tlsFilter_KeyUp);
 			this.tlsDrives.DropDownItemClicked += new ToolStripItemClickedEventHandler(tlsDrives_DropDownItemClicked);
 			this.listView.MouseUp += new MouseEventHandler(listView_MouseUp);
 			this.listView.ItemDrag += new ItemDragEventHandler(listView_ItemDrag);
 			this.listView.DragOver += new DragEventHandler(listView_DragOver);
 			this.listView.DragDrop += new DragEventHandler(listView_DragDrop);
+			this.listView.KeyUp += new KeyEventHandler(listView_KeyUp);
+			this.listView.AfterLabelEdit += new LabelEditEventHandler(listView_AfterLabelEdit);
 
 			resizeControls();
 
 			// Set some options on the listview.
 			listView.View = View.Details;
-			tlsFilter.Text = "*.*";
+			tlsFilter.Text = string.Empty;
 
 			List<string> columns = new List<string>();
 			columns.Add("Filename");
@@ -138,8 +136,11 @@ namespace SharpFile {
 				return new List<string>(0);
 			}
 
+			// Get an array of the listview items.
 			ListViewItem[] itemArray = new ListViewItem[listView.SelectedItems.Count];
 			listView.SelectedItems.CopyTo(itemArray, 0);
+
+			// Convert the listviewitem array into a string array of the paths.
 			string[] nameArray = Array.ConvertAll<ListViewItem, string>(itemArray, delegate(ListViewItem item) {
 				return item.Name;
 			});
@@ -159,7 +160,7 @@ namespace SharpFile {
 
 			listView.Height = this.Height - 60;
 
-			tlsPath.Size = new Size(base.Width - 15 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
+			tlsPath.Size = new Size(base.Width - 20 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
 		}
 		#endregion
 
@@ -186,7 +187,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Resizes the controls when the listview changes size.
 		/// </summary>
-		private void listView_ClientSizeChanged(object sender, EventArgs e) {
+		private void this_ClientSizeChanged(object sender, EventArgs e) {
 			resizeControls();
 		}
 
@@ -258,10 +259,8 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the listview when Enter is pressed in the filter textbox.
 		/// </summary>
-		private void tlsFilter_KeyDown(object sender, KeyEventArgs e) {
-			if (e.KeyData == Keys.Enter) {
-				ExecuteOrUpdate();
-			}
+		void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
+			ExecuteOrUpdate();
 		}
 
 		/// <summary>
@@ -382,6 +381,30 @@ namespace SharpFile {
 			if (paths.Count > 0) {
 				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 				updateFileListing(true);
+			}
+		}
+
+		void listView_KeyUp(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.F2) {
+				if (listView.SelectedItems.Count > 0) {
+					ListViewItem item = listView.SelectedItems[0];
+					item.BeginEdit();
+				}
+			}
+		}
+
+		void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
+			if (!string.IsNullOrEmpty(e.Label)) {
+				ListViewItem item = listView.Items[e.Item];
+				FileSystemInfo fileSystemInfo = FileSystemInfoFactory.GetFileSystemInfo(item.Name);
+				string path = fileSystemInfo.Path;
+
+				try {
+					File.Move(path + item.Text, path + e.Label);
+				} catch (Exception ex) {
+					e.CancelEdit = true;
+					MessageBox.Show(ex.Message);
+				}
 			}
 		}
 		#endregion
@@ -530,41 +553,29 @@ namespace SharpFile {
 			if (e.Error == null && 
 				e.Result != null &&
 				e.Result is IEnumerable<FileSystemInfo>) {
-				IEnumerable<FileSystemInfo> dataInfos = (IEnumerable<FileSystemInfo>)e.Result;
+				IEnumerable<FileSystemInfo> fileSystemInfoList = (IEnumerable<FileSystemInfo>)e.Result;
 				int fileCount = 0;
 				int folderCount = 0;
 
 				try {
 					listView.BeginUpdate();
 
+					// TODO: Prevent listview scrolling here.
+
 					// Clear the listview.
 					listView.Items.Clear();
 
-					foreach (FileSystemInfo dataInfo in dataInfos) {
-						// Create a new listview item with the display name.
-						ListViewItem item = new ListViewItem(dataInfo.DisplayName);
-						item.Name = dataInfo.FullPath;
-
-						// Get the image index for this filesystem object from the parent's ImageList.
-						int imageIndex = OnGetImageIndex(dataInfo);
-						item.ImageIndex = imageIndex;
-
-						if (dataInfo is FileInfo) {
-							item.SubItems.Add(General.GetHumanReadableSize(dataInfo.Size.ToString()));
-							fileCount++;
-						} else {
-							item.SubItems.Add(string.Empty);
-							folderCount++;
-						}
-
-						item.SubItems.Add(dataInfo.LastWriteTime.ToShortDateString());
-						item.SubItems.Add(dataInfo.LastWriteTime.ToShortTimeString());
+					// Create a new listview item with the display name.
+					foreach (FileSystemInfo fileSystemInfo in fileSystemInfoList) {
+						ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
 						listView.Items.Add(item);
 					}
-					listView.EndUpdate();
 
 					// Basic stuff that should happen everytime files are shown.
 					listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+					listView.EndUpdate();
+
 					UpdateStatus(string.Format("Folders: {0}; Files: {1}",
 						folderCount-2,
 						fileCount));
@@ -578,6 +589,28 @@ namespace SharpFile {
 			}
 		}
 		#endregion
+
+		private ListViewItem createListViewItem(FileSystemInfo fileSystemInfo, ref int fileCount, ref int folderCount) {
+			ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
+			item.Name = fileSystemInfo.FullPath;
+			item.Tag = fileSystemInfo;
+
+			// Get the image index for this filesystem object from the parent's ImageList.
+			int imageIndex = OnGetImageIndex(fileSystemInfo);
+			item.ImageIndex = imageIndex;
+
+			if (fileSystemInfo is FileInfo) {
+				item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
+				fileCount++;
+			} else {
+				item.SubItems.Add(string.Empty);
+				folderCount++;
+			}
+
+			item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortDateString());
+			item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortTimeString());
+			return item;
+		}
 		#endregion
 
 		public ImageList ImageList {

@@ -13,6 +13,6 @@ move /Y "%2tmp\SharpFile.exe" "%2SharpFile.exe"
 rmdir /S /Q "%2tmp"
 
 if not exist "c:\utility\7-zip\7z.exe" goto end
-"c:\utility\7-zip\7z.exe" u -tzip -mx9 "%2SharpFile_bin.zip" "%2ChangeLog.txt" "%2SharpFile.exe" "%2gpl.txt" "%2Readme.txt" "%2*.xml"
-"c:\utility\7-zip\7z.exe" u -tzip -mx9 "%2SharpFile_src.zip" -r "%1*.*" -x!"%1bin\" -x!"%1obj\" -x!"%1.svn\" -x!"%1_svn\" -x!"%1*.user" -x!"%1*.NoLoad" -x!"%1*.suo"
+"c:\utility\7-zip\7z.exe" u -tzip -mx9 "%2SharpFile_bin.zip" "%2ChangeLog.txt" "%2SharpFile.exe" "%2gpl.txt" "%2Readme.txt" "%2*.xml" "%2thanks.txt"
+"c:\utility\7-zip\7z.exe" u -tzip -mx9 "%2SharpFile_src.zip" -r "%1*.*" -x!"%1bin\" -x!"%1obj\" -x!"%1.svn\" -x!"%1_svn\" -x!"%1*.user" -x!"%1*.NoLoad" -x!"%1*.suo" -x!"%1todo.*"
 :end

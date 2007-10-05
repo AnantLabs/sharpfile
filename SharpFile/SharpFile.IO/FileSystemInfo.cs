@@ -41,5 +41,25 @@ namespace SharpFile.IO {
 				return fullPath;
 			}
 		}
+
+		public string Path {
+			get {
+				return fullPath.Replace(name, string.Empty);
+			}
+		}
+
+		public override bool Equals(object obj) {
+			FileSystemInfo fileSystemInfo = obj as FileSystemInfo;
+
+			if (fileSystemInfo != null) {
+				if (this.fullPath == fileSystemInfo.fullPath) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			return base.Equals(obj);
+		}
 	}
 }

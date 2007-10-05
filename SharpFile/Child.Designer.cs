@@ -29,8 +29,8 @@ namespace SharpFile
         private void InitializeComponent()
         {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Child));
-			this.listView = new System.Windows.Forms.ListView();
-			this.toolStrip = new System.Windows.Forms.ToolStrip();
+			this.listView = new SharpFile.ListView();
+			this.toolStrip = new SharpFile.ToolStrip();
 			this.tlsDrives = new System.Windows.Forms.ToolStripDropDownButton();
 			this.tlsPath = new System.Windows.Forms.ToolStripTextBox();
 			this.tlsFilter = new System.Windows.Forms.ToolStripTextBox();
@@ -40,6 +40,7 @@ namespace SharpFile
 			// listView
 			// 
 			this.listView.AllowDrop = true;
+			this.listView.LabelEdit = true;
 			this.listView.Location = new System.Drawing.Point(3, 31);
 			this.listView.Name = "listView";
 			this.listView.Size = new System.Drawing.Size(492, 346);
@@ -80,7 +81,6 @@ namespace SharpFile
 			// tlsFilter
 			// 
 			this.tlsFilter.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-			this.tlsFilter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
 			this.tlsFilter.Name = "tlsFilter";
 			this.tlsFilter.Size = new System.Drawing.Size(55, 25);
 			// 
@@ -102,8 +102,8 @@ namespace SharpFile
 
         #endregion
 
-        private System.Windows.Forms.ListView listView;
-		private System.Windows.Forms.ToolStrip toolStrip;
+        private SharpFile.ListView listView;
+		private SharpFile.ToolStrip toolStrip;
 		private System.Windows.Forms.ToolStripDropDownButton tlsDrives;
 		private System.Windows.Forms.ToolStripTextBox tlsPath;
 		private System.Windows.Forms.ToolStripTextBox tlsFilter;
