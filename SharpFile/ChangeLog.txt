@@ -1,6 +1,9 @@
 0.35
 	Right-click context menu.
 	Preliminary support for drag-and-drop operations.
+	F2 to Rename files.
+	On-the-fly file filtering.
+	FIX: Less flickering listview (again).
 
 0.30
 	Show progress on long-running operations.
