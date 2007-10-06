@@ -72,7 +72,6 @@ namespace SharpFile {
 		/// <returns>The index of the image in the master ImageList.</returns>
 		protected int GetImageIndex(FileSystemInfo fsi, bool forceUpdate) {
 			if (OnGetImageIndex != null) {
-				//return sysImageList.IconIndex(fsi.FullPath);
 				return OnGetImageIndex(fsi.FullPath, forceUpdate);
 			}
 
@@ -437,9 +436,6 @@ namespace SharpFile {
 						item.Text = driveInfo.DisplayName;
 						item.Name = driveInfo.FullPath;
 
-						//int imageIndex = GetImageIndex(driveInfo);
-						//item.Image = ImageList.Images[imageIndex];
-
 						int imageIndex = GetImageIndex(driveInfo);
 						item.Image = SysImageList.Icon(imageIndex).ToBitmap();
 						
@@ -496,10 +492,6 @@ namespace SharpFile {
 		/// <param name="path">Path to get information about.</param>
 		/// <param name="filter">Pattern to filter the information.</param>
 		private void updateFileListing(string path, string filter, bool forceUpdate) {
-			//if (listView.SmallImageList == null) {
-			//    listView.SmallImageList = ImageList;
-			//}
-
 			if (listView.SmallImageList == null) {
 				SysImageListHelper.SetListViewImageList(listView, SysImageList, false);
 			}
@@ -606,19 +598,12 @@ namespace SharpFile {
 			item.Name = fileSystemInfo.FullPath;
 			item.Tag = fileSystemInfo;
 
-			// Get the image index for this filesystem object from the parent's ImageList.
-			//int imageIndex = GetImageIndex(fileSystemInfo);
-			//item.ImageIndex = imageIndex;
-
 			int imageIndex = 0;
-
 			if (fileSystemInfo is FileInfo) {
-				//imageIndex = sysImageList.IconIndex(fileSystemInfo.FullPath);
 				imageIndex = GetImageIndex(fileSystemInfo);
 				item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
 				fileCount++;
 			} else {
-				//imageIndex = sysImageList.IconIndex(fileSystemInfo.FullPath, true);
 				imageIndex = GetImageIndex(fileSystemInfo, true);
 				item.SubItems.Add(string.Empty);
 				folderCount++;
@@ -630,12 +615,6 @@ namespace SharpFile {
 			return item;
 		}
 		#endregion
-
-		//public ImageList ImageList {
-		//    get {
-		//        return ((Parent)this.MdiParent).ImageList;
-		//    }
-		//}
 
 		public SysImageList SysImageList {
 			get {

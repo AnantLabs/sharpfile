@@ -87,9 +87,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ToolStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="UnitDisplayType.cs" />
   </ItemGroup>
   <ItemGroup>

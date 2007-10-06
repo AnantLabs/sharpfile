@@ -30,7 +30,7 @@ namespace SharpFile
         {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Child));
 			this.listView = new SharpFile.ListView();
-			this.toolStrip = new SharpFile.ToolStrip();
+			this.toolStrip = new System.Windows.Forms.ToolStrip();
 			this.tlsDrives = new System.Windows.Forms.ToolStripDropDownButton();
 			this.tlsPath = new System.Windows.Forms.ToolStripTextBox();
 			this.tlsFilter = new System.Windows.Forms.ToolStripTextBox();
@@ -103,7 +103,7 @@ namespace SharpFile
         #endregion
 
         private SharpFile.ListView listView;
-		private SharpFile.ToolStrip toolStrip;
+		private System.Windows.Forms.ToolStrip toolStrip;
 		private System.Windows.Forms.ToolStripDropDownButton tlsDrives;
 		private System.Windows.Forms.ToolStripTextBox tlsPath;
 		private System.Windows.Forms.ToolStripTextBox tlsFilter;

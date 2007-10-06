@@ -65,7 +65,6 @@ namespace SharpFile
 			this.statusStrip = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.imageList = new System.Windows.Forms.ImageList(this.components);
 			this.progressDisk = new ProgressDisk.ProgressDisk();
 			this.menuStrip.SuspendLayout();
 			this.statusStrip.SuspendLayout();
@@ -350,12 +349,6 @@ namespace SharpFile
 			this.toolStripStatus.Name = "toolStripStatus";
 			this.toolStripStatus.Size = new System.Drawing.Size(0, 17);
 			// 
-			// imageList
-			// 
-			this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			this.imageList.ImageSize = new System.Drawing.Size(16, 16);
-			this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-			// 
 			// progressDisk
 			// 
 			this.progressDisk.ActiveForeColor1 = System.Drawing.Color.LightGray;
@@ -429,8 +422,7 @@ namespace SharpFile
         private System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
 		private System.Windows.Forms.ToolTip ToolTip;
-		private System.Windows.Forms.ImageList imageList;
-			private ProgressDisk.ProgressDisk progressDisk;
+		private ProgressDisk.ProgressDisk progressDisk;
     }
 }
 
