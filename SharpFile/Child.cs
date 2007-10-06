@@ -98,7 +98,6 @@ namespace SharpFile {
 			this.listView.ItemDrag += new ItemDragEventHandler(listView_ItemDrag);
 			this.listView.DragOver += new DragEventHandler(listView_DragOver);
 			this.listView.DragDrop += new DragEventHandler(listView_DragDrop);
-			this.listView.GiveFeedback += new GiveFeedbackEventHandler(listView_GiveFeedback);
 			this.listView.KeyUp += new KeyEventHandler(listView_KeyUp);
 			this.listView.AfterLabelEdit += new LabelEditEventHandler(listView_AfterLabelEdit);
 
@@ -383,21 +382,10 @@ namespace SharpFile {
 
 			if (paths.Count > 0) {
 				string selectedPaths = string.Join(",", paths.ToArray());
-				//int imageIndex = GetTextIndex(selectedPaths, this.Font);
-
-				//imageListDrag.ImageList = ImageList;
-				//imageListDrag.StartDrag(imageIndex);
-
 				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
-
-				//imageListDrag.CompleteDrag();
-
+				
 				updateFileListing(true);
 			}
-		}
-
-		void listView_GiveFeedback(object sender, GiveFeedbackEventArgs e) {
-			//imageListDrag.DragDrop();
 		}
 
 		void listView_KeyUp(object sender, KeyEventArgs e) {

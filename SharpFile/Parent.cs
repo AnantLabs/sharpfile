@@ -29,8 +29,6 @@ namespace SharpFile {
 			timer.Tick += delegate {
 				progressDisk.Value = (progressDisk.Value + 1) % 12;
 			};
-
-			Tracer.Write("Finish Parent ctor.");
 		}
 
 		private void ShowNewForm(object sender, EventArgs e) {
