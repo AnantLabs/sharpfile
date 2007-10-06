@@ -22,6 +22,7 @@
 - Tabbed MDI interface
 
 - use the ListViewItem.Tag property to store the filesysteminfo, instead of re-creating it from the ListViewItem.Name
+	- OR instead, inheriting from ListViewItem and storing a FSI object directly on the object
 
 - Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
 - Specifying columns to show in listview

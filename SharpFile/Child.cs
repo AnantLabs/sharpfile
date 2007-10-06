@@ -1,19 +1,16 @@
 using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Common;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
-using DirectoryInfo = SharpFile.IO.DirectoryInfo;
-using DriveInfo = SharpFile.IO.DriveInfo;
-using FileInfo = SharpFile.IO.FileInfo;
-using FileSystemInfo = SharpFile.IO.FileSystemInfo;
-using System.Runtime.InteropServices;
+
+using SharpFile.UI;
 
 namespace SharpFile {
 	public partial class Child : Form {
@@ -34,7 +31,7 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		public delegate int OnGetImageIndexDelegate(FileSystemInfo dataInfo);
+		public delegate int OnGetImageIndexDelegate(string path, bool forceUpdate);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		/// <summary>
@@ -64,14 +61,19 @@ namespace SharpFile {
 				OnUpdateProgress(value);
 		}
 
+		protected int GetImageIndex(FileSystemInfo fsi) {
+			return GetImageIndex(fsi, false);
+		}
+
 		/// <summary>
 		/// Passes the filesystem info to any listening events.
 		/// </summary>
 		/// <param name="dataInfo">Filesystem information.</param>
 		/// <returns>The index of the image in the master ImageList.</returns>
-		protected int GetImageIndex(FileSystemInfo dataInfo) {
+		protected int GetImageIndex(FileSystemInfo fsi, bool forceUpdate) {
 			if (OnGetImageIndex != null) {
-				return OnGetImageIndex(dataInfo);
+				//return sysImageList.IconIndex(fsi.FullPath);
+				return OnGetImageIndex(fsi.FullPath, forceUpdate);
 			}
 
 			return -1;
@@ -96,6 +98,7 @@ namespace SharpFile {
 			this.listView.ItemDrag += new ItemDragEventHandler(listView_ItemDrag);
 			this.listView.DragOver += new DragEventHandler(listView_DragOver);
 			this.listView.DragDrop += new DragEventHandler(listView_DragDrop);
+			this.listView.GiveFeedback += new GiveFeedbackEventHandler(listView_GiveFeedback);
 			this.listView.KeyUp += new KeyEventHandler(listView_KeyUp);
 			this.listView.AfterLabelEdit += new LabelEditEventHandler(listView_AfterLabelEdit);
 
@@ -379,9 +382,22 @@ namespace SharpFile {
 			List<string> paths = getSelectedPaths();
 
 			if (paths.Count > 0) {
+				string selectedPaths = string.Join(",", paths.ToArray());
+				//int imageIndex = GetTextIndex(selectedPaths, this.Font);
+
+				//imageListDrag.ImageList = ImageList;
+				//imageListDrag.StartDrag(imageIndex);
+
 				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
+
+				//imageListDrag.CompleteDrag();
+
 				updateFileListing(true);
 			}
+		}
+
+		void listView_GiveFeedback(object sender, GiveFeedbackEventArgs e) {
+			//imageListDrag.DragDrop();
 		}
 
 		void listView_KeyUp(object sender, KeyEventArgs e) {
@@ -433,13 +449,16 @@ namespace SharpFile {
 						item.Text = driveInfo.DisplayName;
 						item.Name = driveInfo.FullPath;
 
-						int imageIndex = OnGetImageIndex(driveInfo);
-						item.Image = ImageList.Images[imageIndex];
+						//int imageIndex = GetImageIndex(driveInfo);
+						//item.Image = ImageList.Images[imageIndex];
+
+						int imageIndex = GetImageIndex(driveInfo);
+						item.Image = SysImageList.Icon(imageIndex).ToBitmap();
 						
 						tlsDrives.DropDownItems.Add(item);
 
 						if (!isLocalDiskFound) {
-							if (driveInfo.DriveType == DriveType.Fixed &&
+							if (driveInfo.DriveType == System.IO.DriveType.Fixed &&
 								driveInfo.IsReady) {
 								isLocalDiskFound = true;
 								item.Select();
@@ -489,8 +508,12 @@ namespace SharpFile {
 		/// <param name="path">Path to get information about.</param>
 		/// <param name="filter">Pattern to filter the information.</param>
 		private void updateFileListing(string path, string filter, bool forceUpdate) {
+			//if (listView.SmallImageList == null) {
+			//    listView.SmallImageList = ImageList;
+			//}
+
 			if (listView.SmallImageList == null) {
-				listView.SmallImageList = ImageList;
+				SysImageListHelper.SetListViewImageList(listView, SysImageList, false);
 			}
 
 			// Prevents the retrieval of file information if unneccessary.
@@ -596,26 +619,39 @@ namespace SharpFile {
 			item.Tag = fileSystemInfo;
 
 			// Get the image index for this filesystem object from the parent's ImageList.
-			int imageIndex = OnGetImageIndex(fileSystemInfo);
-			item.ImageIndex = imageIndex;
+			//int imageIndex = GetImageIndex(fileSystemInfo);
+			//item.ImageIndex = imageIndex;
+
+			int imageIndex = 0;
 
 			if (fileSystemInfo is FileInfo) {
+				//imageIndex = sysImageList.IconIndex(fileSystemInfo.FullPath);
+				imageIndex = GetImageIndex(fileSystemInfo);
 				item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
 				fileCount++;
 			} else {
+				//imageIndex = sysImageList.IconIndex(fileSystemInfo.FullPath, true);
+				imageIndex = GetImageIndex(fileSystemInfo, true);
 				item.SubItems.Add(string.Empty);
 				folderCount++;
 			}
 
+			item.ImageIndex = imageIndex;
 			item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortDateString());
 			item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortTimeString());
 			return item;
 		}
 		#endregion
 
-		public ImageList ImageList {
+		//public ImageList ImageList {
+		//    get {
+		//        return ((Parent)this.MdiParent).ImageList;
+		//    }
+		//}
+
+		public SysImageList SysImageList {
 			get {
-				return ((Parent)this.MdiParent).ImageList;
+				return ((Parent)this.MdiParent).SysImageList;
 			}
 		}
 

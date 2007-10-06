@@ -113,6 +113,10 @@
       <Project>{F9F8A1B7-00C8-411C-8063-987C1F720956}</Project>
       <Name>SharpFile.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="SharpFile.UI\SharpFile.UI.csproj">
+      <Project>{3896D530-3308-45BC-B802-AE953EDAD227}</Project>
+      <Name>SharpFile.UI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Timers;
 using System.ComponentModel;
+using System.Timers;
 
 namespace SharpFile.Infrastructure {
 	public class FileSystemWatcher {
@@ -27,7 +27,6 @@ namespace SharpFile.Infrastructure {
 			timer.Elapsed += delegate {
 				lock (lockObject) {
 					if (stack.Count > 0) {
-						//synchronizingObject.Invoke(stack.Peek(), null);
 						stack.Peek().Invoke(null, null);
 						stack.Clear();
 					}

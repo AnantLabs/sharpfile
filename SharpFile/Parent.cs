@@ -3,10 +3,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
+using SharpFile.UI;
 
 namespace SharpFile {
 	public partial class Parent : Form {
 		private Timer timer = new Timer();
+		private SysImageList sysImageList = new SysImageList();
+
+		private static object lockObject = new object();
 
 		public Parent() {
 			InitializeComponent();
@@ -25,6 +29,8 @@ namespace SharpFile {
 			timer.Tick += delegate {
 				progressDisk.Value = (progressDisk.Value + 1) % 12;
 			};
+
+			Tracer.Write("Finish Parent ctor.");
 		}
 
 		private void ShowNewForm(object sender, EventArgs e) {
@@ -54,8 +60,8 @@ namespace SharpFile {
 				}
 			};
 
-			childForm.OnGetImageIndex += delegate(FileSystemInfo dataInfo) {
-				return IconManager.GetImageIndex(dataInfo, imageList);
+			childForm.OnGetImageIndex += delegate(string path, bool forceUpdate) {
+				return SysImageList.IconIndex(path, forceUpdate);
 			};
 
 			// Update the list view.
@@ -68,9 +74,11 @@ namespace SharpFile {
 			this.progressDisk.Location = new Point(base.Width - 45, base.Height - 45);
 		}
 
-		public ImageList ImageList {
+		public SysImageList SysImageList {
 			get {
-				return imageList;
+				lock (lockObject) {
+					return sysImageList;
+				}
 			}
 		}
 
