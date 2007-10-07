@@ -123,11 +123,8 @@ namespace SharpFile {
 		protected override void OnResize(System.EventArgs e) {
 			UpdateScroller();
 			base.OnResize(e);
-			Invalidate(true);
+
 			
-			if (this.Multiline) {
-				return;
-			}
 		}
 
 		private void Scroller_ScrollLeft(Object sender, System.EventArgs e) {
@@ -177,6 +174,10 @@ namespace SharpFile {
 				Scroller.LeftScroller.Visible = true;
 				Scroller.RightScroller.Visible = true;
 				Scroller.CloseButton.Visible = true;
+
+				if (this.Multiline) {
+					return;
+				}
 
 				if (this.Alignment == TabAlignment.Top) {
 					Scroller.Location = new Point(this.Width - Scroller.Width, 2);

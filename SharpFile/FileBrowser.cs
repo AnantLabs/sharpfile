@@ -277,7 +277,8 @@ namespace SharpFile {
 		/// Refreshes the listview when a different drive is selected.
 		/// </summary>
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			e.ClickedItem.Select();
+			//e.ClickedItem.Select();
+			tlsDrives.Image = e.ClickedItem.Image;
 			ExecuteOrUpdate(e.ClickedItem.Name);
 		}
 
@@ -457,6 +458,7 @@ namespace SharpFile {
 								driveInfo.IsReady) {
 								isLocalDiskFound = true;
 								item.Select();
+								tlsDrives.Image = item.Image;
 								ExecuteOrUpdate(driveInfo.FullPath);
 							}
 						}

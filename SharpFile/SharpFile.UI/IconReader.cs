@@ -109,6 +109,43 @@ namespace SharpFile.UI {
 			User32.DestroyIcon(shfi.hIcon);		// Cleanup
 			return icon;
 		}
+
+		/// <summary>
+		/// Used to access system folder icons.
+		/// </summary>
+		/// <param name="size">Specify large or small icons.</param>
+		/// <param name="folderType">Specify open or closed FolderType.</param>
+		/// <returns>System.Drawing.Icon</returns>
+		public static System.Drawing.Icon GetDriveIcon(string drivePath, IconSize size, FolderType folderType) {
+			// Need to add size check, although errors generated at present!
+			uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
+
+			if (FolderType.Open == folderType) {
+				flags += Shell32.SHGFI_OPENICON;
+			}
+
+			if (IconSize.Small == size) {
+				flags += Shell32.SHGFI_SMALLICON;
+			} else {
+				flags += Shell32.SHGFI_LARGEICON;
+			}
+
+			// Get the folder icon
+			Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
+			Shell32.SHGetFileInfo(drivePath,
+				Shell32.FILE_ATTRIBUTE_DIRECTORY,
+				ref shfi,
+				(uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
+				flags);
+
+			System.Drawing.Icon.FromHandle(shfi.hIcon);	// Load the icon from an HICON handle
+
+			// Now clone the icon, so that it can be successfully stored in an ImageList
+			System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
+
+			User32.DestroyIcon(shfi.hIcon);		// Cleanup
+			return icon;
+		}
 	}
 
 	// This code has been left largely untouched from that in the CRC example. The main changes have been moving

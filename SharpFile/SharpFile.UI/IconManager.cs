@@ -10,17 +10,16 @@ namespace SharpFile.UI {
 
 		private readonly static object lockObject = new object();
 
-		private static Icon getFileIcon(FileSystemInfo fileSystemInfo) {
-			return IconReader.GetFileIcon(fileSystemInfo.FullPath, IconReader.IconSize.Small, false);
+		private static Icon getFileIcon(string path) {
+			return IconReader.GetFileIcon(path, IconReader.IconSize.Small, false);
 		}
 
 		private static Icon getFolderIcon() {
 			return IconReader.GetFolderIcon(IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
-		private static Icon getDriveIcon() {
-			// TODO: Actally get the correct drive icon.
-			return IconReader.GetFolderIcon(IconReader.IconSize.Small, IconReader.FolderType.Closed);
+		private static Icon getDriveIcon(string path) {
+			return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
 		public static int GetImageIndex(FileSystemInfo fileSystemInfo, ImageList imageList) {
@@ -41,7 +40,7 @@ namespace SharpFile.UI {
 					extension.Equals(string.Empty)) {
 					// Add the full name of the file if it is an executable into the the ImageList.
 					if (!imageList.Images.ContainsKey(fullPath)) {
-						Icon icon = getFileIcon(fileSystemInfo);
+						Icon icon = getFileIcon(fullPath);
 						imageList.Images.Add(fullPath, icon);
 					}
 
@@ -49,7 +48,7 @@ namespace SharpFile.UI {
 				} else {
 					// Add the extension into the ImageList.
 					if (!imageList.Images.ContainsKey(extension)) {
-						Icon icon = getFileIcon(fileSystemInfo);
+						Icon icon = getFileIcon(fullPath);
 						imageList.Images.Add(extension, icon);
 					}
 
@@ -65,7 +64,7 @@ namespace SharpFile.UI {
 				imageIndex = imageList.Images.IndexOfKey(closedFolderKey);
 			} else if (fileSystemInfo is DriveInfo) {
 				if (!imageList.Images.ContainsKey(fullPath)) {
-					Icon icon = getDriveIcon();
+					Icon icon = getDriveIcon(fullPath);
 					imageList.Images.Add(fullPath, icon);
 				}
 
