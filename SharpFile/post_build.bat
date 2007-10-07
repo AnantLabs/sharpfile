@@ -3,10 +3,11 @@ mkdir "%2tmp"
 
 :tmp_exists
 if not exist "C:\Programming\ILMerge\ILMerge.exe" goto no_ilmerge_exists
-"C:\Programming\ILMerge\ILMerge.exe" /out:"%2tmp\SharpFile.exe" "%2SharpFile.exe" "%2Common.dll" "%2SharpFile.Infrastructure.dll" "%2SharpFile.IO.dll"
+"C:\Programming\ILMerge\ILMerge.exe" /n /out:"%2tmp\SharpFile.exe" "%2SharpFile.exe" "%2Common.dll" "%2SharpFile.Infrastructure.dll" "%2SharpFile.IO.dll" "%2SharpFile.UI.dll" 
 del "%2Common.dll"
 del "%2SharpFile.Infrastructure.dll" 
 del "%2SharpFile.IO.dll"
+del "%2SharpFile.UI.dll"
 move /Y "%2tmp\SharpFile.exe" "%2SharpFile.exe"
 
 :no_ilmerge_exists

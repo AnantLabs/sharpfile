@@ -17,6 +17,7 @@
 - Validate rename before-hand and throw up tooltip or something
 - Second selection to rename
 - Rename directories
+- Information/Property slideable "pane" list vista's file manager
 
 - true dual-pane mode, as opposed to hacky MDI mode
 - Tabbed MDI interface

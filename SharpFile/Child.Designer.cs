@@ -29,23 +29,58 @@ namespace SharpFile
         private void InitializeComponent()
         {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Child));
+			this.tabControl = new SharpFile.TabControl();
+			this.tabPage = new System.Windows.Forms.TabPage();
 			this.listView = new SharpFile.ListView();
 			this.toolStrip = new System.Windows.Forms.ToolStrip();
 			this.tlsDrives = new System.Windows.Forms.ToolStripDropDownButton();
 			this.tlsPath = new System.Windows.Forms.ToolStripTextBox();
 			this.tlsFilter = new System.Windows.Forms.ToolStripTextBox();
+			this.tabControl.SuspendLayout();
+			this.tabPage.SuspendLayout();
 			this.toolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// tabControl
+			// 
+			this.tabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+			this.tabControl.Controls.Add(this.tabPage);
+			this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tabControl.IsVisible = true;
+			this.tabControl.Location = new System.Drawing.Point(0, 0);
+			this.tabControl.Margin = new System.Windows.Forms.Padding(0);
+			this.tabControl.Name = "tabControl";
+			this.tabControl.Padding = new System.Drawing.Point(0, 0);
+			this.tabControl.SelectedIndex = 0;
+			this.tabControl.Size = new System.Drawing.Size(497, 379);
+			this.tabControl.TabIndex = 5;
+			// 
+			// tabPage
+			// 
+			this.tabPage.Controls.Add(this.listView);
+			this.tabPage.Controls.Add(this.toolStrip);
+			this.tabPage.Location = new System.Drawing.Point(4, 25);
+			this.tabPage.Name = "tabPage";
+			this.tabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage.Size = new System.Drawing.Size(489, 350);
+			this.tabPage.TabIndex = 0;
+			this.tabPage.Text = "tabPage";
+			this.tabPage.UseVisualStyleBackColor = true;
+			// 
 			// listView
 			// 
+			this.listView.AllowColumnReorder = true;
 			this.listView.AllowDrop = true;
+			this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listView.LabelEdit = true;
-			this.listView.Location = new System.Drawing.Point(3, 31);
+			this.listView.Location = new System.Drawing.Point(3, 28);
+			this.listView.Margin = new System.Windows.Forms.Padding(0);
 			this.listView.Name = "listView";
-			this.listView.Size = new System.Drawing.Size(492, 346);
+			this.listView.ShowItemToolTips = true;
+			this.listView.Size = new System.Drawing.Size(483, 319);
 			this.listView.TabIndex = 0;
 			this.listView.UseCompatibleStateImageBehavior = false;
+			this.listView.View = System.Windows.Forms.View.Details;
 			// 
 			// toolStrip
 			// 
@@ -54,10 +89,10 @@ namespace SharpFile
             this.tlsDrives,
             this.tlsPath,
             this.tlsFilter});
-			this.toolStrip.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip.Location = new System.Drawing.Point(3, 3);
 			this.toolStrip.Name = "toolStrip";
 			this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.toolStrip.Size = new System.Drawing.Size(497, 25);
+			this.toolStrip.Size = new System.Drawing.Size(483, 25);
 			this.toolStrip.TabIndex = 4;
 			this.toolStrip.Text = "toolStrip1";
 			// 
@@ -84,28 +119,43 @@ namespace SharpFile
 			this.tlsFilter.Name = "tlsFilter";
 			this.tlsFilter.Size = new System.Drawing.Size(55, 25);
 			// 
+			// tabPage
+			// 
+			this.tabPage.Location = new System.Drawing.Point(4, 25);
+			this.tabPage.Name = "tabPage1";
+			this.tabPage.Size = new System.Drawing.Size(489, 350);
+			this.tabPage.TabIndex = 1;
+			this.tabPage.Text = "tabPage";
+			this.tabPage.Visible = false;
+			this.tabPage.Controls.Add(this.toolStrip);
+			this.tabPage.Controls.Add(this.listView);
+			// 
 			// Child
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(497, 379);
-			this.Controls.Add(this.toolStrip);
-			this.Controls.Add(this.listView);
+			this.Controls.Add(this.tabControl);
 			this.Name = "Child";
 			this.Text = "Child";
+			this.tabControl.ResumeLayout(false);
+			this.tabPage.ResumeLayout(false);
+			this.tabPage.PerformLayout();
 			this.toolStrip.ResumeLayout(false);
 			this.toolStrip.PerformLayout();
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
         }
 
         #endregion
 
-        private SharpFile.ListView listView;
+		private System.Windows.Forms.TabPage tabPage;
+		private ListView listView;
 		private System.Windows.Forms.ToolStrip toolStrip;
 		private System.Windows.Forms.ToolStripDropDownButton tlsDrives;
 		private System.Windows.Forms.ToolStripTextBox tlsPath;
 		private System.Windows.Forms.ToolStripTextBox tlsFilter;
-    }
+		private SharpFile.TabControl tabControl;
+
+	}
 }

@@ -153,6 +153,7 @@ namespace SharpFile {
 		/// Resizes the controls correctly.
 		/// </summary>
 		private void resizeControls() {
+			/*
 			if (this.WindowState == FormWindowState.Maximized) {
 				listView.Width = this.Width - 13;
 			} else {
@@ -160,6 +161,7 @@ namespace SharpFile {
 			}
 
 			listView.Height = this.Height - 60;
+			*/
 
 			tlsPath.Size = new Size(base.Width - 20 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
 		}
@@ -539,6 +541,7 @@ namespace SharpFile {
 			// Update some information about the current directory.
 			tlsPath.Text = directoryPath;
 			this.Text = directoryPath;
+			this.tabPage.Text = directoryPath;
 
 			// Set up the watcher.
 			fileSystemWatcher.Path = path;

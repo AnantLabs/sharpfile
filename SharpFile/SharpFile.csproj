@@ -87,6 +87,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="TabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UnitDisplayType.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +129,6 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>rem $(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>rem $(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
