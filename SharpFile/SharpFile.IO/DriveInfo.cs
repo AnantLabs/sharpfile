@@ -27,18 +27,6 @@ namespace SharpFile.IO {
 				Common.General.GetHumanReadableSize(availableFreeSpace.ToString())); //string.Format("{0:0,0}", availableFreeSpace));
 		}
 
-		public DriveInfo(string name, string label, DriveType driveType, string format,
-			long size, long availableFreeSpace) {
-			this.name = name;
-			this.label = label;
-			this.driveType = driveType;
-			this.format = format;
-			this.size = size;
-			this.availableFreeSpace = availableFreeSpace;
-			this.fullPath = name + @"\";
-			this.displayName = fullPath + " <" + driveType.ToString() + ">";
-		}
-
 		public bool IsReady {
 			get {
 				return isReady;
