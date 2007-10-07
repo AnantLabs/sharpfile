@@ -11,18 +11,27 @@ namespace SharpFile.UI {
 		private readonly static object lockObject = new object();
 
 		private static Icon getFileIcon(string path) {
-			return IconReader.GetFileIcon(path, IconReader.IconSize.Small, false);
+			return getFileIcon(path, false);
 		}
 
-		private static Icon getFolderIcon() {
-			return IconReader.GetFolderIcon(IconReader.IconSize.Small, IconReader.FolderType.Closed);
+		private static Icon getFileIcon(string path, bool showOverlay) {
+			return IconReader.GetFileIcon(path, IconReader.IconSize.Small, showOverlay);
+		}
+
+		private static Icon getFolderIcon(string path) {
+			return getFolderIcon(path, false);
+		}
+
+		private static Icon getFolderIcon(string path, bool showOverlay) {
+			return IconReader.GetFolderIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed, showOverlay);
 		}
 
 		private static Icon getDriveIcon(string path) {
 			return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
-		public static int GetImageIndex(FileSystemInfo fileSystemInfo, ImageList imageList) {
+		public static int GetImageIndex(FileSystemInfo fileSystemInfo, ImageList imageList, System.IO.DriveType driveType) {
+			bool showOverlay = true;
 			int imageIndex = imageList.Images.Count;
 			string fullPath = fileSystemInfo.FullPath;
 
@@ -30,17 +39,18 @@ namespace SharpFile.UI {
 				string extension = ((FileInfo)fileSystemInfo).Extension;
 
 				// TODO: Specify the extensions to grab the images from in a config file.
-				if (extension.Equals(".exe") ||
+				if (showOverlay || 
+					(extension.Equals(".exe") ||
 					extension.Equals(".lnk") ||
 					extension.Equals(".dll") ||
 					extension.Equals(".ps") ||
 					extension.Equals(".scr") ||
 					extension.Equals(".ico") ||
 					extension.Equals(".icn") ||
-					extension.Equals(string.Empty)) {
+					extension.Equals(string.Empty))) {
 					// Add the full name of the file if it is an executable into the the ImageList.
 					if (!imageList.Images.ContainsKey(fullPath)) {
-						Icon icon = getFileIcon(fullPath);
+						Icon icon = getFileIcon(fullPath, showOverlay);
 						imageList.Images.Add(fullPath, icon);
 					}
 
@@ -56,12 +66,24 @@ namespace SharpFile.UI {
 				}
 			} else if (fileSystemInfo is DirectoryInfo) {
 				// Add the directory information into the ImageList.
-				if (!imageList.Images.ContainsKey(closedFolderKey)) {
-					Icon icon = getFolderIcon();
-					imageList.Images.Add(closedFolderKey, icon);
+				string folderKey = fileSystemInfo.FullPath;
+
+				// Only actively probe directories when they are on a fixed drive.
+				if (driveType == System.IO.DriveType.Fixed) {
+					if (!imageList.Images.ContainsKey(folderKey)) {
+						Icon icon = getFolderIcon(folderKey, showOverlay);
+						imageList.Images.Add(folderKey, icon);
+					}
+				} else {
+					folderKey = closedFolderKey;
+
+					if (!imageList.Images.ContainsKey(closedFolderKey)) {
+						Icon icon = getFolderIcon(null, false);
+						imageList.Images.Add(folderKey, icon);
+					}
 				}
 
-				imageIndex = imageList.Images.IndexOfKey(closedFolderKey);
+				imageIndex = imageList.Images.IndexOfKey(folderKey);
 			} else if (fileSystemInfo is DriveInfo) {
 				if (!imageList.Images.ContainsKey(fullPath)) {
 					Icon icon = getDriveIcon(fullPath);

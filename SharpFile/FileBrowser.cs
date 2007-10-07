@@ -30,7 +30,7 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi);
+		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, System.IO.DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		public FileBrowser() {
@@ -64,9 +64,9 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="fsi"></param>
 		/// <returns></returns>
-		protected int GetImageIndex(FileSystemInfo fsi) {
+		protected int GetImageIndex(FileSystemInfo fsi, System.IO.DriveType driveType) {
 			if (OnGetImageIndex != null) {
-				return OnGetImageIndex(fsi);
+				return OnGetImageIndex(fsi, driveType);
 			}
 
 			return -1;
@@ -443,7 +443,7 @@ namespace SharpFile {
 						item.Name = driveInfo.FullPath;
 						item.Tag = driveInfo;
 
-						int imageIndex = GetImageIndex(driveInfo);
+						int imageIndex = GetImageIndex(driveInfo, driveInfo.DriveType);
 						if (imageIndex > -1) {
 							item.Image = ImageList.Images[imageIndex];
 						}
@@ -617,14 +617,15 @@ namespace SharpFile {
 			ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
 			item.Name = fileSystemInfo.FullPath;
 			item.Tag = fileSystemInfo;
+			System.IO.DriveType driveType = ((DriveInfo)tlsDrives.Tag).DriveType;
 
 			int imageIndex = 0;
 			if (fileSystemInfo is FileInfo) {
-				imageIndex = GetImageIndex(fileSystemInfo);
+				imageIndex = GetImageIndex(fileSystemInfo, driveType);
 				item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
 				fileCount++;
 			} else {
-				imageIndex = GetImageIndex(fileSystemInfo);
+				imageIndex = GetImageIndex(fileSystemInfo, driveType);
 				item.SubItems.Add(string.Empty);
 				folderCount++;
 			}

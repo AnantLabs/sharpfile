@@ -6,6 +6,7 @@ namespace SharpFile.IO {
 		protected string name;
 		protected string fullPath;
 		protected long size;
+		protected DriveInfo root;
 		protected DateTime lastWriteTime;
 
 		public string DisplayName {
@@ -39,6 +40,17 @@ namespace SharpFile.IO {
 		public string FullPath {
 			get {
 				return fullPath;
+			}
+		}
+
+		public DriveInfo Root {
+			get {
+				if (root == null) {
+					string rootString = fullPath.Substring(0, FullPath.IndexOf(":"));
+					root = new DriveInfo(new System.IO.DriveInfo(rootString));					
+				}
+
+				return root;
 			}
 		}
 

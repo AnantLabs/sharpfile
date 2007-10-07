@@ -47,12 +47,71 @@ namespace SharpFile.UI {
 		/// <param name="size">Large or small</param>
 		/// <param name="linkOverlay">Whether to include the link icon</param>
 		/// <returns>System.Drawing.Icon</returns>
-		public static System.Drawing.Icon GetFileIcon(string name, IconSize size, bool linkOverlay) {
-			Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
-			uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
+		public static System.Drawing.Icon GetFileIcon(string path, IconSize size, bool showOverlay) {
+			uint flags = 0;
+			bool linkOverlay = false;
 
-			if (true == linkOverlay)
+			if (linkOverlay) {
 				flags += Shell32.SHGFI_LINKOVERLAY;
+			}
+
+			// Show overlay for files.
+			if (showOverlay) {
+				flags += Shell32.SHGFI_ADDOVERLAYS;
+			}
+
+			// Get the folder icon.
+			return getIcon(path, size, Shell32.FILE_ATTRIBUTE_NORMAL, flags);
+		}
+
+		/// <summary>
+		/// Used to access system folder icons.
+		/// </summary>
+		/// <param name="size">Specify large or small icons.</param>
+		/// <param name="folderType">Specify open or closed FolderType.</param>
+		/// <returns>System.Drawing.Icon</returns>
+		public static System.Drawing.Icon GetFolderIcon(string path, IconSize size, FolderType folderType, bool showOverlay) {
+			uint flags = 0;
+
+			if (FolderType.Open == folderType) {
+				flags += Shell32.SHGFI_OPENICON;
+			}
+
+			if (showOverlay) {
+				flags += Shell32.SHGFI_ADDOVERLAYS;
+			}
+
+			// Get the folder icon.
+			return getIcon(path, size, Shell32.FILE_ATTRIBUTE_DIRECTORY, flags);
+		}
+
+		/// <summary>
+		/// Used to access system folder icons.
+		/// </summary>
+		/// <param name="size">Specify large or small icons.</param>
+		/// <param name="folderType">Specify open or closed FolderType.</param>
+		/// <returns>System.Drawing.Icon</returns>
+		public static System.Drawing.Icon GetDriveIcon(string path, IconSize size, FolderType folderType) {
+			uint flags = 0;
+
+			if (FolderType.Open == folderType) {
+				flags += Shell32.SHGFI_OPENICON;
+			}
+
+			// Get the folder icon.
+			return getIcon(path, size, Shell32.FILE_ATTRIBUTE_DIRECTORY, flags);
+		}
+
+		/// <summary>
+		/// Gets the icon.
+		/// </summary>
+		/// <param name="path">Path to retrieve the icon.</param>
+		/// <param name="dwAttrs">Attributes of the icon.</param>
+		/// <param name="size">Size of the icon.</param>
+		/// <param name="flags">Flags used when retrieving the icon.</param>
+		/// <returns>Icon.</returns>
+		private static Icon getIcon(string path, IconSize size, uint dwAttrs, uint flags) {
+			flags += Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
 
 			/* Check the size specified for return. */
 			if (IconSize.Small == size) {
@@ -61,89 +120,19 @@ namespace SharpFile.UI {
 				flags += Shell32.SHGFI_LARGEICON;
 			}
 
-			Shell32.SHGetFileInfo(name,
-				Shell32.FILE_ATTRIBUTE_NORMAL,
-				ref shfi,
-				(uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
-				flags);
-
-			// Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly
-			System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
-			User32.DestroyIcon(shfi.hIcon);		// Cleanup
-			return icon;
-		}
-
-		/// <summary>
-		/// Used to access system folder icons.
-		/// </summary>
-		/// <param name="size">Specify large or small icons.</param>
-		/// <param name="folderType">Specify open or closed FolderType.</param>
-		/// <returns>System.Drawing.Icon</returns>
-		public static System.Drawing.Icon GetFolderIcon(IconSize size, FolderType folderType) {
-			// Need to add size check, although errors generated at present!
-			uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
-
-			if (FolderType.Open == folderType) {
-				flags += Shell32.SHGFI_OPENICON;
-			}
-
-			if (IconSize.Small == size) {
-				flags += Shell32.SHGFI_SMALLICON;
-			} else {
-				flags += Shell32.SHGFI_LARGEICON;
-			}
-
-			// Get the folder icon
 			Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
-			Shell32.SHGetFileInfo(null,
-				Shell32.FILE_ATTRIBUTE_DIRECTORY,
+			Shell32.SHGetFileInfo(path,
+				dwAttrs,
 				ref shfi,
 				(uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
 				flags);
 
-			System.Drawing.Icon.FromHandle(shfi.hIcon);	// Load the icon from an HICON handle
+			// Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly.
+			Icon icon = (Icon)Icon.FromHandle(shfi.hIcon).Clone();
 
-			// Now clone the icon, so that it can be successfully stored in an ImageList
-			System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
+			// Cleanup.
+			User32.DestroyIcon(shfi.hIcon);
 
-			User32.DestroyIcon(shfi.hIcon);		// Cleanup
-			return icon;
-		}
-
-		/// <summary>
-		/// Used to access system folder icons.
-		/// </summary>
-		/// <param name="size">Specify large or small icons.</param>
-		/// <param name="folderType">Specify open or closed FolderType.</param>
-		/// <returns>System.Drawing.Icon</returns>
-		public static System.Drawing.Icon GetDriveIcon(string drivePath, IconSize size, FolderType folderType) {
-			// Need to add size check, although errors generated at present!
-			uint flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
-
-			if (FolderType.Open == folderType) {
-				flags += Shell32.SHGFI_OPENICON;
-			}
-
-			if (IconSize.Small == size) {
-				flags += Shell32.SHGFI_SMALLICON;
-			} else {
-				flags += Shell32.SHGFI_LARGEICON;
-			}
-
-			// Get the folder icon
-			Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
-			Shell32.SHGetFileInfo(drivePath,
-				Shell32.FILE_ATTRIBUTE_DIRECTORY,
-				ref shfi,
-				(uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
-				flags);
-
-			System.Drawing.Icon.FromHandle(shfi.hIcon);	// Load the icon from an HICON handle
-
-			// Now clone the icon, so that it can be successfully stored in an ImageList
-			System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
-
-			User32.DestroyIcon(shfi.hIcon);		// Cleanup
 			return icon;
 		}
 	}
