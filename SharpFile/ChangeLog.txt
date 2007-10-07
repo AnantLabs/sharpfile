@@ -3,6 +3,8 @@
 	Preliminary support for drag-and-drop operations.
 	F2 to Rename files.
 	On-the-fly file filtering.
+	Tabbed child windows.
+	Show overlays on files/folders.
 	FIX: Less flickering listview (again).
 
 0.30

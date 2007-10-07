@@ -14,10 +14,9 @@
 - Validate rename before-hand and throw up tooltip or something
 - Second selection to rename
 - Rename directories
-- Information/Property slideable "pane" list vista's file manager
+- Information/Property slideable "pane" list like vista's file manager
 - only show scroll buttons on child tabcontrol when necessary
 - middle-click to close tabs, mouse wheel, ctrl-tab functionality
-- refactor iconreader
 
 - true dual-pane mode, as opposed to hacky MDI mode
 - Tabbed MDI interface
