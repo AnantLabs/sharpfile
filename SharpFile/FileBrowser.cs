@@ -5,11 +5,11 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using System.Diagnostics;
 using SharpFile.IO;
 using SharpFile.UI;
-using Common;
 using SharpFile.Infrastructure;
-using System.Diagnostics;
+using Common;
 
 namespace SharpFile {
 	public partial class FileBrowser : UserControl {
@@ -30,7 +30,8 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		public delegate int OnGetImageIndexDelegate(string path, bool forceUpdate);
+		//public delegate int OnGetImageIndexDelegate(string path, bool forceUpdate);
+		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		public FileBrowser() {
@@ -75,7 +76,8 @@ namespace SharpFile {
 		/// <returns>The index of the image in the master ImageList.</returns>
 		protected int GetImageIndex(FileSystemInfo fsi, bool forceUpdate) {
 			if (OnGetImageIndex != null) {
-				return OnGetImageIndex(fsi.FullPath, forceUpdate);
+				//return OnGetImageIndex(fsi.FullPath, forceUpdate);
+				return OnGetImageIndex(fsi);
 			}
 
 			return -1;
@@ -87,6 +89,7 @@ namespace SharpFile {
 		/// Sets the child up.
 		/// </summary>
 		private void initializeComponent() {
+			this.Dock = DockStyle.Fill;
 			this.DoubleBuffered = true;
 
 			// Attach to some events.
@@ -95,7 +98,7 @@ namespace SharpFile {
 			this.listView.KeyDown += new KeyEventHandler(listView_KeyDown);
 			this.tlsPath.KeyDown += new KeyEventHandler(tlsPath_KeyDown);
 			this.tlsFilter.KeyUp += new KeyEventHandler(tlsFilter_KeyUp);
-			this.tlsDrives.DropDownItemClicked += new ToolStripItemClickedEventHandler(tlsDrives_DropDownItemClicked);
+			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
 			this.listView.MouseUp += new MouseEventHandler(listView_MouseUp);
 			this.listView.ItemDrag += new ItemDragEventHandler(listView_ItemDrag);
 			this.listView.DragOver += new DragEventHandler(listView_DragOver);
@@ -166,7 +169,8 @@ namespace SharpFile {
 			listView.Height = this.Height - 60;
 			*/
 
-			tlsPath.Size = new Size(base.Width - 20 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
+			this.listView.Height = this.Height - 25;
+			tlsPath.Size = new Size(base.Width - 5 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
 		}
 		#endregion
 
@@ -443,7 +447,7 @@ namespace SharpFile {
 
 						int imageIndex = GetImageIndex(driveInfo);
 						if (imageIndex > -1) {
-							item.Image = SysImageList.Icon(imageIndex).ToBitmap();
+							item.Image = ImageList.Images[imageIndex];
 						}
 
 						tlsDrives.DropDownItems.Add(item);
@@ -500,7 +504,7 @@ namespace SharpFile {
 		/// <param name="filter">Pattern to filter the information.</param>
 		private void updateFileListing(string path, string filter, bool forceUpdate) {
 			if (listView.SmallImageList == null) {
-				SysImageListHelper.SetListViewImageList(listView, SysImageList, false);
+				listView.SmallImageList = ImageList;
 			}
 
 			// Prevents the retrieval of file information if unneccessary.
@@ -546,7 +550,7 @@ namespace SharpFile {
 			// Update some information about the current directory.
 			tlsPath.Text = directoryPath;
 			this.Text = directoryPath;
-			//this.tabPage.Text = directoryPath;
+			this.Parent.Text = directoryPath;
 
 			// Set up the watcher.
 			fileSystemWatcher.Path = path;
@@ -612,6 +616,7 @@ namespace SharpFile {
 				item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
 				fileCount++;
 			} else {
+				//imageIndex = GetImageIndex(fileSystemInfo, true);
 				imageIndex = GetImageIndex(fileSystemInfo, true);
 				item.SubItems.Add(string.Empty);
 				folderCount++;
@@ -624,10 +629,9 @@ namespace SharpFile {
 		}
 		#endregion
 
-		public SysImageList SysImageList {
+		public ImageList ImageList {
 			get {
-				//return ((Parent)this.MdiParent).SysImageList;
-				return ((Child)this.Parent.Parent.Parent).SysImageList;
+				return ((Child)this.Parent.Parent.Parent).ImageList;
 			}
 		}
 

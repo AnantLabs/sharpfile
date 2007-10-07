@@ -28,14 +28,16 @@ namespace SharpFile {
 		public new TabPage SelectedTab {
 			get {
 				return ((TabPage)base.SelectedTab);
+			} set {
+				base.SelectedTab = value;
 			}
 		}
 
 		//TabControl overrides dispose to clean up the component list.
 		[PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
 		protected override void Dispose(bool disposing) {
-			if (disposing) {
-				if (UpDown != null)
+			if (disposing && 
+				UpDown != null) {
 					UpDown.ReleaseHandle();
 			}
 			
@@ -120,7 +122,6 @@ namespace SharpFile {
 
 		protected override void OnResize(System.EventArgs e) {
 			UpdateScroller();
-
 			base.OnResize(e);
 			Invalidate(true);
 			
@@ -161,8 +162,7 @@ namespace SharpFile {
 		}
 
 		void Scroller_TabOpen(object sender, EventArgs e) {
-			TabPage tabPage = new TabPage();
-			this.TabPages.Add(tabPage);
+			((Child)this.Parent).AddTab();			
 			UpdateScroller();
 		}
 
@@ -200,7 +200,6 @@ namespace SharpFile {
 	}
 
 	#region   Custom Scroller with Close Button
-
 	internal class TabScroller : System.Windows.Forms.Control {
 		#region   Windows Form Designer generated code
 		public TabScroller()

@@ -1,5 +1,3 @@
-using System;
-
 namespace SharpFile {
 	public class TabPage : System.Windows.Forms.TabPage {
 		FileBrowser fileBrowser;

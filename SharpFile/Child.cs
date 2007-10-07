@@ -1,16 +1,9 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Common;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
-
 using SharpFile.UI;
+using Common;
 
 namespace SharpFile {
 	public partial class Child : Form {
@@ -20,7 +13,7 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		public delegate int OnGetImageIndexDelegate(string path, bool forceUpdate);
+		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		/// <summary>
@@ -28,11 +21,7 @@ namespace SharpFile {
 		/// </summary>
 		public Child() {
 			InitializeComponent();
-			addTab();
-
-			SelectedFileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
-			SelectedFileBrowser.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
-			SelectedFileBrowser.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
+			AddTab();
 		}
 
 		void SelectedFileBrowser_OnUpdateStatus(string status) {
@@ -47,34 +36,28 @@ namespace SharpFile {
 			}
 		}
 
-		int FileBrowser_OnGetImageIndex(string path, bool forceUpdate) {
+		int FileBrowser_OnGetImageIndex(FileSystemInfo fsi) {
 			if (OnGetImageIndex != null) {
-				return OnGetImageIndex(path, forceUpdate);
+				return OnGetImageIndex(fsi);
 			}
 
 			return -1;
 		}
 
-		public void UpdateDriveListing() {
-			if (this.tabControl.TabCount > 0) {
-				SelectedFileBrowser.UpdateDriveListing();
-			}
-		}
-
-		private void addTab() {
+		public void AddTab() {
 			TabPage tabPage = new TabPage();
+			tabPage.FileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
+			tabPage.FileBrowser.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
+			tabPage.FileBrowser.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
+			tabPage.FileBrowser.UpdateDriveListing();
+
 			this.tabControl.Controls.Add(tabPage);
+			this.tabControl.SelectedTab = tabPage;
 		}
 
-		public FileBrowser SelectedFileBrowser {
+		public ImageList ImageList {
 			get {
-				return this.tabControl.SelectedTab.FileBrowser;
-			}
-		}
-
-		public SysImageList SysImageList {
-			get {
-				return ((Parent)this.MdiParent).SysImageList;
+				return ((Parent)this.MdiParent).ImageList;
 			}
 		}
 	}

@@ -569,13 +569,8 @@ namespace SharpFile.UI {
 		/// <param name="forceLoadFromDisk">If True, then hit the disk to get the icon,
 		/// otherwise only hit the disk if no cached icon is available.</param>
 		/// <returns>Index of the icon</returns>
-		public int IconIndex(
-			string fileName,
-			bool forceLoadFromDisk) {
-			return IconIndex(
-				fileName,
-				forceLoadFromDisk,
-				ShellIconStateConstants.ShellIconStateNormal);
+		public int IconIndex(string fileName, bool forceLoadFromDisk) {
+			return IconIndex(fileName, forceLoadFromDisk, ShellIconStateConstants.ShellIconStateNormal);
 		}
 
 		/// <summary>
@@ -587,13 +582,10 @@ namespace SharpFile.UI {
 		/// <param name="iconState">Flags specifying the state of the icon
 		/// returned.</param>
 		/// <returns>Index of the icon</returns>
-		public int IconIndex(
-			string fileName,
-			bool forceLoadFromDisk,
-			ShellIconStateConstants iconState
-			) {
+		public int IconIndex(string fileName, bool forceLoadFromDisk, ShellIconStateConstants iconState) {
 			SHGetFileInfoConstants dwFlags = SHGetFileInfoConstants.SHGFI_SYSICONINDEX;
 			int dwAttr = 0;
+
 			if (size == SysImageListSize.smallIcons) {
 				dwFlags |= SHGetFileInfoConstants.SHGFI_SMALLICON;
 			}
@@ -613,9 +605,21 @@ namespace SharpFile.UI {
 			// icon, for example sFileSpec = "C:\PANTS.DOC"
 			SHFILEINFO shfi = new SHFILEINFO();
 			uint shfiSize = (uint)Marshal.SizeOf(shfi.GetType());
-			IntPtr retVal = SHGetFileInfo(
-				fileName, dwAttr, ref shfi, shfiSize,
-				((uint)(dwFlags) | (uint)iconState));
+			IntPtr retVal = new IntPtr();
+
+			if (System.IO.Directory.Exists(fileName)) {
+				dwFlags = SHGetFileInfoConstants.SHGFI_ICON | SHGetFileInfoConstants.SHGFI_USEFILEATTRIBUTES;
+
+				retVal = SHGetFileInfo(null,
+					FILE_ATTRIBUTE_DIRECTORY,
+					ref shfi,
+					shfiSize,
+					(uint)dwFlags);
+			} else {
+				retVal = SHGetFileInfo(
+					fileName, dwAttr, ref shfi, shfiSize,
+					((uint)(dwFlags) | (uint)iconState));
+			}
 
 			if (retVal.Equals(IntPtr.Zero)) {
 				System.Diagnostics.Debug.Assert((!retVal.Equals(IntPtr.Zero)), "Failed to get icon index");

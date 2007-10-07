@@ -8,7 +8,7 @@ using SharpFile.IO;
 namespace SharpFile {
 	public partial class Parent : Form {
 		private Timer timer = new Timer();
-		private SysImageList sysImageList = new SysImageList();
+		private ImageList imageList = new ImageList();
 
 		private static object lockObject = new object();
 
@@ -29,6 +29,8 @@ namespace SharpFile {
 			timer.Tick += delegate {
 				progressDisk.Value = (progressDisk.Value + 1) % 12;
 			};
+
+			imageList.ColorDepth = ColorDepth.Depth32Bit;
 		}
 
 		private void ShowNewForm(object sender, EventArgs e) {
@@ -58,12 +60,9 @@ namespace SharpFile {
 				}
 			};
 
-			childForm.OnGetImageIndex += delegate(string path, bool forceUpdate) {
-				return SysImageList.IconIndex(path, forceUpdate);
+			childForm.OnGetImageIndex += delegate(FileSystemInfo fsi) {
+				return IconManager.GetImageIndex(fsi, ImageList);
 			};
-
-			// Update the list view.
-			childForm.UpdateDriveListing();
 		}
 
 		protected override void OnResize(EventArgs e) {
@@ -72,10 +71,10 @@ namespace SharpFile {
 			this.progressDisk.Location = new Point(base.Width - 45, base.Height - 45);
 		}
 
-		public SysImageList SysImageList {
+		public ImageList ImageList {
 			get {
 				lock (lockObject) {
-					return sysImageList;
+					return imageList;
 				}
 			}
 		}

@@ -42,6 +42,7 @@ namespace SharpFile {
 			this.toolStrip.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip.Name = "toolStrip";
 			this.toolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.toolStrip.ShowItemToolTips = false;
 			this.toolStrip.Size = new System.Drawing.Size(454, 25);
 			this.toolStrip.TabIndex = 1;
 			this.toolStrip.Text = "toolStrip";
@@ -63,16 +64,20 @@ namespace SharpFile {
 			// tlsFilter
 			// 
 			this.tlsFilter.Name = "tlsFilter";
-			this.tlsFilter.Size = new System.Drawing.Size(100, 25);
+			this.tlsFilter.Size = new System.Drawing.Size(50, 25);
 			// 
 			// listView
 			// 
-			this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listView.AllowColumnReorder = true;
+			this.listView.AllowDrop = true;
+			this.listView.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.listView.LabelEdit = true;
 			this.listView.Location = new System.Drawing.Point(0, 0);
 			this.listView.Name = "listView";
 			this.listView.Size = new System.Drawing.Size(454, 254);
 			this.listView.TabIndex = 0;
 			this.listView.UseCompatibleStateImageBehavior = false;
+			this.listView.View = System.Windows.Forms.View.Details;
 			// 
 			// FileBrowser
 			// 
