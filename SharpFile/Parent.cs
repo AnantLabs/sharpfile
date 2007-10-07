@@ -1,9 +1,9 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SharpFile.IO;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
+using SharpFile.IO;
 
 namespace SharpFile {
 	public partial class Parent : Form {
@@ -16,8 +16,8 @@ namespace SharpFile {
 			InitializeComponent();
 			this.DoubleBuffered = true;
 
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint | 
+				ControlStyles.OptimizedDoubleBuffer, true);
 
 			ShowNewForm(null, EventArgs.Empty);
 

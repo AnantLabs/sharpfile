@@ -1,7 +1,7 @@
+using System;
 using System.Drawing;
 using System.Security.Permissions;
 using System.Windows.Forms;
-using System;
 using System.Runtime.InteropServices;
 
 namespace SharpFile {
@@ -22,6 +22,12 @@ namespace SharpFile {
 				} else {
 					return base.DisplayRectangle;
 				}
+			}
+		}
+
+		public new TabPage SelectedTab {
+			get {
+				return ((TabPage)base.SelectedTab);
 			}
 		}
 
@@ -155,7 +161,7 @@ namespace SharpFile {
 		}
 
 		void Scroller_TabOpen(object sender, EventArgs e) {
-			TabPage tabPage = new TabPage(@"c:\");
+			TabPage tabPage = new TabPage();
 			this.TabPages.Add(tabPage);
 			UpdateScroller();
 		}
