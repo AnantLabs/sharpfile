@@ -49,7 +49,6 @@ namespace SharpFile {
 			tabPage.FileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
 			tabPage.FileBrowser.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
 			tabPage.FileBrowser.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
-			tabPage.FileBrowser.UpdateDriveListing();
 
 			this.tabControl.Controls.Add(tabPage);
 			this.tabControl.SelectedTab = tabPage;

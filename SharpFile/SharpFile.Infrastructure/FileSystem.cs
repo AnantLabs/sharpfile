@@ -12,9 +12,11 @@ namespace SharpFile.Infrastructure {
 		public static IEnumerable<FileSystemInfo> GetFiles(System.IO.DirectoryInfo directoryInfo, string filter) {
 			List<FileSystemInfo> dataInfos = new List<FileSystemInfo>();
 
+			/*
 			if (!directoryInfo.Root.Name.Equals(directoryInfo.FullName)) {
 				dataInfos.Add(new RootDirectoryInfo(directoryInfo.Root));
 			}
+			*/
 
 			if (directoryInfo.Parent != null) {
 				if (!directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name)) {

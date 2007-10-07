@@ -30,7 +30,6 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		//public delegate int OnGetImageIndexDelegate(string path, bool forceUpdate);
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
@@ -61,22 +60,12 @@ namespace SharpFile {
 		}
 
 		/// <summary>
-		/// 
+		/// Passes the filesystem info to any listening events.
 		/// </summary>
 		/// <param name="fsi"></param>
 		/// <returns></returns>
 		protected int GetImageIndex(FileSystemInfo fsi) {
-			return GetImageIndex(fsi, false);
-		}
-
-		/// <summary>
-		/// Passes the filesystem info to any listening events.
-		/// </summary>
-		/// <param name="dataInfo">Filesystem information.</param>
-		/// <returns>The index of the image in the master ImageList.</returns>
-		protected int GetImageIndex(FileSystemInfo fsi, bool forceUpdate) {
 			if (OnGetImageIndex != null) {
-				//return OnGetImageIndex(fsi.FullPath, forceUpdate);
 				return OnGetImageIndex(fsi);
 			}
 
@@ -99,6 +88,7 @@ namespace SharpFile {
 			this.tlsPath.KeyDown += new KeyEventHandler(tlsPath_KeyDown);
 			this.tlsFilter.KeyUp += new KeyEventHandler(tlsFilter_KeyUp);
 			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
+			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
 			this.listView.MouseUp += new MouseEventHandler(listView_MouseUp);
 			this.listView.ItemDrag += new ItemDragEventHandler(listView_ItemDrag);
 			this.listView.DragOver += new DragEventHandler(listView_DragOver);
@@ -277,9 +267,15 @@ namespace SharpFile {
 		/// Refreshes the listview when a different drive is selected.
 		/// </summary>
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			//e.ClickedItem.Select();
+			e.ClickedItem.Select();
 			tlsDrives.Image = e.ClickedItem.Image;
 			ExecuteOrUpdate(e.ClickedItem.Name);
+		}
+
+		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
+			if (tlsDrives.Tag != null) {
+				updateFileListing(((DriveInfo)tlsDrives.Tag).FullPath, true);
+			}
 		}
 
 		private void listView_MouseUp(object sender, MouseEventArgs e) {
@@ -445,6 +441,7 @@ namespace SharpFile {
 						ToolStripMenuItem item = new ToolStripMenuItem();
 						item.Text = driveInfo.DisplayName;
 						item.Name = driveInfo.FullPath;
+						item.Tag = driveInfo;
 
 						int imageIndex = GetImageIndex(driveInfo);
 						if (imageIndex > -1) {
@@ -459,7 +456,8 @@ namespace SharpFile {
 								isLocalDiskFound = true;
 								item.Select();
 								tlsDrives.Image = item.Image;
-								ExecuteOrUpdate(driveInfo.FullPath);
+								tlsDrives.Tag = driveInfo;
+								updateFileListing(driveInfo.FullPath);
 							}
 						}
 					}
@@ -493,6 +491,14 @@ namespace SharpFile {
 		#region UpdateFileListing
 		private void updateFileListing(bool forceUpdate) {
 			updateFileListing(tlsPath.Text, tlsFilter.Text, forceUpdate);
+		}
+
+		private void updateFileListing(string path) {
+			updateFileListing(path, tlsFilter.Text, false);
+		}
+
+		private void updateFileListing(string path, bool forceUpdate) {
+			updateFileListing(path, tlsFilter.Text, forceUpdate);
 		}
 
 		private void updateFileListing(string path, string filter) {
@@ -618,8 +624,7 @@ namespace SharpFile {
 				item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
 				fileCount++;
 			} else {
-				//imageIndex = GetImageIndex(fileSystemInfo, true);
-				imageIndex = GetImageIndex(fileSystemInfo, true);
+				imageIndex = GetImageIndex(fileSystemInfo);
 				item.SubItems.Add(string.Empty);
 				folderCount++;
 			}
