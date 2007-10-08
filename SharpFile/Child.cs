@@ -1,8 +1,5 @@
-using System;
 using System.Windows.Forms;
 using SharpFile.IO;
-using SharpFile.Infrastructure;
-using SharpFile.UI;
 using Common;
 
 namespace SharpFile {

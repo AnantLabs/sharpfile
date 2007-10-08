@@ -1,7 +1,5 @@
 using System;
 using System.Drawing;
-using System.Collections;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace SharpFile.UI {
@@ -124,7 +122,7 @@ namespace SharpFile.UI {
 			Shell32.SHGetFileInfo(path,
 				dwAttrs,
 				ref shfi,
-				(uint)System.Runtime.InteropServices.Marshal.SizeOf(shfi),
+				(uint)Marshal.SizeOf(shfi),
 				flags);
 
 			// Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly.

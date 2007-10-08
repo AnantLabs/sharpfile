@@ -19,9 +19,9 @@ namespace SharpFile.Infrastructure {
 			*/
 
 			if (directoryInfo.Parent != null) {
-				if (!directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name)) {
+				//if (!directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name)) {
 					dataInfos.Add(new ParentDirectoryInfo(directoryInfo.Parent));
-				}
+				//}
 			}
 
 			System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();

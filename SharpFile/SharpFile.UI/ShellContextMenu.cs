@@ -44,10 +44,6 @@ namespace SharpFile.UI {
 		}
 
 		private class internalShellContextMenu : NativeWindow {
-			public internalShellContextMenu()
-				: base() {
-			}
-
 			private Win32.IContextMenu2 contextMenu2;
 
 			public ContextMenuResult PopupMenu(Environment.SpecialFolder specialFolder, IntPtr parent) {

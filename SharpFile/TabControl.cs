@@ -9,10 +9,10 @@ namespace SharpFile {
 		private bool isVisible = true;
 
 		public TabControl() {
-			this.Scroller.ScrollLeft += new EventHandler(Scroller_ScrollLeft);
-			this.Scroller.ScrollRight += new EventHandler(Scroller_ScrollRight);
-			this.Scroller.TabClose += new EventHandler(Scroller_TabClose);
-			this.Scroller.TabOpen += new EventHandler(Scroller_TabOpen);
+			this.Scroller.ScrollLeft += Scroller_ScrollLeft;
+			this.Scroller.ScrollRight += Scroller_ScrollRight;
+			this.Scroller.TabClose += Scroller_TabClose;
+			this.Scroller.TabOpen += Scroller_TabOpen;
 		}
 
 		public override Rectangle DisplayRectangle {
@@ -78,7 +78,7 @@ namespace SharpFile {
 		}
 
 		[PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
-		protected override void WndProc(ref System.Windows.Forms.Message m) {
+		protected override void WndProc(ref Message m) {
 			if (m.Msg == WM_PARENTNOTIFY) {
 				if ((ushort)(m.WParam.ToInt32() & 0xFFFF) == WM_Create) {
 					System.Text.StringBuilder WindowName = new System.Text.StringBuilder(16);
@@ -101,7 +101,7 @@ namespace SharpFile {
 			base.WndProc(ref m);
 		}
 
-		protected override void OnHandleCreated(System.EventArgs e) {
+		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated(e);
 
 			if (this.Multiline == false) {
@@ -112,7 +112,7 @@ namespace SharpFile {
 			this.OnFontChanged(EventArgs.Empty);
 		}
 
-		protected override void OnFontChanged(System.EventArgs e) {
+		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged(e);
 			this.Scroller.Font = new Font("Marlett", this.Font.SizeInPoints, FontStyle.Regular, GraphicsUnit.Point);
 			this.Scroller.Height = this.ItemSize.Height;
@@ -120,14 +120,14 @@ namespace SharpFile {
 			this.OnResize(EventArgs.Empty);
 		}
 
-		protected override void OnResize(System.EventArgs e) {
+		protected override void OnResize(EventArgs e) {
 			UpdateScroller();
 			base.OnResize(e);
 
 			
 		}
 
-		private void Scroller_ScrollLeft(Object sender, System.EventArgs e) {
+		private void Scroller_ScrollLeft(Object sender, EventArgs e) {
 			if (this.TabCount == 0) {
 				return;
 			}
@@ -137,7 +137,7 @@ namespace SharpFile {
 			SendMessage(this.Handle, WM_HSCROLL, (IntPtr)(scrollPos | 0x8), IntPtr.Zero);
 		}
 
-		private void Scroller_ScrollRight(Object sender, System.EventArgs e) {
+		private void Scroller_ScrollRight(Object sender, EventArgs e) {
 			if (this.TabCount == 0) {
 				return;
 			}
@@ -151,7 +151,7 @@ namespace SharpFile {
 			SendMessage(this.Handle, WM_HSCROLL, (IntPtr)(scrollPos | 0x8), IntPtr.Zero);
 		}
 
-		private void Scroller_TabClose(Object sender, System.EventArgs e) {
+		private void Scroller_TabClose(Object sender, EventArgs e) {
 			if (this.SelectedTab != null) {
 				this.TabPages.Remove(this.SelectedTab);
 				UpdateScroller();
@@ -301,32 +301,32 @@ namespace SharpFile {
 		public event EventHandler ScrollLeft;
 		public event EventHandler ScrollRight;
 
-		private void TabScroller_Resize(Object sender, System.EventArgs e) {
+		private void TabScroller_Resize(Object sender, EventArgs e) {
 			LeftScroller.Width = this.Width / 4;
 			RightScroller.Width = this.Width / 4;
 			CloseButton.Width = this.Width / 4;
 			OpenButton.Width = this.Width / 4;
 		}
 
-		private void LeftScroller_Click(Object sender, System.EventArgs e) {
+		private void LeftScroller_Click(Object sender, EventArgs e) {
 			if (ScrollLeft != null) {
 				ScrollLeft(this, EventArgs.Empty);
 			}
 		}
 
-		private void RightScroller_Click(Object sender, System.EventArgs e) {
+		private void RightScroller_Click(Object sender, EventArgs e) {
 			if (ScrollRight != null) {
 				ScrollRight(this, EventArgs.Empty);
 			}
 		}
 
-		private void CloseButton_Click(Object sender, System.EventArgs e) {
+		private void CloseButton_Click(Object sender, EventArgs e) {
 			if (TabClose != null) {
 				TabClose(this, EventArgs.Empty);
 			}
 		}
 
-		private void OpenButton_Click(Object sender, System.EventArgs e) {
+		private void OpenButton_Click(Object sender, EventArgs e) {
 			if (TabOpen != null) {
 				TabOpen(this, EventArgs.Empty);
 			}
@@ -345,8 +345,6 @@ namespace SharpFile {
 
 	#region  UpDown Control Subclasser
 	internal class NativeUpDown : NativeWindow {
-		public NativeUpDown() : base() { }
-
 		private const int WM_DESTROY = 0x2;
 		private const int WM_NCDESTROY = 0x82;
 		private const int WM_WINDOWPOSCHANGING = 0x46;
@@ -358,7 +356,7 @@ namespace SharpFile {
 		}
 
 		[PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
-		protected override void WndProc(ref System.Windows.Forms.Message m) {
+		protected override void WndProc(ref Message m) {
 			if (m.Msg == WM_DESTROY || m.Msg == WM_NCDESTROY)
 				this.ReleaseHandle();
 			else if (m.Msg == WM_WINDOWPOSCHANGING) {

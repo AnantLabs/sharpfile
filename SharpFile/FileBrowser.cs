@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SharpFile.IO;
@@ -20,7 +18,7 @@ namespace SharpFile {
 		private string _path;
 		private string _filter;
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
-		private SharpFile.Infrastructure.FileSystemWatcher fileSystemWatcher;
+		private System.IO.FileSystemWatcher fileSystemWatcher;
 		private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
 		private long totalSelectedSize = 0;
 
@@ -82,19 +80,19 @@ namespace SharpFile {
 			this.DoubleBuffered = true;
 
 			// Attach to some events.
-			this.ClientSizeChanged += new EventHandler(this_ClientSizeChanged);
-			this.listView.DoubleClick += new EventHandler(listView_DoubleClick);
-			this.listView.KeyDown += new KeyEventHandler(listView_KeyDown);
-			this.tlsPath.KeyDown += new KeyEventHandler(tlsPath_KeyDown);
-			this.tlsFilter.KeyUp += new KeyEventHandler(tlsFilter_KeyUp);
+			this.ClientSizeChanged += this_ClientSizeChanged;
+			this.listView.DoubleClick += listView_DoubleClick;
+			this.listView.KeyDown += listView_KeyDown;
+			this.tlsPath.KeyDown += tlsPath_KeyDown;
+			this.tlsFilter.KeyUp += tlsFilter_KeyUp;
 			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
-			this.listView.MouseUp += new MouseEventHandler(listView_MouseUp);
-			this.listView.ItemDrag += new ItemDragEventHandler(listView_ItemDrag);
-			this.listView.DragOver += new DragEventHandler(listView_DragOver);
-			this.listView.DragDrop += new DragEventHandler(listView_DragDrop);
-			this.listView.KeyUp += new KeyEventHandler(listView_KeyUp);
-			this.listView.AfterLabelEdit += new LabelEditEventHandler(listView_AfterLabelEdit);
+			this.listView.MouseUp += listView_MouseUp;
+			this.listView.ItemDrag += listView_ItemDrag;
+			this.listView.DragOver += listView_DragOver;
+			this.listView.DragDrop += listView_DragDrop;
+			this.listView.KeyUp += listView_KeyUp;
+			this.listView.AfterLabelEdit += listView_AfterLabelEdit;
 
 			resizeControls();
 
@@ -112,10 +110,45 @@ namespace SharpFile {
 				listView.Columns.Add(column);
 			}
 
-			fileSystemWatcher = new SharpFile.Infrastructure.FileSystemWatcher(this, 5000);
-			fileSystemWatcher.Changed += delegate {
-				updateFileListing(true);
-			};
+			fileSystemWatcher = new System.IO.FileSystemWatcher(); //this, 5000);
+			fileSystemWatcher.Changed += fileSystemWatcher_Changed;
+			fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
+			fileSystemWatcher.Created += fileSystemWatcher_Changed;
+			fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
+		}
+
+		private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
+			string path = e.FullPath;
+
+			//List<FileSystemInfo> fileSystemInfoList = new List<FileSystemInfo>();
+			//fileSystemInfoList.Add(FileSystemInfoFactory.GetFileSystemInfo(path));
+			FileSystemInfo fsi = FileSystemInfoFactory.GetFileSystemInfo(path);
+
+			MethodInvoker invoker = new MethodInvoker(delegate() {
+				listView.BeginUpdate();
+
+				switch (e.ChangeType) {
+					case System.IO.WatcherChangeTypes.Changed:
+						listView.Items.RemoveByKey(path);
+						updateListView(fsi);
+						break;
+					case System.IO.WatcherChangeTypes.Created:
+						updateListView(fsi);
+						break;
+					case System.IO.WatcherChangeTypes.Deleted:
+						listView.Items.RemoveByKey(path);
+						break;
+					case System.IO.WatcherChangeTypes.Renamed:
+						string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
+						listView.Items.RemoveByKey(oldFullPath);
+						updateListView(fsi);
+						break;
+				}
+
+				listView.EndUpdate();
+			});
+
+			listView.Invoke(invoker);
 		}
 
 		private void updateSelectedTotalSize(long size) {
@@ -269,12 +302,13 @@ namespace SharpFile {
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			e.ClickedItem.Select();
 			tlsDrives.Image = e.ClickedItem.Image;
-			ExecuteOrUpdate(e.ClickedItem.Name);
+			tlsDrives.Tag = e.ClickedItem.Tag;
+			ExecuteOrUpdate(((DriveInfo)e.ClickedItem.Tag).FullPath);
 		}
 
 		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
 			if (tlsDrives.Tag != null) {
-				updateFileListing(((DriveInfo)tlsDrives.Tag).FullPath, true);
+				ExecuteOrUpdate(((DriveInfo)tlsDrives.Tag).FullPath);
 			}
 		}
 
@@ -296,7 +330,7 @@ namespace SharpFile {
 				// Update the file listing.
 				if (contextMenuResult != ShellContextMenu.ContextMenuResult.NoUserFeedback &&
 					contextMenuResult != ShellContextMenu.ContextMenuResult.ContextMenuError) {
-					updateFileListing(true);
+					updateListView(true);
 				}
 			}
 		}
@@ -339,7 +373,7 @@ namespace SharpFile {
 				}
 			}
 
-			updateFileListing(true);
+			updateListView(true);
 		}
 
 		private void listView_DragOver(object sender, DragEventArgs e) {
@@ -386,10 +420,9 @@ namespace SharpFile {
 			List<string> paths = getSelectedPaths();
 
 			if (paths.Count > 0) {
-				string selectedPaths = string.Join(",", paths.ToArray());
 				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 
-				updateFileListing(true);
+				updateListView(true);
 			}
 		}
 
@@ -406,10 +439,21 @@ namespace SharpFile {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = listView.Items[e.Item];
 				FileSystemInfo fileSystemInfo = FileSystemInfoFactory.GetFileSystemInfo(item.Name);
-				string path = fileSystemInfo.Path;
+
+				string source = string.Format("{0}{1}",
+					fileSystemInfo.Path,
+					item.Text);
+
+				string destination = string.Format("{0}{1}",
+					fileSystemInfo.Path,
+					e.Label);
 
 				try {
-					File.Move(path + item.Text, path + e.Label);
+					if (fileSystemInfo is FileInfo) {
+						File.Move(source, destination);
+					} else if (fileSystemInfo is DirectoryInfo) {
+						Directory.Move(source, destination);
+					}
 				} catch (Exception ex) {
 					e.CancelEdit = true;
 					MessageBox.Show(ex.Message);
@@ -457,7 +501,7 @@ namespace SharpFile {
 								item.Select();
 								tlsDrives.Image = item.Image;
 								tlsDrives.Tag = driveInfo;
-								updateFileListing(driveInfo.FullPath);
+								updateListView(driveInfo.FullPath);
 							}
 						}
 					}
@@ -482,27 +526,27 @@ namespace SharpFile {
 			if (System.IO.File.Exists(path)) {
 				Process.Start(path);
 			} else if (System.IO.Directory.Exists(path)) {
-				updateFileListing(path, tlsFilter.Text);
+				updateListView(path, tlsFilter.Text, true, true);
 			} else {
 				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
 		}
 
-		#region UpdateFileListing
-		private void updateFileListing(bool forceUpdate) {
-			updateFileListing(tlsPath.Text, tlsFilter.Text, forceUpdate);
+		#region updateListView
+		private void updateListView(bool forceUpdate) {
+			updateListView(tlsPath.Text, tlsFilter.Text, forceUpdate, false);
 		}
 
-		private void updateFileListing(string path) {
-			updateFileListing(path, tlsFilter.Text, false);
+		private void updateListView(string path) {
+			updateListView(path, tlsFilter.Text, false, false);
 		}
 
-		private void updateFileListing(string path, bool forceUpdate) {
-			updateFileListing(path, tlsFilter.Text, forceUpdate);
+		private void updateListView(string path, bool forceUpdate) {
+			updateListView(path, tlsFilter.Text, forceUpdate, false);
 		}
 
-		private void updateFileListing(string path, string filter) {
-			updateFileListing(path, filter, false);
+		private void updateListView(string path, string filter) {
+			updateListView(path, filter, false, false);
 		}
 
 		/// <summary>
@@ -510,7 +554,7 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="path">Path to get information about.</param>
 		/// <param name="filter">Pattern to filter the information.</param>
-		private void updateFileListing(string path, string filter, bool forceUpdate) {
+		private void updateListView(string path, string filter, bool forceUpdate, bool clearListView) {
 			if (listView.SmallImageList == null) {
 				listView.SmallImageList = ImageList;
 			}
@@ -538,6 +582,9 @@ namespace SharpFile {
 
 				// Anonymous method that retrieves the file information.
 				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
+					// Disable the filewatcher.
+					fileSystemWatcher.EnableRaisingEvents = false;
+
 					// Grab the files and report the progress to the parent.
 					backgroundWorker.ReportProgress(50);
 					e.Result = FileSystem.GetFiles(directoryInfo, filter);
@@ -545,7 +592,31 @@ namespace SharpFile {
 				};
 
 				// Method that runs when the DoWork method is finished.
-				backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
+				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
+					if (e.Error == null &&
+						e.Result != null &&
+						e.Result is IEnumerable<FileSystemInfo>) {
+						IEnumerable<FileSystemInfo> fileSystemInfoList = (IEnumerable<FileSystemInfo>)e.Result;
+
+						listView.BeginUpdate();
+						if (clearListView) {
+							listView.Items.Clear();
+						}						
+
+						updateListView(fileSystemInfoList);
+						listView.EndUpdate();
+
+						// Update some information about the current directory.
+						tlsPath.Text = directoryPath;
+						this.Text = directoryPath;
+						this.Parent.Text = directoryPath;
+
+						// Set up the watcher.
+						fileSystemWatcher.Path = directoryPath;
+						fileSystemWatcher.Filter = filter;
+						fileSystemWatcher.EnableRaisingEvents = true;
+					}
+				};
 
 				// Anonymous method that updates the status to the parent form.
 				backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
@@ -554,64 +625,150 @@ namespace SharpFile {
 
 				backgroundWorker.RunWorkerAsync();
 			}
-
-			// Update some information about the current directory.
-			tlsPath.Text = directoryPath;
-			this.Text = directoryPath;
-			this.Parent.Text = directoryPath;
-
-			// Set up the watcher.
-			fileSystemWatcher.Path = path;
-			fileSystemWatcher.Filter = filter;
-			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 
 		/// <summary>
-		/// Event that gets fired when all of the file/directory information has been retrieved.
+		/// Parses the file/directory information and updates the listview.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-			// Make sure we got back good information.
-			if (e.Error == null &&
-				e.Result != null &&
-				e.Result is IEnumerable<FileSystemInfo>) {
-				IEnumerable<FileSystemInfo> fileSystemInfoList = (IEnumerable<FileSystemInfo>)e.Result;
-				int fileCount = 0;
-				int folderCount = 0;
+		private void updateListView(IEnumerable<FileSystemInfo> fileSystemInfoList) {
+			int fileCount = 0;
+			int folderCount = 0;
 
-				try {
-					listView.BeginUpdate();
-
-					// TODO: Prevent listview scrolling here.
-
-					// Clear the listview.
-					listView.Items.Clear();
-
-					// Create a new listview item with the display name.
-					foreach (FileSystemInfo fileSystemInfo in fileSystemInfoList) {
+			try {
+				// Create a new listview item with the display name.
+				foreach (FileSystemInfo fileSystemInfo in fileSystemInfoList) {
+					if (!listView.Items.ContainsKey(fileSystemInfo.FullPath)) {
 						ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
 						listView.Items.Add(item);
+
+						/*
+						// TODO: This doesn't need to be done except when inserting a new listitem.
+						int listViewIndex = 0;
+						listViewIndex = getListViewIndex(fileSystemInfo);
+
+						if (listViewIndex == -1) {
+							listView.Items.Insert(0, item);
+						} else {
+							listView.Items.Insert(listViewIndex, item);
+						}
+						*/
 					}
-
-					// Basic stuff that should happen everytime files are shown.
-					listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-					listView.EndUpdate();
-
-					UpdateStatus(string.Format("Folders: {0}; Files: {1}",
-						folderCount - 2,
-						fileCount));
-				} catch (System.UnauthorizedAccessException) {
-					listView.BeginUpdate();
-					listView.Items.Add("Unauthorized Access");
-					listView.EndUpdate();
-				} catch (Exception ex) {
-					MessageBox.Show(ex.Message + ex.StackTrace);
 				}
+
+				// Basic stuff that should happen everytime files are shown.
+				listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+				UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+					folderCount,
+					fileCount));
+			} catch (UnauthorizedAccessException) {
+				listView.BeginUpdate();
+				listView.Items.Add("Unauthorized Access");
+				listView.EndUpdate();
+			} catch (Exception ex) {
+				MessageBox.Show(ex.Message + ex.StackTrace);
+			}
+		}
+
+		/// <summary>
+		/// Parses the file/directory information and inserts the file info into the listview.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void updateListView(FileSystemInfo fileSystemInfo) {
+			int fileCount = 0;
+			int folderCount = 0;
+
+			try {
+				// Create a new listview item with the display name.
+				if (!listView.Items.ContainsKey(fileSystemInfo.FullPath)) {
+					ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
+					//listView.Items.Add(item);
+
+					// TODO: This doesn't need to be done except when inserting a new listitem.
+					int listViewIndex = 0;
+					listViewIndex = getListViewIndex(fileSystemInfo);
+
+					if (listViewIndex == -1) {
+						listView.Items.Insert(0, item);
+					} else {
+						listView.Items.Insert(listViewIndex, item);
+					}
+				}
+
+				// Basic stuff that should happen everytime files are shown.
+				listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+				UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+					folderCount,
+					fileCount));
+			} catch (UnauthorizedAccessException) {
+				listView.BeginUpdate();
+				listView.Items.Add("Unauthorized Access");
+				listView.EndUpdate();
+			} catch (Exception ex) {
+				MessageBox.Show(ex.Message + ex.StackTrace);
 			}
 		}
 		#endregion
+
+		/// <summary>
+		/// Retrieves the index that the list view item should be inserted into.
+		/// </summary>
+		/// <param name="fsi"></param>
+		/// <returns></returns>
+		private int getListViewIndex(FileSystemInfo fsi) {
+			// Copy the items to an array for further processing.
+			ListViewItem[] items = new ListViewItem[listView.Items.Count + 1];
+			listView.Items.CopyTo(items, 0);
+
+			// Add the new filesysteminfo item to the array of items.
+			ListViewItem item = new ListViewItem(fsi.FullPath);
+			item.Name = fsi.FullPath;
+			item.Tag = fsi;
+			item.Text = fsi.DisplayName;
+			items[items.Length - 1] = item;
+
+			// Determine if the file should be pushed further down based on the number of directories above it.
+			int indexOffset = 0;
+			if (fsi is FileInfo) {
+				indexOffset = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
+					return ((FileSystemInfo)i.Tag) is DirectoryInfo;
+				}).Length;
+			}
+
+			// Filter out any items that are not the same type.
+			items = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
+				// ToDO: Fix this -- it prevents the parent directory from getting sorted.
+				if (i.Tag.GetType() == fsi.GetType()) {
+					return true;
+				}
+
+				return false;
+			});
+
+			// Sort the array ascending.
+			Array.Sort<ListViewItem>(items, delegate(ListViewItem i1, ListViewItem i2) {
+				// Sort root directories so they appear first.
+				if (i2.Text == RootDirectoryInfo.DisplayName) {
+					return 1;
+				}
+
+				// Sort parent directories so they appear second.
+				if (i2.Text == ParentDirectoryInfo.DisplayName) {
+					return 1;
+				}
+
+				// Sort everything else according to their name.
+				return i1.Name.CompareTo(i2.Name);
+			});
+
+			// Add the index of the item to the correct offset.
+			int index = Array.IndexOf<ListViewItem>(items, item) + indexOffset;
+			return index;
+		}
 
 		private ListViewItem createListViewItem(FileSystemInfo fileSystemInfo, ref int fileCount, ref int folderCount) {
 			ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
@@ -627,7 +784,11 @@ namespace SharpFile {
 			} else {
 				imageIndex = GetImageIndex(fileSystemInfo, driveType);
 				item.SubItems.Add(string.Empty);
-				folderCount++;
+
+				if (!(fileSystemInfo is ParentDirectoryInfo) &&
+					!(fileSystemInfo is RootDirectoryInfo)) {
+					folderCount++;
+				}
 			}
 
 			item.ImageIndex = imageIndex;

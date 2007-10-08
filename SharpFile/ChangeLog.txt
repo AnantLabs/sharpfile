@@ -1,3 +1,10 @@
+0.40
+	Completely flicker-less listview (refreshes in place).
+	Rename directories.
+	Better icon support.
+	Drive icons.
+	FIX: Drive button wouldn't correctly update the current drive.
+
 0.35
 	Right-click context menu.
 	Preliminary support for drag-and-drop operations.

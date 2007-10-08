@@ -69,6 +69,7 @@ namespace SharpFile.UI {
 				string folderKey = fileSystemInfo.FullPath;
 
 				// Only actively probe directories when they are on a fixed drive.
+				// TODO: Specify what drive types should be actively probed.
 				if (driveType == System.IO.DriveType.Fixed) {
 					if (!imageList.Images.ContainsKey(folderKey)) {
 						Icon icon = getFolderIcon(folderKey, showOverlay);
