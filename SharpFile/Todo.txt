@@ -12,12 +12,16 @@
 - Prevent drag-and-drop operation if it is completed in less than some arbitrary time limit (200 ms?)
 - Prevent flicker in toolstrip when resizing
 - Validate rename before-hand and throw up tooltip or something
-- Second selection to rename
 - Information/Property slideable "pane" list like vista's file manager
 - only show scroll buttons on child tabcontrol when necessary
 - middle-click to close tabs, mouse wheel, ctrl-tab functionality
 - Hot-tracking listview
 - Full-row select
+- ListView should be refactored to include it's relavant code from FileBrowser -- FileSystemListBox?
+- test to make sure that filesystemwatcher events still fire even when updating the UI
+- copy/move should show progress (write bytes, as opposed to File.Copy()?) -- should it use built-in copy/move/ functionality?
+- Type to find (like servant salamander)
+- preview panel?
 
 - true dual-pane mode, as opposed to hacky MDI mode
 - Tabbed MDI interface
@@ -30,8 +34,10 @@
 
 BUG
 - Get rid of folder icon for root and parent directories
-- "System Volum Information folder" never returns any information
+- "System Volume Information folder" never returns any information
+- Drag and drop onto listview doesn't correctly order the item
 
 Vista issues
 	No icon overlay
 	Ugly child-tab buttons (I want them flat)
+	ProgressDisk in wrong position -- needs to be attached to status bar somehow
