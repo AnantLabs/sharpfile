@@ -1,8 +1,9 @@
 0.40
-	Completely flicker-less listview (refreshes in place).
+	Completely flicker-less listview refreshes.
 	Rename directories.
 	Better icon support.
 	Drive icons.
+	Selection of current drive displayed in dropdown menu.
 	FIX: Drive button wouldn't correctly update the current drive.
 
 0.35

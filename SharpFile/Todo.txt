@@ -1,6 +1,6 @@
 - move listview code to the custom listview control
+- communicate tab name, child name, parent name up by delegate as opposed to property like it is now -- then only set it once the action is finished like before.
 
-- Selection of current drive in dropdowns
 - Refresh of drive listing when new drives are entered
 - Refresh button
 - Sorting of listview

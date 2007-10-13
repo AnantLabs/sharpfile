@@ -5,9 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SharpFile.IO;
-using SharpFile.UI;
 using SharpFile.Infrastructure;
-using Common;
 
 namespace SharpFile {
 	public partial class FileBrowser : UserControl {
@@ -18,6 +16,9 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
+		/// <summary>
+		/// Filebrowser ctor.
+		/// </summary>
 		public FileBrowser() {
 			InitializeComponent();
 			initializeComponent();
@@ -27,8 +28,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Passes the filesystem info to any listening events.
 		/// </summary>
-		/// <param name="fsi"></param>
-		/// <returns></returns>
+		/// <returns>Image index.</returns>
 		protected int GetImageIndex(FileSystemInfo fsi, DriveType driveType) {
 			if (OnGetImageIndex != null) {
 				return OnGetImageIndex(fsi, driveType);
@@ -54,10 +54,9 @@ namespace SharpFile {
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
 
 			resizeControls();
-
 			tlsFilter.Text = string.Empty;
 
-			fileSystemWatcher = new System.IO.FileSystemWatcher(); //this, 5000);
+			fileSystemWatcher = new System.IO.FileSystemWatcher();
 			fileSystemWatcher.Changed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Created += fileSystemWatcher_Changed;
@@ -68,17 +67,6 @@ namespace SharpFile {
 		/// Resizes the controls correctly.
 		/// </summary>
 		private void resizeControls() {
-			/*
-			if (this.WindowState == FormWindowState.Maximized) {
-				listView.Width = this.Width - 13;
-			} else {
-				listView.Width = base.Width - 15;
-			}
-
-			listView.Height = this.Height - 60;
-			*/
-
-			this.listView.Height = this.Height - 25;
 			tlsPath.Size = new Size(base.Width - 5 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
 		}
 		#endregion
@@ -111,23 +99,30 @@ namespace SharpFile {
 		/// Refreshes the listview when a different drive is selected.
 		/// </summary>
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			e.ClickedItem.Select();
+			DriveInfo driveInfo = (DriveInfo)e.ClickedItem.Tag;
 			tlsDrives.Image = e.ClickedItem.Image;
-			tlsDrives.Tag = e.ClickedItem.Tag;
-			ExecuteOrUpdate(((DriveInfo)e.ClickedItem.Tag).FullPath);
+			tlsDrives.Tag = driveInfo;
+
+			ExecuteOrUpdate(driveInfo.FullPath);
+			highlightDrive(driveInfo);
 		}
 
+		/// <summary>
+		/// Refreshes the listview with the current root drive.
+		/// </summary>
 		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
-			if (tlsDrives.Tag != null) {
-				ExecuteOrUpdate(((DriveInfo)tlsDrives.Tag).FullPath);
-			}
+			ExecuteOrUpdate(((DriveInfo)tlsDrives.Tag).FullPath);
 		}
 
+		/// <summary>
+		/// Fires when the filesystem watcher sees a filesystem event.
+		/// </summary>
 		private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
 			string path = e.FullPath;
 			FileSystemInfo fsi = FileSystemInfoFactory.GetFileSystemInfo(path);
 
-			MethodInvoker invoker = new MethodInvoker(delegate() {
+			// Required to ensure the listview update occurs on the calling thread.
+			MethodInvoker updater = new MethodInvoker(delegate() {
 				listView.BeginUpdate();
 
 				switch (e.ChangeType) {
@@ -151,7 +146,7 @@ namespace SharpFile {
 				listView.EndUpdate();
 			});
 
-			listView.Invoke(invoker);
+			listView.Invoke(updater);
 		}
 		#endregion
 
@@ -174,6 +169,7 @@ namespace SharpFile {
 					tlsDrives.DropDownItems.Clear();
 					bool isLocalDiskFound = false;
 
+					// Create a new menu item in the dropdown for each drive.
 					foreach (DriveInfo driveInfo in drives) {
 						ToolStripMenuItem item = new ToolStripMenuItem();
 						item.Text = driveInfo.DisplayName;
@@ -187,14 +183,15 @@ namespace SharpFile {
 
 						tlsDrives.DropDownItems.Add(item);
 
+						// Grab some information for the first fixed disk we find that is ready.
 						if (!isLocalDiskFound) {
 							if (driveInfo.DriveType == DriveType.Fixed &&
 								driveInfo.IsReady) {
 								isLocalDiskFound = true;
-								item.Select();
 								tlsDrives.Image = item.Image;
 								tlsDrives.Tag = driveInfo;
-								updateListView(driveInfo.FullPath);
+								highlightDrive(driveInfo);
+								ExecuteOrUpdate(driveInfo.FullPath);
 							}
 						}
 					}
@@ -202,15 +199,6 @@ namespace SharpFile {
 
 				backgroundWorker.RunWorkerAsync();
 			}
-		}
-		#endregion
-
-		private void updateListView(string path) {
-			listView.UpdateListView(path, tlsFilter.Text, false, false);
-		}
-
-		private void updateListView(string path, bool forceUpdate) {
-			listView.UpdateListView(path, tlsFilter.Text, forceUpdate, false);
 		}
 
 		#region ExecuteOrUpdate methods.
@@ -235,13 +223,36 @@ namespace SharpFile {
 			}
 		}
 		#endregion
+		#endregion
 
+		#region Private methods.
+		/// <summary>
+		/// Highlights the passed-in drive.
+		/// </summary>
+		private void highlightDrive(DriveInfo driveInfo) {
+			foreach (ToolStripItem item in tlsDrives.DropDownItems) {
+				if ((DriveInfo)item.Tag == driveInfo) {
+					item.BackColor = SystemColors.HighlightText;
+				} else {
+					item.BackColor = SystemColors.Control;
+				}
+			}
+		}
+		#endregion
+
+		#region Properties.
+		/// <summary>
+		/// Shared ImageList from the parent form.
+		/// </summary>
 		public ImageList ImageList {
 			get {
-				return ((Child)this.Parent.Parent.Parent).ImageList;
+				return ((Parent)((Child)this.Parent.Parent.Parent).MdiParent).ImageList;
 			}
 		}
 
+		/// <summary>
+		/// The current path.
+		/// </summary>
 		public string Path {
 			get {
 				return _path;
@@ -253,6 +264,9 @@ namespace SharpFile {
 			}
 		}
 
+		/// <summary>
+		/// The current filter.
+		/// </summary>
 		public string Filter {
 			get {
 				return _filter;
@@ -263,22 +277,32 @@ namespace SharpFile {
 			}
 		}
 
+		/// <summary>
+		/// The current FileSystemWatcher.
+		/// </summary>
 		public System.IO.FileSystemWatcher FileSystemWatcher {
 			get {
 				return fileSystemWatcher;
 			}
 		}
 
+		/// <summary>
+		/// The currently selected drive.
+		/// </summary>
 		public DriveInfo DriveInfo {
 			get {
 				return ((DriveInfo)tlsDrives.Tag);
 			}
 		}
 
+		/// <summary>
+		/// The child listview.
+		/// </summary>
 		public ListView ListView {
 			get {
 				return listView;
 			}
 		}
+		#endregion
 	}
 }

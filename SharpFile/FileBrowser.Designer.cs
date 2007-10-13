@@ -70,12 +70,12 @@ namespace SharpFile {
 			// 
 			this.listView.AllowColumnReorder = true;
 			this.listView.AllowDrop = true;
-			this.listView.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.listView.LabelEdit = true;
-			this.listView.Location = new System.Drawing.Point(0, 0);
+			this.listView.Location = new System.Drawing.Point(0, 25);
 			this.listView.Name = "listView";
-			this.listView.Size = new System.Drawing.Size(454, 254);
-			this.listView.TabIndex = 0;
+			this.listView.Size = new System.Drawing.Size(454, 229);
+			this.listView.TabIndex = 2;
 			this.listView.UseCompatibleStateImageBehavior = false;
 			this.listView.View = System.Windows.Forms.View.Details;
 			// 
@@ -83,8 +83,9 @@ namespace SharpFile {
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.toolStrip);
 			this.Controls.Add(this.listView);
+			this.Controls.Add(this.toolStrip);
+			this.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.Name = "FileBrowser";
 			this.Size = new System.Drawing.Size(454, 254);
 			this.toolStrip.ResumeLayout(false);
@@ -96,10 +97,10 @@ namespace SharpFile {
 
 		#endregion
 
-		private ListView listView;
 		private System.Windows.Forms.ToolStrip toolStrip;
 		private System.Windows.Forms.ToolStripSplitButton tlsDrives;
 		private System.Windows.Forms.ToolStripTextBox tlsPath;
 		private System.Windows.Forms.ToolStripTextBox tlsFilter;
+		private ListView listView;
 	}
 }

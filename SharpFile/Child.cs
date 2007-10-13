@@ -51,11 +51,5 @@ namespace SharpFile {
 			this.tabControl.Controls.Add(tabPage);
 			this.tabControl.SelectedTab = tabPage;
 		}
-
-		public ImageList ImageList {
-			get {
-				return ((Parent)this.MdiParent).ImageList;
-			}
-		}
 	}
 }

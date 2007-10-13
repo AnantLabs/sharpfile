@@ -37,6 +37,7 @@ namespace SharpFile {
 		}
 
 		private void initializeComponent() {
+			this.Dock = DockStyle.Fill;
 			this.DoubleClick += listView_DoubleClick;
 			this.KeyDown += listView_KeyDown;
 			this.MouseUp += listView_MouseUp;
@@ -376,6 +377,10 @@ namespace SharpFile {
 		#endregion
 
 		#region UpdateListView methods.
+		public void UpdateListView(bool forceUpdate) {
+			UpdateListView(Path, Filter, forceUpdate, false);
+		}
+
 		public void UpdateListView(string path, string filter) {
 			UpdateListView(path, filter, false, false);
 		}
@@ -502,10 +507,6 @@ namespace SharpFile {
 			} catch (Exception ex) {
 				MessageBox.Show(ex.Message + ex.StackTrace);
 			}
-		}
-
-		public void UpdateListView(bool forceUpdate) {
-			UpdateListView(Path, Filter, forceUpdate, false);
 		}
 
 		/// <summary>
