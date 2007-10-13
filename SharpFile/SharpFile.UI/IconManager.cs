@@ -30,7 +30,7 @@ namespace SharpFile.UI {
 			return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
-		public static int GetImageIndex(FileSystemInfo fileSystemInfo, ImageList imageList, System.IO.DriveType driveType) {
+		public static int GetImageIndex(FileSystemInfo fileSystemInfo, ImageList imageList, DriveType driveType) {
 			bool showOverlay = true;
 			int imageIndex = imageList.Images.Count;
 			string fullPath = fileSystemInfo.FullPath;
@@ -70,7 +70,7 @@ namespace SharpFile.UI {
 
 				// Only actively probe directories when they are on a fixed drive.
 				// TODO: Specify what drive types should be actively probed.
-				if (driveType == System.IO.DriveType.Fixed) {
+				if (driveType == DriveType.Fixed) {
 					if (!imageList.Images.ContainsKey(folderKey)) {
 						Icon icon = getFolderIcon(folderKey, showOverlay);
 						imageList.Images.Add(folderKey, icon);

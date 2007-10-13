@@ -1,3 +1,5 @@
+- move listview code to the custom listview control
+
 - Selection of current drive in dropdowns
 - Refresh of drive listing when new drives are entered
 - Refresh button
@@ -31,6 +33,8 @@
 
 - Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
 - Specifying columns to show in listview
+
+- ILMerge in MSBuild/csproj file
 
 BUG
 - Get rid of folder icon for root and parent directories

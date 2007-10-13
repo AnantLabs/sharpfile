@@ -10,7 +10,7 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, System.IO.DriveType driveType);
+		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		/// <summary>
@@ -33,7 +33,7 @@ namespace SharpFile {
 			}
 		}
 
-		int FileBrowser_OnGetImageIndex(FileSystemInfo fsi, System.IO.DriveType driveType) {
+		int FileBrowser_OnGetImageIndex(FileSystemInfo fsi, DriveType driveType) {
 			if (OnGetImageIndex != null) {
 				return OnGetImageIndex(fsi, driveType);
 			}
@@ -44,8 +44,9 @@ namespace SharpFile {
 		public void AddTab() {
 			TabPage tabPage = new TabPage();
 			tabPage.FileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
-			tabPage.FileBrowser.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
-			tabPage.FileBrowser.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
+			tabPage.FileBrowser.ListView.OnGetImageIndex += FileBrowser_OnGetImageIndex;
+			tabPage.FileBrowser.ListView.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
+			tabPage.FileBrowser.ListView.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
 
 			this.tabControl.Controls.Add(tabPage);
 			this.tabControl.SelectedTab = tabPage;

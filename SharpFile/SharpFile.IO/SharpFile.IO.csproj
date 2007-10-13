@@ -29,11 +29,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Directory.cs" />
     <Compile Include="DirectoryInfo.cs" />
     <Compile Include="DriveInfo.cs" />
+    <Compile Include="DriveType.cs" />
     <Compile Include="File.cs" />
     <Compile Include="FileInfo.cs" />
     <Compile Include="FileSystemInfo.cs" />

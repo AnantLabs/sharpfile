@@ -1,5 +1,6 @@
 using System.IO;
 using Common;
+using System;
 
 namespace SharpFile.IO {
 	public class DriveInfo : FileSystemInfo {
@@ -11,7 +12,7 @@ namespace SharpFile.IO {
 
 		public DriveInfo(System.IO.DriveInfo driveInfo) {
 			this.name = driveInfo.Name;
-			this.driveType = driveInfo.DriveType;
+			this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
 			this.fullPath = name;
 			this.isReady = driveInfo.IsReady;
 
