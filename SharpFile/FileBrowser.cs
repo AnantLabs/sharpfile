@@ -249,6 +249,7 @@ namespace SharpFile {
 			set {
 				_path = value;
 				tlsPath.Text = _path;
+				((TabPage)this.Parent).Text = _path;
 			}
 		}
 

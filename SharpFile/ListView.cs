@@ -521,9 +521,6 @@ namespace SharpFile {
 				// Create a new listview item with the display name.
 				if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
 					ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
-					//this.Items.Add(item);
-
-					// TODO: This doesn't need to be done except when inserting a new listitem.
 					int listViewIndex = 0;
 					listViewIndex = getListViewIndex(fileSystemInfo);
 
@@ -576,7 +573,7 @@ namespace SharpFile {
 
 			// Filter out any items that are not the same type.
 			items = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-				// ToDO: Fix this -- it prevents the parent directory from getting sorted.
+				// TODO: Fix this -- it prevents the parent directory from getting sorted.
 				if (i.Tag.GetType() == fsi.GetType()) {
 					return true;
 				}
