@@ -47,7 +47,7 @@ namespace SharpFile.UI {
 					extension.Equals(".scr") ||
 					extension.Equals(".ico") ||
 					extension.Equals(".icn") ||
-					extension.Equals(string.Empty))) {
+					string.IsNullOrEmpty(extension))) {
 					// Add the full name of the file if it is an executable into the the ImageList.
 					if (!imageList.Images.ContainsKey(fullPath)) {
 						Icon icon = getFileIcon(fullPath, showOverlay);

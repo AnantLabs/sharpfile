@@ -4,7 +4,9 @@
 	Better icon support.
 	Drive icons.
 	Selection of current drive displayed in dropdown menu.
+	Selection now correctly moves to the next object.
 	FIX: Drive button wouldn't correctly update the current drive.
+	FIX: Remove files/directories from selected list now correctly updates total.
 
 0.35
 	Right-click context menu.

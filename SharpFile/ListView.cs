@@ -127,9 +127,14 @@ namespace SharpFile {
 			if (e.KeyCode == Keys.Space) {
 				if (this.SelectedItems != null &&
 					this.SelectedItems.Count > 0) {
+					int maxIndex = 0;
+
 					foreach (ListViewItem item in this.SelectedItems) {
-						string path = item.Name;
-						FileSystemInfo fileSystemInfo = FileSystemInfoFactory.GetFileSystemInfo(path);
+						FileSystemInfo fileSystemInfo = (FileSystemInfo)item.Tag;
+
+						if (item.Index > maxIndex) {
+							maxIndex = item.Index;
+						}
 
 						if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
 							item.ForeColor = Color.Red;
@@ -145,13 +150,14 @@ namespace SharpFile {
 							if (sizeIndex > 0) {
 								long size = 0;
 
-								if (item.SubItems[sizeIndex].Text.Equals(string.Empty) ||
+								if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
 									fileSystemInfo is DirectoryInfo) {
 									using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
 										backgroundWorker.WorkerReportsProgress = true;
 
 										backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
 											backgroundWorker.ReportProgress(50);
+											item.SubItems[sizeIndex].Text = "...";
 											eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
 											backgroundWorker.ReportProgress(100);
 										};
@@ -179,7 +185,17 @@ namespace SharpFile {
 						} else {
 							item.ForeColor = Color.Black;
 							selectedFileSystemInfos.Remove(fileSystemInfo);
+							updateSelectedTotalSize(-fileSystemInfo.Size);
 						}
+
+						item.Focused = false;
+						item.Selected = false;
+					}
+
+					int nextIndex = maxIndex + 1;
+					if (this.Items.Count > nextIndex) {
+						this.Items[nextIndex].Focused = true;
+						this.Items[nextIndex].Selected = true;
 					}
 				}
 			}
@@ -365,7 +381,7 @@ namespace SharpFile {
 		void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = this.Items[e.Item];
-				FileSystemInfo fileSystemInfo = FileSystemInfoFactory.GetFileSystemInfo(item.Name);
+				FileSystemInfo fileSystemInfo = (FileSystemInfo)item.Tag;
 
 				string source = string.Format("{0}{1}",
 					fileSystemInfo.Path,
@@ -562,7 +578,7 @@ namespace SharpFile {
 				if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
 					ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
 					int listViewIndex = 0;
-					listViewIndex = getListViewIndex(fileSystemInfo);
+					listViewIndex = getListViewIndex(item);
 
 					if (listViewIndex == -1) {
 						this.Items.Insert(0, item);
@@ -591,16 +607,15 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="fsi"></param>
 		/// <returns></returns>
-		private int getListViewIndex(FileSystemInfo fsi) {
+		private int getListViewIndex(ListViewItem item) {
+			// Get the filesysteminfo object from the item's tag.
+			FileSystemInfo fsi = (FileSystemInfo)item.Tag;
+
 			// Copy the items to an array for further processing.
 			ListViewItem[] items = new ListViewItem[this.Items.Count + 1];
 			this.Items.CopyTo(items, 0);
 
-			// Add the new filesysteminfo item to the array of items.
-			ListViewItem item = new ListViewItem(fsi.FullPath);
-			item.Name = fsi.FullPath;
-			item.Tag = fsi;
-			item.Text = fsi.DisplayName;
+			// Add the new listview item to the array of items.
 			items[items.Length - 1] = item;
 
 			// Determine if the file should be pushed further down based on the number of directories above it.

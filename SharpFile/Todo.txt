@@ -1,11 +1,7 @@
-- communicate tab name, child name, parent name up by delegate as opposed to property like it is now -- then only set it once the action is finished like before.
 - drag and drop folder
-- filecount/folder count shuld be stored in the filebrowser and updated via delegate
-
 - Refresh of drive listing when new drives are entered
 - Refresh button
 - Sorting of listview
-- Full row select
 - Able to cancel long-running operations (esc?)
 - Drag-and-drop support for links (both ways)
 - thumbnail files when possible (images?)
@@ -13,7 +9,9 @@
 - Clean up menus and icons at top (some don't apply)
 - Make sure that all code in UI (child) is neccessary and couldn't be moved to infrastructure/IO
 - Prevent drag-and-drop operation if it is completed in less than some arbitrary time limit (200 ms?)
+
 - Prevent flicker in toolstrip when resizing
+
 - Validate rename before-hand and throw up tooltip or something
 - Information/Property slideable "pane" list like vista's file manager
 - only show scroll buttons on child tabcontrol when necessary
@@ -41,6 +39,7 @@ BUG
 - Get rid of folder icon for root and parent directories
 - "System Volume Information folder" never returns any information
 - Drag and drop onto listview doesn't correctly order the item
+- Filesystem events don't correctly update status bar
 
 Vista issues
 	No icon overlay

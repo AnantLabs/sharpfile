@@ -71,6 +71,7 @@ namespace SharpFile {
 			this.listView.AllowColumnReorder = true;
 			this.listView.AllowDrop = true;
 			this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listView.FullRowSelect = true;
 			this.listView.LabelEdit = true;
 			this.listView.Location = new System.Drawing.Point(0, 25);
 			this.listView.Name = "listView";
@@ -81,12 +82,9 @@ namespace SharpFile {
 			// 
 			// FileBrowser
 			// 
-			//this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			//this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.listView);
 			this.Controls.Add(this.toolStrip);
 			this.ForeColor = System.Drawing.SystemColors.ControlText;
-			this.Name = "FileBrowser";
 			this.Size = new System.Drawing.Size(454, 254);
 			this.toolStrip.ResumeLayout(false);
 			this.toolStrip.PerformLayout();
