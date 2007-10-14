@@ -44,7 +44,7 @@
       <DependentUpon>Child.cs</DependentUpon>
     </Compile>
     <Compile Include="FileBrowser.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="FileBrowser.Designer.cs">
       <DependentUpon>FileBrowser.cs</DependentUpon>
@@ -98,9 +98,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="TabControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TabPage.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UnitDisplayType.cs" />

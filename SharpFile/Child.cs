@@ -42,14 +42,14 @@ namespace SharpFile {
 		}
 
 		public void AddTab() {
-			TabPage tabPage = new TabPage();
-			tabPage.FileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
-			tabPage.FileBrowser.ListView.OnGetImageIndex += FileBrowser_OnGetImageIndex;
-			tabPage.FileBrowser.ListView.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
-			tabPage.FileBrowser.ListView.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
+			FileBrowser fileBrowser = new FileBrowser();
+			fileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
+			fileBrowser.ListView.OnGetImageIndex += FileBrowser_OnGetImageIndex;
+			fileBrowser.ListView.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
+			fileBrowser.ListView.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
 
-			this.tabControl.Controls.Add(tabPage);
-			this.tabControl.SelectedTab = tabPage;
+			this.tabControl.Controls.Add(fileBrowser);
+			this.tabControl.SelectedTab = fileBrowser;
 		}
 	}
 }

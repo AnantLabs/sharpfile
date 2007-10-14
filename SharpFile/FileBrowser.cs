@@ -8,7 +8,7 @@ using SharpFile.IO;
 using SharpFile.Infrastructure;
 
 namespace SharpFile {
-	public partial class FileBrowser : UserControl {
+	public partial class FileBrowser : System.Windows.Forms.TabPage {
 		private string _path;
 		private string _filter;
 		private System.IO.FileSystemWatcher fileSystemWatcher;
@@ -22,6 +22,7 @@ namespace SharpFile {
 		public FileBrowser() {
 			InitializeComponent();
 			initializeComponent();
+			UpdateDriveListing();
 		}
 
 		#region Delegate methods
@@ -246,7 +247,7 @@ namespace SharpFile {
 		/// </summary>
 		public ImageList ImageList {
 			get {
-				return ((Parent)((Child)this.Parent.Parent.Parent).MdiParent).ImageList;
+				return ((Parent)((Child)this.Parent.Parent).MdiParent).ImageList;
 			}
 		}
 
@@ -260,7 +261,7 @@ namespace SharpFile {
 			set {
 				_path = value;
 				tlsPath.Text = _path;
-				((TabPage)this.Parent).Text = _path;
+				this.Text = _path;
 			}
 		}
 
