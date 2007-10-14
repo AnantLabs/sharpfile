@@ -67,7 +67,8 @@ namespace SharpFile {
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
 
-			this.progressDisk.Location = new Point(base.Width - 45, base.Height - 45);
+			this.progressDisk.Location = new Point(base.ClientSize.Width - 35, 
+				base.ClientSize.Height - 18);
 		}
 
 		public ImageList ImageList {

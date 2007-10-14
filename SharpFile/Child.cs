@@ -21,6 +21,7 @@ namespace SharpFile {
 			AddTab();
 		}
 
+		#region Events.
 		void SelectedFileBrowser_OnUpdateStatus(string status) {
 			if (OnUpdateStatus != null) {
 				OnUpdateStatus(status);
@@ -41,6 +42,15 @@ namespace SharpFile {
 			return -1;
 		}
 
+		void tabControl_Selected(object sender, TabControlEventArgs e) {
+			this.Text = ((FileBrowser)this.tabControl.SelectedTab).Path;
+		}
+
+		void fileBrowser_OnUpdatePath(string path) {
+			this.Text = path;
+		}
+		#endregion
+
 		public void AddTab() {
 			FileBrowser fileBrowser = new FileBrowser();
 			fileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
@@ -52,14 +62,6 @@ namespace SharpFile {
 			this.tabControl.Controls.Add(fileBrowser);
 			this.tabControl.SelectedTab = fileBrowser;
 			this.tabControl.Selected += new TabControlEventHandler(tabControl_Selected);
-		}
-
-		void tabControl_Selected(object sender, TabControlEventArgs e) {
-			this.Text = ((FileBrowser)this.tabControl.SelectedTab).Path;
-		}
-
-		void fileBrowser_OnUpdatePath(string path) {
-			this.Text = path;
 		}
 	}
 }
