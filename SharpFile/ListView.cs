@@ -216,6 +216,9 @@ namespace SharpFile {
 			return new List<string>(nameArray);
 		}
 
+		/// <summary>
+		/// Displays the right-click context menu.
+		/// </summary>
 		private void listView_MouseUp(object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Right) {
 				ShellContextMenu m = new ShellContextMenu();
@@ -239,8 +242,11 @@ namespace SharpFile {
 			}
 		}
 
+		/// <summary>
+		/// Performs the necessary action when a file is dropped on the form.
+		/// </summary>
 		private void listView_DragDrop(object sender, DragEventArgs e) {
-			// Can only drop files, so check
+			// Can only drop files.
 			if (!e.Data.GetDataPresent(DataFormats.FileDrop)) {
 				return;
 			}
@@ -248,25 +254,27 @@ namespace SharpFile {
 			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 			foreach (string file in files) {
 				string dest = Path + "\\" + System.IO.Path.GetFileName(file);
-
 				bool isFolder = Directory.Exists(file);
 				bool isFile = File.Exists(file);
 
-				// Ignore if it doesn't exist
-				if (!isFolder && !isFile)
+				// Ignore if it doesn't exist.
+				if (!isFolder && !isFile) {
 					continue;
+				}
 
 				try {
 					switch (e.Effect) {
 						case DragDropEffects.Copy:
 							// TODO: Need to handle folders.
-							if (isFile)
+							if (isFile) {
 								File.Copy(file, dest, false);
+							}
 							break;
 						case DragDropEffects.Move:
 							// TODO: Need to handle folders.
-							if (isFile)
+							if (isFile) {
 								File.Move(file, dest);
+							}
 							break;
 						case DragDropEffects.Link:
 							// TODO: Need to handle links.
@@ -280,6 +288,9 @@ namespace SharpFile {
 			UpdateListView(true);
 		}
 
+		/// <summary>
+		/// Performs action neccessary to allow drags from listview.
+		/// </summary>
 		private void listView_DragOver(object sender, DragEventArgs e) {
 			// Determine whether file data exists in the drop data. If not, then
 			// the drop effect reflects that the drop cannot occur.
@@ -313,24 +324,33 @@ namespace SharpFile {
 				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
 				if (files.Length > 0 && !files[0].ToUpper().StartsWith(Path) &&
-				(e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
+				(e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
 					e.Effect = DragDropEffects.Copy;
+				}
 			} else {
 				e.Effect = DragDropEffects.None;
 			}
 		}
 
+		/// <summary>
+		/// Performs a drag operation.
+		/// </summary>
 		private void listView_ItemDrag(object sender, ItemDragEventArgs e) {
 			List<string> paths = getSelectedPaths();
 
 			if (paths.Count > 0) {
-				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
+				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), 
+					DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 
 				UpdateListView(true);
 			}
 		}
 
+		/// <summary>
+		/// Performs actions based on the key pressed.
+		/// </summary>
 		void listView_KeyUp(object sender, KeyEventArgs e) {
+			// TODO: Should be specified by config.
 			if (e.KeyCode == Keys.F2) {
 				if (this.SelectedItems.Count > 0) {
 					ListViewItem item = this.SelectedItems[0];
@@ -339,6 +359,9 @@ namespace SharpFile {
 			}
 		}
 
+		/// <summary>
+		/// Renames the file/directory that was being edited.
+		/// </summary>
 		void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = this.Items[e.Item];
@@ -390,10 +413,19 @@ namespace SharpFile {
 		#endregion
 
 		#region UpdateListView methods.
+		/// <summary>
+		/// Update the listview specifying whether or not the force the update.
+		/// </summary>
+		/// <param name="forceUpdate">Force the update.</param>
 		public void UpdateListView(bool forceUpdate) {
 			UpdateListView(Path, Filter, forceUpdate, false);
 		}
 
+		/// <summary>
+		/// Update the listview with the specified path and filter.
+		/// </summary>
+		/// <param name="path">Path to get information about.</param>
+		/// <param name="filter">Pattern to filter the information.</param>
 		public void UpdateListView(string path, string filter) {
 			UpdateListView(path, filter, false, false);
 		}
@@ -414,10 +446,6 @@ namespace SharpFile {
 				filter.Equals(Filter)) {
 				return;
 			}
-			//else {
-			//    Path = path;
-			//    Filter = filter;
-			//}
 
 			// Get the directory information.
 			System.IO.DirectoryInfo directoryInfo = new System.IO.DirectoryInfo(path);
@@ -614,6 +642,11 @@ namespace SharpFile {
 			return index;
 		}
 
+		/// <summary>
+		/// Create listview from the filesystem information.
+		/// </summary>
+		/// <param name="fileSystemInfo">Filesystem information.</param>
+		/// <returns>Listview item that references the filesystem object.</returns>
 		private ListViewItem createListViewItem(FileSystemInfo fileSystemInfo, ref int fileCount, ref int folderCount) {
 			ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
 			item.Name = fileSystemInfo.FullPath;
@@ -642,36 +675,45 @@ namespace SharpFile {
 		}
 		#endregion
 
+		/// <summary>
+		/// Shared imagelist.
+		/// </summary>
 		public ImageList ImageList {
 			get {
 				return ((FileBrowser)this.Parent).ImageList;
 			}
 		}
 
+		/// <summary>
+		/// Current path.
+		/// </summary>
 		public string Path {
 			get {
 				return ((FileBrowser)this.Parent).Path;
 			}
-			//set {
-			//    ((FileBrowser)this.Parent).Path = value;
-			//}
 		}
 
+		/// <summary>
+		/// Current filter.
+		/// </summary>
 		public string Filter {
 			get {
 				return ((FileBrowser)this.Parent).Filter;
 			}
-			//set {
-			//    ((FileBrowser)this.Parent).Filter = value;
-			//}
 		}
 
+		/// <summary>
+		/// Current FileSystemWatcher.
+		/// </summary>
 		public System.IO.FileSystemWatcher FileSystemWatcher {
 			get {
 				return ((FileBrowser)this.Parent).FileSystemWatcher;
 			}
 		}
 
+		/// <summary>
+		/// Current drive.
+		/// </summary>
 		public DriveInfo DriveInfo {
 			get {
 				return ((FileBrowser)this.Parent).DriveInfo;
