@@ -44,12 +44,22 @@ namespace SharpFile {
 		public void AddTab() {
 			FileBrowser fileBrowser = new FileBrowser();
 			fileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
+			fileBrowser.OnUpdatePath += fileBrowser_OnUpdatePath;
 			fileBrowser.ListView.OnGetImageIndex += FileBrowser_OnGetImageIndex;
 			fileBrowser.ListView.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
 			fileBrowser.ListView.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
 
 			this.tabControl.Controls.Add(fileBrowser);
 			this.tabControl.SelectedTab = fileBrowser;
+			this.tabControl.Selected += new TabControlEventHandler(tabControl_Selected);
+		}
+
+		void tabControl_Selected(object sender, TabControlEventArgs e) {
+			this.Text = ((FileBrowser)this.tabControl.SelectedTab).Path;
+		}
+
+		void fileBrowser_OnUpdatePath(string path) {
+			this.Text = path;
 		}
 	}
 }

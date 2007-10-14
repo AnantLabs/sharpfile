@@ -16,6 +16,9 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
+		public delegate void OnUpdatePathDelegate(string path);
+		public event OnUpdatePathDelegate OnUpdatePath;
+
 		/// <summary>
 		/// Filebrowser ctor.
 		/// </summary>
@@ -37,6 +40,16 @@ namespace SharpFile {
 
 			return -1;
 		}
+
+		/// <summary>
+		/// Passes the path to any listening events.
+		/// </summary>
+		/// <param name="value">Percentage value for status.</param>
+		protected void UpdatePath(string path) {
+			if (OnUpdatePath != null) {
+				OnUpdatePath(path);
+			}
+		}
 		#endregion
 
 		#region Private methods
@@ -44,32 +57,21 @@ namespace SharpFile {
 		/// Sets the filebrowser up.
 		/// </summary>
 		private void initializeComponent() {
-			this.Dock = DockStyle.Fill;
 			this.DoubleBuffered = true;
+			tlsFilter.Text = string.Empty;
 
 			// Attach to some events.
-			this.ClientSizeChanged += this_ClientSizeChanged;
 			this.tlsPath.KeyDown += tlsPath_KeyDown;
 			this.tlsFilter.KeyUp += tlsFilter_KeyUp;
 			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
 			this.listView.OnUpdatePath += listView_OnUpdatePath;
 
-			resizeControls();
-			tlsFilter.Text = string.Empty;
-
 			fileSystemWatcher = new System.IO.FileSystemWatcher();
 			fileSystemWatcher.Changed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Created += fileSystemWatcher_Changed;
 			fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
-		}
-
-		/// <summary>
-		/// Resizes the controls correctly.
-		/// </summary>
-		private void resizeControls() {
-			tlsPath.Size = new Size(base.Width - 5 - (tlsFilter.Width + tlsDrives.Width), tlsPath.Height);
 		}
 		#endregion
 
@@ -81,6 +83,8 @@ namespace SharpFile {
 			this.Text = path;
 			this.tlsPath.Text = path;
 			_path = path;
+
+			UpdatePath(path);
 		}
 
 		/// <summary>
@@ -90,13 +94,6 @@ namespace SharpFile {
 			if (e.KeyData == Keys.Enter) {
 				ExecuteOrUpdate();
 			}
-		}
-
-		/// <summary>
-		/// Resizes the controls when the listview changes size.
-		/// </summary>
-		private void this_ClientSizeChanged(object sender, EventArgs e) {
-			resizeControls();
 		}
 
 		/// <summary>

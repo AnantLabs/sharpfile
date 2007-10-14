@@ -71,8 +71,8 @@
       <DependentUpon>Child.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileBrowser.resx">
-      <SubType>Designer</SubType>
       <DependentUpon>FileBrowser.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Parent.resx">
       <SubType>Designer</SubType>
@@ -98,6 +98,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="TabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolStripSpringTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UnitDisplayType.cs" />

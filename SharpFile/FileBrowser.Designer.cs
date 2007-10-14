@@ -26,7 +26,7 @@ namespace SharpFile {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FileBrowser));
 			this.toolStrip = new System.Windows.Forms.ToolStrip();
 			this.tlsDrives = new System.Windows.Forms.ToolStripSplitButton();
-			this.tlsPath = new System.Windows.Forms.ToolStripTextBox();
+			this.tlsPath = new ToolStripSpringTextBox();
 			this.tlsFilter = new System.Windows.Forms.ToolStripTextBox();
 			this.listView = new SharpFile.ListView();
 			this.toolStrip.SuspendLayout();
@@ -85,6 +85,7 @@ namespace SharpFile {
 			this.Controls.Add(this.listView);
 			this.Controls.Add(this.toolStrip);
 			this.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.Name = "FileBrowser";
 			this.Size = new System.Drawing.Size(454, 254);
 			this.toolStrip.ResumeLayout(false);
 			this.toolStrip.PerformLayout();
@@ -97,7 +98,7 @@ namespace SharpFile {
 
 		private System.Windows.Forms.ToolStrip toolStrip;
 		private System.Windows.Forms.ToolStripSplitButton tlsDrives;
-		private System.Windows.Forms.ToolStripTextBox tlsPath;
+		private ToolStripSpringTextBox tlsPath;
 		private System.Windows.Forms.ToolStripTextBox tlsFilter;
 		private ListView listView;
 	}
