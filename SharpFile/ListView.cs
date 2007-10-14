@@ -28,6 +28,9 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
+		public delegate void OnUpdatePathDelegate(string path);
+		public event OnUpdatePathDelegate OnUpdatePath;
+
 		public ListView() {
 			// This prevents flicker in the listview. 
 			// It is a protected property, so it is only available if we derive from ListView.
@@ -79,6 +82,16 @@ namespace SharpFile {
 		protected void UpdateProgress(int value) {
 			if (OnUpdateProgress != null) {
 				OnUpdateProgress(value);
+			}
+		}
+
+		/// <summary>
+		/// Passes the path to any listening events.
+		/// </summary>
+		/// <param name="value">Percentage value for status.</param>
+		protected void UpdatePath(string path) {
+			if (OnUpdatePath != null) {
+				OnUpdatePath(path);
 			}
 		}
 
@@ -400,10 +413,11 @@ namespace SharpFile {
 				path.Equals(Path) &&
 				filter.Equals(Filter)) {
 				return;
-			} else {
-				Path = path;
-				Filter = filter;
 			}
+			//else {
+			//    Path = path;
+			//    Filter = filter;
+			//}
 
 			// Get the directory information.
 			System.IO.DirectoryInfo directoryInfo = new System.IO.DirectoryInfo(path);
@@ -443,10 +457,7 @@ namespace SharpFile {
 						this.EndUpdate();
 
 						// Update some information about the current directory.
-						//tlsPath.Text = directoryPath;
-						this.Path = directoryPath;
-						this.Text = directoryPath;
-						this.Parent.Text = directoryPath;
+						UpdatePath(directoryPath);
 
 						// Set up the watcher.
 						FileSystemWatcher.Path = directoryPath;
@@ -641,18 +652,18 @@ namespace SharpFile {
 			get {
 				return ((FileBrowser)this.Parent).Path;
 			}
-			set {
-				((FileBrowser)this.Parent).Path = value;
-			}
+			//set {
+			//    ((FileBrowser)this.Parent).Path = value;
+			//}
 		}
 
 		public string Filter {
 			get {
 				return ((FileBrowser)this.Parent).Filter;
 			}
-			set {
-				((FileBrowser)this.Parent).Filter = value;
-			}
+			//set {
+			//    ((FileBrowser)this.Parent).Filter = value;
+			//}
 		}
 
 		public System.IO.FileSystemWatcher FileSystemWatcher {

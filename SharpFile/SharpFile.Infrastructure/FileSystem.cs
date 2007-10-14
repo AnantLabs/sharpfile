@@ -42,7 +42,7 @@ namespace SharpFile.Infrastructure {
 		}
 
 		private static System.IO.FileInfo[] getFilteredFiles(System.IO.DirectoryInfo directoryInfo, string filter) {
-			if (filter.Equals(string.Empty)) {
+			if (string.IsNullOrEmpty(filter)) {
 				return directoryInfo.GetFiles();
 			} else {
 				return directoryInfo.GetFiles("*" + filter + "*", System.IO.SearchOption.TopDirectoryOnly);

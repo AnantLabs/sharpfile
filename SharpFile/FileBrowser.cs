@@ -53,6 +53,7 @@ namespace SharpFile {
 			this.tlsFilter.KeyUp += tlsFilter_KeyUp;
 			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
+			this.listView.OnUpdatePath += listView_OnUpdatePath;
 
 			resizeControls();
 			tlsFilter.Text = string.Empty;
@@ -73,6 +74,15 @@ namespace SharpFile {
 		#endregion
 
 		#region Events
+		/// <summary>
+		/// Displays the current path in the tab text and textbox.
+		/// </summary>
+		private void listView_OnUpdatePath(string path) {
+			this.Text = path;
+			this.tlsPath.Text = path;
+			_path = path;
+		}
+
 		/// <summary>
 		/// Refreshes the listview when Enter is pressed in the path textbox.
 		/// </summary>
@@ -258,11 +268,6 @@ namespace SharpFile {
 			get {
 				return _path;
 			}
-			set {
-				_path = value;
-				tlsPath.Text = _path;
-				this.Text = _path;
-			}
 		}
 
 		/// <summary>
@@ -271,10 +276,6 @@ namespace SharpFile {
 		public string Filter {
 			get {
 				return _filter;
-			}
-			set {
-				_filter = value;
-				tlsFilter.Text = _filter;
 			}
 		}
 
