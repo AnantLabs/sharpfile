@@ -1,7 +1,7 @@
 using SharpFile.UI;
 namespace SharpFile
 {
-    partial class Parent
+    partial class MdiParent
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace SharpFile
         private void InitializeComponent()
         {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Parent));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MdiParent));
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileMenu = new System.Windows.Forms.ToolStripMenuItem();
 			this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -364,7 +364,7 @@ namespace SharpFile
 			this.progressDisk.TabIndex = 4;
 			this.progressDisk.Value = 9;
 			// 
-			// Parent
+			// MdiParent
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -375,7 +375,7 @@ namespace SharpFile
 			this.DoubleBuffered = true;
 			this.IsMdiContainer = true;
 			this.MainMenuStrip = this.menuStrip;
-			this.Name = "Parent";
+			this.Name = "MdiParent";
 			this.Text = "SharpFile";
 			this.menuStrip.ResumeLayout(false);
 			this.menuStrip.PerformLayout();

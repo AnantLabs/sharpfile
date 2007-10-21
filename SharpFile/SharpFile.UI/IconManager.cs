@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using SharpFile.IO;
+using System.Reflection;
 
 namespace SharpFile.UI {
 	public static class IconManager {
@@ -153,5 +154,21 @@ namespace SharpFile.UI {
 			//}
 		}
 		*/
+
+		public static ImageList FindImageList(Control control) {
+			PropertyInfo propertyInfo = control.GetType().GetProperty("ImageList", typeof(ImageList));
+
+			// Check to see if control has ImageList, if it doesn't go to the parent.
+			if (propertyInfo != null && 
+				propertyInfo.CanRead && 
+				propertyInfo.GetValue(control, null) != null) {
+				return (ImageList)propertyInfo.GetValue(control, null);
+			}
+			if (control.Parent == null) {
+				throw new Exception("No ImageList provided.");
+			}
+
+			return FindImageList(control.Parent);
+		}
 	}
 }

@@ -6,12 +6,14 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
+using SharpFile.UI;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {
 		private string _path;
 		private string _filter;
 		private System.IO.FileSystemWatcher fileSystemWatcher;
+		private ImageList imageList;
 
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
@@ -254,7 +256,11 @@ namespace SharpFile {
 		/// </summary>
 		public ImageList ImageList {
 			get {
-				return ((Parent)((Child)this.Parent.Parent).MdiParent).ImageList;
+				if (imageList == null) {
+					imageList = IconManager.FindImageList(this.Parent);
+				}
+
+				return imageList;
 			}
 		}
 

@@ -1,9 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Text;
 using System.Windows.Forms;
 using SharpFile.IO;
-using Common;
+using SharpFile.UI;
 
 namespace SharpFile {
-	public partial class Child : Form {
+	public partial class Child : UserControl {
 		public delegate void OnUpdateStatusDelegate(string status);
 		public event OnUpdateStatusDelegate OnUpdateStatus;
 
@@ -13,9 +19,8 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
-		/// <summary>
-		/// Child ctor.
-		/// </summary>
+		private ImageList imageList;
+
 		public Child() {
 			InitializeComponent();
 			AddTab();
@@ -43,7 +48,7 @@ namespace SharpFile {
 		}
 
 		void tabControl_Selected(object sender, TabControlEventArgs e) {
-			this.Text = ((FileBrowser)this.tabControl.SelectedTab).Path;
+			this.Text = ((FileBrowser)this.TabControl.SelectedTab).Path;
 		}
 
 		void fileBrowser_OnUpdatePath(string path) {
@@ -59,9 +64,25 @@ namespace SharpFile {
 			fileBrowser.ListView.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
 			fileBrowser.ListView.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
 
-			this.tabControl.Controls.Add(fileBrowser);
-			this.tabControl.SelectedTab = fileBrowser;
-			this.tabControl.Selected += new TabControlEventHandler(tabControl_Selected);
+			this.TabControl.Controls.Add(fileBrowser);
+			this.TabControl.SelectedTab = fileBrowser;
+			this.TabControl.Selected += new TabControlEventHandler(tabControl_Selected);
+		}
+
+		public ImageList ImageList {
+			get {
+				if (imageList == null) {
+					imageList = IconManager.FindImageList(this.Parent);
+				}
+
+				return imageList;
+			}
+		}
+
+		public TabControl TabControl {
+			get {
+				return tabControl;
+			}
 		}
 	}
 }

@@ -1,3 +1,5 @@
+- Get rid of designers classes for some classes (at least mdichild)
+
 - drag and drop folder
 - Refresh of drive listing when new drives are entered
 - Refresh button
@@ -21,9 +23,7 @@
 - copy/move should show progress (write bytes, as opposed to File.Copy()?) -- should it use built-in copy/move/ functionality?
 - Type to find (like servant salamander)
 - preview panel?
-
 - true dual-pane mode, as opposed to hacky MDI mode
-- Tabbed MDI interface
 
 - Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
 - Specifying columns to show in listview

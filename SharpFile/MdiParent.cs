@@ -5,13 +5,20 @@ using SharpFile.UI;
 using SharpFile.IO;
 
 namespace SharpFile {
-	public partial class Parent : Form {
+	public enum ParentType {
+		Mdi,
+		[Obsolete("Tab ParentType not explicitedly supported.")]
+		Tab,
+		Dual
+	}
+
+	public partial class MdiParent : Form {
+		private static object lockObject = new object();
 		private Timer timer = new Timer();
 		private ImageList imageList = new ImageList();
+		private ParentType parentType = ParentType.Mdi;
 
-		private static object lockObject = new object();
-
-		public Parent() {
+		public MdiParent() {
 			InitializeComponent();
 			this.DoubleBuffered = true;
 
@@ -32,19 +39,40 @@ namespace SharpFile {
 			imageList.ColorDepth = ColorDepth.Depth32Bit;
 		}
 
+		/*
+		void Parent_MdiChildActivate(object sender, EventArgs e) {
+			// If child form is new and no has tabPage, create new tabPage
+			if (this.ActiveMdiChild.Tag == null) {
+				// Add a tabPage to tabControl with child form caption
+				TabPage tabPage = new TabPage(this.ActiveMdiChild.Text);
+				tabPage.Controls.Add(this.ActiveMdiChild);
+				tabPage.Tag = this.ActiveMdiChild;
+				tabPage.Parent = tabControl;
+				tabControl.SelectedTab = tabPage;
+
+				this.ActiveMdiChild.WindowState = FormWindowState.Maximized;
+
+				this.ActiveMdiChild.Tag = tabPage;
+				//this.ActiveMdiChild.FormClosed += new FormClosedEventHandler(ActiveMdiChild_FormClosed);
+			}
+
+			if (!tabControl.Visible)
+				tabControl.Visible = true;
+		}
+		*/
+
 		private void ShowNewForm(object sender, EventArgs e) {
 			// Create a new instance of the child form.
-			Child childForm = new Child();
-
+			MdiChild childForm = new MdiChild();
 			// Make it a child of this MDI form before showing it.
 			childForm.MdiParent = this;
 			childForm.Show();
 
-			childForm.OnUpdateStatus += delegate(string status) {
+			childForm.Child.OnUpdateStatus += delegate(string status) {
 				toolStripStatus.Text = status;
 			};
 
-			childForm.OnUpdateProgress += delegate(int value) {
+			childForm.Child.OnUpdateProgress += delegate(int value) {
 				if (value < 100) {
 					if (!timer.Enabled) {
 						progressDisk.Value = 4;
@@ -59,7 +87,7 @@ namespace SharpFile {
 				}
 			};
 
-			childForm.OnGetImageIndex += delegate(FileSystemInfo fsi, DriveType driveType) {
+			childForm.Child.OnGetImageIndex += delegate(FileSystemInfo fsi, DriveType driveType) {
 				return IconManager.GetImageIndex(fsi, ImageList, driveType);
 			};
 		}
@@ -67,7 +95,7 @@ namespace SharpFile {
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
 
-			this.progressDisk.Location = new Point(base.ClientSize.Width - 35, 
+			this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
 				base.ClientSize.Height - 18);
 		}
 

@@ -1,11 +1,11 @@
 namespace SharpFile {
-	partial class Child {
-		/// <summary> 
+	partial class TabParent {
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		/// <summary> 
+		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -16,10 +16,10 @@ namespace SharpFile {
 			base.Dispose(disposing);
 		}
 
-		#region Component Designer generated code
+		#region Windows Form Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
@@ -33,16 +33,17 @@ namespace SharpFile {
 			this.tabControl.Location = new System.Drawing.Point(0, 0);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(387, 253);
+			this.tabControl.Size = new System.Drawing.Size(495, 308);
 			this.tabControl.TabIndex = 0;
 			// 
-			// Child
+			// TabParent
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(495, 308);
 			this.Controls.Add(this.tabControl);
-			this.Name = "Child";
-			this.Size = new System.Drawing.Size(387, 253);
+			this.Name = "TabParent";
+			this.Text = "TabParent";
 			this.ResumeLayout(false);
 
 		}

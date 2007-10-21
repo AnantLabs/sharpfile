@@ -13,7 +13,9 @@ namespace SharpFile
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Parent());
+            
+			Application.Run(new MdiParent());
+			//Application.Run(new TabParent());
         }
     }
 }

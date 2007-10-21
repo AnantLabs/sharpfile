@@ -122,9 +122,7 @@ namespace SharpFile {
 
 		protected override void OnResize(EventArgs e) {
 			UpdateScroller();
-			base.OnResize(e);
-
-			
+			base.OnResize(e);			
 		}
 
 		private void Scroller_ScrollLeft(Object sender, EventArgs e) {
@@ -159,7 +157,11 @@ namespace SharpFile {
 		}
 
 		void Scroller_TabOpen(object sender, EventArgs e) {
-			((Child)this.Parent).AddTab();			
+			if (this.Parent is Child) {
+				((Child)this.Parent).AddTab();
+			} else if (this.Parent is TabParent) {
+				((TabParent)this.Parent).AddTab();
+			}
 			UpdateScroller();
 		}
 
