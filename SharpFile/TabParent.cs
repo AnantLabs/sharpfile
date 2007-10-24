@@ -17,17 +17,6 @@ namespace SharpFile {
 			TabChild tabChild = new TabChild();
 			this.tabControl.Controls.Add(tabChild);
 			this.tabControl.SelectedTab = tabChild;
-
-			//FileBrowser fileBrowser = new FileBrowser();
-			//fileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
-			//fileBrowser.OnUpdatePath += fileBrowser_OnUpdatePath;
-			//fileBrowser.ListView.OnGetImageIndex += FileBrowser_OnGetImageIndex;
-			//fileBrowser.ListView.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
-			//fileBrowser.ListView.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
-
-			//this.tabControl.Controls.Add(fileBrowser);
-			//this.tabControl.SelectedTab = fileBrowser;
-			//this.tabControl.Selected += new TabControlEventHandler(tabControl_Selected);
 		}
 
 		public ImageList ImageList {

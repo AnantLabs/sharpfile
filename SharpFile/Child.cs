@@ -19,8 +19,6 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
-		private ImageList imageList;
-
 		public Child() {
 			InitializeComponent();
 			AddTab();
@@ -67,16 +65,6 @@ namespace SharpFile {
 			this.TabControl.Controls.Add(fileBrowser);
 			this.TabControl.SelectedTab = fileBrowser;
 			this.TabControl.Selected += new TabControlEventHandler(tabControl_Selected);
-		}
-
-		public ImageList ImageList {
-			get {
-				if (imageList == null) {
-					imageList = IconManager.FindImageList(this.Parent);
-				}
-
-				return imageList;
-			}
 		}
 
 		public TabControl TabControl {

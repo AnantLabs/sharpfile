@@ -453,7 +453,7 @@ namespace SharpFile {
 		/// <param name="filter">Pattern to filter the information.</param>
 		public void UpdateListView(string path, string filter, bool forceUpdate, bool clearListView) {
 			if (this.SmallImageList == null) {
-				this.SmallImageList = ImageList;
+				this.SmallImageList = IconManager.FindImageList(this.Parent);
 			}
 
 			// Prevents the retrieval of file information if unneccessary.
@@ -534,31 +534,15 @@ namespace SharpFile {
 					if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
 						ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
 						this.Items.Add(item);
-
-						/*
-						// TODO: This doesn't need to be done except when inserting a new listitem.
-						int listViewIndex = 0;
-						listViewIndex = getListViewIndex(fileSystemInfo);
-
-						if (listViewIndex == -1) {
-							this.Items.Insert(0, item);
-						} else {
-							this.Items.Insert(listViewIndex, item);
-						}
-						*/
 					}
 				}
 
-				// Basic stuff that should happen everytime files are shown.
+				// Resize the columns based on the column content.
 				this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
 				UpdateStatus(string.Format("Folders: {0}; Files: {1}",
 					folderCount,
 					fileCount));
-			//} catch (UnauthorizedAccessException) {
-			//    this.BeginUpdate();
-			//    this.Items.Add("Unauthorized Access");
-			//    this.EndUpdate();
 			} catch (Exception ex) {
 				MessageBox.Show(ex.Message + ex.StackTrace);
 			}
@@ -593,10 +577,6 @@ namespace SharpFile {
 				UpdateStatus(string.Format("Folders: {0}; Files: {1}",
 					folderCount,
 					fileCount));
-			//} catch (UnauthorizedAccessException) {
-			//    this.BeginUpdate();
-			//    this.Items.Add("Unauthorized Access");
-			//    this.EndUpdate();
 			} catch (Exception ex) {
 				MessageBox.Show(ex.Message + ex.StackTrace);
 			}
@@ -605,8 +585,6 @@ namespace SharpFile {
 		/// <summary>
 		/// Retrieves the index that the list view item should be inserted into.
 		/// </summary>
-		/// <param name="fsi"></param>
-		/// <returns></returns>
 		private int getListViewIndex(ListViewItem item) {
 			// Get the filesysteminfo object from the item's tag.
 			FileSystemInfo fsi = (FileSystemInfo)item.Tag;
@@ -689,15 +667,6 @@ namespace SharpFile {
 			return item;
 		}
 		#endregion
-
-		/// <summary>
-		/// Shared imagelist.
-		/// </summary>
-		public ImageList ImageList {
-			get {
-				return ((FileBrowser)this.Parent).ImageList;
-			}
-		}
 
 		/// <summary>
 		/// Current path.
