@@ -3,6 +3,7 @@ using System.Web;
 using System.Web.Security;
 using System.Data;
 using Data;
+using Common;
 
 namespace Domain.Membership {
 	/// <summary>
@@ -51,50 +52,54 @@ namespace Domain.Membership {
 			populateUser(name);
 		}
 
-		public bool Login() {
-			return Login(true);
+		public bool Login(string plainTextPassword) {
+			return Login(plainTextPassword, true);
 		}
 
-		public bool Login(bool persistent) {
-			if (userType != UserType.NonAuthenticated) {
-				string roles = userType.ToString();
+		public bool Login(string plainTextPassword, bool persistent) {
+			string encryptedPassword = Security.Encrypt(plainTextPassword);
 
-				// Make sure our admin users are also users.
-				if (userType == UserType.Admin) {
-					roles = string.Format("{0},{1}",
-						roles,
-						UserType.User.ToString());
+			if (this.hashedPassword == encryptedPassword) {
+				if (userType != UserType.NonAuthenticated) {
+					string roles = userType.ToString();
+
+					// Make sure our admin users are also users.
+					if (userType == UserType.Admin) {
+						roles = string.Format("{0},{1}",
+							roles,
+							UserType.User.ToString());
+					}
+
+					// Initialize FormsAuthentication, for what it's worth
+					FormsAuthentication.Initialize();
+
+					// Create a new ticket used for authentication
+					FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
+					   formsAuthenticationVersion,
+					   id.ToString(),
+					   DateTime.Now,
+					   DateTime.Now.AddMinutes(cookieExpirationTime),
+					   persistent,
+					   roles,
+					   FormsAuthentication.FormsCookiePath);
+
+					// Encrypt the cookie using the machine key for secure transport
+					string hashedTicket = FormsAuthentication.Encrypt(ticket);
+
+					HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, hashedTicket);
+
+					// Set the cookie's expiration time to the tickets expiration time.
+					if (ticket.IsPersistent) {
+						cookie.Expires = ticket.Expiration;
+					}
+
+					// Add the cookie to the list for outgoing response
+					if (HttpContext.Current != null) {
+						HttpContext.Current.Response.Cookies.Add(cookie);
+					}
+
+					return true;
 				}
-
-				// Initialize FormsAuthentication, for what it's worth
-				FormsAuthentication.Initialize();
-
-				// Create a new ticket used for authentication
-				FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
-				   formsAuthenticationVersion,
-				   id.ToString(),
-				   DateTime.Now,
-				   DateTime.Now.AddMinutes(cookieExpirationTime),
-				   persistent,
-				   roles,
-				   FormsAuthentication.FormsCookiePath);
-
-				// Encrypt the cookie using the machine key for secure transport
-				string hashedTicket = FormsAuthentication.Encrypt(ticket);
-
-				HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, hashedTicket);
-
-				// Set the cookie's expiration time to the tickets expiration time.
-				if (ticket.IsPersistent) {
-					cookie.Expires = ticket.Expiration;
-				}
-
-				// Add the cookie to the list for outgoing response
-				if (HttpContext.Current != null) {
-					HttpContext.Current.Response.Cookies.Add(cookie);
-				}
-
-				return true;
 			}
 
 			return false;
@@ -105,12 +110,13 @@ namespace Domain.Membership {
 				if (HttpContext.Current != null) {
 					if (HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName] != null) {
 						HttpContext.Current.Response.Cookies[FormsAuthentication.FormsCookieName].Expires = DateTime.Now.AddYears(-30);
-						HttpContext.Current.Response.Redirect(HttpContext.Current.Request.Url.PathAndQuery, true);
 					}
 				}
 			} catch (Exception ex) {
 				Data.Admin.InsertErrorLog(ex);
 			}
+
+			HttpContext.Current.Response.Redirect(HttpContext.Current.Request.Url.PathAndQuery, true);
 		}
 
 		public void Update(string name, string email, string plainTextPassword) {
@@ -134,12 +140,14 @@ namespace Domain.Membership {
 
 		private void populateUserFromDataTable(DataTable userTable) {
 			if (userTable.Rows.Count > 0) {
-				this.id = int.Parse(userTable.Rows[0]["Id"].ToString());
-				this.name = userTable.Rows[0]["Name"].ToString();
-				this.hashedPassword = userTable.Rows[0]["Password"].ToString();
-				this.email = userTable.Rows[0]["Email"].ToString();
+				DataRow row = userTable.Rows[0];
+
+				this.id = int.Parse(row["Id"].ToString());
+				this.name = row["Name"].ToString();
+				this.hashedPassword = row["Password"].ToString();
+				this.email = row["Email"].ToString();
 				this.enableJs = false;
-				this.userType = (UserType)Enum.Parse(typeof(UserType), userTable.Rows[0]["TypeName"].ToString());
+				this.userType = (UserType)Enum.Parse(typeof(UserType), row["TypeName"].ToString());
 
 				this.isPopulated = true;
 			} else {

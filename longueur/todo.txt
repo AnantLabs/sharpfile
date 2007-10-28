@@ -10,10 +10,10 @@
 	- Add ExchangeReader
 
 - Admin
-	- add new tags
+	- tags admin
 	- delete entry
 	- delete user
-	- Links admin page
+	- Links admin
 	- Prevent people from messing w/ people higher than themselves
 	- Superuser
 	- Fancy-up the gridview

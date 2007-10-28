@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using Domain.Membership;
+using Data;
 
 public partial class Controls_Login : System.Web.UI.UserControl
 {
@@ -37,24 +38,40 @@ public partial class Controls_Login : System.Web.UI.UserControl
 
 	void lnkSubmit_Click(object sender, EventArgs e)
 	{
-		//SiteUser siteUser = Data.GetUser(txtUsername.Text, txtPassword.Text);
+		bool validUsername = false;
+		bool validLogin = false;
+		string redirectUrl = "/";
+		string username = txtUsername.Text;
+		string password = txtPassword.Text;
 
-		SiteUser siteUser = new SiteUser(txtUsername.Text);
+		try {
+			SiteUser siteUser = new SiteUser(username);
 
-		if (siteUser != null &&
-			siteUser.Login())
-		{
-			string redirectUrl = "/";
+			if (siteUser != null) {
+				validUsername = true;
+				validLogin = siteUser.Login(password);
+			}
+		} catch (Exception ex) {
+			validUsername = false;
+			validLogin = false;
+			Admin.InsertErrorLog(ex);
+		}
 
-			if (!string.IsNullOrEmpty(Request.QueryString["ReturnUrl"]))
-			{
+		if (validUsername && validLogin) {
+			Admin.InsertErrorLog("Valid user and password login.", "Username: " + username);
+
+			if (!string.IsNullOrEmpty(Request.QueryString["ReturnUrl"])) {
 				redirectUrl = Request.QueryString["ReturnUrl"];
 			}
 
 			Response.Redirect(redirectUrl, true);
-		}
-		else
-		{
+		} else {
+			if (!validUsername) {
+				Admin.InsertErrorLog("Invalid username login.", "Username: " + username);
+			} else if (!validLogin) {
+				Admin.InsertErrorLog("Invalid password login.", "Username: " + username);
+			}
+
 			message.Visible = true;
 			message.Text = "The username or password entered is incorrect. Try again.";
 		}
