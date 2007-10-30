@@ -3,22 +3,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using SharpFile.UI;
 using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile {
-	public enum ParentType {
-		Mdi,
-		[Obsolete("Tab ParentType not explicitedly supported.")]
-		Tab,
-		Dual
-	}
-
 	public partial class MdiParent : Form {
-		private static object lockObject = new object();
 		private Timer timer = new Timer();
-		private ImageList imageList = new ImageList();
-		private ParentType parentType = ParentType.Mdi;
+		private Settings settings;
 
-		public MdiParent() {
+		public MdiParent(Settings settings) {
+			this.settings = settings;
 			InitializeComponent();
 			this.DoubleBuffered = true;
 
@@ -36,30 +29,9 @@ namespace SharpFile {
 				progressDisk.Value = (progressDisk.Value + 1) % 12;
 			};
 
-			imageList.ColorDepth = ColorDepth.Depth32Bit;
+			this.Width = 500;
+			this.Height = 500;
 		}
-
-		/*
-		void Parent_MdiChildActivate(object sender, EventArgs e) {
-			// If child form is new and no has tabPage, create new tabPage
-			if (this.ActiveMdiChild.Tag == null) {
-				// Add a tabPage to tabControl with child form caption
-				TabPage tabPage = new TabPage(this.ActiveMdiChild.Text);
-				tabPage.Controls.Add(this.ActiveMdiChild);
-				tabPage.Tag = this.ActiveMdiChild;
-				tabPage.Parent = tabControl;
-				tabControl.SelectedTab = tabPage;
-
-				this.ActiveMdiChild.WindowState = FormWindowState.Maximized;
-
-				this.ActiveMdiChild.Tag = tabPage;
-				//this.ActiveMdiChild.FormClosed += new FormClosedEventHandler(ActiveMdiChild_FormClosed);
-			}
-
-			if (!tabControl.Visible)
-				tabControl.Visible = true;
-		}
-		*/
 
 		private void ShowNewForm(object sender, EventArgs e) {
 			// Create a new instance of the child form.
@@ -101,9 +73,7 @@ namespace SharpFile {
 
 		public ImageList ImageList {
 			get {
-				lock (lockObject) {
-					return imageList;
-				}
+				return settings.ImageList;
 			}
 		}
 

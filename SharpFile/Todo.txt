@@ -1,4 +1,6 @@
+- All Parent forms should inherit from one base form which does all of the settings-related stuff
 - Get rid of designers classes for some classes (at least mdichild)
+- weirdness with files not updating the listview when drag and dropping different places
 
 - drag and drop folder
 - Refresh of drive listing when new drives are entered
@@ -14,7 +16,6 @@
 - Prevent flicker in toolstrip when resizing
 - Validate rename before-hand and throw up tooltip or something
 - Information/Property slideable "pane" list like vista's file manager
-- only show scroll buttons on child tabcontrol when necessary
 - middle-click to close tabs, mouse wheel, ctrl-tab functionality
 - Hot-tracking listview
 - Full-row select
@@ -22,8 +23,7 @@
 - test to make sure that filesystemwatcher events still fire even when updating the UI
 - copy/move should show progress (write bytes, as opposed to File.Copy()?) -- should it use built-in copy/move/ functionality?
 - Type to find (like servant salamander)
-- preview panel?
-- true dual-pane mode, as opposed to hacky MDI mode
+- preview panel
 
 - Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
 - Specifying columns to show in listview
@@ -33,10 +33,10 @@
 BUG
 - Get rid of folder icon for root and parent directories
 - "System Volume Information folder" never returns any information
-- Drag and drop onto listview doesn't correctly order the item
+- Drag and drop onto listview doesn't correctly order the item (I think this now works)
 - Filesystem events don't correctly update status bar
 
 Vista issues
-	No icon overlay
+	No icon overlays
 	Ugly child-tab buttons (I want them flat)
 	ProgressDisk in wrong position -- needs to be attached to status bar somehow

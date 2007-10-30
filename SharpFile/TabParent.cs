@@ -1,29 +1,29 @@
 using System;
 using System.Windows.Forms;
+using SharpFile.Infrastructure;
 
 namespace SharpFile {
 	public partial class TabParent : Form {
-		private static object lockObject = new object();
-		private ImageList imageList = new ImageList();
+		private Settings settings;
 
-		public TabParent() {
+		public TabParent(Settings settings) {
+			this.settings = settings;
 			InitializeComponent();
 			AddTab();
-
-			imageList.ColorDepth = ColorDepth.Depth32Bit;
 		}
 
 		public void AddTab() {
 			TabChild tabChild = new TabChild();
+			
+			// TODO: Wire tab child to OnGetImageIndex() to actually grab images.
+
 			this.tabControl.Controls.Add(tabChild);
 			this.tabControl.SelectedTab = tabChild;
 		}
 
 		public ImageList ImageList {
 			get {
-				lock (lockObject) {
-					return imageList;
-				}
+				return settings.ImageList;
 			}
 		}
 	}

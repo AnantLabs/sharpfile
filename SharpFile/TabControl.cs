@@ -13,6 +13,7 @@ namespace SharpFile {
 			this.Scroller.ScrollRight += Scroller_ScrollRight;
 			this.Scroller.TabClose += Scroller_TabClose;
 			this.Scroller.TabOpen += Scroller_TabOpen;
+			this.Appearance = TabAppearance.FlatButtons;
 		}
 
 		public override Rectangle DisplayRectangle {
