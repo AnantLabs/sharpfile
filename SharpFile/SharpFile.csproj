@@ -49,9 +49,6 @@
     <Compile Include="DualParent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DualParent.Designer.cs">
-      <DependentUpon>DualParent.cs</DependentUpon>
-    </Compile>
     <Compile Include="MdiChild.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,10 +81,6 @@
     <EmbeddedResource Include="Child.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Child.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DualParent.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>DualParent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MdiChild.resx">
       <SubType>Designer</SubType>

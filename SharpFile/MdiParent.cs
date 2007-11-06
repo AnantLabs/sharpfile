@@ -6,36 +6,21 @@ using SharpFile.IO;
 using SharpFile.Infrastructure;
 
 namespace SharpFile {
-	public partial class MdiParent : Form {
-		private Timer timer = new Timer();
-		private Settings settings;
-
-		public MdiParent(Settings settings) {
-			this.settings = settings;
+	public partial class MdiParent : BaseParent {
+		public MdiParent(Settings settings) : base(settings) {
 			InitializeComponent();
-			this.DoubleBuffered = true;
-
-			SetStyle(ControlStyles.AllPaintingInWmPaint | 
-				ControlStyles.OptimizedDoubleBuffer, true);
 
 			ShowNewForm(null, EventArgs.Empty);
 
 			if (this.MdiChildren.Length == 1) {
 				this.MdiChildren[0].WindowState = FormWindowState.Maximized;
 			}
-
-			timer.Enabled = true;
-			timer.Tick += delegate {
-				progressDisk.Value = (progressDisk.Value + 1) % 12;
-			};
-
-			this.Width = 500;
-			this.Height = 500;
 		}
 
 		private void ShowNewForm(object sender, EventArgs e) {
 			// Create a new instance of the child form.
 			MdiChild childForm = new MdiChild();
+
 			// Make it a child of this MDI form before showing it.
 			childForm.MdiParent = this;
 			childForm.Show();
@@ -62,19 +47,6 @@ namespace SharpFile {
 			childForm.Child.OnGetImageIndex += delegate(FileSystemInfo fsi, DriveType driveType) {
 				return IconManager.GetImageIndex(fsi, ImageList, driveType);
 			};
-		}
-
-		protected override void OnResize(EventArgs e) {
-			base.OnResize(e);
-
-			this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
-				base.ClientSize.Height - 18);
-		}
-
-		public ImageList ImageList {
-			get {
-				return settings.ImageList;
-			}
 		}
 
 		private void OpenFile(object sender, EventArgs e) {

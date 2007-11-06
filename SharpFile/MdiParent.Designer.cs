@@ -62,12 +62,8 @@ namespace SharpFile
 			this.searchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.statusStrip = new System.Windows.Forms.StatusStrip();
-			this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
 			this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.progressDisk = new ProgressDisk.ProgressDisk();
 			this.menuStrip.SuspendLayout();
-			this.statusStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip
@@ -334,53 +330,17 @@ namespace SharpFile
 			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
 			this.aboutToolStripMenuItem.Text = "&About ...";
 			// 
-			// statusStrip
-			// 
-			this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatus});
-			this.statusStrip.Location = new System.Drawing.Point(0, 431);
-			this.statusStrip.Name = "statusStrip";
-			this.statusStrip.Size = new System.Drawing.Size(632, 22);
-			this.statusStrip.TabIndex = 2;
-			this.statusStrip.Text = "StatusStrip";
-			// 
-			// toolStripStatus
-			// 
-			this.toolStripStatus.Name = "toolStripStatus";
-			this.toolStripStatus.Size = new System.Drawing.Size(0, 17);
-			// 
-			// progressDisk
-			// 
-			this.progressDisk.ActiveForeColor1 = System.Drawing.Color.LightGray;
-			this.progressDisk.ActiveForeColor2 = System.Drawing.Color.White;
-			this.progressDisk.BackGroundColor = System.Drawing.Color.Transparent;
-			this.progressDisk.BlockSize = ProgressDisk.BlockSize.Medium;
-			this.progressDisk.InactiveForeColor1 = System.Drawing.Color.DimGray;
-			this.progressDisk.InactiveForeColor2 = System.Drawing.Color.DarkGray;
-			this.progressDisk.Location = new System.Drawing.Point(597, 435);
-			this.progressDisk.Name = "progressDisk";
-			this.progressDisk.Size = new System.Drawing.Size(16, 16);
-			this.progressDisk.SquareSize = 16;
-			this.progressDisk.TabIndex = 4;
-			this.progressDisk.Value = 9;
-			// 
 			// MdiParent
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(632, 453);
-			this.Controls.Add(this.progressDisk);
-			this.Controls.Add(this.statusStrip);
 			this.Controls.Add(this.menuStrip);
-			this.DoubleBuffered = true;
 			this.IsMdiContainer = true;
 			this.MainMenuStrip = this.menuStrip;
-			this.Name = "MdiParent";
 			this.Text = "SharpFile";
 			this.menuStrip.ResumeLayout(false);
 			this.menuStrip.PerformLayout();
-			this.statusStrip.ResumeLayout(false);
-			this.statusStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -389,12 +349,12 @@ namespace SharpFile
 
 
 		private System.Windows.Forms.MenuStrip menuStrip;
-		private System.Windows.Forms.StatusStrip statusStrip;
+		//private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatus;
+		//private System.Windows.Forms.ToolStripStatusLabel toolStripStatus;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tileHorizontalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileMenu;
@@ -422,7 +382,7 @@ namespace SharpFile
         private System.Windows.Forms.ToolStripMenuItem indexToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem searchToolStripMenuItem;
 		private System.Windows.Forms.ToolTip ToolTip;
-		private ProgressDisk.ProgressDisk progressDisk;
+		//private ProgressDisk.ProgressDisk progressDisk;
     }
 }
 

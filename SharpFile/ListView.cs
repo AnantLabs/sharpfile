@@ -213,26 +213,6 @@ namespace SharpFile {
 		}
 
 		/// <summary>
-		/// Gets the selected paths.
-		/// </summary>
-		private List<string> getSelectedPaths() {
-			if (this.SelectedItems.Count == 0) {
-				return new List<string>(0);
-			}
-
-			// Get an array of the listview items.
-			ListViewItem[] itemArray = new ListViewItem[this.SelectedItems.Count];
-			this.SelectedItems.CopyTo(itemArray, 0);
-
-			// Convert the listviewitem array into a string array of the paths.
-			string[] nameArray = Array.ConvertAll<ListViewItem, string>(itemArray, delegate(ListViewItem item) {
-				return item.Name;
-			});
-
-			return new List<string>(nameArray);
-		}
-
-		/// <summary>
 		/// Displays the right-click context menu.
 		/// </summary>
 		private void listView_MouseUp(object sender, MouseEventArgs e) {
@@ -248,12 +228,6 @@ namespace SharpFile {
 					contextMenuResult = m.PopupMenu(this.SelectedItems[0].Name, this.Handle);
 				} else {
 					contextMenuResult = m.PopupMenu(Path, this.Handle);
-				}
-
-				// Update the file listing.
-				if (contextMenuResult != ShellContextMenu.ContextMenuResult.NoUserFeedback &&
-					contextMenuResult != ShellContextMenu.ContextMenuResult.ContextMenuError) {
-					UpdateListView(true);
 				}
 			}
 		}
@@ -557,28 +531,30 @@ namespace SharpFile {
 			int fileCount = 0;
 			int folderCount = 0;
 
-			try {
-				// Create a new listview item with the display name.
-				if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
-					ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
-					int listViewIndex = 0;
-					listViewIndex = getListViewIndex(item);
+			if (fileSystemInfo != null) {
+				try {
+					// Create a new listview item with the display name.
+					if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
+						ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
+						int listViewIndex = 0;
+						listViewIndex = getListViewIndex(item);
 
-					if (listViewIndex == -1) {
-						this.Items.Insert(0, item);
-					} else {
-						this.Items.Insert(listViewIndex, item);
+						if (listViewIndex == -1) {
+							this.Items.Insert(0, item);
+						} else {
+							this.Items.Insert(listViewIndex, item);
+						}
 					}
+
+					// Basic stuff that should happen everytime files are shown.
+					this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+					UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+						folderCount,
+						fileCount));
+				} catch (Exception ex) {
+					MessageBox.Show(ex.Message + ex.StackTrace);
 				}
-
-				// Basic stuff that should happen everytime files are shown.
-				this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-				UpdateStatus(string.Format("Folders: {0}; Files: {1}",
-					folderCount,
-					fileCount));
-			} catch (Exception ex) {
-				MessageBox.Show(ex.Message + ex.StackTrace);
 			}
 		}
 
@@ -665,6 +641,26 @@ namespace SharpFile {
 			item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortDateString());
 			item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortTimeString());
 			return item;
+		}
+
+		/// <summary>
+		/// Gets the selected paths.
+		/// </summary>
+		private List<string> getSelectedPaths() {
+			if (this.SelectedItems.Count == 0) {
+				return new List<string>(0);
+			}
+
+			// Get an array of the listview items.
+			ListViewItem[] itemArray = new ListViewItem[this.SelectedItems.Count];
+			this.SelectedItems.CopyTo(itemArray, 0);
+
+			// Convert the listviewitem array into a string array of the paths.
+			string[] nameArray = Array.ConvertAll<ListViewItem, string>(itemArray, delegate(ListViewItem item) {
+				return item.Name;
+			});
+
+			return new List<string>(nameArray);
 		}
 		#endregion
 
