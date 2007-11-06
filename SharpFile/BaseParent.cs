@@ -70,6 +70,8 @@ namespace SharpFile {
 			this.toolStripStatus.Size = new System.Drawing.Size(0, 10);
 			this.toolStripStatus.Dock = DockStyle.Bottom;
 
+			// Add the SplitContainer if necessary. This is required to be here, 
+			// otherwise the listview gets cut off by the statusbar.
 			if (settings.ParentType == ParentType.Dual) {
 				this.splitContainer = new SplitContainer();
 				this.splitContainer.Dock = DockStyle.Fill;

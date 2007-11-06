@@ -241,41 +241,32 @@ namespace SharpFile {
 				return;
 			}
 
-			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-			foreach (string file in files) {
-				string dest = Path + "\\" + System.IO.Path.GetFileName(file);
-				bool isFolder = Directory.Exists(file);
-				bool isFile = File.Exists(file);
+			string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
+			foreach (string fileDrop in fileDrops) {
+				FileSystemInfo fsi = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
 
-				// Ignore if it doesn't exist.
-				if (!isFolder && !isFile) {
-					continue;
-				}
+				if (fsi != null) {
+					string destination = string.Format(@"{0}\{1}",
+						Path,
+						fsi.Name);
 
-				try {
-					switch (e.Effect) {
-						case DragDropEffects.Copy:
-							// TODO: Need to handle folders.
-							if (isFile) {
-								File.Copy(file, dest, false);
-							}
-							break;
-						case DragDropEffects.Move:
-							// TODO: Need to handle folders.
-							if (isFile) {
-								File.Move(file, dest);
-							}
-							break;
-						case DragDropEffects.Link:
-							// TODO: Need to handle links.
-							break;
+					try {
+						switch (e.Effect) {
+							case DragDropEffects.Copy:
+								FileSystemInfoFactory.Copy(fsi, destination);
+								break;
+							case DragDropEffects.Move:
+								FileSystemInfoFactory.Move(fsi, destination);
+								break;
+							case DragDropEffects.Link:
+								// TODO: Need to handle links.
+								break;
+						}
+					} catch (IOException ex) {
+						MessageBox.Show(this, "Failed to perform the specified operation:\n\n" + ex.Message, "File operation failed", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 					}
-				} catch (IOException ex) {
-					MessageBox.Show(this, "Failed to perform the specified operation:\n\n" + ex.Message, "File operation failed", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 				}
 			}
-
-			UpdateListView(true);
 		}
 
 		/// <summary>
@@ -331,8 +322,6 @@ namespace SharpFile {
 			if (paths.Count > 0) {
 				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), 
 					DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
-
-				UpdateListView(true);
 			}
 		}
 
@@ -355,22 +344,26 @@ namespace SharpFile {
 		void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = this.Items[e.Item];
-				FileSystemInfo fileSystemInfo = (FileSystemInfo)item.Tag;
+				FileSystemInfo fsi = (FileSystemInfo)item.Tag;
 
-				string source = string.Format("{0}{1}",
-					fileSystemInfo.Path,
-					item.Text);
+				//string source = string.Format("{0}{1}",
+				//    fileSystemInfo.Path,
+				//    item.Text);
 
 				string destination = string.Format("{0}{1}",
-					fileSystemInfo.Path,
+					fsi.Path,
 					e.Label);
 
 				try {
+					FileSystemInfoFactory.Move(fsi, destination);
+
+					/*
 					if (fileSystemInfo is FileInfo) {
 						File.Move(source, destination);
 					} else if (fileSystemInfo is DirectoryInfo) {
 						Directory.Move(source, destination);
 					}
+					*/
 				} catch (Exception ex) {
 					e.CancelEdit = true;
 					MessageBox.Show(ex.Message);

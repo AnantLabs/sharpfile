@@ -1,5 +1,3 @@
-using System;
-
 namespace SharpFile.IO {
 	public static class File {
 		public static bool Exists(string path) {
