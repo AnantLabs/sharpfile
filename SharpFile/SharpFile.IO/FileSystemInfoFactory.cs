@@ -39,9 +39,9 @@ namespace SharpFile.IO {
 		/// <param name="destination">The full destination path for the file or directory.</param>
 		public static void Copy(FileSystemInfo fsi, string destination) {
 			if (fsi is DirectoryInfo) {
-				Directory.Copy(fsi.FullPath, destination);
+				Directory.Copy((DirectoryInfo)fsi, destination);
 			} else if (fsi is FileInfo) {
-				File.Copy(fsi.FullPath, destination, false);
+				File.Copy((FileInfo)fsi, destination, false);
 			} else {
 				throw new System.Exception("Type is not valid: " + fsi.GetType());
 			}
@@ -54,9 +54,9 @@ namespace SharpFile.IO {
 		/// <param name="destination">The full destination path for the file or directory.</param>
 		public static void Move(FileSystemInfo fsi, string destination) {
 			if (fsi is DirectoryInfo) {
-				Directory.Move(fsi.FullPath, destination);
+				Directory.Move((DirectoryInfo)fsi, destination);
 			} else if (fsi is FileInfo) {
-				File.Move(fsi.FullPath, destination);
+				File.Move((FileInfo)fsi, destination);
 			} else {
 				throw new System.Exception("Type is not valid: " + fsi.GetType());
 			}

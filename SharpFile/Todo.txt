@@ -1,8 +1,8 @@
-- All Parent forms should inherit from one base form which does all of the settings-related stuff
 - Get rid of designers classes for some classes (at least mdichild)
-- weirdness with files not updating the listview when drag and dropping different places
-
-- drag and drop folder
+- Save the last file location
+- Save the position of the seperator for the dual file view
+- Show title of the currently selected directory in the parent
+- Add file menu to base so that dual has access to it as well; some things will be only in the mdi parent, though
 - Refresh of drive listing when new drives are entered
 - Refresh button
 - Sorting of listview
@@ -19,24 +19,21 @@
 - middle-click to close tabs, mouse wheel, ctrl-tab functionality
 - Hot-tracking listview
 - Full-row select
-- ListView should be refactored to include it's relavant code from FileBrowser -- FileSystemListBox?
 - test to make sure that filesystemwatcher events still fire even when updating the UI
-- copy/move should show progress (write bytes, as opposed to File.Copy()?) -- should it use built-in copy/move/ functionality?
+- copy/move should show progress (write bytes, as opposed to File.Copy()?) -- should it use built-in copy/move functionality?
 - Type to find (like servant salamander)
-- preview panel
-
-- Configuration (view, columns, icon size, extensions to grab icons for, length of time before refresh)
+- preview panel for some filetypes (QuickLook ?)
+- Configuration (view, columns, icon size, extensions to grab icons for)
 - Specifying columns to show in listview
 
-- ILMerge in MSBuild/csproj file
-
-BUG
-- Get rid of folder icon for root and parent directories
+BUGS
 - "System Volume Information folder" never returns any information
-- Drag and drop onto listview doesn't correctly order the item (I think this now works)
 - Filesystem events don't correctly update status bar
 
-Vista issues
+VISTA BUGS
 	No icon overlays
 	Ugly child-tab buttons (I want them flat)
 	ProgressDisk in wrong position -- needs to be attached to status bar somehow
+	
+BUILD-RELATED
+- ILMerge in MSBuild/csproj file

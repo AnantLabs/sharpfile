@@ -209,7 +209,7 @@ namespace SharpFile {
 			totalSelectedSize += size;
 
 			UpdateStatus(string.Format("Selected items: {0}",
-									General.GetHumanReadableSize(totalSelectedSize.ToString())));
+				General.GetHumanReadableSize(totalSelectedSize.ToString())));
 		}
 
 		/// <summary>
@@ -217,17 +217,17 @@ namespace SharpFile {
 		/// </summary>
 		private void listView_MouseUp(object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Right) {
-				ShellContextMenu m = new ShellContextMenu();
+				ShellContextMenu menu = new ShellContextMenu();
 				ShellContextMenu.ContextMenuResult contextMenuResult;
 
 				if (this.SelectedItems.Count > 1) {
 					List<string> paths = getSelectedPaths();
 
-					contextMenuResult = m.PopupMenu(paths, this.Handle);
+					contextMenuResult = menu.PopupMenu(paths, this.Handle);
 				} else if (this.SelectedItems.Count == 1) {
-					contextMenuResult = m.PopupMenu(this.SelectedItems[0].Name, this.Handle);
+					contextMenuResult = menu.PopupMenu(this.SelectedItems[0].Name, this.Handle);
 				} else {
-					contextMenuResult = m.PopupMenu(Path, this.Handle);
+					contextMenuResult = menu.PopupMenu(Path, this.Handle);
 				}
 			}
 		}
@@ -246,7 +246,7 @@ namespace SharpFile {
 				FileSystemInfo fsi = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
 
 				if (fsi != null) {
-					string destination = string.Format(@"{0}\{1}",
+					string destination = string.Format(@"{0}{1}",
 						Path,
 						fsi.Name);
 
@@ -264,6 +264,8 @@ namespace SharpFile {
 						}
 					} catch (IOException ex) {
 						MessageBox.Show(this, "Failed to perform the specified operation:\n\n" + ex.Message, "File operation failed", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+					} catch (Exception ex) {
+						MessageBox.Show(this, "Shit went down:\n\n" + ex.Message, "Oh no.", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 					}
 				}
 			}
@@ -320,7 +322,7 @@ namespace SharpFile {
 			List<string> paths = getSelectedPaths();
 
 			if (paths.Count > 0) {
-				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()), 
+				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()),
 					DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 			}
 		}
@@ -346,24 +348,12 @@ namespace SharpFile {
 				ListViewItem item = this.Items[e.Item];
 				FileSystemInfo fsi = (FileSystemInfo)item.Tag;
 
-				//string source = string.Format("{0}{1}",
-				//    fileSystemInfo.Path,
-				//    item.Text);
-
 				string destination = string.Format("{0}{1}",
 					fsi.Path,
 					e.Label);
 
 				try {
 					FileSystemInfoFactory.Move(fsi, destination);
-
-					/*
-					if (fileSystemInfo is FileInfo) {
-						File.Move(source, destination);
-					} else if (fileSystemInfo is DirectoryInfo) {
-						Directory.Move(source, destination);
-					}
-					*/
 				} catch (Exception ex) {
 					e.CancelEdit = true;
 					MessageBox.Show(ex.Message);
@@ -385,12 +375,13 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="path"></param>
 		public void ExecuteOrUpdate(string path, string filter) {
-			if (System.IO.File.Exists(path)) {
+			if (File.Exists(path)) {
 				Process.Start(path);
-			} else if (System.IO.Directory.Exists(path)) {
+			} else if (Directory.Exists(path)) {
 				UpdateListView(path, filter, true, true);
 			} else {
-				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
+				MessageBox.Show(string.Format("The path, {0}, looks like it is incorrect.",
+					path));
 			}
 		}
 		#endregion
@@ -431,6 +422,7 @@ namespace SharpFile {
 			}
 
 			// Get the directory information.
+			// TODO: This should be a DirectoryInfo object.
 			System.IO.DirectoryInfo directoryInfo = new System.IO.DirectoryInfo(path);
 			string directoryPath = directoryInfo.FullName;
 			directoryPath = string.Format("{0}{1}",
@@ -462,7 +454,7 @@ namespace SharpFile {
 						this.BeginUpdate();
 						if (clearListView) {
 							this.Items.Clear();
-						}						
+						}
 
 						UpdateListView(fileSystemInfoList);
 						this.EndUpdate();
@@ -569,7 +561,12 @@ namespace SharpFile {
 			int indexOffset = 0;
 			if (fsi is FileInfo) {
 				indexOffset = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-					return ((FileSystemInfo)i.Tag) is DirectoryInfo;
+					return (i.Tag is DirectoryInfo);
+				}).Length;
+			} else if (fsi is DirectoryInfo) {
+				indexOffset = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
+					return (i.Tag is ParentDirectoryInfo ||
+						i.Tag is RootDirectoryInfo);
 				}).Length;
 			}
 

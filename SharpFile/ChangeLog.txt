@@ -1,3 +1,9 @@
+0.50
+	Dual view.
+	Drag and drop re-written; directories now supported.
+	Beginnings of some settings support.
+	FIX: Updates on right-click operations now works correctly.
+
 0.40
 	Completely flicker-less listview refreshes.
 	Rename directories.
