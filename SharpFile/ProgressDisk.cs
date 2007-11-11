@@ -29,7 +29,13 @@ namespace ProgressDisk
 
 		public ProgressDisk()
 		{
-			InitializeComponent();
+			this.SuspendLayout();
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.DoubleBuffered = true;
+			this.Size = new System.Drawing.Size(50, 50);
+			this.ResumeLayout(false);
+
 			// CheckForIllegalCrossThreadCalls = false;
 			Render();
 		}

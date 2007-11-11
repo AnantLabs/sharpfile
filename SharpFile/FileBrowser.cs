@@ -15,6 +15,12 @@ namespace SharpFile {
 		private System.IO.FileSystemWatcher fileSystemWatcher;
 		private ImageList imageList;
 
+		private ToolStrip toolStrip;
+		private ToolStripSplitButton tlsDrives;
+		private ToolStripSpringTextBox tlsPath;
+		private ToolStripTextBox tlsFilter;
+		private ListView listView;
+
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
@@ -25,7 +31,63 @@ namespace SharpFile {
 		/// Filebrowser ctor.
 		/// </summary>
 		public FileBrowser() {
-			InitializeComponent();
+			this.toolStrip = new ToolStrip();
+			this.tlsDrives = new ToolStripSplitButton();
+			this.tlsPath = new ToolStripSpringTextBox();
+			this.tlsFilter = new ToolStripTextBox();
+			this.listView = new SharpFile.ListView();
+			this.toolStrip.SuspendLayout();
+			this.SuspendLayout();
+			// 
+			// toolStrip
+			// 
+			this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+				this.tlsDrives,
+				this.tlsPath,
+				this.tlsFilter});
+			this.toolStrip.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip.RenderMode = ToolStripRenderMode.System;
+			this.toolStrip.ShowItemToolTips = false;
+			this.toolStrip.Size = new System.Drawing.Size(454, 25);
+			this.toolStrip.TabIndex = 1;
+			// 
+			// tlsDrives
+			// 
+			this.tlsDrives.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.tlsDrives.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.tlsDrives.Size = new System.Drawing.Size(32, 22);
+			// 
+			// tlsPath
+			// 
+			this.tlsPath.Size = new System.Drawing.Size(100, 25);
+			// 
+			// tlsFilter
+			// 
+			this.tlsFilter.Size = new System.Drawing.Size(50, 25);
+			// 
+			// listView
+			// 
+			this.listView.AllowColumnReorder = true;
+			this.listView.AllowDrop = true;
+			this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.listView.FullRowSelect = true;
+			this.listView.LabelEdit = true;
+			this.listView.Location = new System.Drawing.Point(0, 25);
+			this.listView.Size = new System.Drawing.Size(454, 229);
+			this.listView.UseCompatibleStateImageBehavior = false;
+			this.listView.View = System.Windows.Forms.View.Details;
+			// 
+			// FileBrowser
+			// 
+			this.Controls.Add(this.listView);
+			this.Controls.Add(this.toolStrip);
+			this.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.toolStrip.ResumeLayout(false);
+			this.toolStrip.PerformLayout();
+			this.ResumeLayout(false);
+			this.PerformLayout();
+
 			initializeComponent();
 			UpdateDriveListing();
 		}

@@ -19,8 +19,24 @@ namespace SharpFile {
 		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
+		private TabControl tabControl;
+
 		public Child() {
-			InitializeComponent();
+			this.tabControl = new SharpFile.TabControl();
+			this.SuspendLayout();
+			// 
+			// tabControl
+			// 
+			this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tabControl.IsVisible = true;
+			// 
+			// Child
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.tabControl);
+			this.ResumeLayout(false);
+
 			AddTab();
 		}
 

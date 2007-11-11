@@ -6,6 +6,8 @@ using SharpFile.UI;
 
 namespace SharpFile {
 	public partial class DualParent : BaseParent {
+		protected SplitContainer splitContainer;
+
 		public DualParent(Settings settings) : base(settings) {
 			Child child1 = new Child();
 			child1.TabControl.Appearance = TabAppearance.FlatButtons;
@@ -63,6 +65,16 @@ namespace SharpFile {
 
 			splitContainer.Panel1.Controls.Add(child1);
 			splitContainer.Panel2.Controls.Add(child2);
+		}
+
+		public override void addControls() {
+			this.splitContainer = new SplitContainer();
+			this.splitContainer.Dock = DockStyle.Fill;
+			this.splitContainer.Size = new System.Drawing.Size(641, 364);
+			this.splitContainer.SplitterDistance = 318;
+			this.Controls.Add(this.splitContainer);
+
+			base.addControls();
 		}
 	}
 }

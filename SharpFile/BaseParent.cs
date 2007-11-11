@@ -10,7 +10,6 @@ namespace SharpFile {
 		protected ProgressDisk.ProgressDisk progressDisk = new ProgressDisk.ProgressDisk();
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
-		protected SplitContainer splitContainer;
 
 		public BaseParent(Settings settings) {
 			this.settings = settings;
@@ -70,21 +69,16 @@ namespace SharpFile {
 			this.toolStripStatus.Size = new System.Drawing.Size(0, 10);
 			this.toolStripStatus.Dock = DockStyle.Bottom;
 
-			// Add the SplitContainer if necessary. This is required to be here, 
-			// otherwise the listview gets cut off by the statusbar.
-			if (settings.ParentType == ParentType.Dual) {
-				this.splitContainer = new SplitContainer();
-				this.splitContainer.Dock = DockStyle.Fill;
-				this.splitContainer.Size = new System.Drawing.Size(641, 364);
-				this.splitContainer.SplitterDistance = 318;
-				this.Controls.Add(this.splitContainer);
-			}
+			addControls();
 
 			this.Controls.Add(this.progressDisk);
 			this.Controls.Add(this.statusStrip);
 
 			this.statusStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
+		}
+
+		public virtual void addControls() {
 		}
 
 		public ImageList ImageList {

@@ -1,4 +1,3 @@
-- Get rid of designers classes for some classes (at least mdichild)
 - Save the last file location
 - Save the position of the seperator for the dual file view
 - Show title of the currently selected directory in the parent
