@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SharpFile.IO {
 	public class DirectoryInfo : FileSystemInfo {
@@ -14,6 +15,41 @@ namespace SharpFile.IO {
 			this.name = directoryInfo.Name;
 			this.lastWriteTime = directoryInfo.LastWriteTime;
 			this.fullPath = directoryInfo.FullName;
+		}
+
+		public System.IO.DirectoryInfo Parent {
+			get {
+				if (directoryInfo.Parent != null) {
+					return directoryInfo.Parent;
+				} else {
+					return null;
+				}
+			}
+		}
+
+		public IEnumerable<IResource> GetDirectories() {
+			System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
+
+			return Array.ConvertAll<System.IO.DirectoryInfo, DirectoryInfo>(directoryInfos,
+				delegate(System.IO.DirectoryInfo di) {
+					return new DirectoryInfo(di);
+				});
+		}
+
+		public IEnumerable<IResource> GetFiles(string filter) {
+			System.IO.FileInfo[] fileInfos = null;
+
+			if (string.IsNullOrEmpty(filter)) {
+				fileInfos = directoryInfo.GetFiles();
+			} else {
+				fileInfos = directoryInfo.GetFiles("*" + filter + "*", 
+					System.IO.SearchOption.TopDirectoryOnly);
+			}
+
+			return Array.ConvertAll<System.IO.FileInfo, FileSystemInfo>(fileInfos,
+				delegate(System.IO.FileInfo fi) {
+					return new FileInfo(fi);
+				});
 		}
 
 		public long GetSize() {

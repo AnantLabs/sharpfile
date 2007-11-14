@@ -16,7 +16,7 @@ namespace SharpFile {
 		private const int SHIFT = 4;
 
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
-		private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
+		private IList<IResource> selectedFileSystemInfos = new List<IResource>();
 		private long totalSelectedSize = 0;
 
 		public delegate void OnUpdateStatusDelegate(string status);
@@ -25,7 +25,7 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
+		public delegate int OnGetImageIndexDelegate(IResource fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		public delegate void OnUpdatePathDelegate(string path);
@@ -100,7 +100,7 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="fsi"></param>
 		/// <returns></returns>
-		protected int GetImageIndex(FileSystemInfo fsi, DriveType driveType) {
+		protected int GetImageIndex(IResource fsi, DriveType driveType) {
 			if (OnGetImageIndex != null) {
 				return OnGetImageIndex(fsi, driveType);
 			}
@@ -130,7 +130,7 @@ namespace SharpFile {
 					int maxIndex = 0;
 
 					foreach (ListViewItem item in this.SelectedItems) {
-						FileSystemInfo fileSystemInfo = (FileSystemInfo)item.Tag;
+						IResource fileSystemInfo = (IResource)item.Tag;
 
 						if (item.Index > maxIndex) {
 							maxIndex = item.Index;
@@ -243,7 +243,7 @@ namespace SharpFile {
 
 			string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
 			foreach (string fileDrop in fileDrops) {
-				FileSystemInfo fsi = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
+				IResource fsi = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
 
 				if (fsi != null) {
 					string destination = string.Format(@"{0}{1}",
@@ -346,10 +346,10 @@ namespace SharpFile {
 		void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = this.Items[e.Item];
-				FileSystemInfo fsi = (FileSystemInfo)item.Tag;
+				IResource fsi = (IResource)item.Tag;
 
 				string destination = string.Format("{0}{1}",
-					fsi.Path,
+					Path,
 					e.Label);
 
 				try {
@@ -423,8 +423,8 @@ namespace SharpFile {
 
 			// Get the directory information.
 			// TODO: This should be a DirectoryInfo object.
-			System.IO.DirectoryInfo directoryInfo = new System.IO.DirectoryInfo(path);
-			string directoryPath = directoryInfo.FullName;
+			DirectoryInfo directoryInfo = new DirectoryInfo(path);
+			string directoryPath = directoryInfo.FullPath;
 			directoryPath = string.Format("{0}{1}",
 				directoryPath,
 				directoryPath.EndsWith(@"\") ? string.Empty : @"\");
@@ -440,7 +440,9 @@ namespace SharpFile {
 
 					// Grab the files and report the progress to the parent.
 					backgroundWorker.ReportProgress(50);
-					e.Result = FileSystem.GetFiles(directoryInfo, filter);
+					IResourceRetriever fileRetriever = new FileRetriever();
+					e.Result = fileRetriever.Get(directoryInfo, filter);
+					//e.Result = FileSystem.GetFiles(directoryInfo, filter);
 					backgroundWorker.ReportProgress(100);
 				};
 
@@ -448,8 +450,8 @@ namespace SharpFile {
 				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
 					if (e.Error == null &&
 						e.Result != null &&
-						e.Result is IEnumerable<FileSystemInfo>) {
-						IEnumerable<FileSystemInfo> fileSystemInfoList = (IEnumerable<FileSystemInfo>)e.Result;
+						e.Result is IEnumerable<IResource>) {
+						IEnumerable<IResource> fileSystemInfoList = (IEnumerable<IResource>)e.Result;
 
 						this.BeginUpdate();
 						if (clearListView) {
@@ -483,13 +485,13 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public void UpdateListView(IEnumerable<FileSystemInfo> fileSystemInfoList) {
+		public void UpdateListView(IEnumerable<IResource> fileSystemInfoList) {
 			int fileCount = 0;
 			int folderCount = 0;
 
 			try {
 				// Create a new listview item with the display name.
-				foreach (FileSystemInfo fileSystemInfo in fileSystemInfoList) {
+				foreach (IResource fileSystemInfo in fileSystemInfoList) {
 					if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
 						ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
 						this.Items.Add(item);
@@ -512,7 +514,7 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public void UpdateListView(FileSystemInfo fileSystemInfo) {
+		public void UpdateListView(IResource fileSystemInfo) {
 			int fileCount = 0;
 			int folderCount = 0;
 
@@ -548,7 +550,7 @@ namespace SharpFile {
 		/// </summary>
 		private int getListViewIndex(ListViewItem item) {
 			// Get the filesysteminfo object from the item's tag.
-			FileSystemInfo fsi = (FileSystemInfo)item.Tag;
+			IResource fsi = (IResource)item.Tag;
 
 			// Copy the items to an array for further processing.
 			ListViewItem[] items = new ListViewItem[this.Items.Count + 1];
@@ -606,7 +608,7 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="fileSystemInfo">Filesystem information.</param>
 		/// <returns>Listview item that references the filesystem object.</returns>
-		private ListViewItem createListViewItem(FileSystemInfo fileSystemInfo, ref int fileCount, ref int folderCount) {
+		private ListViewItem createListViewItem(IResource fileSystemInfo, ref int fileCount, ref int folderCount) {
 			ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
 			item.Name = fileSystemInfo.FullPath;
 			item.Tag = fileSystemInfo;

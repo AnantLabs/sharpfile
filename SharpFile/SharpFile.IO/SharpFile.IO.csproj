@@ -41,7 +41,12 @@
     <Compile Include="FileInfo.cs" />
     <Compile Include="FileSystemInfo.cs" />
     <Compile Include="FileSystemInfoFactory.cs" />
-    <Compile Include="IOException.cs" />
+    <Compile Include="IOException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IResource.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ParentDirectoryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RootDirectoryInfo.cs" />

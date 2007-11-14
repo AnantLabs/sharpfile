@@ -21,7 +21,7 @@ namespace SharpFile {
 		private ToolStripTextBox tlsFilter;
 		private ListView listView;
 
-		public delegate int OnGetImageIndexDelegate(FileSystemInfo fsi, DriveType driveType);
+		public delegate int OnGetImageIndexDelegate(IResource fsi, DriveType driveType);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		public delegate void OnUpdatePathDelegate(string path);
@@ -97,7 +97,7 @@ namespace SharpFile {
 		/// Passes the filesystem info to any listening events.
 		/// </summary>
 		/// <returns>Image index.</returns>
-		protected int GetImageIndex(FileSystemInfo fsi, DriveType driveType) {
+		protected int GetImageIndex(IResource fsi, DriveType driveType) {
 			if (OnGetImageIndex != null) {
 				return OnGetImageIndex(fsi, driveType);
 			}
@@ -191,7 +191,7 @@ namespace SharpFile {
 		/// </summary>
 		private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
 			string path = e.FullPath;
-			FileSystemInfo fsi = FileSystemInfoFactory.GetFileSystemInfo(path);
+			IResource fsi = FileSystemInfoFactory.GetFileSystemInfo(path);
 
 			// Required to ensure the listview update occurs on the calling thread.
 			MethodInvoker updater = new MethodInvoker(delegate() {
@@ -232,38 +232,65 @@ namespace SharpFile {
 				// Anonymous method that grabs the drive information.
 				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
 					e.Result = FileSystem.GetDrives();
+					//e.Result = FileSystem.GetServers();
 				};
 
 				// Anonymous method to run after the drives are retrieved.
 				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
-					List<DriveInfo> drives = new List<DriveInfo>((IEnumerable<DriveInfo>)e.Result);
+					// TODO: Support listing servers in the drive dropdown.
+					/*
+					if (e.Error == null && !e.Cancelled && e.Result != null && e.Result is IEnumerable<string>) {
+						List<string> servers = new List<string>((IEnumerable<string>)e.Result);
 
-					tlsDrives.DropDownItems.Clear();
-					bool isLocalDiskFound = false;
+						tlsDrives.Clear();
 
-					// Create a new menu item in the dropdown for each drive.
-					foreach (DriveInfo driveInfo in drives) {
-						ToolStripMenuItem item = new ToolStripMenuItem();
-						item.Text = driveInfo.DisplayName;
-						item.Name = driveInfo.FullPath;
-						item.Tag = driveInfo;
+						// Create a new menu item in the dropdown for each drive.
+						foreach (string server in servers) {
+							ToolStripMenuItem item = new ToolStripMenuItem();
+							item.Text = server;
+							item.Name = server;
+							item.Tag = server;
 
-						int imageIndex = GetImageIndex(driveInfo, driveInfo.DriveType);
-						if (imageIndex > -1) {
-							item.Image = ImageList.Images[imageIndex];
+							//int imageIndex = GetImageIndex(driveInfo, driveInfo.DriveType);
+							//if (imageIndex > -1) {
+							//    item.Image = ImageList.Images[imageIndex];
+							//}
+
+							tlsDrives.DropDownItems.Add(item);
 						}
+					}
+					*/
 
-						tlsDrives.DropDownItems.Add(item);
+					if (e.Error == null && !e.Cancelled && e.Result != null && e.Result is IEnumerable<DriveInfo>) {
+						List<DriveInfo> drives = new List<DriveInfo>((IEnumerable<DriveInfo>)e.Result);
 
-						// Grab some information for the first fixed disk we find that is ready.
-						if (!isLocalDiskFound) {
-							if (driveInfo.DriveType == DriveType.Fixed &&
-								driveInfo.IsReady) {
-								isLocalDiskFound = true;
-								tlsDrives.Image = item.Image;
-								tlsDrives.Tag = driveInfo;
-								highlightDrive(driveInfo);
-								ExecuteOrUpdate(driveInfo.FullPath);
+						tlsDrives.DropDownItems.Clear();
+						bool isLocalDiskFound = false;
+
+						// Create a new menu item in the dropdown for each drive.
+						foreach (DriveInfo driveInfo in drives) {
+							ToolStripMenuItem item = new ToolStripMenuItem();
+							item.Text = driveInfo.DisplayName;
+							item.Name = driveInfo.FullPath;
+							item.Tag = driveInfo;
+
+							int imageIndex = GetImageIndex(driveInfo, driveInfo.DriveType);
+							if (imageIndex > -1) {
+								item.Image = ImageList.Images[imageIndex];
+							}
+
+							tlsDrives.DropDownItems.Add(item);
+
+							// Grab some information for the first fixed disk we find that is ready.
+							if (!isLocalDiskFound) {
+								if (driveInfo.DriveType == DriveType.Fixed &&
+									driveInfo.IsReady) {
+									isLocalDiskFound = true;
+									tlsDrives.Image = item.Image;
+									tlsDrives.Tag = driveInfo;
+									highlightDrive(driveInfo);
+									ExecuteOrUpdate(driveInfo.FullPath);
+								}
 							}
 						}
 					}

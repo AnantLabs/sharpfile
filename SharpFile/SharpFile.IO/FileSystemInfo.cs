@@ -1,7 +1,8 @@
 using System;
+using System.Text;
 
 namespace SharpFile.IO {
-	public abstract class FileSystemInfo {
+	public abstract class FileSystemInfo : IResource {
 		protected string displayName;
 		protected string name;
 		protected string fullPath;
@@ -60,11 +61,18 @@ namespace SharpFile.IO {
 			}
 		}
 
+		/*
+		public override int GetHashCode() {
+			// TODO: Convert the path to an int.
+			return this.fullPath;
+		}
+		*/
+
 		public override bool Equals(object obj) {
-			FileSystemInfo fileSystemInfo = obj as FileSystemInfo;
+			IResource fileSystemInfo = obj as IResource;
 
 			if (fileSystemInfo != null) {
-				if (this.fullPath == fileSystemInfo.fullPath) {
+				if (this.fullPath == fileSystemInfo.FullPath) {
 					return true;
 				} else {
 					return false;

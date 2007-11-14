@@ -31,7 +31,7 @@ namespace SharpFile.UI {
 			return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
-		public static int GetImageIndex(FileSystemInfo fileSystemInfo, ImageList imageList, DriveType driveType) {
+		public static int GetImageIndex(IResource fileSystemInfo, ImageList imageList, DriveType driveType) {
 			bool showOverlay = true;
 			int imageIndex = imageList.Images.Count;
 			string fullPath = fileSystemInfo.FullPath;
