@@ -35,7 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileRetriever.cs" />
-    <Compile Include="FileSystemEnumerator.cs" />
     <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="DriveRetriever.cs" />
     <Compile Include="IParentResourceRetriever.cs" />

@@ -31,7 +31,6 @@ namespace SharpFile.UI {
 			return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
-		//public static int GetImageIndex(IChildResource fileSystemInfo, ImageList imageList, DriveType driveType) {
 		public static int GetImageIndex(IResource fileSystemInfo, ImageList imageList) {
 			bool showOverlay = true;
 			int imageIndex = imageList.Images.Count;
@@ -69,22 +68,12 @@ namespace SharpFile.UI {
 			} else if (fileSystemInfo is DirectoryInfo) {
 				// Add the directory information into the ImageList.
 				string folderKey = fileSystemInfo.FullPath;
+				folderKey = closedFolderKey;
 
-				// Only actively probe directories when they are on a fixed drive.
-				// TODO: Specify what drive types should be actively probed.
-				//if (driveType == DriveType.Fixed) {
-				//    if (!imageList.Images.ContainsKey(folderKey)) {
-				//        Icon icon = getFolderIcon(folderKey, showOverlay);
-				//        imageList.Images.Add(folderKey, icon);
-				//    }
-				//} else {
-					folderKey = closedFolderKey;
-
-					if (!imageList.Images.ContainsKey(closedFolderKey)) {
-						Icon icon = getFolderIcon(null, false);
-						imageList.Images.Add(folderKey, icon);
-					}
-				//}
+				if (!imageList.Images.ContainsKey(closedFolderKey)) {
+					Icon icon = getFolderIcon(null, false);
+					imageList.Images.Add(folderKey, icon);
+				}
 
 				imageIndex = imageList.Images.IndexOfKey(folderKey);
 			} else if (fileSystemInfo is DriveInfo) {

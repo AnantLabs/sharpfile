@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildResourceFactory.cs" />
     <Compile Include="Directory.cs" />
     <Compile Include="DirectoryInfo.cs" />
     <Compile Include="DriveInfo.cs" />
@@ -40,7 +41,6 @@
     <Compile Include="File.cs" />
     <Compile Include="FileInfo.cs" />
     <Compile Include="FileSystemInfo.cs" />
-    <Compile Include="FileSystemInfoFactory.cs" />
     <Compile Include="IOException.cs">
       <SubType>Code</SubType>
     </Compile>

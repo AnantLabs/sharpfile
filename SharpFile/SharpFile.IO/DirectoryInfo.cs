@@ -60,6 +60,14 @@ namespace SharpFile.IO {
 			return size;
 		}
 
+		public void Copy(string destination) {
+			Directory.Copy(this, destination);
+		}
+
+		public void Move(string destination) {
+			Directory.Move(this, destination);
+		}
+
 		private long getSize(System.IO.DirectoryInfo directoryInfo) {
 			long totalSize = 0;
 

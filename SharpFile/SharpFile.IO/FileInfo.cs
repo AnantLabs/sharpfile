@@ -19,5 +19,13 @@ namespace SharpFile.IO {
 				return extension;
 			}
 		}
+
+		public void Copy(string destination) {
+			File.Copy(this, destination);
+		}
+
+		public void Move(string destination) {
+			File.Move(this, destination);
+		}
 	}
 }

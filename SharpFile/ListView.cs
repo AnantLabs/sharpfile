@@ -53,6 +53,8 @@ namespace SharpFile {
 			// Set some options on the listview.
 			this.View = View.Details;
 
+			// TODO: Columns should be set by the IChildResource properties that are actually populated.
+			// Maybe there should be a list associated with IParenttResources where the columns available are specified.
 			List<string> columns = new List<string>();
 			columns.Add("Filename");
 			columns.Add("Size");
@@ -244,20 +246,20 @@ namespace SharpFile {
 
 			string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
 			foreach (string fileDrop in fileDrops) {
-				IChildResource fsi = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
+				IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop);
 
-				if (fsi != null) {
+				if (resource != null) {
 					string destination = string.Format(@"{0}{1}",
 						Path,
-						fsi.Name);
+						resource.Name);
 
 					try {
 						switch (e.Effect) {
 							case DragDropEffects.Copy:
-								FileSystemInfoFactory.Copy(fsi, destination);
+								resource.Copy(destination);
 								break;
 							case DragDropEffects.Move:
-								FileSystemInfoFactory.Move(fsi, destination);
+								resource.Move(destination);
 								break;
 							case DragDropEffects.Link:
 								// TODO: Need to handle links.
@@ -347,14 +349,14 @@ namespace SharpFile {
 		void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = this.Items[e.Item];
-				IChildResource fsi = (IChildResource)item.Tag;
+				IChildResource resource = (IChildResource)item.Tag;
 
 				string destination = string.Format("{0}{1}",
 					Path,
 					e.Label);
 
 				try {
-					FileSystemInfoFactory.Move(fsi, destination);
+					resource.Move(destination);
 				} catch (Exception ex) {
 					e.CancelEdit = true;
 					MessageBox.Show(ex.Message);
@@ -424,6 +426,7 @@ namespace SharpFile {
 
 					// TODO: The ChildRetriever should be specified in the ParentResource.
 					IChildResourceRetriever fileRetriever = new FileRetriever();
+
 					e.Result = fileRetriever.Get(directoryInfo, filter);
 					backgroundWorker.ReportProgress(100);
 				};
@@ -643,15 +646,6 @@ namespace SharpFile {
 				return ((FileBrowser)this.Parent).Path;
 			}
 		}
-
-		/// <summary>
-		/// Current filter.
-		/// </summary>
-		//public string Filter {
-		//    get {
-		//        return ((FileBrowser)this.Parent).Filter;
-		//    }
-		//}
 
 		/// <summary>
 		/// Current FileSystemWatcher.

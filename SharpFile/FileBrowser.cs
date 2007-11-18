@@ -199,7 +199,7 @@ namespace SharpFile {
 		/// </summary>
 		private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
 			string path = e.FullPath;
-			IChildResource fsi = FileSystemInfoFactory.GetFileSystemInfo(path);
+			IChildResource resource = ChildResourceFactory.GetChildResource(path);
 
 			// Required to ensure the listview update occurs on the calling thread.
 			MethodInvoker updater = new MethodInvoker(delegate() {
@@ -208,10 +208,10 @@ namespace SharpFile {
 				switch (e.ChangeType) {
 					case System.IO.WatcherChangeTypes.Changed:
 						listView.Items.RemoveByKey(path);
-						listView.UpdateListView(fsi);
+						listView.UpdateListView(resource);
 						break;
 					case System.IO.WatcherChangeTypes.Created:
-						listView.UpdateListView(fsi);
+						listView.UpdateListView(resource);
 						break;
 					case System.IO.WatcherChangeTypes.Deleted:
 						listView.Items.RemoveByKey(path);
@@ -219,7 +219,7 @@ namespace SharpFile {
 					case System.IO.WatcherChangeTypes.Renamed:
 						string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
 						listView.Items.RemoveByKey(oldFullPath);
-						listView.UpdateListView(fsi);
+						listView.UpdateListView(resource);
 						break;
 				}
 
