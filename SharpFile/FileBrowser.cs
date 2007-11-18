@@ -5,14 +5,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
 using SharpFile.IO;
-using SharpFile.Infrastructure;
 using SharpFile.UI;
 using System.Threading;
+using SharpFile.Retrievers.IO;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {
 		private string _path;
-		//private string _filter;
 		private System.IO.FileSystemWatcher fileSystemWatcher;
 		private ImageList imageList;
 
@@ -358,15 +357,6 @@ namespace SharpFile {
 				return _path;
 			}
 		}
-
-		/// <summary>
-		/// The current filter.
-		/// </summary>
-		//public string Filter {
-		//    get {
-		//        return _filter;
-		//    }
-		//}
 
 		/// <summary>
 		/// The current FileSystemWatcher.

@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Diagnostics;
 using SharpFile.UI;
 using SharpFile.IO;
-using SharpFile.Infrastructure;
+using SharpFile.Retrievers.IO;
 using Common;
 
 namespace SharpFile {
