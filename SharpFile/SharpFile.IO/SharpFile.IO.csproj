@@ -35,41 +35,36 @@
   <ItemGroup>
     <Compile Include="ChildResourceFactory.cs" />
     <Compile Include="Directory.cs" />
-    <Compile Include="DirectoryInfo.cs" />
-    <Compile Include="DriveInfo.cs" />
+    <Compile Include="ChildResources\DirectoryInfo.cs" />
+    <Compile Include="ParentResources\DriveInfo.cs" />
     <Compile Include="DriveType.cs" />
-    <Compile Include="File.cs" />
-    <Compile Include="FileInfo.cs" />
+    <Compile Include="ChildResources\FileInfo.cs" />
     <Compile Include="FileSystemInfo.cs" />
-    <Compile Include="IChildResourceRetriever.cs" />
+    <Compile Include="Retrievers\IChildResourceRetriever.cs" />
     <Compile Include="IOException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IChildResource.cs">
+    <Compile Include="ChildResources\IChildResource.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IParentResource.cs" />
-    <Compile Include="IParentResourceRetriever.cs" />
+    <Compile Include="ParentResources\IParentResource.cs" />
+    <Compile Include="Retrievers\IParentResourceRetriever.cs" />
     <Compile Include="IResource.cs" />
-    <Compile Include="NullInfo.cs" />
-    <Compile Include="ParentDirectoryInfo.cs" />
+    <Compile Include="ParentResources\NullInfo.cs" />
+    <Compile Include="ChildResources\ParentDirectoryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Retrievers\DriveRetriever.cs" />
     <Compile Include="Retrievers\FileRetriever.cs" />
     <Compile Include="Retrievers\NullRetriever.cs" />
     <Compile Include="Retrievers\ServerRetriever.cs" />
-    <Compile Include="RootDirectoryInfo.cs" />
-    <Compile Include="ServerInfo.cs" />
+    <Compile Include="ChildResources\RootDirectoryInfo.cs" />
+    <Compile Include="ParentResources\ServerInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">
       <Project>{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}</Project>
       <Name>Common</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ChildResources\" />
-    <Folder Include="ParentResources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

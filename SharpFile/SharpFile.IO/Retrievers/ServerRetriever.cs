@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using SharpFile.IO;
+using SharpFile.ParentResources.IO;
 
 namespace SharpFile.Retrievers.IO {
 	public class ServerRetriever : IParentResourceRetriever {

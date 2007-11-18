@@ -1,4 +1,5 @@
 using System;
+using SharpFile.ParentResources.IO;
 
 namespace SharpFile.IO {
 	public interface IResource {

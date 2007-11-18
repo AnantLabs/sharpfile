@@ -1,8 +1,8 @@
 using System;
-using System.IO;
 using Common;
+using SharpFile.IO;
 
-namespace SharpFile.IO {
+namespace SharpFile.ParentResources.IO {
 	public class ServerInfo : FileSystemInfo, IParentResource {
 		private string label;
 		private string format;

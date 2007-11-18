@@ -7,6 +7,8 @@ using System.Diagnostics;
 using SharpFile.UI;
 using SharpFile.IO;
 using SharpFile.Retrievers.IO;
+using SharpFile.ChildResources.IO;
+using SharpFile.ParentResources.IO;
 using Common;
 
 namespace SharpFile {
@@ -378,10 +380,14 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="path"></param>
 		public void ExecuteOrUpdate(string path) {
-			if (File.Exists(path)) {
-				Process.Start(path);
-			} else if (Directory.Exists(path)) {
-				UpdateListView(path, string.Empty);
+			IChildResource resource = ChildResourceFactory.GetChildResource(path);
+
+			if (resource != null) {
+				if (resource is FileInfo) {
+					Process.Start(path);
+				} else if (resource is DirectoryInfo) {
+					UpdateListView(path, string.Empty);
+				}
 			} else {
 				MessageBox.Show(string.Format("The path, {0}, looks like it is incorrect.",
 					path));

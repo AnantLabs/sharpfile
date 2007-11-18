@@ -1,6 +1,6 @@
 using System;
 
-namespace SharpFile.IO {
+namespace SharpFile.ParentResources.IO {
 	public class NullInfo : IParentResource {
 		private const string displayName = "---------";
 

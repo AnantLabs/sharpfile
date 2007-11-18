@@ -1,5 +1,7 @@
 using System;
 using System.Text;
+using SharpFile.ParentResources.IO;
+using SharpFile.ChildResources.IO;
 
 namespace SharpFile.IO {
 	public abstract class FileSystemInfo {

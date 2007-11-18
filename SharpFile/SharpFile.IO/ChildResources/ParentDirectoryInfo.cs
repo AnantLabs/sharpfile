@@ -1,4 +1,4 @@
-namespace SharpFile.IO {
+namespace SharpFile.ChildResources.IO {
 	public class ParentDirectoryInfo : DirectoryInfo {
 		public new const string DisplayName = "..";
 

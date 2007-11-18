@@ -1,9 +1,9 @@
 using System;
-using System.IO;
 using Common;
+using SharpFile.IO;
 
-namespace SharpFile.IO {
-	public class DriveInfo : FileSystemInfo, SharpFile.ParentResources.IO.IParentResource {
+namespace SharpFile.ParentResources.IO {
+	public class DriveInfo :FileSystemInfo, IParentResource {
 		private string label;
 		private string format;
 		private long availableFreeSpace;

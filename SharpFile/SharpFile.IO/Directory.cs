@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using SharpFile.ChildResources.IO;
+
 namespace SharpFile.IO {
+	// TODO: Move all of this functionality to the DirectoryInfo object.
 	public static class Directory {
 		public static bool Exists(string path) {
 			return System.IO.Directory.Exists(path);
@@ -42,7 +45,8 @@ namespace SharpFile.IO {
 			}
 
 			foreach (FileInfo fileInfo in GetFiles(source)) {
-				File.Copy(fileInfo, destination + fileInfo.Name, true);
+				fileInfo.Copy(destination + fileInfo.Name);
+				//File.Copy(fileInfo, destination + fileInfo.Name, true);
 			}
 
 			foreach (DirectoryInfo directory in GetDirectories(source)) {

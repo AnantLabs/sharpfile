@@ -1,8 +1,10 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using SharpFile.IO;
 using System.Reflection;
+using SharpFile.IO;
+using SharpFile.ParentResources.IO;
+using SharpFile.ChildResources.IO;
 
 namespace SharpFile.UI {
 	public static class IconManager {

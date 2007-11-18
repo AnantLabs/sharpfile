@@ -8,6 +8,8 @@ using SharpFile.IO;
 using SharpFile.UI;
 using System.Threading;
 using SharpFile.Retrievers.IO;
+using SharpFile.ParentResources.IO;
+using SharpFile.ChildResources.IO;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {

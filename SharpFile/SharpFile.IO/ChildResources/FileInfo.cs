@@ -1,4 +1,6 @@
-namespace SharpFile.IO {
+using SharpFile.IO;
+
+namespace SharpFile.ChildResources.IO {
 	public class FileInfo : FileSystemInfo, IChildResource {
 		private string extension;
 
@@ -21,11 +23,11 @@ namespace SharpFile.IO {
 		}
 
 		public void Copy(string destination) {
-			File.Copy(this, destination);
+			System.IO.File.Copy(this.FullPath, destination, false);
 		}
 
 		public void Move(string destination) {
-			File.Move(this, destination);
+			System.IO.File.Move(this.FullPath, destination);
 		}
 	}
 }

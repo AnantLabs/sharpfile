@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using SharpFile.IO;
 
-namespace SharpFile.IO {
+namespace SharpFile.ChildResources.IO {
 	public class DirectoryInfo : FileSystemInfo, IChildResource {
 		private System.IO.DirectoryInfo directoryInfo;
 

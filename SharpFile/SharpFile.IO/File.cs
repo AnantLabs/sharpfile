@@ -1,3 +1,4 @@
+/*
 namespace SharpFile.IO {
 	public static class File {
 		public static bool Exists(string path) {
@@ -17,3 +18,4 @@ namespace SharpFile.IO {
 		}
 	}
 }
+*/
