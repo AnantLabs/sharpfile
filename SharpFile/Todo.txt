@@ -26,6 +26,10 @@
 - Specifying columns to show in listview
 
 BUGS
+- Dual view 
+	- doesn't show progress
+	- doesn't update parent with tab info
+- Update parent form with path info	
 - "System Volume Information folder" never returns any information
 - Filesystem events don't correctly update status bar
 

@@ -35,10 +35,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileRetriever.cs" />
-    <Compile Include="FileSystem.cs" />
     <Compile Include="FileSystemEnumerator.cs" />
     <Compile Include="FileSystemWatcher.cs" />
-    <Compile Include="IResourceRetriever.cs" />
+    <Compile Include="DriveRetriever.cs" />
+    <Compile Include="IParentResourceRetriever.cs" />
+    <Compile Include="IChildResourceRetriever.cs" />
+    <Compile Include="NullRetriever.cs" />
+    <Compile Include="ServerRetriever.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerEnum.cs" />
     <Compile Include="Settings.cs" />

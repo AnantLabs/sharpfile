@@ -7,13 +7,16 @@ using System.Diagnostics;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
+using System.Threading;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {
 		private string _path;
-		private string _filter;
+		//private string _filter;
 		private System.IO.FileSystemWatcher fileSystemWatcher;
 		private ImageList imageList;
+
+		private static readonly object lockObject = new object();
 
 		private ToolStrip toolStrip;
 		private ToolStripSplitButton tlsDrives;
@@ -21,7 +24,7 @@ namespace SharpFile {
 		private ToolStripTextBox tlsFilter;
 		private ListView listView;
 
-		public delegate int OnGetImageIndexDelegate(IResource fsi, DriveType driveType);
+		public delegate int OnGetImageIndexDelegate(IResource fsi);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		public delegate void OnUpdatePathDelegate(string path);
@@ -89,7 +92,12 @@ namespace SharpFile {
 			this.PerformLayout();
 
 			initializeComponent();
-			UpdateDriveListing();
+
+			List<IParentResourceRetriever> resourceRetrievers = new List<IParentResourceRetriever>();
+			resourceRetrievers.Add(new DriveRetriever());
+			resourceRetrievers.Add(new ServerRetriever());
+
+			UpdateParentListing(resourceRetrievers);
 		}
 
 		#region Delegate methods
@@ -97,9 +105,9 @@ namespace SharpFile {
 		/// Passes the filesystem info to any listening events.
 		/// </summary>
 		/// <returns>Image index.</returns>
-		protected int GetImageIndex(IResource fsi, DriveType driveType) {
+		protected int GetImageIndex(IResource fsi) {
 			if (OnGetImageIndex != null) {
-				return OnGetImageIndex(fsi, driveType);
+				return OnGetImageIndex(fsi);
 			}
 
 			return -1;
@@ -191,7 +199,7 @@ namespace SharpFile {
 		/// </summary>
 		private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
 			string path = e.FullPath;
-			IResource fsi = FileSystemInfoFactory.GetFileSystemInfo(path);
+			IChildResource fsi = FileSystemInfoFactory.GetFileSystemInfo(path);
 
 			// Required to ensure the listview update occurs on the calling thread.
 			MethodInvoker updater = new MethodInvoker(delegate() {
@@ -226,55 +234,37 @@ namespace SharpFile {
 		/// <summary>
 		/// Update the drive information contained in the drive dropdown asynchronously.
 		/// </summary>
-		public void UpdateDriveListing() {
-			// Set up a new background worker to delegate the asynchronous retrieval.
-			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-				// Anonymous method that grabs the drive information.
-				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-					e.Result = FileSystem.GetDrives();
-					//e.Result = FileSystem.GetServers();
-				};
+		public void UpdateParentListing(IEnumerable<IParentResourceRetriever> resourceRetrievers) {
+			// Clear the dropdown.
+			tlsDrives.DropDownItems.Clear();
 
-				// Anonymous method to run after the drives are retrieved.
-				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
-					// TODO: Support listing servers in the drive dropdown.
-					/*
-					if (e.Error == null && !e.Cancelled && e.Result != null && e.Result is IEnumerable<string>) {
-						List<string> servers = new List<string>((IEnumerable<string>)e.Result);
+			// Queue all of the resource retrievers onto the threadpool and set up the callback method.
+			foreach (IParentResourceRetriever resourceRetriever in resourceRetrievers) {
+				ThreadPool.QueueUserWorkItem(new WaitCallback(UpdateParentListing_Callback), resourceRetriever);
+			}
+		}
 
-						tlsDrives.Clear();
+		/// <summary>
+		/// The callback that inserts the information retrieved fromt he resource retriever into the parent dropdown.
+		/// </summary>
+		/// <param name="stateInfo">The resource retriever.</param>
+		private void UpdateParentListing_Callback(object stateInfo) {
+			lock (lockObject) {
+				if (stateInfo is IParentResourceRetriever) {
+					IParentResourceRetriever resourceRetriever = (IParentResourceRetriever)stateInfo;
+					List<IParentResource> resources = new List<IParentResource>(resourceRetriever.Get());
 
-						// Create a new menu item in the dropdown for each drive.
-						foreach (string server in servers) {
-							ToolStripMenuItem item = new ToolStripMenuItem();
-							item.Text = server;
-							item.Name = server;
-							item.Tag = server;
-
-							//int imageIndex = GetImageIndex(driveInfo, driveInfo.DriveType);
-							//if (imageIndex > -1) {
-							//    item.Image = ImageList.Images[imageIndex];
-							//}
-
-							tlsDrives.DropDownItems.Add(item);
-						}
-					}
-					*/
-
-					if (e.Error == null && !e.Cancelled && e.Result != null && e.Result is IEnumerable<DriveInfo>) {
-						List<DriveInfo> drives = new List<DriveInfo>((IEnumerable<DriveInfo>)e.Result);
-
-						tlsDrives.DropDownItems.Clear();
+					MethodInvoker updater = new MethodInvoker(delegate() {
 						bool isLocalDiskFound = false;
 
 						// Create a new menu item in the dropdown for each drive.
-						foreach (DriveInfo driveInfo in drives) {
+						foreach (IParentResource resource in resources) {
 							ToolStripMenuItem item = new ToolStripMenuItem();
-							item.Text = driveInfo.DisplayName;
-							item.Name = driveInfo.FullPath;
-							item.Tag = driveInfo;
+							item.Text = resource.DisplayName;
+							item.Name = resource.FullPath;
+							item.Tag = resource;
 
-							int imageIndex = GetImageIndex(driveInfo, driveInfo.DriveType);
+							int imageIndex = GetImageIndex(resource);
 							if (imageIndex > -1) {
 								item.Image = ImageList.Images[imageIndex];
 							}
@@ -282,7 +272,9 @@ namespace SharpFile {
 							tlsDrives.DropDownItems.Add(item);
 
 							// Grab some information for the first fixed disk we find that is ready.
-							if (!isLocalDiskFound) {
+							if (resource is DriveInfo && !isLocalDiskFound) {
+								DriveInfo driveInfo = (DriveInfo)resource;
+
 								if (driveInfo.DriveType == DriveType.Fixed &&
 									driveInfo.IsReady) {
 									isLocalDiskFound = true;
@@ -293,10 +285,10 @@ namespace SharpFile {
 								}
 							}
 						}
-					}
-				};
+					});
 
-				backgroundWorker.RunWorkerAsync();
+					this.Invoke(updater);
+				}
 			}
 		}
 
@@ -316,7 +308,12 @@ namespace SharpFile {
 			if (System.IO.File.Exists(path)) {
 				Process.Start(path);
 			} else if (System.IO.Directory.Exists(path)) {
-				listView.UpdateListView(path, tlsFilter.Text, true, true);
+				// Required to ensure the listview update occurs on the calling thread.
+				MethodInvoker updater = new MethodInvoker(delegate() {
+					listView.UpdateListView(path, tlsFilter.Text);
+				});
+
+				listView.Invoke(updater);
 			} else {
 				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
@@ -328,9 +325,9 @@ namespace SharpFile {
 		/// <summary>
 		/// Highlights the passed-in drive.
 		/// </summary>
-		private void highlightDrive(DriveInfo driveInfo) {
+		private void highlightDrive(IParentResource driveInfo) {
 			foreach (ToolStripItem item in tlsDrives.DropDownItems) {
-				if ((DriveInfo)item.Tag == driveInfo) {
+				if (item.Tag == driveInfo) {
 					item.BackColor = SystemColors.HighlightText;
 				} else {
 					item.BackColor = SystemColors.Control;
@@ -365,11 +362,11 @@ namespace SharpFile {
 		/// <summary>
 		/// The current filter.
 		/// </summary>
-		public string Filter {
-			get {
-				return _filter;
-			}
-		}
+		//public string Filter {
+		//    get {
+		//        return _filter;
+		//    }
+		//}
 
 		/// <summary>
 		/// The current FileSystemWatcher.

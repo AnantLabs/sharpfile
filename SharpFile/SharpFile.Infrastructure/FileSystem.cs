@@ -59,21 +59,21 @@ namespace SharpFile.Infrastructure {
 		//        });
 		//}
 
-		public static IEnumerable<DriveInfo> GetDrives() {
-			foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
-				yield return new DriveInfo(driveInfo);
-			}
-		}
+		//public static IEnumerable<DriveInfo> GetDrives() {
+		//    foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
+		//        yield return new DriveInfo(driveInfo);
+		//    }
+		//}
 
-		public static IEnumerable<string> GetServers() {
-			ServerEnum serverEnum = new ServerEnum(ResourceScope.RESOURCE_GLOBALNET,
-				ResourceType.RESOURCETYPE_DISK,
-				ResourceUsage.RESOURCEUSAGE_ALL,
-				ResourceDisplayType.RESOURCEDISPLAYTYPE_SERVER);
+		//public static IEnumerable<string> GetServers() {
+		//    ServerEnum serverEnum = new ServerEnum(ResourceScope.RESOURCE_GLOBALNET,
+		//        ResourceType.RESOURCETYPE_DISK,
+		//        ResourceUsage.RESOURCEUSAGE_ALL,
+		//        ResourceDisplayType.RESOURCEDISPLAYTYPE_SERVER);
 
-			foreach (string server in serverEnum) {
-				yield return server;
-			}
-		}
+		//    foreach (string server in serverEnum) {
+		//        yield return server;
+		//    }
+		//}
 	}
 }

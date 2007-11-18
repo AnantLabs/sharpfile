@@ -1,5 +1,5 @@
 namespace SharpFile.IO {
-	public class FileInfo : FileSystemInfo {
+	public class FileInfo : FileSystemInfo, IChildResource {
 		private string extension;
 
 		public FileInfo(string fileName)

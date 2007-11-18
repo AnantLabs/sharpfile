@@ -13,8 +13,8 @@ namespace SharpFile {
 			child1.TabControl.Appearance = TabAppearance.FlatButtons;
 			child1.TabControl.IsVisible = true;
 			child1.Dock = DockStyle.Fill;
-			child1.OnGetImageIndex += delegate(IResource fsi, DriveType driveType) {
-				return IconManager.GetImageIndex(fsi, ImageList, driveType);
+			child1.OnGetImageIndex += delegate(IResource fsi) {
+				return IconManager.GetImageIndex(fsi, ImageList);
 			};
 
 			child1.OnUpdateStatus += delegate(string status) {
@@ -40,8 +40,8 @@ namespace SharpFile {
 			child2.Dock = DockStyle.Fill;
 			child2.TabControl.IsVisible = true;
 			child2.TabControl.Appearance = TabAppearance.FlatButtons;
-			child2.OnGetImageIndex += delegate(IResource fsi, DriveType driveType) {
-				return IconManager.GetImageIndex(fsi, ImageList, driveType);
+			child2.OnGetImageIndex += delegate(IResource fsi) {
+				return IconManager.GetImageIndex(fsi, ImageList);
 			};
 
 			child2.OnUpdateStatus += delegate(string status) {

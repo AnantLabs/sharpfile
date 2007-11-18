@@ -2,7 +2,7 @@ using System;
 using System.Text;
 
 namespace SharpFile.IO {
-	public abstract class FileSystemInfo : IResource {
+	public abstract class FileSystemInfo {
 		protected string displayName;
 		protected string name;
 		protected string fullPath;
@@ -69,7 +69,7 @@ namespace SharpFile.IO {
 		*/
 
 		public override bool Equals(object obj) {
-			IResource fileSystemInfo = obj as IResource;
+			IChildResource fileSystemInfo = obj as IChildResource;
 
 			if (fileSystemInfo != null) {
 				if (this.fullPath == fileSystemInfo.FullPath) {

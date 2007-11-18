@@ -16,7 +16,7 @@ namespace SharpFile {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public event OnUpdateProgressDelegate OnUpdateProgress;
 
-		public delegate int OnGetImageIndexDelegate(IResource fsi, DriveType driveType);
+		public delegate int OnGetImageIndexDelegate(IResource fsi);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
 
 		private TabControl tabControl;
@@ -53,9 +53,9 @@ namespace SharpFile {
 			}
 		}
 
-		int FileBrowser_OnGetImageIndex(IResource fsi, DriveType driveType) {
+		int FileBrowser_OnGetImageIndex(IResource fsi) {
 			if (OnGetImageIndex != null) {
-				return OnGetImageIndex(fsi, driveType);
+				return OnGetImageIndex(fsi);
 			}
 
 			return -1;

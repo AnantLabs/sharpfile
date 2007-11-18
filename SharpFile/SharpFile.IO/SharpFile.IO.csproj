@@ -44,12 +44,16 @@
     <Compile Include="IOException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IResource.cs">
+    <Compile Include="IChildResource.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IParentResource.cs" />
+    <Compile Include="IResource.cs" />
+    <Compile Include="NullInfo.cs" />
     <Compile Include="ParentDirectoryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RootDirectoryInfo.cs" />
+    <Compile Include="ServerInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj">

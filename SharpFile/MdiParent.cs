@@ -44,8 +44,8 @@ namespace SharpFile {
 				}
 			};
 
-			childForm.Child.OnGetImageIndex += delegate(IResource fsi, DriveType driveType) {
-				return IconManager.GetImageIndex(fsi, ImageList, driveType);
+			childForm.Child.OnGetImageIndex += delegate(IResource fsi) {
+				return IconManager.GetImageIndex(fsi, ImageList);
 			};
 		}
 

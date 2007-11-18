@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace SharpFile.IO {
-	public class DirectoryInfo : FileSystemInfo {
+	public class DirectoryInfo : FileSystemInfo, IChildResource {
 		private System.IO.DirectoryInfo directoryInfo;
 
 		public DirectoryInfo(string path)
@@ -27,7 +27,7 @@ namespace SharpFile.IO {
 			}
 		}
 
-		public IEnumerable<IResource> GetDirectories() {
+		public IEnumerable<IChildResource> GetDirectories() {
 			System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
 
 			return Array.ConvertAll<System.IO.DirectoryInfo, DirectoryInfo>(directoryInfos,
@@ -36,7 +36,7 @@ namespace SharpFile.IO {
 				});
 		}
 
-		public IEnumerable<IResource> GetFiles(string filter) {
+		public IEnumerable<IChildResource> GetFiles(string filter) {
 			System.IO.FileInfo[] fileInfos = null;
 
 			if (string.IsNullOrEmpty(filter)) {
@@ -46,7 +46,7 @@ namespace SharpFile.IO {
 					System.IO.SearchOption.TopDirectoryOnly);
 			}
 
-			return Array.ConvertAll<System.IO.FileInfo, FileSystemInfo>(fileInfos,
+			return Array.ConvertAll<System.IO.FileInfo, FileInfo>(fileInfos,
 				delegate(System.IO.FileInfo fi) {
 					return new FileInfo(fi);
 				});

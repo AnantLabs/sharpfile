@@ -5,14 +5,15 @@ namespace SharpFile.IO {
 		/// </summary>
 		/// <param name="path">Path to retrieve the object for.</param>
 		/// <returns>A FileSystemInfo-derived object, or null if it is not valid.</returns>
-		public static IResource GetFileSystemInfo(string path) {
+		public static IChildResource GetFileSystemInfo(string path) {
 			if (Directory.Exists(path)) {
 				return new DirectoryInfo(path);
 			} else if (File.Exists(path)) {
 				return new FileInfo(path);
-			} else if (driveExists(path)) {
-				return new DriveInfo(new System.IO.DriveInfo(path));
-			}
+			} 
+			//else if (driveExists(path)) {
+			//    return new DriveInfo(new System.IO.DriveInfo(path));
+			//}
 
 			return null;
 		}
@@ -22,7 +23,7 @@ namespace SharpFile.IO {
 		/// </summary>
 		/// <param name="fsi">FileSystemInfo object.</param>
 		/// <returns>Whether or not the path exists.</returns>
-		public static bool Exists(IResource fsi) {
+		public static bool Exists(IChildResource fsi) {
 			if (fsi is DirectoryInfo) {
 				return Directory.Exists(fsi.FullPath);
 			} else if (fsi is FileInfo) {
@@ -37,7 +38,7 @@ namespace SharpFile.IO {
 		/// </summary>
 		/// <param name="fsi">FileSystemInfo object.</param>
 		/// <param name="destination">The full destination path for the file or directory.</param>
-		public static void Copy(IResource fsi, string destination) {
+		public static void Copy(IChildResource fsi, string destination) {
 			if (fsi is DirectoryInfo) {
 				Directory.Copy((DirectoryInfo)fsi, destination);
 			} else if (fsi is FileInfo) {
@@ -52,7 +53,7 @@ namespace SharpFile.IO {
 		/// </summary>
 		/// <param name="fsi">FileSystemInfo object.</param>
 		/// <param name="destination">The full destination path for the file or directory.</param>
-		public static void Move(IResource fsi, string destination) {
+		public static void Move(IChildResource fsi, string destination) {
 			if (fsi is DirectoryInfo) {
 				Directory.Move((DirectoryInfo)fsi, destination);
 			} else if (fsi is FileInfo) {
