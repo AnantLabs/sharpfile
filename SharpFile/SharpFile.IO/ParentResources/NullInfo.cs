@@ -1,6 +1,7 @@
 using System;
+using SharpFile.IO.Retrievers;
 
-namespace SharpFile.ParentResources.IO {
+namespace SharpFile.IO.ParentResources {
 	public class NullInfo : IParentResource {
 		private const string displayName = "---------";
 
@@ -32,6 +33,16 @@ namespace SharpFile.ParentResources.IO {
 		public DriveInfo Root {
 			get { 
 				throw new Exception("The method or operation is not implemented."); 
+			}
+		}
+
+		public void Execute(IView view) {
+			throw new Exception("Execute not defined.");
+		}
+
+		public IChildResourceRetriever ChildResourceRetriever {
+			get {
+				throw new Exception("ChildResourceRetriever not defined.");
 			}
 		}
 		#endregion

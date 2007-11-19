@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using SharpFile.IO.ParentResources;
 using SharpFile.IO;
-using SharpFile.ParentResources.IO;
 
-namespace SharpFile.Retrievers.IO {
+namespace SharpFile.IO.Retrievers {
 	public class DriveRetriever : IParentResourceRetriever {
 		public IEnumerable<IParentResource> Get() {
 			foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {

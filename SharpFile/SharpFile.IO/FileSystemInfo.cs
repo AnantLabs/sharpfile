@@ -1,7 +1,7 @@
 using System;
 using System.Text;
-using SharpFile.ParentResources.IO;
-using SharpFile.ChildResources.IO;
+using SharpFile.IO.ParentResources;
+using SharpFile.IO.ChildResources;
 
 namespace SharpFile.IO {
 	public abstract class FileSystemInfo {
@@ -59,7 +59,11 @@ namespace SharpFile.IO {
 
 		public string Path {
 			get {
-				return fullPath.Replace(name, string.Empty);
+				if (!fullPath.Equals(name)) {
+					return fullPath.Replace(name, string.Empty);
+				} else {
+					return fullPath;
+				}
 			}
 		}
 

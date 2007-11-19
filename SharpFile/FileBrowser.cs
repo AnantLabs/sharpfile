@@ -4,12 +4,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading;
+using SharpFile.IO.Retrievers;
+using SharpFile.IO.ParentResources;
+using SharpFile.IO.ChildResources;
 using SharpFile.IO;
 using SharpFile.UI;
-using System.Threading;
-using SharpFile.Retrievers.IO;
-using SharpFile.ParentResources.IO;
-using SharpFile.ChildResources.IO;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {
@@ -184,7 +184,8 @@ namespace SharpFile {
 			tlsDrives.Image = e.ClickedItem.Image;
 			tlsDrives.Tag = driveInfo;
 
-			ExecuteOrUpdate(driveInfo.FullPath);
+			driveInfo.Execute(listView);
+			//ExecuteOrUpdate(driveInfo.FullPath);
 			highlightDrive(driveInfo);
 		}
 
@@ -192,7 +193,9 @@ namespace SharpFile {
 		/// Refreshes the listview with the current root drive.
 		/// </summary>
 		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
-			ExecuteOrUpdate(((DriveInfo)tlsDrives.Tag).FullPath);
+			((DriveInfo)tlsDrives.Tag).Execute(listView);
+			
+			//ExecuteOrUpdate(((DriveInfo)tlsDrives.Tag).FullPath);
 		}
 
 		/// <summary>
@@ -288,7 +291,7 @@ namespace SharpFile {
 						}
 					});
 
-					this.Invoke(updater);
+					this.BeginInvoke(updater);
 				}
 			}
 		}
@@ -306,16 +309,24 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="path"></param>
 		public void ExecuteOrUpdate(string path) {
+			IChildResource resource = ChildResourceFactory.GetChildResource(path);
+
+			if (resource != null) {
+				resource.Execute(listView);
+			}
+			/*
 			if (System.IO.File.Exists(path)) {
 				Process.Start(path);
 			} else if (System.IO.Directory.Exists(path)) {
 				// Required to ensure the listview update occurs on the calling thread.
 				MethodInvoker updater = new MethodInvoker(delegate() {
-					listView.UpdateListView(path, tlsFilter.Text);
+					//listView.UpdateListView(path, tlsFilter.Text);
 				});
 
 				listView.Invoke(updater);
-			} else {
+			} 
+			 */ 
+			else {
 				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
 			}
 		}
@@ -356,7 +367,17 @@ namespace SharpFile {
 		/// </summary>
 		public string Path {
 			get {
+				if (string.IsNullOrEmpty(_path)) {
+					_path = ((DriveInfo)tlsDrives.Tag).FullPath;
+				}
+
 				return _path;
+			}
+		}
+
+		public string Filter {
+			get {
+				return tlsFilter.Text;
 			}
 		}
 

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using SharpFile.IO.ParentResources;
 using SharpFile.IO;
-using SharpFile.ParentResources.IO;
 
-namespace SharpFile.Retrievers.IO {
+namespace SharpFile.IO.Retrievers {
 	public class ServerRetriever : IParentResourceRetriever {
 		public IEnumerable<IParentResource> Get() {
 			//ServerEnum serverEnum = new ServerEnum(ResourceScope.RESOURCE_CONNECTED,

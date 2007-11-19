@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Diagnostics;
+using SharpFile.IO.Retrievers;
+using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
 using SharpFile.UI;
 using SharpFile.IO;
-using SharpFile.Retrievers.IO;
-using SharpFile.ChildResources.IO;
-using SharpFile.ParentResources.IO;
 using Common;
 
 namespace SharpFile {
-	public class ListView : System.Windows.Forms.ListView {
+	public class ListView : System.Windows.Forms.ListView, IView {
 		private const int ALT = 32;
 		private const int CTRL = 8;
 		private const int SHIFT = 4;
@@ -83,7 +83,7 @@ namespace SharpFile {
 		/// Passes the value to any listening events.
 		/// </summary>
 		/// <param name="value">Percentage value for status.</param>
-		protected void UpdateProgress(int value) {
+		public void UpdateProgress(int value) {
 			if (OnUpdateProgress != null) {
 				OnUpdateProgress(value);
 			}
@@ -93,7 +93,7 @@ namespace SharpFile {
 		/// Passes the path to any listening events.
 		/// </summary>
 		/// <param name="value">Percentage value for status.</param>
-		protected void UpdatePath(string path) {
+		public void UpdatePath(string path) {
 			if (OnUpdatePath != null) {
 				OnUpdatePath(path);
 			}
@@ -120,8 +120,11 @@ namespace SharpFile {
 		private void listView_DoubleClick(object sender, EventArgs e) {
 			if (this.SelectedItems.Count > 0) {
 				string path = this.SelectedItems[0].Name;
-				//ExecuteOrUpdate(path, Filter);
-				ExecuteOrUpdate(path);
+				IChildResource resource = ChildResourceFactory.GetChildResource(path);
+
+				if (resource != null) {
+					resource.Execute(this);
+				}
 			}
 		}
 
@@ -371,31 +374,32 @@ namespace SharpFile {
 		/// <summary>
 		/// Executes the file, or refreshes the listview for the selected directory in the path textbox.
 		/// </summary>
-		public void ExecuteOrUpdate() {
-			ExecuteOrUpdate(Path);
-		}
+		//public void ExecuteOrUpdate() {
+		//    ExecuteOrUpdate(Path);
+		//}
 
 		/// <summary>
 		/// Executes the provided file, or refreshes the listview for the provided directory.
 		/// </summary>
 		/// <param name="path"></param>
-		public void ExecuteOrUpdate(string path) {
-			IChildResource resource = ChildResourceFactory.GetChildResource(path);
+		//public void ExecuteOrUpdate(string path) {
+		//    IChildResource resource = ChildResourceFactory.GetChildResource(path);
 
-			if (resource != null) {
-				if (resource is FileInfo) {
-					Process.Start(path);
-				} else if (resource is DirectoryInfo) {
-					UpdateListView(path, string.Empty);
-				}
-			} else {
-				MessageBox.Show(string.Format("The path, {0}, looks like it is incorrect.",
-					path));
-			}
-		}
+		//    if (resource != null) {
+		//        if (resource is FileInfo) {
+		//            Process.Start(path);
+		//        } else if (resource is DirectoryInfo) {
+		//            UpdateListView(path, string.Empty);
+		//        }
+		//    } else {
+		//        MessageBox.Show(string.Format("The path, {0}, looks like it is incorrect.",
+		//            path));
+		//    }
+		//}
 		#endregion
 
 		#region UpdateListView methods.
+		/*
 		/// <summary>
 		/// Updates the listview with the specified path and filter.
 		/// </summary>
@@ -403,12 +407,12 @@ namespace SharpFile {
 		/// <param name="filter">Pattern to filter the information.</param>
 		public void UpdateListView(string path, string filter) {
 			if (this.SmallImageList == null) {
-				this.SmallImageList = IconManager.FindImageList(this.Parent);
+			    this.SmallImageList = IconManager.FindImageList(this.Parent);
 			}
 
 			// Prevents the retrieval of file information if unneccessary.
 			if (path.Equals(Path)) {
-				return;
+			    return;
 			}
 
 			// Get the directory information.
@@ -446,7 +450,7 @@ namespace SharpFile {
 
 						this.BeginUpdate();
 						this.Items.Clear();
-						UpdateListView(fileSystemInfoList);
+						UpdateView(fileSystemInfoList);
 						this.EndUpdate();
 
 						// Update some information about the current directory.
@@ -467,13 +471,18 @@ namespace SharpFile {
 				backgroundWorker.RunWorkerAsync();
 			}
 		}
+		*/
 
 		/// <summary>
 		/// Parses the file/directory information and updates the listview.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public void UpdateListView(IEnumerable<IChildResource> fileSystemInfoList) {
+		public void UpdateView(IEnumerable<IChildResource> fileSystemInfoList) {
+			if (this.SmallImageList == null) {
+				this.SmallImageList = IconManager.FindImageList(this.Parent);
+			}
+
 			int fileCount = 0;
 			int folderCount = 0;
 
@@ -644,12 +653,25 @@ namespace SharpFile {
 		}
 		#endregion
 
+		public void ClearView() {
+			this.Items.Clear();
+		}
+
 		/// <summary>
 		/// Current path.
 		/// </summary>
 		public string Path {
 			get {
 				return ((FileBrowser)this.Parent).Path;
+			}
+		}
+
+		/// <summary>
+		/// Current filter.
+		/// </summary>
+		public string Filter {
+			get {
+				return ((FileBrowser)this.Parent).Filter;
 			}
 		}
 

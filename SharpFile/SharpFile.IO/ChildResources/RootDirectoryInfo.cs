@@ -1,6 +1,6 @@
-using SharpFile.ParentResources.IO;
+using SharpFile.IO.ParentResources;
 
-namespace SharpFile.ChildResources.IO {
+namespace SharpFile.IO.ChildResources {
 	public class RootDirectoryInfo : DriveInfo {
 		public new const string DisplayName = ".";
 

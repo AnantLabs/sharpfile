@@ -1,5 +1,6 @@
 using System;
-using SharpFile.ParentResources.IO;
+using SharpFile.IO.ParentResources;
+using SharpFile.IO.Retrievers;
 
 namespace SharpFile.IO {
 	public interface IResource {
@@ -9,5 +10,8 @@ namespace SharpFile.IO {
 		long Size { get; }
 		DriveInfo Root { get; }
 		bool Equals(object obj);
+
+		void Execute(IView view);
+		IChildResourceRetriever ChildResourceRetriever { get; }
 	}
 }

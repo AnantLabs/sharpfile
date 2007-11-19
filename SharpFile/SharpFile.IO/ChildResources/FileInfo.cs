@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using SharpFile.IO;
+using SharpFile.IO.Retrievers;
 
-namespace SharpFile.ChildResources.IO {
+namespace SharpFile.IO.ChildResources {
 	public class FileInfo : FileSystemInfo, IChildResource {
 		private string extension;
 
@@ -28,6 +30,16 @@ namespace SharpFile.ChildResources.IO {
 
 		public void Move(string destination) {
 			System.IO.File.Move(this.FullPath, destination);
+		}
+
+		public void Execute(IView view) {
+			Process.Start(this.FullPath);
+		}
+
+		public IChildResourceRetriever ChildResourceRetriever {
+			get {
+				return null;
+			}
 		}
 
 		public static bool Exists(string path) {

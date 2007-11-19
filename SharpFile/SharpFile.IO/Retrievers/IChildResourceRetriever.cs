@@ -1,9 +1,9 @@
 using System.Collections.Generic;
+using SharpFile.IO.ChildResources;
 using SharpFile.IO;
-using SharpFile.ChildResources.IO;
 
-namespace SharpFile.IO {
+namespace SharpFile.IO.Retrievers {
 	public interface IChildResourceRetriever {
-		IEnumerable<IChildResource> Get(IChildResource resource, string filter);
+		IEnumerable<IChildResource> Get(IView view, IResource resource);
 	}
 }

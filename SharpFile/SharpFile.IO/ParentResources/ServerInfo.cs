@@ -1,8 +1,9 @@
 using System;
 using Common;
+using SharpFile.IO.Retrievers;
 using SharpFile.IO;
 
-namespace SharpFile.ParentResources.IO {
+namespace SharpFile.IO.ParentResources {
 	public class ServerInfo : FileSystemInfo, IParentResource {
 		private string label;
 		private string format;
@@ -46,6 +47,16 @@ namespace SharpFile.ParentResources.IO {
 		public string Format {
 			get {
 				throw new Exception("Format not defined.");
+			}
+		}
+
+		public void Execute(IView view) {
+			throw new Exception("Execute not defined.");
+		}
+
+		public IChildResourceRetriever ChildResourceRetriever {
+			get {
+				throw new Exception("ChildResourceRetriever not defined.");
 			}
 		}
 	}

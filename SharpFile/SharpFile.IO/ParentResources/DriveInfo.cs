@@ -1,9 +1,10 @@
 using System;
 using Common;
+using SharpFile.IO.Retrievers;
 using SharpFile.IO;
 
-namespace SharpFile.ParentResources.IO {
-	public class DriveInfo :FileSystemInfo, IParentResource {
+namespace SharpFile.IO.ParentResources {
+	public class DriveInfo : FileSystemInfo, IParentResource {
 		private string label;
 		private string format;
 		private long availableFreeSpace;
@@ -55,6 +56,16 @@ namespace SharpFile.ParentResources.IO {
 		public string Format {
 			get {
 				return format;
+			}
+		}
+
+		public void Execute(IView view) {
+			this.ChildResourceRetriever.Get(view, this);
+		}
+
+		public IChildResourceRetriever ChildResourceRetriever {
+			get {
+				return new FileRetriever();
 			}
 		}
 	}
