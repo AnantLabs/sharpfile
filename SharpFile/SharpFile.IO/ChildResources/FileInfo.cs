@@ -29,5 +29,9 @@ namespace SharpFile.ChildResources.IO {
 		public void Move(string destination) {
 			System.IO.File.Move(this.FullPath, destination);
 		}
+
+		public static bool Exists(string path) {
+			return System.IO.File.Exists(path);
+		}
 	}
 }

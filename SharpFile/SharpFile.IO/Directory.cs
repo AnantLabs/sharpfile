@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SharpFile.ChildResources.IO;
 
+/*
 namespace SharpFile.IO {
 	// TODO: Move all of this functionality to the DirectoryInfo object.
 	public static class Directory {
@@ -57,3 +58,4 @@ namespace SharpFile.IO {
 		}
 	}
 }
+*/

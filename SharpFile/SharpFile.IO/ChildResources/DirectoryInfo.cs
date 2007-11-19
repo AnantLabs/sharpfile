@@ -37,6 +37,10 @@ namespace SharpFile.ChildResources.IO {
 				});
 		}
 
+		public IEnumerable<IChildResource> GetFiles() {
+			return GetFiles(string.Empty);
+		}
+
 		public IEnumerable<IChildResource> GetFiles(string filter) {
 			System.IO.FileInfo[] fileInfos = null;
 
@@ -62,11 +66,37 @@ namespace SharpFile.ChildResources.IO {
 		}
 
 		public void Copy(string destination) {
-			Directory.Copy(this, destination);
+			if (!destination.EndsWith(@"\")) {
+				destination += @"\";
+			}
+
+			if (!Exists(destination)) {
+				Create(destination);
+			}
+
+			foreach (FileInfo fileInfo in GetFiles()) {
+				fileInfo.Copy(destination + fileInfo.Name);
+				//File.Copy(fileInfo, destination + fileInfo.Name, true);
+			}
+
+			foreach (DirectoryInfo directory in GetDirectories()) {
+				string subFolder = directory.Name;
+				Create(destination + @"\" + subFolder);
+				directory.Copy(destination + @"\" + subFolder);
+			}
 		}
 
 		public void Move(string destination) {
-			Directory.Move(this, destination);
+			System.IO.Directory.Move(this.FullPath, destination);
+		}
+
+		public static DirectoryInfo Create(string path) {
+			System.IO.DirectoryInfo directoryInfo = System.IO.Directory.CreateDirectory(path);
+			return new DirectoryInfo(directoryInfo);
+		}
+
+		public static bool Exists(string path) {
+			return System.IO.Directory.Exists(path);
 		}
 
 		private long getSize(System.IO.DirectoryInfo directoryInfo) {
