@@ -16,6 +16,7 @@ namespace SharpFile {
 		private string _path;
 		private System.IO.FileSystemWatcher fileSystemWatcher;
 		private ImageList imageList;
+		private bool handleCreated = false;
 
 		private static readonly object lockObject = new object();
 
@@ -139,12 +140,18 @@ namespace SharpFile {
 			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
 			this.listView.OnUpdatePath += listView_OnUpdatePath;
+			this.HandleCreated += FileBrowser_HandleCreated;
 
 			fileSystemWatcher = new System.IO.FileSystemWatcher();
 			fileSystemWatcher.Changed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Created += fileSystemWatcher_Changed;
 			fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
+		}
+
+		void FileBrowser_HandleCreated(object sender, EventArgs e)
+		{
+			handleCreated = true;
 		}
 		#endregion
 
@@ -258,7 +265,7 @@ namespace SharpFile {
 					IParentResourceRetriever resourceRetriever = (IParentResourceRetriever)stateInfo;
 					List<IParentResource> resources = new List<IParentResource>(resourceRetriever.Get());
 
-					MethodInvoker updater = new MethodInvoker(delegate() {
+					MethodInvoker updater = delegate() {
 						bool isLocalDiskFound = false;
 
 						// Create a new menu item in the dropdown for each drive.
@@ -289,9 +296,11 @@ namespace SharpFile {
 								}
 							}
 						}
-					});
+					};
 
-					this.BeginInvoke(updater);
+					if (handleCreated) {
+						this.BeginInvoke(updater);
+					}
 				}
 			}
 		}

@@ -3,8 +3,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Diagnostics;
-using SharpFile.IO.Retrievers;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
 using SharpFile.UI;
@@ -20,6 +18,7 @@ namespace SharpFile {
 		private UnitDisplay unitDisplay = UnitDisplay.Bytes;
 		private IList<IChildResource> selectedFileSystemInfos = new List<IChildResource>();
 		private long totalSelectedSize = 0;
+		private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
 
 		public delegate void OnUpdateStatusDelegate(string status);
 		public event OnUpdateStatusDelegate OnUpdateStatus;
@@ -53,6 +52,7 @@ namespace SharpFile {
 			this.AfterLabelEdit += listView_AfterLabelEdit;
 
 			// Set some options on the listview.
+			// TODO: This should be able to be set via dropdown/settings.
 			this.View = View.Details;
 
 			// TODO: Columns should be set by the IChildResource properties that are actually populated.
@@ -92,7 +92,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Passes the path to any listening events.
 		/// </summary>
-		/// <param name="value">Percentage value for status.</param>
+		/// <param name="path">Path to update.</param>
 		public void UpdatePath(string path) {
 			if (OnUpdatePath != null) {
 				OnUpdatePath(path);
@@ -473,11 +473,44 @@ namespace SharpFile {
 		}
 		*/
 
+		private void addItem(IChildResource resource, ref int fileCount, ref int folderCount) {
+			if (!itemDictionary.ContainsKey(resource.FullPath)) {
+				ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
+				itemDictionary.Add(resource.FullPath, item);
+				this.Items.Add(item);
+			}
+		}
+
+		private void insertItem(IChildResource resource, ref int fileCount, ref int folderCount)
+		{
+			//if (!itemDictionary.ContainsKey(resource.FullPath))
+			//{
+			//  ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
+			//  this.Items.Add(item);
+			//  itemDictionary.Add(resource.FullPath, item);
+			//}
+
+			if (!itemDictionary.ContainsKey(resource.FullPath))
+			{
+				ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
+				int listViewIndex = getListViewIndex(item);
+
+				if (listViewIndex == -1)
+				{
+					this.Items.Insert(0, item);
+				}
+				else
+				{
+					this.Items.Insert(listViewIndex, item);
+				}
+
+				itemDictionary.Add(resource.FullPath, item);
+			}
+		}
+
 		/// <summary>
 		/// Parses the file/directory information and updates the listview.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void UpdateView(IEnumerable<IChildResource> fileSystemInfoList) {
 			if (this.SmallImageList == null) {
 				this.SmallImageList = IconManager.FindImageList(this.Parent);
@@ -488,19 +521,16 @@ namespace SharpFile {
 
 			try {
 				// Create a new listview item with the display name.
-				foreach (IChildResource fileSystemInfo in fileSystemInfoList) {
-					if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
-						ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
-						this.Items.Add(item);
-					}
+				foreach (IChildResource resource in fileSystemInfoList) {
+					addItem(resource, ref fileCount, ref folderCount);
 				}
 
 				// Resize the columns based on the column content.
 				this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
 				UpdateStatus(string.Format("Folders: {0}; Files: {1}",
-					folderCount,
-					fileCount));
+                   folderCount,
+                   fileCount));
 			} catch (Exception ex) {
 				MessageBox.Show(ex.Message + ex.StackTrace);
 			}
@@ -509,8 +539,6 @@ namespace SharpFile {
 		/// <summary>
 		/// Parses the file/directory information and inserts the file info into the listview.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void UpdateListView(IChildResource fileSystemInfo) {
 			int fileCount = 0;
 			int folderCount = 0;
@@ -518,17 +546,7 @@ namespace SharpFile {
 			if (fileSystemInfo != null) {
 				try {
 					// Create a new listview item with the display name.
-					if (!this.Items.ContainsKey(fileSystemInfo.FullPath)) {
-						ListViewItem item = createListViewItem(fileSystemInfo, ref fileCount, ref folderCount);
-						int listViewIndex = 0;
-						listViewIndex = getListViewIndex(item);
-
-						if (listViewIndex == -1) {
-							this.Items.Insert(0, item);
-						} else {
-							this.Items.Insert(listViewIndex, item);
-						}
-					}
+					insertItem(fileSystemInfo, ref fileCount, ref folderCount);
 
 					// Basic stuff that should happen everytime files are shown.
 					this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -655,6 +673,7 @@ namespace SharpFile {
 
 		public void ClearView() {
 			this.Items.Clear();
+			this.itemDictionary.Clear();
 		}
 
 		/// <summary>
