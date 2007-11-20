@@ -292,7 +292,7 @@ namespace SharpFile {
 									tlsDrives.Image = item.Image;
 									tlsDrives.Tag = driveInfo;
 									highlightDrive(driveInfo);
-									ExecuteOrUpdate(driveInfo.FullPath);
+									ExecuteOrUpdate(driveInfo);
 								}
 							}
 						}
@@ -310,33 +310,19 @@ namespace SharpFile {
 		/// Executes the file, or refreshes the listview for the selected directory in the path textbox.
 		/// </summary>
 		public void ExecuteOrUpdate() {
-			ExecuteOrUpdate(tlsPath.Text);
+			IChildResource resource = ChildResourceFactory.GetChildResource(tlsPath.Text);
+			ExecuteOrUpdate(resource);
 		}
 
 		/// <summary>
 		/// Executes the provided file, or refreshes the listview for the provided directory.
 		/// </summary>
 		/// <param name="path"></param>
-		public void ExecuteOrUpdate(string path) {
-			IChildResource resource = ChildResourceFactory.GetChildResource(path);
-
+		public void ExecuteOrUpdate(IResource resource) {
 			if (resource != null) {
 				resource.Execute(listView);
-			}
-			/*
-			if (System.IO.File.Exists(path)) {
-				Process.Start(path);
-			} else if (System.IO.Directory.Exists(path)) {
-				// Required to ensure the listview update occurs on the calling thread.
-				MethodInvoker updater = new MethodInvoker(delegate() {
-					//listView.UpdateListView(path, tlsFilter.Text);
-				});
-
-				listView.Invoke(updater);
-			} 
-			 */ 
-			else {
-				MessageBox.Show("The path, " + path + ", looks like it is incorrect.");
+			} else {
+				MessageBox.Show("The path, " + resource.FullPath + ", looks like it is incorrect.");
 			}
 		}
 		#endregion

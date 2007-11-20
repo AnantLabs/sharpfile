@@ -35,6 +35,7 @@
   <ItemGroup>
     <Compile Include="ChildResourceFactory.cs" />
     <Compile Include="ChildResources\DirectoryInfo.cs" />
+    <Compile Include="IFileContainer.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="ParentResources\DriveInfo.cs" />
     <Compile Include="DriveType.cs" />

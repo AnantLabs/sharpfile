@@ -1,15 +1,18 @@
 using System;
-using Common;
+using System.Collections.Generic;
 using SharpFile.IO.Retrievers;
+using SharpFile.IO.ChildResources;
 using SharpFile.IO;
+using Common;
 
 namespace SharpFile.IO.ParentResources {
-	public class DriveInfo : FileSystemInfo, IParentResource {
+	public class DriveInfo : FileSystemInfo, IParentResource, IFileContainer {
 		private string label;
 		private string format;
 		private long availableFreeSpace;
 		private DriveType driveType;
 		private bool isReady;
+		private DirectoryInfo directoryInfo;
 
 		public DriveInfo(System.IO.DriveInfo driveInfo) {
 			this.name = driveInfo.Name;
@@ -61,6 +64,26 @@ namespace SharpFile.IO.ParentResources {
 
 		public void Execute(IView view) {
 			this.ChildResourceRetriever.Get(view, this);
+		}
+
+		public IEnumerable<IChildResource> GetDirectories() {
+			if (directoryInfo == null) {
+				directoryInfo = new DirectoryInfo(this.FullPath);
+			}
+
+			return directoryInfo.GetDirectories();
+		}
+
+		public IEnumerable<IChildResource> GetFiles() {
+			return GetFiles(string.Empty);
+		}
+
+		public IEnumerable<IChildResource> GetFiles(string filter) {
+			if (directoryInfo == null) {
+				directoryInfo = new DirectoryInfo(this.FullPath);
+			}
+
+			return directoryInfo.GetFiles(filter);
 		}
 
 		public IChildResourceRetriever ChildResourceRetriever {

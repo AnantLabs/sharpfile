@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SharpFile.IO.ChildResources;
+using System.IO;
 
 namespace SharpFile.IO {
 	// TODO: This might be better somewhere else. Maybe there should be an assembly just for interfaces.
@@ -12,5 +13,6 @@ namespace SharpFile.IO {
 		void EndUpdate();
 		string Path { get; }
 		string Filter { get; }
+		FileSystemWatcher FileSystemWatcher { get; }
 	}
 }

@@ -5,7 +5,7 @@ using SharpFile.IO.Retrievers;
 using SharpFile.IO;
 
 namespace SharpFile.IO.ChildResources {
-	public class DirectoryInfo : FileSystemInfo, IChildResource {
+	public class DirectoryInfo : FileSystemInfo, IChildResource, IFileContainer {
 		private System.IO.DirectoryInfo directoryInfo;
 
 		public DirectoryInfo(string path)
@@ -92,63 +92,8 @@ namespace SharpFile.IO.ChildResources {
 		}
 
 		public void Execute(IView view) {
-			/*
-			// Get the directory information.
+			// This uses the FileRetriever.
 			this.ChildResourceRetriever.Get(view, this);
-			*/
-
-			// Get the directory information.
-			DirectoryInfo directoryInfo = new DirectoryInfo(this.FullPath);
-			string directoryPath = directoryInfo.FullPath;
-			//directoryPath = string.Format("{0}{1}",
-			//    directoryPath,
-			//    directoryPath.EndsWith(@"\") ? string.Empty : @"\");
-
-			// Create another thread to get the file information asynchronously.
-			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-				backgroundWorker.WorkerReportsProgress = true;
-
-				// Anonymous method that retrieves the file information.
-				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-					// Disable the filewatcher.
-					//FileSystemWatcher.EnableRaisingEvents = false;
-
-					// Grab the files and report the progress to the parent.
-					backgroundWorker.ReportProgress(50);
-
-					e.Result = this.ChildResourceRetriever.Get(view, directoryInfo);
-					backgroundWorker.ReportProgress(100);
-				};
-
-				// Method that runs when the DoWork method is finished.
-				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
-					if (e.Error == null &&
-						e.Result != null &&
-						e.Result is IEnumerable<IChildResource>) {
-						IEnumerable<IChildResource> fileSystemInfoList = (IEnumerable<IChildResource>)e.Result;
-
-						view.BeginUpdate();
-						view.ClearView();
-						view.UpdateView(fileSystemInfoList);
-						view.EndUpdate();
-
-						// Update some information about the current directory.
-						view.UpdatePath(directoryPath);
-
-						// Set up the watcher.
-						//FileSystemWatcher.Path = directoryPath;
-						//FileSystemWatcher.Filter = filter;
-						//FileSystemWatcher.EnableRaisingEvents = true;
-					}
-				};
-
-				// Anonymous method that updates the status to the parent form.
-				backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
-					view.UpdateProgress(e.ProgressPercentage);
-				};
-
-				backgroundWorker.RunWorkerAsync();
-			}
 		}
 
 		public static DirectoryInfo Create(string path) {
