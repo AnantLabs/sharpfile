@@ -88,8 +88,8 @@ namespace SharpFile {
 		}
 
 		protected override void onFormLoad() {
-			//Forms.SetProperty<string>(this.splitContainer.Panel1, "Path", settings.LeftPath);
-			//Forms.SetProperty<string>(this.splitContainer.Panel2, "Path", settings.RightPath);
+			Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", settings.LeftPath);
+			Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", settings.RightPath);
 
 			base.onFormLoad();
 		}

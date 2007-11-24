@@ -14,7 +14,6 @@ using Common;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {
-		private string _path;
 		private System.IO.FileSystemWatcher fileSystemWatcher;
 		private ImageList imageList;
 		private bool handleCreated = false;
@@ -119,7 +118,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Passes the path to any listening events.
 		/// </summary>
-		/// <param name="value">Percentage value for status.</param>
+		/// <param name="path">Path.</param>
 		protected void UpdatePath(string path) {
 			if (OnUpdatePath != null) {
 				OnUpdatePath(path);
@@ -163,7 +162,6 @@ namespace SharpFile {
 		private void listView_OnUpdatePath(string path) {
 			this.Text = path;
 			this.tlsPath.Text = path;
-			_path = path;
 
 			UpdatePath(path);
 		}
@@ -188,22 +186,19 @@ namespace SharpFile {
 		/// Refreshes the listview when a different drive is selected.
 		/// </summary>
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			DriveInfo driveInfo = (DriveInfo)e.ClickedItem.Tag;
-			tlsDrives.Image = e.ClickedItem.Image;
-			tlsDrives.Tag = driveInfo;
+			IParentResource resource = (IParentResource)e.ClickedItem.Tag;
 
-			driveInfo.Execute(listView);
-			//ExecuteOrUpdate(driveInfo.FullPath);
-			highlightDrive(driveInfo);
+			resource.Execute(listView);
+			highlightParentResource(resource, e.ClickedItem.Image);
 		}
 
 		/// <summary>
 		/// Refreshes the listview with the current root drive.
 		/// </summary>
 		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
-			((DriveInfo)tlsDrives.Tag).Execute(listView);
-			
-			//ExecuteOrUpdate(((DriveInfo)tlsDrives.Tag).FullPath);
+			IParentResource resource = (IParentResource)tlsDrives.Tag;
+
+			resource.Execute(listView);
 		}
 
 		/// <summary>
@@ -283,6 +278,46 @@ namespace SharpFile {
 
 							tlsDrives.DropDownItems.Add(item);
 
+							if (!isLocalDiskFound) {
+								if (!string.IsNullOrEmpty(Path)) {
+									IChildResource childResource = ChildResourceFactory.GetChildResource(Path);
+
+									if (childResource != null &&
+										childResource.Root.FullPath == resource.FullPath) {
+										isLocalDiskFound = true;
+
+										highlightParentResource(childResource.Root, item.Image);
+										ExecuteOrUpdate(childResource);
+									}
+								}
+
+								if (!isLocalDiskFound && resource is DriveInfo) {
+									DriveInfo driveInfo = (DriveInfo)resource;
+
+									if (driveInfo.DriveType == DriveType.Fixed &&
+										driveInfo.IsReady) {
+										isLocalDiskFound = true;
+
+										highlightParentResource(driveInfo, item.Image);
+										ExecuteOrUpdate(driveInfo);
+									}
+								}
+							}
+
+							/*
+							if (resource is DriveInfo && !string.IsNullOrEmpty(this.tlsPath.Text) && !isLocalDiskFound) {
+								DriveInfo driveInfo = (DriveInfo)resource;
+								IChildResource childResource = ChildResourceFactory.GetChildResource(this.tlsPath.Text);
+
+								if (childResource != null && childResource.Root.FullPath == driveInfo.FullPath) {
+									isLocalDiskFound = true;
+									highlightDrive(childResource.Root);
+									tlsDrives.Image = item.Image;
+									tlsDrives.Tag = childResource.Root;
+									ExecuteOrUpdate(childResource);
+								}
+							}
+
 							// Grab some information for the first fixed disk we find that is ready.
 							if (resource is DriveInfo && !isLocalDiskFound) {
 								DriveInfo driveInfo = (DriveInfo)resource;
@@ -296,6 +331,7 @@ namespace SharpFile {
 									ExecuteOrUpdate(driveInfo);
 								}
 							}
+							*/
 						}
 					};
 
@@ -333,10 +369,13 @@ namespace SharpFile {
 		/// <summary>
 		/// Highlights the passed-in drive.
 		/// </summary>
-		private void highlightDrive(IParentResource driveInfo) {
+		private void highlightParentResource(IParentResource resource, Image image) {
 			foreach (ToolStripItem item in tlsDrives.DropDownItems) {
-				if (item.Tag == driveInfo) {
+				if (((IParentResource)item.Tag).FullPath == resource.FullPath) {
 					item.BackColor = SystemColors.HighlightText;
+					
+					tlsDrives.Image = image;
+					tlsDrives.Tag = (DriveInfo)resource;
 				} else {
 					item.BackColor = SystemColors.Control;
 				}
@@ -363,11 +402,13 @@ namespace SharpFile {
 		/// </summary>
 		public string Path {
 			get {
-				if (string.IsNullOrEmpty(_path)) {
-					_path = ((DriveInfo)tlsDrives.Tag).FullPath;
+				if (string.IsNullOrEmpty(this.tlsPath.Text)) {
+					this.tlsPath.Text = ((DriveInfo)tlsDrives.Tag).FullPath;
 				}
 
-				return _path;
+				return this.tlsPath.Text;
+			} set {
+				this.tlsPath.Text = value;
 			}
 		}
 
