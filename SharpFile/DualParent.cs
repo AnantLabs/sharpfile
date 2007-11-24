@@ -81,8 +81,8 @@ namespace SharpFile {
 		}
 
 		protected override void onFormClosing() {
-			settings.LeftPath = Forms.GetProperty<string>(this.splitContainer.Panel1, "Path");
-			settings.RightPath = Forms.GetProperty<string>(this.splitContainer.Panel2, "Path");
+			settings.LeftPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
+			settings.RightPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
 
 			base.onFormClosing();
 		}

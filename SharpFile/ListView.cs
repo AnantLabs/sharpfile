@@ -513,7 +513,7 @@ namespace SharpFile {
 		/// </summary>
 		public void UpdateView(IEnumerable<IChildResource> fileSystemInfoList) {
 			if (this.SmallImageList == null) {
-				this.SmallImageList = Forms.FindProperty<ImageList>(this.Parent, "ImageList");
+				this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
 			}
 
 			int fileCount = 0;

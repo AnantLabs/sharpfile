@@ -351,7 +351,7 @@ namespace SharpFile {
 		public ImageList ImageList {
 			get {
 				if (imageList == null) {
-					imageList = Forms.FindProperty<ImageList>(this.Parent, "ImageList");
+					imageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
 				}
 
 				return imageList;
