@@ -171,7 +171,14 @@ namespace SharpFile {
 		/// </summary>
 		private void tlsPath_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
-				ExecuteOrUpdate();
+				IChildResource resource = ChildResourceFactory.GetChildResource(Path);
+
+				if (resource != null) {
+					resource.Execute(listView);
+				} else {
+					MessageBox.Show("The path, " + Path + ", looks like it is incorrect.");
+					Path = this.Text;
+				}
 			}
 		}
 
@@ -179,7 +186,8 @@ namespace SharpFile {
 		/// Refreshes the listview when Enter is pressed in the filter textbox.
 		/// </summary>
 		void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
-			ExecuteOrUpdate();
+			IChildResource resource = ChildResourceFactory.GetChildResource(Path);
+			resource.Execute(listView);
 		}
 
 		/// <summary>
@@ -278,7 +286,9 @@ namespace SharpFile {
 
 							tlsDrives.DropDownItems.Add(item);
 
+							// Gets information about the path already specified or the drive currently being added.
 							if (!isLocalDiskFound) {
+								// If the path has been defined and it is valid, then grab information about it.
 								if (!string.IsNullOrEmpty(Path)) {
 									IChildResource childResource = ChildResourceFactory.GetChildResource(Path);
 
@@ -287,10 +297,11 @@ namespace SharpFile {
 										isLocalDiskFound = true;
 
 										highlightParentResource(childResource.Root, item.Image);
-										ExecuteOrUpdate(childResource);
+										childResource.Execute(listView);
 									}
 								}
 
+								// If the view hasn't been updated and the resource is a drive, then grab some information about it.
 								if (!isLocalDiskFound && resource is DriveInfo) {
 									DriveInfo driveInfo = (DriveInfo)resource;
 
@@ -299,39 +310,10 @@ namespace SharpFile {
 										isLocalDiskFound = true;
 
 										highlightParentResource(driveInfo, item.Image);
-										ExecuteOrUpdate(driveInfo);
+										driveInfo.Execute(listView);
 									}
 								}
 							}
-
-							/*
-							if (resource is DriveInfo && !string.IsNullOrEmpty(this.tlsPath.Text) && !isLocalDiskFound) {
-								DriveInfo driveInfo = (DriveInfo)resource;
-								IChildResource childResource = ChildResourceFactory.GetChildResource(this.tlsPath.Text);
-
-								if (childResource != null && childResource.Root.FullPath == driveInfo.FullPath) {
-									isLocalDiskFound = true;
-									highlightDrive(childResource.Root);
-									tlsDrives.Image = item.Image;
-									tlsDrives.Tag = childResource.Root;
-									ExecuteOrUpdate(childResource);
-								}
-							}
-
-							// Grab some information for the first fixed disk we find that is ready.
-							if (resource is DriveInfo && !isLocalDiskFound) {
-								DriveInfo driveInfo = (DriveInfo)resource;
-
-								if (driveInfo.DriveType == DriveType.Fixed &&
-									driveInfo.IsReady) {
-									isLocalDiskFound = true;
-									tlsDrives.Image = item.Image;
-									tlsDrives.Tag = driveInfo;
-									highlightDrive(driveInfo);
-									ExecuteOrUpdate(driveInfo);
-								}
-							}
-							*/
 						}
 					};
 
@@ -341,28 +323,6 @@ namespace SharpFile {
 				}
 			}
 		}
-
-		#region ExecuteOrUpdate methods.
-		/// <summary>
-		/// Executes the file, or refreshes the listview for the selected directory in the path textbox.
-		/// </summary>
-		public void ExecuteOrUpdate() {
-			IChildResource resource = ChildResourceFactory.GetChildResource(tlsPath.Text);
-			ExecuteOrUpdate(resource);
-		}
-
-		/// <summary>
-		/// Executes the provided file, or refreshes the listview for the provided directory.
-		/// </summary>
-		/// <param name="path"></param>
-		public void ExecuteOrUpdate(IResource resource) {
-			if (resource != null) {
-				resource.Execute(listView);
-			} else {
-				MessageBox.Show("The path, " + resource.FullPath + ", looks like it is incorrect.");
-			}
-		}
-		#endregion
 		#endregion
 
 		#region Private methods.
@@ -371,11 +331,13 @@ namespace SharpFile {
 		/// </summary>
 		private void highlightParentResource(IParentResource resource, Image image) {
 			foreach (ToolStripItem item in tlsDrives.DropDownItems) {
-				if (((IParentResource)item.Tag).FullPath == resource.FullPath) {
+				IParentResource parentResource = ((IParentResource)item.Tag);
+
+				if (parentResource.FullPath == resource.FullPath) {
 					item.BackColor = SystemColors.HighlightText;
 					
 					tlsDrives.Image = image;
-					tlsDrives.Tag = (DriveInfo)resource;
+					tlsDrives.Tag = resource;
 				} else {
 					item.BackColor = SystemColors.Control;
 				}

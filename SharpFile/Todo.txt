@@ -1,10 +1,19 @@
-- Save the last file location
+BUGS
+- "System Volume Information folder" never returns any information
+- Filesystem events don't correctly update status bar
+- Drag drop weirdness
+- Network drive (z:) not sorted correctly
+- Multiple filewatcher events fire on one file operation -- catch them all and just update once?
+
+TODO
+- Update parent form with path info	
+- Log4net support to log detailed debug logs
 - Save the position of the seperator for the dual file view
 - Show title of the currently selected directory in the parent
 - Add file menu to base so that dual has access to it as well; some things will be only in the mdi parent, though
 - Refresh of drive listing when new drives are entered
 - Refresh button
-- Sorting of listview
+- Sorting of listview by column
 - Able to cancel long-running operations (esc?)
 - Drag-and-drop support for links (both ways)
 - thumbnail files when possible (images?)
@@ -23,15 +32,7 @@
 - Type to find (like servant salamander)
 - preview panel for some filetypes (QuickLook ?)
 - Configuration (view, columns, icon size, extensions to grab icons for)
-- Specifying columns to show in listview
-
-BUGS
-- Dual view 
-	- doesn't show progress
-	- doesn't update parent with tab info
-- Update parent form with path info	
-- "System Volume Information folder" never returns any information
-- Filesystem events don't correctly update status bar
+- Specifying columns to show in listview (should be done in the childresource?)
 
 VISTA BUGS
 	No icon overlays
