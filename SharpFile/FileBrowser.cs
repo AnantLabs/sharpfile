@@ -10,6 +10,7 @@ using SharpFile.IO.ParentResources;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO;
 using SharpFile.UI;
+using Common;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {
@@ -350,7 +351,7 @@ namespace SharpFile {
 		public ImageList ImageList {
 			get {
 				if (imageList == null) {
-					imageList = IconManager.FindImageList(this.Parent);
+					imageList = Forms.FindProperty<ImageList>(this.Parent, "ImageList");
 				}
 
 				return imageList;

@@ -20,18 +20,8 @@ namespace SharpFile {
 			SetStyle(ControlStyles.AllPaintingInWmPaint |
 				ControlStyles.OptimizedDoubleBuffer, true);
 
-			this.Width = settings.Width;
-			this.Height = settings.Height;
-
-			this.FormClosing += delegate(object sender, FormClosingEventArgs e) {
-				settings.Width = this.Width;
-				settings.Height = this.Height;
-			};
-
-			this.Load += delegate(object sender, EventArgs e) {
-				this.Width = settings.Width;
-				this.Height = settings.Height;
-			};
+			this.FormClosing += BaseParent_FormClosing;
+			this.Load += BaseParent_Load;
 
 			this.Resize += delegate(object sender, EventArgs e) {
 				this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
@@ -42,6 +32,20 @@ namespace SharpFile {
 			timer.Tick += delegate {
 				progressDisk.Value = (progressDisk.Value + 1) % 12;
 			};
+		}
+
+		void BaseParent_Load(object sender, EventArgs e) {
+			this.Width = settings.Width;
+			this.Height = settings.Height;
+
+			onFormLoad();
+		}
+
+		void BaseParent_FormClosing(object sender, FormClosingEventArgs e) {
+			settings.Width = this.Width;
+			settings.Height = this.Height;
+
+			onFormClosing();
 		}
 
 		private void initializeComponents() {
@@ -78,7 +82,13 @@ namespace SharpFile {
 			this.ResumeLayout(false);
 		}
 
-		public virtual void addControls() {
+		protected virtual void addControls() {
+		}
+
+		protected virtual void onFormClosing() {
+		}
+
+		protected virtual void onFormLoad() {
 		}
 
 		public ImageList ImageList {

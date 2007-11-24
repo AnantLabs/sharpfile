@@ -1,14 +1,17 @@
 using System;
 using System.Windows.Forms;
+using System.Reflection;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.UI;
+using Common;
 
 namespace SharpFile {
-	public partial class DualParent : BaseParent {
+	public partial class DualParent :BaseParent {
 		protected SplitContainer splitContainer;
 
-		public DualParent(Settings settings) : base(settings) {
+		public DualParent(Settings settings)
+			: base(settings) {
 			Child child1 = new Child();
 			child1.TabControl.Appearance = TabAppearance.FlatButtons;
 			child1.TabControl.IsVisible = true;
@@ -67,7 +70,7 @@ namespace SharpFile {
 			splitContainer.Panel2.Controls.Add(child2);
 		}
 
-		public override void addControls() {
+		protected override void addControls() {
 			this.splitContainer = new SplitContainer();
 			this.splitContainer.Dock = DockStyle.Fill;
 			this.splitContainer.Size = new System.Drawing.Size(641, 364);
@@ -75,6 +78,20 @@ namespace SharpFile {
 			this.Controls.Add(this.splitContainer);
 
 			base.addControls();
+		}
+
+		protected override void onFormClosing() {
+			settings.LeftPath = Forms.GetProperty<string>(this.splitContainer.Panel1, "Path");
+			settings.RightPath = Forms.GetProperty<string>(this.splitContainer.Panel2, "Path");
+
+			base.onFormClosing();
+		}
+
+		protected override void onFormLoad() {
+			//Forms.SetProperty<string>(this.splitContainer.Panel1, "Path", settings.LeftPath);
+			//Forms.SetProperty<string>(this.splitContainer.Panel2, "Path", settings.RightPath);
+
+			base.onFormLoad();
 		}
 	}
 }

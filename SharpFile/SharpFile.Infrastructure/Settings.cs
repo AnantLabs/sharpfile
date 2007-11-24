@@ -18,6 +18,8 @@ namespace SharpFile.Infrastructure {
 		private ImageList imageList = new ImageList();
 		private int width;
 		private int height;
+		private string leftPath;
+		private string rightPath;
 
 		public Settings() {
 			this.parentType = ParentType.Dual;
@@ -41,8 +43,28 @@ namespace SharpFile.Infrastructure {
 		}
 
 		public int Height {
-			get { return height; }
-			set { height = value; }
+			get {
+				return height;
+			} set {
+				height = value;
+			}
+		}
+
+		public string LeftPath {
+			get {
+				return leftPath;
+			} set {
+				leftPath = value;
+			}
+		}
+
+		public string RightPath {
+			get {
+				return rightPath;
+			}
+			set {
+				rightPath = value;
+			}
 		}
 
 		[XmlIgnore]
