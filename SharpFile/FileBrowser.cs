@@ -24,7 +24,7 @@ namespace SharpFile {
 		private ToolStripSplitButton tlsDrives;
 		private ToolStripSpringTextBox tlsPath;
 		private ToolStripTextBox tlsFilter;
-		private ListView listView;
+		private IView view;
 
 		public delegate int OnGetImageIndexDelegate(IResource fsi);
 		public event OnGetImageIndexDelegate OnGetImageIndex;
@@ -40,7 +40,7 @@ namespace SharpFile {
 			this.tlsDrives = new ToolStripSplitButton();
 			this.tlsPath = new ToolStripSpringTextBox();
 			this.tlsFilter = new ToolStripTextBox();
-			this.listView = new SharpFile.ListView();
+			this.view = new SharpFile.ListView();
 			this.toolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -73,19 +73,19 @@ namespace SharpFile {
 			// 
 			// listView
 			// 
-			this.listView.AllowColumnReorder = true;
-			this.listView.AllowDrop = true;
-			this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.listView.FullRowSelect = true;
-			this.listView.LabelEdit = true;
-			this.listView.Location = new System.Drawing.Point(0, 25);
-			this.listView.Size = new System.Drawing.Size(454, 229);
-			this.listView.UseCompatibleStateImageBehavior = false;
-			this.listView.View = System.Windows.Forms.View.Details;
+			//this.view.AllowColumnReorder = true;
+			//this.view.AllowDrop = true;
+			//this.view.Dock = System.Windows.Forms.DockStyle.Fill;
+			//this.view.FullRowSelect = true;
+			//this.view.LabelEdit = true;
+			//this.view.Location = new System.Drawing.Point(0, 25);
+			//this.view.Size = new System.Drawing.Size(454, 229);
+			//this.view.UseCompatibleStateImageBehavior = false;
+			//this.view.View = System.Windows.Forms.View.Details;
 			// 
 			// FileBrowser
 			// 
-			this.Controls.Add(this.listView);
+			this.Controls.Add(this.view.Control);
 			this.Controls.Add(this.toolStrip);
 			this.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.toolStrip.ResumeLayout(false);
@@ -139,7 +139,7 @@ namespace SharpFile {
 			this.tlsFilter.KeyUp += tlsFilter_KeyUp;
 			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
-			this.listView.OnUpdatePath += listView_OnUpdatePath;
+			this.view.OnUpdatePath += view_OnUpdatePath;
 			this.HandleCreated += FileBrowser_HandleCreated;
 
 			fileSystemWatcher = new System.IO.FileSystemWatcher();
@@ -159,7 +159,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Displays the current path in the tab text and textbox.
 		/// </summary>
-		private void listView_OnUpdatePath(string path) {
+		private void view_OnUpdatePath(string path) {
 			this.Text = path;
 			this.tlsPath.Text = path;
 
@@ -167,14 +167,14 @@ namespace SharpFile {
 		}
 
 		/// <summary>
-		/// Refreshes the listview when Enter is pressed in the path textbox.
+		/// Refreshes the view when Enter is pressed in the path textbox.
 		/// </summary>
 		private void tlsPath_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyData == Keys.Enter) {
 				IChildResource resource = ChildResourceFactory.GetChildResource(Path);
 
 				if (resource != null) {
-					resource.Execute(listView);
+					resource.Execute(view);
 				} else {
 					MessageBox.Show("The path, " + Path + ", looks like it is incorrect.");
 					Path = this.Text;
@@ -183,30 +183,30 @@ namespace SharpFile {
 		}
 
 		/// <summary>
-		/// Refreshes the listview when Enter is pressed in the filter textbox.
+		/// Refreshes the view when Enter is pressed in the filter textbox.
 		/// </summary>
 		void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
 			IChildResource resource = ChildResourceFactory.GetChildResource(Path);
-			resource.Execute(listView);
+			resource.Execute(view);
 		}
 
 		/// <summary>
-		/// Refreshes the listview when a different drive is selected.
+		/// Refreshes the view when a different drive is selected.
 		/// </summary>
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			IParentResource resource = (IParentResource)e.ClickedItem.Tag;
 
-			resource.Execute(listView);
+			resource.Execute(view);
 			highlightParentResource(resource, e.ClickedItem.Image);
 		}
 
 		/// <summary>
-		/// Refreshes the listview with the current root drive.
+		/// Refreshes the view with the current root drive.
 		/// </summary>
 		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
 			IParentResource resource = (IParentResource)tlsDrives.Tag;
 
-			resource.Execute(listView);
+			resource.Execute(view);
 		}
 
 		/// <summary>
@@ -216,32 +216,32 @@ namespace SharpFile {
 			string path = e.FullPath;
 			IChildResource resource = ChildResourceFactory.GetChildResource(path);
 
-			// Required to ensure the listview update occurs on the calling thread.
+			// Required to ensure the view update occurs on the calling thread.
 			MethodInvoker updater = new MethodInvoker(delegate() {
-				listView.BeginUpdate();
+				view.BeginUpdate();
 
 				switch (e.ChangeType) {
 					case System.IO.WatcherChangeTypes.Changed:
-						listView.Items.RemoveByKey(path);
-						listView.UpdateListView(resource);
+						view.RemoveItem(path);
+						view.UpdateView(resource);
 						break;
 					case System.IO.WatcherChangeTypes.Created:
-						listView.UpdateListView(resource);
+						view.UpdateView(resource);
 						break;
 					case System.IO.WatcherChangeTypes.Deleted:
-						listView.Items.RemoveByKey(path);
+						view.RemoveItem(path);
 						break;
 					case System.IO.WatcherChangeTypes.Renamed:
 						string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
-						listView.Items.RemoveByKey(oldFullPath);
-						listView.UpdateListView(resource);
+						view.RemoveItem(oldFullPath);
+						view.UpdateView(resource);
 						break;
 				}
 
-				listView.EndUpdate();
+				view.EndUpdate();
 			});
 
-			listView.Invoke(updater);
+			view.Control.Invoke(updater);
 		}
 		#endregion
 
@@ -297,7 +297,7 @@ namespace SharpFile {
 										isLocalDiskFound = true;
 
 										highlightParentResource(childResource.Root, item.Image);
-										childResource.Execute(listView);
+										childResource.Execute(view);
 									}
 								}
 
@@ -310,7 +310,7 @@ namespace SharpFile {
 										isLocalDiskFound = true;
 
 										highlightParentResource(driveInfo, item.Image);
-										driveInfo.Execute(listView);
+										driveInfo.Execute(view);
 									}
 								}
 							}
@@ -399,11 +399,11 @@ namespace SharpFile {
 		}
 
 		/// <summary>
-		/// The child listview.
+		/// The child view.
 		/// </summary>
-		public ListView View {
+		public IView View {
 			get {
-				return listView;
+				return view;
 			}
 		}
 		#endregion

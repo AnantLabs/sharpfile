@@ -1,12 +1,15 @@
+using System;
+using System.IO;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using SharpFile.IO.ChildResources;
-using System.IO;
-using System;
 
 namespace SharpFile.IO {
 	// TODO: This might be better somewhere else. Maybe there should be an assembly just for interfaces.
 	public interface IView {
 		void UpdateView(IEnumerable<IChildResource> childResources);
+		void UpdateView(IChildResource childResource);
+		void RemoveItem(string path);
 		void UpdatePath(string path);
 		void UpdateProgress(int progress);
 		void ClearView();
@@ -15,6 +18,7 @@ namespace SharpFile.IO {
 		string Path { get; }
 		string Filter { get; }
 		FileSystemWatcher FileSystemWatcher { get; }
+		Control Control { get; }
 
 		event View.OnGetImageIndexDelegate OnGetImageIndex;
 		event View.OnUpdateProgressDelegate OnUpdateProgress;

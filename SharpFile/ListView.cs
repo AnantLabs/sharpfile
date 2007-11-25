@@ -466,6 +466,11 @@ namespace SharpFile {
 		}
 		*/
 
+		public void RemoveItem(string path) {
+			this.Items.RemoveByKey(path);
+			itemDictionary.Remove(path);
+		}
+
 		private void addItem(IChildResource resource, ref int fileCount, ref int folderCount) {
 			if (!itemDictionary.ContainsKey(resource.FullPath)) {
 				ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
@@ -504,7 +509,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Parses the file/directory information and updates the listview.
 		/// </summary>
-		public void UpdateView(IEnumerable<IChildResource> fileSystemInfoList) {
+		public void UpdateView(IEnumerable<IChildResource> resources) {
 			if (this.SmallImageList == null) {
 				this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
 			}
@@ -514,7 +519,7 @@ namespace SharpFile {
 
 			try {
 				// Create a new listview item with the display name.
-				foreach (IChildResource resource in fileSystemInfoList) {
+				foreach (IChildResource resource in resources) {
 					addItem(resource, ref fileCount, ref folderCount);
 				}
 
@@ -532,14 +537,14 @@ namespace SharpFile {
 		/// <summary>
 		/// Parses the file/directory information and inserts the file info into the listview.
 		/// </summary>
-		public void UpdateListView(IChildResource fileSystemInfo) {
+		public void UpdateView(IChildResource resource) {
 			int fileCount = 0;
 			int folderCount = 0;
 
-			if (fileSystemInfo != null) {
+			if (resource != null) {
 				try {
 					// Create a new listview item with the display name.
-					insertItem(fileSystemInfo, ref fileCount, ref folderCount);
+					insertItem(resource, ref fileCount, ref folderCount);
 
 					// Basic stuff that should happen everytime files are shown.
 					this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -702,6 +707,12 @@ namespace SharpFile {
 			get {
 				return Forms.GetPropertyInParent<IParentResource>(this, "ParentResource");
 				//return ((FileBrowser)this.Parent).DriveInfo;
+			}
+		}
+
+		public Control Control {
+			get {
+				return this;
 			}
 		}
 	}
