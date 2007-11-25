@@ -5,14 +5,12 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile {
 	public class BaseParent : Form {
-		protected Settings settings;
 		protected Timer timer = new Timer();
 		protected ProgressDisk.ProgressDisk progressDisk = new ProgressDisk.ProgressDisk();
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 
-		public BaseParent(Settings settings) {
-			this.settings = settings;
+		public BaseParent() {
 			initializeComponents();
 
 			this.DoubleBuffered = true;
@@ -35,15 +33,15 @@ namespace SharpFile {
 		}
 
 		void BaseParent_Load(object sender, EventArgs e) {
-			this.Width = settings.Width;
-			this.Height = settings.Height;
+			this.Width = Settings.Instance.Width;
+			this.Height = Settings.Instance.Height;
 
 			onFormLoad();
 		}
 
 		void BaseParent_FormClosing(object sender, FormClosingEventArgs e) {
-			settings.Width = this.Width;
-			settings.Height = this.Height;
+			Settings.Instance.Width = this.Width;
+			Settings.Instance.Height = this.Height;
 
 			onFormClosing();
 		}
@@ -93,7 +91,7 @@ namespace SharpFile {
 
 		public ImageList ImageList {
 			get {
-				return settings.ImageList;
+				return Settings.Instance.ImageList;
 			}
 		}
 	}

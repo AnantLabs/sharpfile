@@ -4,13 +4,9 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile {
 	public partial class TabParent : Form {
-		private Settings settings;
-
 		private TabControl tabControl;
 
-		public TabParent(Settings settings) {
-			this.settings = settings;
-
+		public TabParent() {
 			this.tabControl = new SharpFile.TabControl();
 			this.SuspendLayout();
 			// 
@@ -41,7 +37,7 @@ namespace SharpFile {
 
 		public ImageList ImageList {
 			get {
-				return settings.ImageList;
+				return Settings.Instance.ImageList;
 			}
 		}
 	}

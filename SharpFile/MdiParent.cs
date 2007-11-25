@@ -7,7 +7,7 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile {
 	public partial class MdiParent : BaseParent {
-		public MdiParent(Settings settings) : base(settings) {
+		public MdiParent() : base() {
 			InitializeComponent();
 
 			ShowNewForm(null, EventArgs.Empty);

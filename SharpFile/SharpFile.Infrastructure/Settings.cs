@@ -2,6 +2,8 @@ using System;
 using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using System.IO;
+using Common;
 
 namespace SharpFile.Infrastructure {
 	public enum ParentType {
@@ -11,7 +13,10 @@ namespace SharpFile.Infrastructure {
 	}
 
 	[Serializable()]
-	public class Settings {
+	public sealed class Settings {
+		public const string FilePath = "settings.config";
+
+		private static readonly Settings instance = new Settings();
 		private static object lockObject = new object();
 
 		private ParentType parentType;
@@ -21,15 +26,52 @@ namespace SharpFile.Infrastructure {
 		private string leftPath;
 		private string rightPath;
 
-		public Settings() {
-			this.parentType = ParentType.Dual;
-			this.imageList.ColorDepth = ColorDepth.Depth32Bit;
+		// Explicit static constructor to tell C# compiler
+		// not to mark type as beforefieldinit
+		static Settings() {
+			loadXml();
+		}
+
+		Settings() {
+			lockObject = new object();
+			this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
+		}
+
+		private static void loadXml() {
+			XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
+
+			// If there is no settings file, create one from some defaults.
+			if (!File.Exists(FilePath)) {
+				instance.Height = 500;
+				instance.Width = 500;
+				instance.ParentType = ParentType.Dual;
+
+				using (TextWriter tw = new StreamWriter(FilePath)) {
+					xmlSerializer.Serialize(tw, instance);
+				}
+			} else {
+				using (TextReader tr = new StreamReader(FilePath)) {
+					Settings settings = (Settings)xmlSerializer.Deserialize(tr);
+					instance.Height = settings.Height;
+					instance.Width = settings.Width;
+					instance.LeftPath = settings.LeftPath;
+					instance.RightPath = settings.RightPath;
+					instance.ParentType = settings.ParentType;
+				}
+			}
+		}
+
+		public static Settings Instance {
+			get {
+				return instance;
+			}
 		}
 
 		public ParentType ParentType {
 			get {
 				return parentType;
-			} set {
+			}
+			set {
 				parentType = value;
 			}
 		}
@@ -37,7 +79,8 @@ namespace SharpFile.Infrastructure {
 		public int Width {
 			get {
 				return width;
-			} set {
+			}
+			set {
 				width = value;
 			}
 		}
@@ -45,7 +88,8 @@ namespace SharpFile.Infrastructure {
 		public int Height {
 			get {
 				return height;
-			} set {
+			}
+			set {
 				height = value;
 			}
 		}
@@ -53,7 +97,8 @@ namespace SharpFile.Infrastructure {
 		public string LeftPath {
 			get {
 				return leftPath;
-			} set {
+			}
+			set {
 				leftPath = value;
 			}
 		}

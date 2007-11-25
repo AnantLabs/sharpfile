@@ -12,6 +12,7 @@ namespace SharpFile.IO.Retrievers {
 		public void Get(IView view, IResource resource) {
 			// Create another thread to get the file information asynchronously.
 			using (backgroundWorker = new BackgroundWorker()) {
+				backgroundWorker.WorkerSupportsCancellation = true;
 				backgroundWorker.WorkerReportsProgress = true;
 
 				// Anonymous method that retrieves the file information.
@@ -22,7 +23,10 @@ namespace SharpFile.IO.Retrievers {
 					// Grab the files and report the progress to the parent.
 					backgroundWorker.ReportProgress(50);
 
-					e.Result = getFiles(resource, view.Filter);
+					if (!backgroundWorker.CancellationPending) {
+						e.Result = getFiles(resource, view.Filter);
+					}
+
 					backgroundWorker.ReportProgress(100);
 				};
 
@@ -53,7 +57,9 @@ namespace SharpFile.IO.Retrievers {
 					view.UpdateProgress(e.ProgressPercentage);
 				};
 
-				backgroundWorker.RunWorkerAsync();
+				if (!backgroundWorker.CancellationPending) {
+					backgroundWorker.RunWorkerAsync();
+				}
 			}
 		}
 
@@ -68,24 +74,6 @@ namespace SharpFile.IO.Retrievers {
 		private IEnumerable<IChildResource> getFiles(IResource resource, string filter) {
 			IFileContainer container = resource as IFileContainer;
 			List<IChildResource> resources = new List<IChildResource>();
-
-			// TODO: Setting that specifies whether to show root directory or not.
-			/*
-			if (!directoryInfo.Root.Name.Equals(directoryInfo.FullName)) {
-				resources.Add(new RootDirectoryInfo(directoryInfo.Root));
-			}
-			*/
-
-			// TODO: Setting that specifies whether to show parent directory or not.
-			if (container is DirectoryInfo) {
-				DirectoryInfo directoryInfo = container as DirectoryInfo;
-
-				if (directoryInfo.Parent != null) {
-					//if (!directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name)) {
-					resources.Add(new ParentDirectoryInfo(directoryInfo.Parent));
-					//}
-				}
-			}
 
 			resources.AddRange(container.GetDirectories());
 			resources.AddRange(container.GetFiles(filter));

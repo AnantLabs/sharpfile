@@ -40,6 +40,10 @@
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpFile.IO\SharpFile.IO.csproj">
       <Project>{F9F8A1B7-00C8-411C-8063-987C1F720956}</Project>
       <Name>SharpFile.IO</Name>

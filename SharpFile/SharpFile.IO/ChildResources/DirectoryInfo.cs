@@ -32,11 +32,28 @@ namespace SharpFile.IO.ChildResources {
 
 		public IEnumerable<IChildResource> GetDirectories() {
 			System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
+			List<IChildResource> directories = new List<IChildResource>(directoryInfos.Length);
 
-			return Array.ConvertAll<System.IO.DirectoryInfo, DirectoryInfo>(directoryInfos,
+			// TODO: Setting that specifies whether to show root directory or not.
+			/*
+			if (!this.Root.Name.Equals(this.FullName)) {
+				directories.Add(new RootDirectoryInfo(this.Root));
+			}
+			*/
+
+			// TODO: Setting that specifies whether to show parent directory or not.
+			if (this.Parent != null) {
+				//if (!directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name)) {
+				directories.Add(new ParentDirectoryInfo(this.Parent));
+				//}
+			}
+
+			directories.AddRange(Array.ConvertAll<System.IO.DirectoryInfo, DirectoryInfo>(directoryInfos,
 				delegate(System.IO.DirectoryInfo di) {
 					return new DirectoryInfo(di);
-				});
+				}));
+
+			return directories;
 		}
 
 		public IEnumerable<IChildResource> GetFiles() {

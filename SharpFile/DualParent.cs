@@ -10,8 +10,8 @@ namespace SharpFile {
 	public partial class DualParent :BaseParent {
 		protected SplitContainer splitContainer;
 
-		public DualParent(Settings settings)
-			: base(settings) {
+		public DualParent()
+			: base() {
 			Child child1 = new Child();
 			child1.TabControl.Appearance = TabAppearance.FlatButtons;
 			child1.TabControl.IsVisible = true;
@@ -81,15 +81,15 @@ namespace SharpFile {
 		}
 
 		protected override void onFormClosing() {
-			settings.LeftPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
-			settings.RightPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
+			Settings.Instance.LeftPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
+			Settings.Instance.RightPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
 
 			base.onFormClosing();
 		}
 
 		protected override void onFormLoad() {
-			Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", settings.LeftPath);
-			Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", settings.RightPath);
+			Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.LeftPath);
+			Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.RightPath);
 
 			base.onFormLoad();
 		}
