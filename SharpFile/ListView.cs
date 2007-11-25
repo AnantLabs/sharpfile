@@ -34,7 +34,6 @@ namespace SharpFile {
 		}
 
 		private void initializeComponent() {
-			this.Dock = DockStyle.Fill;
 			this.DoubleClick += listView_DoubleClick;
 			this.KeyDown += listView_KeyDown;
 			this.MouseUp += listView_MouseUp;
@@ -47,9 +46,15 @@ namespace SharpFile {
 			// Set some options on the listview.
 			// TODO: This should be able to be set via dropdown/settings.
 			this.View = System.Windows.Forms.View.Details;
+			this.Dock = DockStyle.Fill;
+			this.AllowColumnReorder = true;
+			this.AllowDrop = true;
+			this.FullRowSelect = true;
+			this.LabelEdit = true;
+			this.UseCompatibleStateImageBehavior = false;
 
 			// TODO: Columns should be set by the IChildResource properties that are actually populated.
-			// Maybe there should be a list associated with IParenttResources where the columns available are specified.
+			// Maybe there should be a list associated with IParentResources where the columns available are specified.
 			List<string> columns = new List<string>();
 			columns.Add("Filename");
 			columns.Add("Size");
@@ -203,17 +208,6 @@ namespace SharpFile {
 		}
 
 		/// <summary>
-		/// Update the selected file sytem objects' total size.
-		/// </summary>
-		/// <param name="size"></param>
-		private void updateSelectedTotalSize(long size) {
-			totalSelectedSize += size;
-
-			UpdateStatus(string.Format("Selected items: {0}",
-				General.GetHumanReadableSize(totalSelectedSize.ToString())));
-		}
-
-		/// <summary>
 		/// Displays the right-click context menu.
 		/// </summary>
 		private void listView_MouseUp(object sender, MouseEventArgs e) {
@@ -331,7 +325,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Performs actions based on the key pressed.
 		/// </summary>
-		void listView_KeyUp(object sender, KeyEventArgs e) {
+		private void listView_KeyUp(object sender, KeyEventArgs e) {
 			// TODO: Should be specified by config.
 			if (e.KeyCode == Keys.F2) {
 				if (this.SelectedItems.Count > 0) {
@@ -344,7 +338,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Renames the file/directory that was being edited.
 		/// </summary>
-		void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
+		private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = this.Items[e.Item];
 				IChildResource resource = (IChildResource)item.Tag;
@@ -363,153 +357,28 @@ namespace SharpFile {
 		}
 		#endregion
 
-		#region ExecuteOrUpdate methods.
+		#region Public methods.
 		/// <summary>
-		/// Executes the file, or refreshes the listview for the selected directory in the path textbox.
+		/// Clears the listview.
 		/// </summary>
-		//public void ExecuteOrUpdate() {
-		//    ExecuteOrUpdate(Path);
-		//}
+		public void ClearView() {
+			this.Items.Clear();
+			this.itemDictionary.Clear();
+		}
 
 		/// <summary>
-		/// Executes the provided file, or refreshes the listview for the provided directory.
+		/// Removes the items.
 		/// </summary>
 		/// <param name="path"></param>
-		//public void ExecuteOrUpdate(string path) {
-		//    IChildResource resource = ChildResourceFactory.GetChildResource(path);
-
-		//    if (resource != null) {
-		//        if (resource is FileInfo) {
-		//            Process.Start(path);
-		//        } else if (resource is DirectoryInfo) {
-		//            UpdateListView(path, string.Empty);
-		//        }
-		//    } else {
-		//        MessageBox.Show(string.Format("The path, {0}, looks like it is incorrect.",
-		//            path));
-		//    }
-		//}
-		#endregion
-
-		#region UpdateListView methods.
-		/*
-		/// <summary>
-		/// Updates the listview with the specified path and filter.
-		/// </summary>
-		/// <param name="path">Path to get information about.</param>
-		/// <param name="filter">Pattern to filter the information.</param>
-		public void UpdateListView(string path, string filter) {
-			if (this.SmallImageList == null) {
-			    this.SmallImageList = IconManager.FindImageList(this.Parent);
-			}
-
-			// Prevents the retrieval of file information if unneccessary.
-			if (path.Equals(Path)) {
-			    return;
-			}
-
-			// Get the directory information.
-			DirectoryInfo directoryInfo = new DirectoryInfo(path);
-			string directoryPath = directoryInfo.FullPath;
-			directoryPath = string.Format("{0}{1}",
-				directoryPath,
-				directoryPath.EndsWith(@"\") ? string.Empty : @"\");
-
-			// Create another thread to get the file information asynchronously.
-			using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-				backgroundWorker.WorkerReportsProgress = true;
-
-				// Anonymous method that retrieves the file information.
-				backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-					// Disable the filewatcher.
-					FileSystemWatcher.EnableRaisingEvents = false;
-
-					// Grab the files and report the progress to the parent.
-					backgroundWorker.ReportProgress(50);
-
-					// TODO: The ChildRetriever should be specified in the ParentResource.
-					IChildResourceRetriever fileRetriever = new FileRetriever();
-
-					e.Result = fileRetriever.Get(directoryInfo, filter);
-					backgroundWorker.ReportProgress(100);
-				};
-
-				// Method that runs when the DoWork method is finished.
-				backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
-					if (e.Error == null &&
-						e.Result != null &&
-						e.Result is IEnumerable<IChildResource>) {
-						IEnumerable<IChildResource> fileSystemInfoList = (IEnumerable<IChildResource>)e.Result;
-
-						this.BeginUpdate();
-						this.Items.Clear();
-						UpdateView(fileSystemInfoList);
-						this.EndUpdate();
-
-						// Update some information about the current directory.
-						UpdatePath(directoryPath);
-
-						// Set up the watcher.
-						FileSystemWatcher.Path = directoryPath;
-						FileSystemWatcher.Filter = filter;
-						FileSystemWatcher.EnableRaisingEvents = true;
-					}
-				};
-
-				// Anonymous method that updates the status to the parent form.
-				backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
-					UpdateProgress(e.ProgressPercentage);
-				};
-
-				backgroundWorker.RunWorkerAsync();
-			}
-		}
-		*/
-
 		public void RemoveItem(string path) {
 			this.Items.RemoveByKey(path);
-			itemDictionary.Remove(path);
-		}
-
-		private void addItem(IChildResource resource, ref int fileCount, ref int folderCount) {
-			if (!itemDictionary.ContainsKey(resource.FullPath)) {
-				ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
-				itemDictionary.Add(resource.FullPath, item);
-				this.Items.Add(item);
-			}
-		}
-
-		private void insertItem(IChildResource resource, ref int fileCount, ref int folderCount)
-		{
-			//if (!itemDictionary.ContainsKey(resource.FullPath))
-			//{
-			//  ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
-			//  this.Items.Add(item);
-			//  itemDictionary.Add(resource.FullPath, item);
-			//}
-
-			if (!itemDictionary.ContainsKey(resource.FullPath))
-			{
-				ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
-				int listViewIndex = getListViewIndex(item);
-
-				if (listViewIndex == -1)
-				{
-					this.Items.Insert(0, item);
-				}
-				else
-				{
-					this.Items.Insert(listViewIndex, item);
-				}
-
-				itemDictionary.Add(resource.FullPath, item);
-			}
+			this.itemDictionary.Remove(path);
 		}
 
 		/// <summary>
 		/// Parses the file/directory information and updates the listview.
 		/// </summary>
-		public void UpdateView(IEnumerable<IChildResource> resources) {
+		public void AddItemRange(IEnumerable<IChildResource> resources) {
 			if (this.SmallImageList == null) {
 				this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
 			}
@@ -537,7 +406,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Parses the file/directory information and inserts the file info into the listview.
 		/// </summary>
-		public void UpdateView(IChildResource resource) {
+		public void InsertItem(IChildResource resource) {
 			int fileCount = 0;
 			int folderCount = 0;
 
@@ -616,6 +485,29 @@ namespace SharpFile {
 			return index;
 		}
 
+		private void addItem(IChildResource resource, ref int fileCount, ref int folderCount) {
+			if (!itemDictionary.ContainsKey(resource.FullPath)) {
+				ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
+				itemDictionary.Add(resource.FullPath, item);
+				this.Items.Add(item);
+			}
+		}
+
+		private void insertItem(IChildResource resource, ref int fileCount, ref int folderCount) {
+			if (!itemDictionary.ContainsKey(resource.FullPath)) {
+				ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
+				int listViewIndex = getListViewIndex(item);
+
+				if (listViewIndex == -1) {
+					this.Items.Insert(0, item);
+				} else {
+					this.Items.Insert(listViewIndex, item);
+				}
+
+				itemDictionary.Add(resource.FullPath, item);
+			}
+		}
+
 		/// <summary>
 		/// Create listview from the filesystem information.
 		/// </summary>
@@ -666,19 +558,25 @@ namespace SharpFile {
 
 			return new List<string>(nameArray);
 		}
-		#endregion
 
-		public void ClearView() {
-			this.Items.Clear();
-			this.itemDictionary.Clear();
+		/// <summary>
+		/// Update the selected file sytem objects' total size.
+		/// </summary>
+		/// <param name="size"></param>
+		private void updateSelectedTotalSize(long size) {
+			totalSelectedSize += size;
+
+			UpdateStatus(string.Format("Selected items: {0}",
+				General.GetHumanReadableSize(totalSelectedSize.ToString())));
 		}
+		#endregion
 
 		/// <summary>
 		/// Current path.
 		/// </summary>
 		public string Path {
 			get {
-				return ((FileBrowser)this.Parent).Path;
+				return Forms.GetPropertyInParent<string>(this.Parent, "Path");
 			}
 		}
 
@@ -687,7 +585,7 @@ namespace SharpFile {
 		/// </summary>
 		public string Filter {
 			get {
-				return ((FileBrowser)this.Parent).Filter;
+				return Forms.GetPropertyInParent<string>(this.Parent, "Filter");
 			}
 		}
 
@@ -696,7 +594,7 @@ namespace SharpFile {
 		/// </summary>
 		public System.IO.FileSystemWatcher FileSystemWatcher {
 			get {
-				return ((FileBrowser)this.Parent).FileSystemWatcher;
+				return Forms.GetPropertyInParent<System.IO.FileSystemWatcher>(this.Parent, "FileSystemWatcher");
 			}
 		}
 
@@ -705,8 +603,7 @@ namespace SharpFile {
 		/// </summary>
 		public IParentResource DriveInfo {
 			get {
-				return Forms.GetPropertyInParent<IParentResource>(this, "ParentResource");
-				//return ((FileBrowser)this.Parent).DriveInfo;
+				return Forms.GetPropertyInParent<IParentResource>(this.Parent, "ParentResource");
 			}
 		}
 

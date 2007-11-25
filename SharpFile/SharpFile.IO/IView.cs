@@ -7,8 +7,8 @@ using SharpFile.IO.ChildResources;
 namespace SharpFile.IO {
 	// TODO: This might be better somewhere else. Maybe there should be an assembly just for interfaces.
 	public interface IView {
-		void UpdateView(IEnumerable<IChildResource> childResources);
-		void UpdateView(IChildResource childResource);
+		void AddItemRange(IEnumerable<IChildResource> childResources);
+		void InsertItem(IChildResource childResource);
 		void RemoveItem(string path);
 		void UpdatePath(string path);
 		void UpdateProgress(int progress);

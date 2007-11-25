@@ -35,11 +35,11 @@ namespace SharpFile.IO.Retrievers {
 					if (e.Error == null &&
 						e.Result != null &&
 						e.Result is IEnumerable<IChildResource>) {
-						IEnumerable<IChildResource> fileSystemInfoList = (IEnumerable<IChildResource>)e.Result;
+						IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
 
 						view.BeginUpdate();
 						view.ClearView();
-						view.UpdateView(fileSystemInfoList);
+						view.AddItemRange(resources);
 						view.EndUpdate();
 
 						// Update some information about the current directory.

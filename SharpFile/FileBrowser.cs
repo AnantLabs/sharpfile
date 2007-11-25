@@ -14,11 +14,11 @@ using Common;
 
 namespace SharpFile {
 	public partial class FileBrowser : System.Windows.Forms.TabPage {
+		private static readonly object lockObject = new object();
+
 		private System.IO.FileSystemWatcher fileSystemWatcher;
 		private ImageList imageList;
 		private bool handleCreated = false;
-
-		private static readonly object lockObject = new object();
 
 		private ToolStrip toolStrip;
 		private ToolStripSplitButton tlsDrives;
@@ -26,11 +26,8 @@ namespace SharpFile {
 		private ToolStripTextBox tlsFilter;
 		private IView view;
 
-		public delegate int OnGetImageIndexDelegate(IResource fsi);
-		public event OnGetImageIndexDelegate OnGetImageIndex;
-
-		public delegate void OnUpdatePathDelegate(string path);
-		public event OnUpdatePathDelegate OnUpdatePath;
+		public event SharpFile.IO.View.OnGetImageIndexDelegate OnGetImageIndex;
+		public event SharpFile.IO.View.OnUpdatePathDelegate OnUpdatePath;
 
 		/// <summary>
 		/// Filebrowser ctor.
@@ -70,18 +67,6 @@ namespace SharpFile {
 			// tlsFilter
 			// 
 			this.tlsFilter.Size = new System.Drawing.Size(50, 25);
-			// 
-			// listView
-			// 
-			//this.view.AllowColumnReorder = true;
-			//this.view.AllowDrop = true;
-			//this.view.Dock = System.Windows.Forms.DockStyle.Fill;
-			//this.view.FullRowSelect = true;
-			//this.view.LabelEdit = true;
-			//this.view.Location = new System.Drawing.Point(0, 25);
-			//this.view.Size = new System.Drawing.Size(454, 229);
-			//this.view.UseCompatibleStateImageBehavior = false;
-			//this.view.View = System.Windows.Forms.View.Details;
 			// 
 			// FileBrowser
 			// 
@@ -148,14 +133,18 @@ namespace SharpFile {
 			fileSystemWatcher.Created += fileSystemWatcher_Changed;
 			fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
 		}
-
-		void FileBrowser_HandleCreated(object sender, EventArgs e)
-		{
-			handleCreated = true;
-		}
 		#endregion
 
 		#region Events
+		/// <summary>
+		/// Fires when the FileBrowser handle has been created.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void FileBrowser_HandleCreated(object sender, EventArgs e) {
+			handleCreated = true;
+		}
+
 		/// <summary>
 		/// Displays the current path in the tab text and textbox.
 		/// </summary>
@@ -185,7 +174,7 @@ namespace SharpFile {
 		/// <summary>
 		/// Refreshes the view when Enter is pressed in the filter textbox.
 		/// </summary>
-		void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
+		private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
 			IChildResource resource = ChildResourceFactory.GetChildResource(Path);
 			resource.Execute(view);
 		}
@@ -195,7 +184,6 @@ namespace SharpFile {
 		/// </summary>
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			IParentResource resource = (IParentResource)e.ClickedItem.Tag;
-
 			resource.Execute(view);
 			highlightParentResource(resource, e.ClickedItem.Image);
 		}
@@ -205,7 +193,6 @@ namespace SharpFile {
 		/// </summary>
 		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
 			IParentResource resource = (IParentResource)tlsDrives.Tag;
-
 			resource.Execute(view);
 		}
 
@@ -223,10 +210,10 @@ namespace SharpFile {
 				switch (e.ChangeType) {
 					case System.IO.WatcherChangeTypes.Changed:
 						view.RemoveItem(path);
-						view.UpdateView(resource);
+						view.InsertItem(resource);
 						break;
 					case System.IO.WatcherChangeTypes.Created:
-						view.UpdateView(resource);
+						view.InsertItem(resource);
 						break;
 					case System.IO.WatcherChangeTypes.Deleted:
 						view.RemoveItem(path);
@@ -234,7 +221,7 @@ namespace SharpFile {
 					case System.IO.WatcherChangeTypes.Renamed:
 						string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
 						view.RemoveItem(oldFullPath);
-						view.UpdateView(resource);
+						view.InsertItem(resource);
 						break;
 				}
 
@@ -365,7 +352,12 @@ namespace SharpFile {
 		public string Path {
 			get {
 				if (string.IsNullOrEmpty(this.tlsPath.Text)) {
-					this.tlsPath.Text = ParentResource.FullPath;
+					if (string.IsNullOrEmpty(ParentResource.FullPath)) {
+						// TODO: This shouldn't be hard-coded.
+						this.tlsPath.Text = @"c:\";
+					} else {
+						this.tlsPath.Text = ParentResource.FullPath;
+					}
 				}
 
 				return this.tlsPath.Text;

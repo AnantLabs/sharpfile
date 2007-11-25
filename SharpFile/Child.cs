@@ -62,7 +62,7 @@ namespace SharpFile {
 		}
 
 		void tabControl_Selected(object sender, TabControlEventArgs e) {
-			this.Text = ((FileBrowser)this.TabControl.SelectedTab).Path;
+			this.Text = Common.Forms.GetPropertyInChild<string>(this.TabControl.SelectedTab, "Path");
 		}
 
 		void fileBrowser_OnUpdatePath(string path) {
