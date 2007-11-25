@@ -74,9 +74,9 @@ namespace SharpFile {
 			FileBrowser fileBrowser = new FileBrowser();
 			fileBrowser.OnGetImageIndex += FileBrowser_OnGetImageIndex;
 			fileBrowser.OnUpdatePath += fileBrowser_OnUpdatePath;
-			fileBrowser.ListView.OnGetImageIndex += FileBrowser_OnGetImageIndex;
-			fileBrowser.ListView.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
-			fileBrowser.ListView.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
+			fileBrowser.View.OnGetImageIndex += FileBrowser_OnGetImageIndex;
+			fileBrowser.View.OnUpdateProgress += SelectedFileBrowser_OnUpdateProgress;
+			fileBrowser.View.OnUpdateStatus += SelectedFileBrowser_OnUpdateStatus;
 
 			this.TabControl.Controls.Add(fileBrowser);
 			this.TabControl.SelectedTab = fileBrowser;

@@ -365,7 +365,7 @@ namespace SharpFile {
 		public string Path {
 			get {
 				if (string.IsNullOrEmpty(this.tlsPath.Text)) {
-					this.tlsPath.Text = ((DriveInfo)tlsDrives.Tag).FullPath;
+					this.tlsPath.Text = ParentResource.FullPath;
 				}
 
 				return this.tlsPath.Text;
@@ -392,16 +392,16 @@ namespace SharpFile {
 		/// <summary>
 		/// The currently selected drive.
 		/// </summary>
-		public DriveInfo DriveInfo {
+		public IParentResource ParentResource {
 			get {
-				return ((DriveInfo)tlsDrives.Tag);
+				return (IParentResource)tlsDrives.Tag;
 			}
 		}
 
 		/// <summary>
 		/// The child listview.
 		/// </summary>
-		public ListView ListView {
+		public ListView View {
 			get {
 				return listView;
 			}

@@ -20,17 +20,10 @@ namespace SharpFile {
 		private long totalSelectedSize = 0;
 		private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
 
-		public delegate void OnUpdateStatusDelegate(string status);
-		public event OnUpdateStatusDelegate OnUpdateStatus;
-
-		public delegate void OnUpdateProgressDelegate(int value);
-		public event OnUpdateProgressDelegate OnUpdateProgress;
-
-		public delegate int OnGetImageIndexDelegate(IResource fsi);
-		public event OnGetImageIndexDelegate OnGetImageIndex;
-
-		public delegate void OnUpdatePathDelegate(string path);
-		public event OnUpdatePathDelegate OnUpdatePath;
+		public event SharpFile.IO.View.OnUpdateStatusDelegate OnUpdateStatus;
+		public event SharpFile.IO.View.OnUpdateProgressDelegate OnUpdateProgress;
+		public event SharpFile.IO.View.OnGetImageIndexDelegate OnGetImageIndex;
+		public event SharpFile.IO.View.OnUpdatePathDelegate OnUpdatePath;
 
 		public ListView() {
 			// This prevents flicker in the listview. 
@@ -53,7 +46,7 @@ namespace SharpFile {
 
 			// Set some options on the listview.
 			// TODO: This should be able to be set via dropdown/settings.
-			this.View = View.Details;
+			this.View = System.Windows.Forms.View.Details;
 
 			// TODO: Columns should be set by the IChildResource properties that are actually populated.
 			// Maybe there should be a list associated with IParenttResources where the columns available are specified.
@@ -627,7 +620,6 @@ namespace SharpFile {
 			ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
 			item.Name = fileSystemInfo.FullPath;
 			item.Tag = fileSystemInfo;
-			DriveType driveType = DriveInfo.DriveType;
 
 			int imageIndex = 0;
 			if (fileSystemInfo is FileInfo) {
@@ -706,9 +698,10 @@ namespace SharpFile {
 		/// <summary>
 		/// Current drive.
 		/// </summary>
-		public DriveInfo DriveInfo {
+		public IParentResource DriveInfo {
 			get {
-				return ((FileBrowser)this.Parent).DriveInfo;
+				return Forms.GetPropertyInParent<IParentResource>(this, "ParentResource");
+				//return ((FileBrowser)this.Parent).DriveInfo;
 			}
 		}
 	}
