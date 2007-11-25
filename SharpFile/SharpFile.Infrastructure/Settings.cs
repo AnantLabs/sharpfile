@@ -12,6 +12,10 @@ namespace SharpFile.Infrastructure {
 		Dual
 	}
 
+	/// <summary>
+	/// Settings singleton.
+	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html
+	/// </summary>
 	[Serializable()]
 	public sealed class Settings {
 		public const string FilePath = "settings.config";
@@ -27,36 +31,49 @@ namespace SharpFile.Infrastructure {
 		private string rightPath;
 
 		// Explicit static constructor to tell C# compiler
-		// not to mark type as beforefieldinit
+		// not to mark type as beforefieldinit.
 		static Settings() {
-			loadXml();
+			Load();
 		}
 
-		Settings() {
+		private Settings() {
 			lockObject = new object();
 			this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
 		}
 
-		private static void loadXml() {
-			XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
+		public static void Load() {
+			lock (lockObject) {
+				XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
 
-			// If there is no settings file, create one from some defaults.
-			if (!File.Exists(FilePath)) {
-				instance.Height = 500;
-				instance.Width = 500;
-				instance.ParentType = ParentType.Dual;
+				// If there is no settings file, create one from some defaults.
+				if (!File.Exists(FilePath)) {
+					instance.Height = 500;
+					instance.Width = 500;
+					instance.ParentType = ParentType.Dual;
+
+					using (TextWriter tw = new StreamWriter(FilePath)) {
+						xmlSerializer.Serialize(tw, instance);
+					}
+				} else {
+					// Set our instance properties from the Xml file.
+					using (TextReader tr = new StreamReader(FilePath)) {
+						Settings settings = (Settings)xmlSerializer.Deserialize(tr);
+						instance.Height = settings.Height;
+						instance.Width = settings.Width;
+						instance.LeftPath = settings.LeftPath;
+						instance.RightPath = settings.RightPath;
+						instance.ParentType = settings.ParentType;
+					}
+				}
+			}
+		}
+
+		public static void Save() {
+			lock (lockObject) {
+				XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
 
 				using (TextWriter tw = new StreamWriter(FilePath)) {
-					xmlSerializer.Serialize(tw, instance);
-				}
-			} else {
-				using (TextReader tr = new StreamReader(FilePath)) {
-					Settings settings = (Settings)xmlSerializer.Deserialize(tr);
-					instance.Height = settings.Height;
-					instance.Width = settings.Width;
-					instance.LeftPath = settings.LeftPath;
-					instance.RightPath = settings.RightPath;
-					instance.ParentType = settings.ParentType;
+					xmlSerializer.Serialize(tw, Instance);
 				}
 			}
 		}

@@ -14,13 +14,9 @@ namespace SharpFile {
         static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-			XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
-
+			
 			Application.ApplicationExit += delegate(object sender, EventArgs e) {
-				using (TextWriter tw = new StreamWriter(Settings.FilePath)) {
-					xmlSerializer.Serialize(tw, Settings.Instance);
-				}
+				Settings.Save();
 			};
 
 			if (Settings.Instance.ParentType == ParentType.Mdi) {
