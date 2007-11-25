@@ -228,7 +228,7 @@ namespace SharpFile {
 				view.EndUpdate();
 			});
 
-			view.Control.Invoke(updater);
+			view.Control.BeginInvoke(updater);
 		}
 		#endregion
 
