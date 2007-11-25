@@ -1,7 +1,7 @@
 BUGS
+*** - Paths are getting saved for some reason.
 - "System Volume Information folder" never returns any information
 - Filesystem events don't correctly update status bar
-- Drag drop weirdness
 - Network drive (z:) not sorted correctly
 - Multiple filewatcher events fire on one file operation -- catch them all and just update once?
 - Filter textbox too small to fit
@@ -9,7 +9,7 @@ BUGS
 
 TODO
 - No hardcoded parent/child form stuff
-- Update parent form with path info	
+- Update parent form with path info	(done for Dual, needs to be done for others)
 - Log4net support to log detailed debug logs
 - Save the position of the seperator for the dual file view
 - Show title of the currently selected directory in the parent

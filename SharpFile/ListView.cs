@@ -42,6 +42,7 @@ namespace SharpFile {
 			this.DragDrop += listView_DragDrop;
 			this.KeyUp += listView_KeyUp;
 			this.AfterLabelEdit += listView_AfterLabelEdit;
+			this.GotFocus += listView_GotFocus;
 
 			// Set some options on the listview.
 			// TODO: This should be able to be set via dropdown/settings.
@@ -112,6 +113,13 @@ namespace SharpFile {
 		#endregion
 
 		#region Events.
+		/// <summary>
+		/// Fires when the list view gets focus.
+		/// </summary>
+		void listView_GotFocus(object sender, EventArgs e) {
+			UpdatePath(Path);
+		}
+
 		/// <summary>
 		/// Refreshes the listview when a file/directory is double-clicked in the listview.
 		/// </summary>

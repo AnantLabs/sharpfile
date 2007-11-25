@@ -7,11 +7,10 @@ using SharpFile.UI;
 using Common;
 
 namespace SharpFile {
-	public partial class DualParent :BaseParent {
+	public partial class DualParent : BaseParent {
 		protected SplitContainer splitContainer;
 
-		public DualParent()
-			: base() {
+		public DualParent() : base() {
 			Child child1 = new Child();
 			child1.TabControl.Appearance = TabAppearance.FlatButtons;
 			child1.TabControl.IsVisible = true;
@@ -37,6 +36,10 @@ namespace SharpFile {
 						timer.Enabled = false;
 					}
 				}
+			};
+
+			child1.OnUpdatePath += delegate(string path) {
+				this.Text = path;
 			};
 
 			Child child2 = new Child();
@@ -66,6 +69,10 @@ namespace SharpFile {
 				}
 			};
 
+			child2.OnUpdatePath += delegate(string path) {
+				this.Text = path;
+			};
+
 			splitContainer.Panel1.Controls.Add(child1);
 			splitContainer.Panel2.Controls.Add(child2);
 		}
@@ -75,8 +82,8 @@ namespace SharpFile {
 			this.splitContainer.Dock = DockStyle.Fill;
 			this.splitContainer.Size = new System.Drawing.Size(641, 364);
 			this.splitContainer.SplitterDistance = 318;
+			
 			this.Controls.Add(this.splitContainer);
-
 			base.addControls();
 		}
 
@@ -84,12 +91,16 @@ namespace SharpFile {
 			Settings.Instance.LeftPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
 			Settings.Instance.RightPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
 
+			// TODO: Save the splitter position.
+
 			base.onFormClosing();
 		}
 
 		protected override void onFormLoad() {
 			Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.LeftPath);
 			Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.RightPath);
+
+			// TODO: Retrieve the splitter position.
 
 			base.onFormLoad();
 		}

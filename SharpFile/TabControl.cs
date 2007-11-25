@@ -34,7 +34,7 @@ namespace SharpFile {
 			}
 		}
 
-		//TabControl overrides dispose to clean up the component list.
+		// TabControl overrides dispose to clean up the component list.
 		[PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
 		protected override void Dispose(bool disposing) {
 			if (disposing && 

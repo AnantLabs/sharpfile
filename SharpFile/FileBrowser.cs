@@ -100,14 +100,13 @@ namespace SharpFile {
 			return -1;
 		}
 
-		/// <summary>
-		/// Passes the path to any listening events.
-		/// </summary>
-		/// <param name="path">Path.</param>
 		protected void UpdatePath(string path) {
 			if (OnUpdatePath != null) {
 				OnUpdatePath(path);
 			}
+
+			this.Text = path;
+			Path = path;
 		}
 		#endregion
 
@@ -120,12 +119,12 @@ namespace SharpFile {
 			tlsFilter.Text = string.Empty;
 
 			// Attach to some events.
+			this.HandleCreated += fileBrowser_HandleCreated;
 			this.tlsPath.KeyDown += tlsPath_KeyDown;
 			this.tlsFilter.KeyUp += tlsFilter_KeyUp;
 			this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
-			this.view.OnUpdatePath += view_OnUpdatePath;
-			this.HandleCreated += FileBrowser_HandleCreated;
+			this.view.OnUpdatePath += UpdatePath;
 
 			fileSystemWatcher = new System.IO.FileSystemWatcher();
 			fileSystemWatcher.Changed += fileSystemWatcher_Changed;
@@ -141,18 +140,8 @@ namespace SharpFile {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void FileBrowser_HandleCreated(object sender, EventArgs e) {
+		private void fileBrowser_HandleCreated(object sender, EventArgs e) {
 			handleCreated = true;
-		}
-
-		/// <summary>
-		/// Displays the current path in the tab text and textbox.
-		/// </summary>
-		private void view_OnUpdatePath(string path) {
-			this.Text = path;
-			this.tlsPath.Text = path;
-
-			UpdatePath(path);
 		}
 
 		/// <summary>
@@ -352,7 +341,8 @@ namespace SharpFile {
 		public string Path {
 			get {
 				if (string.IsNullOrEmpty(this.tlsPath.Text)) {
-					if (string.IsNullOrEmpty(ParentResource.FullPath)) {
+					if (ParentResource == null ||
+						string.IsNullOrEmpty(ParentResource.FullPath)) {
 						// TODO: This shouldn't be hard-coded.
 						this.tlsPath.Text = @"c:\";
 					} else {
@@ -362,7 +352,15 @@ namespace SharpFile {
 
 				return this.tlsPath.Text;
 			} set {
-				this.tlsPath.Text = value;
+				if (value == null) {
+					string path = value;
+
+					if (!path.EndsWith(@"\")) {
+						path += @"\";
+					}
+
+					this.tlsPath.Text = path;
+				}
 			}
 		}
 
