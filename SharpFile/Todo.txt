@@ -1,5 +1,4 @@
 BUGS
-*** - Paths are getting saved for some reason.
 - "System Volume Information folder" never returns any information
 - Filesystem events don't correctly update status bar
 - Network drive (z:) not sorted correctly
