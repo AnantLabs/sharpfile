@@ -352,7 +352,7 @@ namespace SharpFile {
 
 				return this.tlsPath.Text;
 			} set {
-				if (value == null) {
+				if (value != null) {
 					string path = value;
 
 					if (!path.EndsWith(@"\")) {
