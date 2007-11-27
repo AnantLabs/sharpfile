@@ -7,6 +7,7 @@ BUGS
 - Flickering textboxes when resizing
 
 TODO
+- Specify defaults for settings as an attribute on the property
 - No hardcoded parent/child form stuff
 - Update parent form with path info	(done for Dual, needs to be done for others)
 - Log4net support to log detailed debug logs
