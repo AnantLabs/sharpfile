@@ -39,7 +39,9 @@ namespace SharpFile {
 			};
 
 			child1.OnUpdatePath += delegate(string path) {
-				this.Text = path;
+				this.Text = string.Format("{0} - {1}",
+					formName,
+					path);
 			};
 
 			Child child2 = new Child();
@@ -70,7 +72,9 @@ namespace SharpFile {
 			};
 
 			child2.OnUpdatePath += delegate(string path) {
-				this.Text = path;
+				this.Text = string.Format("{0} - {1}",
+					formName,
+					path);
 			};
 
 			splitContainer.Panel1.Controls.Add(child1);

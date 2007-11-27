@@ -15,6 +15,14 @@ namespace SharpFile {
 			if (this.MdiChildren.Length == 1) {
 				this.MdiChildren[0].WindowState = FormWindowState.Maximized;
 			}
+
+			this.MdiChildActivate += delegate(object sender, EventArgs e) {
+				((MdiChild)this.ActiveMdiChild).Child.OnUpdatePath += delegate(string path) {
+					this.Text = string.Format("{0} - {1}",
+							formName,
+							path);
+				};
+			};
 		}
 
 		private void ShowNewForm(object sender, EventArgs e) {
@@ -46,6 +54,12 @@ namespace SharpFile {
 
 			childForm.Child.OnGetImageIndex += delegate(IResource fsi) {
 				return IconManager.GetImageIndex(fsi, ImageList);
+			};
+
+			childForm.Child.OnUpdatePath += delegate(string path) {
+				this.Text = string.Format("{0} - {1}",
+					formName,
+					path);
 			};
 		}
 

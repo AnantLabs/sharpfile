@@ -44,25 +44,36 @@ namespace SharpFile.Infrastructure {
 		public static void Load() {
 			lock (lockObject) {
 				XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
+				bool settingsLoaded = false;
 
 				// If there is no settings file, create one from some defaults.
-				if (!File.Exists(FilePath)) {
+				if (File.Exists(FilePath)) {
+					try {
+						// Set our instance properties from the Xml file.
+						using (TextReader tr = new StreamReader(FilePath)) {
+							Settings settings = (Settings)xmlSerializer.Deserialize(tr);
+							instance.Height = settings.Height;
+							instance.Width = settings.Width;
+							instance.LeftPath = settings.LeftPath;
+							instance.RightPath = settings.RightPath;
+							instance.ParentType = settings.ParentType;
+						}
+
+						settingsLoaded = true;
+					} catch {
+						settingsLoaded = false;
+
+						// TODO: Show a message saying that default values have been loaded.
+					}
+				} 
+
+				if (!settingsLoaded) {
 					instance.Height = 500;
 					instance.Width = 500;
 					instance.ParentType = ParentType.Dual;
 
 					using (TextWriter tw = new StreamWriter(FilePath)) {
 						xmlSerializer.Serialize(tw, instance);
-					}
-				} else {
-					// Set our instance properties from the Xml file.
-					using (TextReader tr = new StreamReader(FilePath)) {
-						Settings settings = (Settings)xmlSerializer.Deserialize(tr);
-						instance.Height = settings.Height;
-						instance.Width = settings.Width;
-						instance.LeftPath = settings.LeftPath;
-						instance.RightPath = settings.RightPath;
-						instance.ParentType = settings.ParentType;
 					}
 				}
 			}
