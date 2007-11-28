@@ -1,8 +1,7 @@
-using System;
 using System.Windows.Forms;
 
 namespace SharpFile {
-	public partial class TabChild : TabPage {
+	public class TabChild : TabPage {
 		private Child child;
 
 		public TabChild() {

@@ -1,4 +1,3 @@
-using System;
 using SharpFile.IO.ParentResources;
 using SharpFile.IO.Retrievers;
 

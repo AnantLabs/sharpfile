@@ -41,11 +41,11 @@ namespace SharpFile.UI {
 		/// <summary>
 		/// Returns an icon for a given file - indicated by the name parameter.
 		/// </summary>
-		/// <param name="name">Pathname for file.</param>
+		/// <param name="path">Pathname for file.</param>
 		/// <param name="size">Large or small</param>
-		/// <param name="linkOverlay">Whether to include the link icon</param>
+		/// <param name="showOverlay">Whether to include the link icon</param>
 		/// <returns>System.Drawing.Icon</returns>
-		public static System.Drawing.Icon GetFileIcon(string path, IconSize size, bool showOverlay) {
+		public static Icon GetFileIcon(string path, IconSize size, bool showOverlay) {
 			uint flags = 0;
 			bool linkOverlay = false;
 
@@ -68,7 +68,7 @@ namespace SharpFile.UI {
 		/// <param name="size">Specify large or small icons.</param>
 		/// <param name="folderType">Specify open or closed FolderType.</param>
 		/// <returns>System.Drawing.Icon</returns>
-		public static System.Drawing.Icon GetFolderIcon(string path, IconSize size, FolderType folderType, bool showOverlay) {
+		public static Icon GetFolderIcon(string path, IconSize size, FolderType folderType, bool showOverlay) {
 			uint flags = 0;
 
 			if (FolderType.Open == folderType) {
@@ -89,7 +89,7 @@ namespace SharpFile.UI {
 		/// <param name="size">Specify large or small icons.</param>
 		/// <param name="folderType">Specify open or closed FolderType.</param>
 		/// <returns>System.Drawing.Icon</returns>
-		public static System.Drawing.Icon GetDriveIcon(string path, IconSize size, FolderType folderType) {
+		public static Icon GetDriveIcon(string path, IconSize size, FolderType folderType) {
 			uint flags = 0;
 
 			if (FolderType.Open == folderType) {

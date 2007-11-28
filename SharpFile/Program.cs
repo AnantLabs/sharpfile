@@ -1,9 +1,6 @@
 using System;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
-using System.Xml.Serialization;
-using System.IO;
-using Common;
 
 namespace SharpFile {
     static class Program {
@@ -15,7 +12,7 @@ namespace SharpFile {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 			
-			Application.ApplicationExit += delegate(object sender, EventArgs e) {
+			Application.ApplicationExit += delegate {
 				Settings.Save();
 			};
 

@@ -4,11 +4,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace ProgressDisk
-{
+namespace ProgressDisk {
 	[DefaultProperty("BlockSize")]
-	public partial class ProgressDisk : UserControl
-	{
+	public class ProgressDisk : UserControl {
 		private GraphicsPath bkGroundPath1 = new GraphicsPath();
 		private GraphicsPath bkGroundPath2 = new GraphicsPath();
 		private GraphicsPath valuePath = new GraphicsPath();
@@ -27,43 +25,39 @@ namespace ProgressDisk
 		private float blockRatio = .4f;
 		private BlockSize bs = BlockSize.Small;
 
-		public ProgressDisk()
-		{
+		public ProgressDisk() {
 			this.SuspendLayout();
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleDimensions = new SizeF(6F, 13F);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.DoubleBuffered = true;
-			this.Size = new System.Drawing.Size(50, 50);
+			this.Size = new Size(50, 50);
 			this.ResumeLayout(false);
 
 			// CheckForIllegalCrossThreadCalls = false;
 			Render();
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
-		{
+		protected override void OnPaint(PaintEventArgs e) {
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 			region = new Region(ClientRectangle);
-			if (backGrndColor == Color.Transparent)
-			{
+			if (backGrndColor == Color.Transparent) {
 				region.Exclude(bkGroundPath2);
 				Region = region;
 			}
 
 			e.Graphics.FillPath(new SolidBrush(backGrndColor), bkGroundPath1);
 			e.Graphics.FillPath(
-			new LinearGradientBrush(new Rectangle(0, 0, size, size), inactiveforeColor1, inactiveforeColor2,
-			value * 360 / 12, true), valuePath);
+				new LinearGradientBrush(new Rectangle(0, 0, size, size), inactiveforeColor1, inactiveforeColor2,
+				                        value*360/12, true), valuePath);
 			e.Graphics.FillPath(
-			new LinearGradientBrush(new Rectangle(0, 0, size, size), activeforeColor1, activeforeColor2,
-			value * 360 / 12, true), freGroundPath);
+				new LinearGradientBrush(new Rectangle(0, 0, size, size), activeforeColor1, activeforeColor2,
+				                        value*360/12, true), freGroundPath);
 			e.Graphics.FillPath(new SolidBrush(backGrndColor), bkGroundPath2);
 
 			base.OnPaint(e);
 		}
 
-		private void Render()
-		{
+		private void Render() {
 			// bkGroundPath1 = new GraphicsPath();
 			// bkGroundPath2 = new GraphicsPath();
 			// valuePath = new GraphicsPath();
@@ -75,37 +69,32 @@ namespace ProgressDisk
 			bkGroundPath1.AddPie(new Rectangle(0, 0, size, size), 0, 360);
 
 			//just in case...
-			if (sliceCount == 0)
-			{
+			if (sliceCount == 0) {
 				sliceCount = 12;
 			}
 
-			float sliceAngle = 360 / sliceCount;
+			float sliceAngle = 360/sliceCount;
 			float sweepAngle = sliceAngle - 5;
-			for (int i = 0; i < sliceCount; i++)
-			{
-				if (value != i)
-				{
-					valuePath.AddPie(0, 0, size, size, i * sliceAngle, sweepAngle);
+			for (int i = 0; i < sliceCount; i++) {
+				if (value != i) {
+					valuePath.AddPie(0, 0, size, size, i*sliceAngle, sweepAngle);
 				}
 			}
 			bkGroundPath2.AddPie(
-			(size / 2 - size * blockRatio), (size / 2 - size * blockRatio),
-			(blockRatio * 2 * size), (blockRatio * 2 * size), 0, 360);
-			freGroundPath.AddPie(new Rectangle(0, 0, size, size), value * sliceAngle, sweepAngle);
+				(size/2 - size*blockRatio), (size/2 - size*blockRatio),
+				(blockRatio*2*size), (blockRatio*2*size), 0, 360);
+			freGroundPath.AddPie(new Rectangle(0, 0, size, size), value*sliceAngle, sweepAngle);
 			Invalidate();
 		}
 
-		protected override void OnSizeChanged(EventArgs e)
-		{
+		protected override void OnSizeChanged(EventArgs e) {
 			size = Math.Max(Width, Height);
 			Size = new Size(size, size);
 			Render();
 			base.OnSizeChanged(e);
 		}
 
-		protected override void OnResize(EventArgs e)
-		{
+		protected override void OnResize(EventArgs e) {
 			size = Math.Max(Width, Height);
 			Size = new Size(size, size);
 			Render();
@@ -113,92 +102,92 @@ namespace ProgressDisk
 		}
 
 		#region Properties
+
 		[DefaultValue(0)]
-		public int Value
-		{
-			get { return value; }
-			set
-			{
+		public int Value {
+			get {
+				return value;
+			}
+			set {
 				this.value = value;
 				Render();
 			}
 		}
 
-		[DefaultValue(typeof(Color), "White")]
-		public Color BackGroundColor
-		{
-			get { return backGrndColor; }
-			set
-			{
+		[DefaultValue(typeof (Color), "White")]
+		public Color BackGroundColor {
+			get {
+				return backGrndColor;
+			}
+			set {
 				backGrndColor = value;
 				Render();
 			}
 		}
 
-		[DefaultValue(typeof(Color), "Blue")]
-		public Color ActiveForeColor1
-		{
-			get { return activeforeColor1; }
-			set
-			{
+		[DefaultValue(typeof (Color), "Blue")]
+		public Color ActiveForeColor1 {
+			get {
+				return activeforeColor1;
+			}
+			set {
 				activeforeColor1 = value;
 				Render();
 			}
 		}
 
-		[DefaultValue(typeof(Color), "LightBlue")]
-		public Color ActiveForeColor2
-		{
-			get { return activeforeColor2; }
-			set
-			{
+		[DefaultValue(typeof (Color), "LightBlue")]
+		public Color ActiveForeColor2 {
+			get {
+				return activeforeColor2;
+			}
+			set {
 				activeforeColor2 = value;
 				Render();
 			}
 		}
 
-		[DefaultValue(typeof(Color), "Green")]
-		public Color InactiveForeColor1
-		{
-			get { return inactiveforeColor1; }
-			set
-			{
+		[DefaultValue(typeof (Color), "Green")]
+		public Color InactiveForeColor1 {
+			get {
+				return inactiveforeColor1;
+			}
+			set {
 				inactiveforeColor1 = value;
 				Render();
 			}
 		}
 
-		[DefaultValue(typeof(Color), "LightGreen")]
-		public Color InactiveForeColor2
-		{
-			get { return inactiveforeColor2; }
-			set
-			{
+		[DefaultValue(typeof (Color), "LightGreen")]
+		public Color InactiveForeColor2 {
+			get {
+				return inactiveforeColor2;
+			}
+			set {
 				inactiveforeColor2 = value;
 				Render();
 			}
 		}
 
 		[DefaultValue(50)]
-		public int SquareSize
-		{
-			get { return size; }
-			set
-			{
+		public int SquareSize {
+			get {
+				return size;
+			}
+			set {
 				size = value;
 				Size = new Size(size, size);
 			}
 		}
 
-		[DefaultValue(typeof(BlockSize), "Small")]
-		public BlockSize BlockSize
-		{
-			get { return bs; }
-			set
-			{
+		[DefaultValue(typeof (BlockSize), "Small")]
+		public BlockSize BlockSize {
+			get {
+				return bs;
+			}
+			set {
 				bs = value;
-				switch (bs)
-				{
+				switch (bs) {
 					case BlockSize.XSmall:
 						blockRatio = 0.49f;
 						break;
@@ -224,16 +213,19 @@ namespace ProgressDisk
 		}
 
 		[DefaultValue(12)]
-		public int SliceCount
-		{
-			get { return sliceCount; }
-			set { sliceCount = value; }
+		public int SliceCount {
+			get {
+				return sliceCount;
+			}
+			set {
+				sliceCount = value;
+			}
 		}
+
 		#endregion
 	}
 
-	public enum BlockSize
-	{
+	public enum BlockSize {
 		XSmall,
 		Small,
 		Medium,

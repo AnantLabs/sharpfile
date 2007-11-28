@@ -1,4 +1,3 @@
-using System;
 using SharpFile.IO.ChildResources;
 
 namespace SharpFile.IO {

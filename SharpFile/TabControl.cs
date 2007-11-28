@@ -28,7 +28,7 @@ namespace SharpFile {
 
 		public new TabPage SelectedTab {
 			get {
-				return ((TabPage)base.SelectedTab);
+				return base.SelectedTab;
 			} set {
 				base.SelectedTab = value;
 			}
@@ -204,7 +204,7 @@ namespace SharpFile {
 	}
 
 	#region   Custom Scroller with Close Button
-	internal class TabScroller : System.Windows.Forms.Control {
+	internal class TabScroller : Control {
 		#region   Windows Form Designer generated code
 		public TabScroller()
 			: base() {

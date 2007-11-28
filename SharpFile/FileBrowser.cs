@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Diagnostics;
+using System.IO;
 using System.Threading;
-using SharpFile.IO.Retrievers;
-using SharpFile.IO.ParentResources;
-using SharpFile.IO.ChildResources;
-using SharpFile.IO;
-using SharpFile.UI;
+using System.Windows.Forms;
 using Common;
+using SharpFile.IO;
+using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
+using SharpFile.IO.Retrievers;
+using DriveInfo=SharpFile.IO.ParentResources.DriveInfo;
+using DriveType=SharpFile.IO.DriveType;
+using View=SharpFile.IO.View;
 
 namespace SharpFile {
-	public partial class FileBrowser : System.Windows.Forms.TabPage {
+	public class FileBrowser : TabPage {
 		private static readonly object lockObject = new object();
 
-		private System.IO.FileSystemWatcher fileSystemWatcher;
+		private FileSystemWatcher fileSystemWatcher;
 		private ImageList imageList;
 		private bool handleCreated = false;
 
@@ -26,8 +27,8 @@ namespace SharpFile {
 		private ToolStripTextBox tlsFilter;
 		private IView view;
 
-		public event SharpFile.IO.View.OnGetImageIndexDelegate OnGetImageIndex;
-		public event SharpFile.IO.View.OnUpdatePathDelegate OnUpdatePath;
+		public event View.OnGetImageIndexDelegate OnGetImageIndex;
+		public event View.OnUpdatePathDelegate OnUpdatePath;
 
 		/// <summary>
 		/// Filebrowser ctor.
@@ -37,42 +38,33 @@ namespace SharpFile {
 			this.tlsDrives = new ToolStripSplitButton();
 			this.tlsPath = new ToolStripSpringTextBox();
 			this.tlsFilter = new ToolStripTextBox();
-			this.view = new SharpFile.ListView();
+			this.view = new ListView();
 			this.toolStrip.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// toolStrip
-			// 
-			this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.tlsDrives,
-				this.tlsPath,
-				this.tlsFilter});
-			this.toolStrip.Location = new System.Drawing.Point(0, 0);
+
+			this.toolStrip.GripStyle = ToolStripGripStyle.Hidden;
+			this.toolStrip.Items.AddRange(new ToolStripItem[] {
+			                                                  	this.tlsDrives,
+			                                                  	this.tlsPath,
+			                                                  	this.tlsFilter
+			                                                  });
+			this.toolStrip.Location = new Point(0, 0);
 			this.toolStrip.RenderMode = ToolStripRenderMode.System;
 			this.toolStrip.ShowItemToolTips = false;
-			this.toolStrip.Size = new System.Drawing.Size(454, 25);
+			this.toolStrip.Size = new Size(454, 25);
 			this.toolStrip.TabIndex = 1;
-			// 
-			// tlsDrives
-			// 
-			this.tlsDrives.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.tlsDrives.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.tlsDrives.Size = new System.Drawing.Size(32, 22);
-			// 
-			// tlsPath
-			// 
-			this.tlsPath.Size = new System.Drawing.Size(100, 25);
-			// 
-			// tlsFilter
-			// 
-			this.tlsFilter.Size = new System.Drawing.Size(50, 25);
-			// 
-			// FileBrowser
-			// 
+
+			this.tlsDrives.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			this.tlsDrives.ImageTransparentColor = Color.Magenta;
+			this.tlsDrives.Size = new Size(32, 22);
+
+			this.tlsPath.Size = new Size(100, 25);
+
+			this.tlsFilter.Size = new Size(50, 25);
+
 			this.Controls.Add(this.view.Control);
 			this.Controls.Add(this.toolStrip);
-			this.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.ForeColor = SystemColors.ControlText;
 			this.toolStrip.ResumeLayout(false);
 			this.toolStrip.PerformLayout();
 			this.ResumeLayout(false);
@@ -88,6 +80,7 @@ namespace SharpFile {
 		}
 
 		#region Delegate methods
+
 		/// <summary>
 		/// Passes the filesystem info to any listening events.
 		/// </summary>
@@ -108,9 +101,11 @@ namespace SharpFile {
 			this.Text = path;
 			Path = path;
 		}
+
 		#endregion
 
 		#region Private methods
+
 		/// <summary>
 		/// Sets the filebrowser up.
 		/// </summary>
@@ -126,15 +121,17 @@ namespace SharpFile {
 			this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
 			this.view.OnUpdatePath += UpdatePath;
 
-			fileSystemWatcher = new System.IO.FileSystemWatcher();
+			fileSystemWatcher = new FileSystemWatcher();
 			fileSystemWatcher.Changed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
 			fileSystemWatcher.Created += fileSystemWatcher_Changed;
 			fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
 		}
+
 		#endregion
 
 		#region Events
+
 		/// <summary>
 		/// Fires when the FileBrowser handle has been created.
 		/// </summary>
@@ -153,7 +150,8 @@ namespace SharpFile {
 
 				if (resource != null) {
 					resource.Execute(view);
-				} else {
+				}
+				else {
 					MessageBox.Show("The path, " + Path + ", looks like it is incorrect.");
 					Path = this.Text;
 				}
@@ -172,7 +170,7 @@ namespace SharpFile {
 		/// Refreshes the view when a different drive is selected.
 		/// </summary>
 		private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			IParentResource resource = (IParentResource)e.ClickedItem.Tag;
+			IParentResource resource = (IParentResource) e.ClickedItem.Tag;
 			resource.Execute(view);
 			highlightParentResource(resource, e.ClickedItem.Image);
 		}
@@ -181,47 +179,49 @@ namespace SharpFile {
 		/// Refreshes the view with the current root drive.
 		/// </summary>
 		private void tlsDrives_ButtonClick(object sender, EventArgs e) {
-			IParentResource resource = (IParentResource)tlsDrives.Tag;
+			IParentResource resource = (IParentResource) tlsDrives.Tag;
 			resource.Execute(view);
 		}
 
 		/// <summary>
 		/// Fires when the filesystem watcher sees a filesystem event.
 		/// </summary>
-		private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
+		private void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e) {
 			string path = e.FullPath;
 			IChildResource resource = ChildResourceFactory.GetChildResource(path);
 
 			// Required to ensure the view update occurs on the calling thread.
-			MethodInvoker updater = new MethodInvoker(delegate() {
-				view.BeginUpdate();
+			MethodInvoker updater = delegate {
+			                                          	view.BeginUpdate();
 
-				switch (e.ChangeType) {
-					case System.IO.WatcherChangeTypes.Changed:
-						view.RemoveItem(path);
-						view.InsertItem(resource);
-						break;
-					case System.IO.WatcherChangeTypes.Created:
-						view.InsertItem(resource);
-						break;
-					case System.IO.WatcherChangeTypes.Deleted:
-						view.RemoveItem(path);
-						break;
-					case System.IO.WatcherChangeTypes.Renamed:
-						string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
-						view.RemoveItem(oldFullPath);
-						view.InsertItem(resource);
-						break;
-				}
+			                                          	switch (e.ChangeType) {
+			                                          		case WatcherChangeTypes.Changed:
+			                                          			view.RemoveItem(path);
+			                                          			view.InsertItem(resource);
+			                                          			break;
+			                                          		case WatcherChangeTypes.Created:
+			                                          			view.InsertItem(resource);
+			                                          			break;
+			                                          		case WatcherChangeTypes.Deleted:
+			                                          			view.RemoveItem(path);
+			                                          			break;
+			                                          		case WatcherChangeTypes.Renamed:
+			                                          			string oldFullPath = ((RenamedEventArgs) e).OldFullPath;
+			                                          			view.RemoveItem(oldFullPath);
+			                                          			view.InsertItem(resource);
+			                                          			break;
+			                                          	}
 
-				view.EndUpdate();
-			});
+			                                          	view.EndUpdate();
+			                                          };
 
 			view.Control.BeginInvoke(updater);
 		}
+
 		#endregion
 
 		#region Public methods
+
 		/// <summary>
 		/// Update the drive information contained in the drive dropdown asynchronously.
 		/// </summary>
@@ -231,7 +231,7 @@ namespace SharpFile {
 
 			// Queue all of the resource retrievers onto the threadpool and set up the callback method.
 			foreach (IParentResourceRetriever resourceRetriever in resourceRetrievers) {
-				ThreadPool.QueueUserWorkItem(new WaitCallback(UpdateParentListing_Callback), resourceRetriever);
+				ThreadPool.QueueUserWorkItem(UpdateParentListing_Callback, resourceRetriever);
 			}
 		}
 
@@ -242,56 +242,56 @@ namespace SharpFile {
 		private void UpdateParentListing_Callback(object stateInfo) {
 			lock (lockObject) {
 				if (stateInfo is IParentResourceRetriever) {
-					IParentResourceRetriever resourceRetriever = (IParentResourceRetriever)stateInfo;
+					IParentResourceRetriever resourceRetriever = (IParentResourceRetriever) stateInfo;
 					List<IParentResource> resources = new List<IParentResource>(resourceRetriever.Get());
 
-					MethodInvoker updater = delegate() {
-						bool isLocalDiskFound = false;
+					MethodInvoker updater = delegate {
+					                        	bool isLocalDiskFound = false;
 
-						// Create a new menu item in the dropdown for each drive.
-						foreach (IParentResource resource in resources) {
-							ToolStripMenuItem item = new ToolStripMenuItem();
-							item.Text = resource.DisplayName;
-							item.Name = resource.FullPath;
-							item.Tag = resource;
+					                        	// Create a new menu item in the dropdown for each drive.
+					                        	foreach (IParentResource resource in resources) {
+					                        		ToolStripMenuItem item = new ToolStripMenuItem();
+					                        		item.Text = resource.DisplayName;
+					                        		item.Name = resource.FullPath;
+					                        		item.Tag = resource;
 
-							int imageIndex = GetImageIndex(resource);
-							if (imageIndex > -1) {
-								item.Image = ImageList.Images[imageIndex];
-							}
+					                        		int imageIndex = GetImageIndex(resource);
+					                        		if (imageIndex > -1) {
+					                        			item.Image = ImageList.Images[imageIndex];
+					                        		}
 
-							tlsDrives.DropDownItems.Add(item);
+					                        		tlsDrives.DropDownItems.Add(item);
 
-							// Gets information about the path already specified or the drive currently being added.
-							if (!isLocalDiskFound) {
-								// If the path has been defined and it is valid, then grab information about it.
-								if (!string.IsNullOrEmpty(Path)) {
-									IChildResource childResource = ChildResourceFactory.GetChildResource(Path);
+					                        		// Gets information about the path already specified or the drive currently being added.
+					                        		if (!isLocalDiskFound) {
+					                        			// If the path has been defined and it is valid, then grab information about it.
+					                        			if (!string.IsNullOrEmpty(Path)) {
+					                        				IChildResource childResource = ChildResourceFactory.GetChildResource(Path);
 
-									if (childResource != null &&
-										childResource.Root.FullPath == resource.FullPath) {
-										isLocalDiskFound = true;
+					                        				if (childResource != null &&
+					                        				    childResource.Root.FullPath == resource.FullPath) {
+					                        					isLocalDiskFound = true;
 
-										highlightParentResource(childResource.Root, item.Image);
-										childResource.Execute(view);
-									}
-								}
+					                        					highlightParentResource(childResource.Root, item.Image);
+					                        					childResource.Execute(view);
+					                        				}
+					                        			}
 
-								// If the view hasn't been updated and the resource is a drive, then grab some information about it.
-								if (!isLocalDiskFound && resource is DriveInfo) {
-									DriveInfo driveInfo = (DriveInfo)resource;
+					                        			// If the view hasn't been updated and the resource is a drive, then grab some information about it.
+					                        			if (!isLocalDiskFound && resource is DriveInfo) {
+					                        				DriveInfo driveInfo = (DriveInfo) resource;
 
-									if (driveInfo.DriveType == DriveType.Fixed &&
-										driveInfo.IsReady) {
-										isLocalDiskFound = true;
+					                        				if (driveInfo.DriveType == DriveType.Fixed &&
+					                        				    driveInfo.IsReady) {
+					                        					isLocalDiskFound = true;
 
-										highlightParentResource(driveInfo, item.Image);
-										driveInfo.Execute(view);
-									}
-								}
-							}
-						}
-					};
+					                        					highlightParentResource(driveInfo, item.Image);
+					                        					driveInfo.Execute(view);
+					                        				}
+					                        			}
+					                        		}
+					                        	}
+					                        };
 
 					if (handleCreated) {
 						this.BeginInvoke(updater);
@@ -299,29 +299,34 @@ namespace SharpFile {
 				}
 			}
 		}
+
 		#endregion
 
 		#region Private methods.
+
 		/// <summary>
 		/// Highlights the passed-in drive.
 		/// </summary>
-		private void highlightParentResource(IParentResource resource, Image image) {
+		private void highlightParentResource(IResource resource, Image image) {
 			foreach (ToolStripItem item in tlsDrives.DropDownItems) {
-				IParentResource parentResource = ((IParentResource)item.Tag);
+				IParentResource parentResource = ((IParentResource) item.Tag);
 
 				if (parentResource.FullPath == resource.FullPath) {
 					item.BackColor = SystemColors.HighlightText;
-					
+
 					tlsDrives.Image = image;
 					tlsDrives.Tag = resource;
-				} else {
+				}
+				else {
 					item.BackColor = SystemColors.Control;
 				}
 			}
 		}
+
 		#endregion
 
 		#region Properties.
+
 		/// <summary>
 		/// Shared ImageList from the parent form.
 		/// </summary>
@@ -342,16 +347,18 @@ namespace SharpFile {
 			get {
 				if (string.IsNullOrEmpty(this.tlsPath.Text)) {
 					if (ParentResource == null ||
-						string.IsNullOrEmpty(ParentResource.FullPath)) {
+					    string.IsNullOrEmpty(ParentResource.FullPath)) {
 						// TODO: This shouldn't be hard-coded.
 						this.tlsPath.Text = @"c:\";
-					} else {
+					}
+					else {
 						this.tlsPath.Text = ParentResource.FullPath;
 					}
 				}
 
 				return this.tlsPath.Text;
-			} set {
+			}
+			set {
 				if (value != null) {
 					string path = value;
 
@@ -373,7 +380,7 @@ namespace SharpFile {
 		/// <summary>
 		/// The current FileSystemWatcher.
 		/// </summary>
-		public System.IO.FileSystemWatcher FileSystemWatcher {
+		public FileSystemWatcher FileSystemWatcher {
 			get {
 				return fileSystemWatcher;
 			}
@@ -384,7 +391,7 @@ namespace SharpFile {
 		/// </summary>
 		public IParentResource ParentResource {
 			get {
-				return (IParentResource)tlsDrives.Tag;
+				return (IParentResource) tlsDrives.Tag;
 			}
 		}
 
@@ -396,6 +403,7 @@ namespace SharpFile {
 				return view;
 			}
 		}
+
 		#endregion
 	}
 }

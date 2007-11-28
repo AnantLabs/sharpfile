@@ -1,35 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
+using Common;
 using SharpFile.IO;
-using SharpFile.UI;
+using View=SharpFile.IO.View;
 
 namespace SharpFile {
-	public partial class Child :UserControl {
-		public event SharpFile.IO.View.OnUpdateStatusDelegate OnUpdateStatus;
-		public event SharpFile.IO.View.OnUpdateProgressDelegate OnUpdateProgress;
-		public event SharpFile.IO.View.OnGetImageIndexDelegate OnGetImageIndex;
-		public event SharpFile.IO.View.OnUpdatePathDelegate OnUpdatePath;
+	public class Child : UserControl {
+		public event View.OnUpdateStatusDelegate OnUpdateStatus;
+		public event View.OnUpdateProgressDelegate OnUpdateProgress;
+		public event View.OnGetImageIndexDelegate OnGetImageIndex;
+		public event View.OnUpdatePathDelegate OnUpdatePath;
 
 		private TabControl tabControl;
 
 		public Child() {
-			this.tabControl = new SharpFile.TabControl();
+			this.tabControl = new TabControl();
 			this.SuspendLayout();
-			// 
-			// tabControl
-			// 
-			this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+
+			this.tabControl.Dock = DockStyle.Fill;
 			this.tabControl.IsVisible = true;
-			// 
-			// Child
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+
+			this.AutoScaleDimensions = new SizeF(6F, 13F);
+			this.AutoScaleMode = AutoScaleMode.Font;
 			this.Controls.Add(this.tabControl);
 			this.ResumeLayout(false);
 
@@ -37,6 +29,7 @@ namespace SharpFile {
 		}
 
 		#region Events.
+
 		private void view_OnUpdateStatus(string status) {
 			if (OnUpdateStatus != null) {
 				OnUpdateStatus(status);
@@ -58,8 +51,8 @@ namespace SharpFile {
 		}
 
 		private void tabControl_Selected(object sender, TabControlEventArgs e) {
-			string path = Common.Forms.GetPropertyInChild<string>(this.TabControl.SelectedTab, "Path");
-			
+			string path = Forms.GetPropertyInChild<string>(this.TabControl.SelectedTab, "Path");
+
 			this.Text = path;
 			fileBrowser_OnUpdatePath(path);
 		}
@@ -69,6 +62,7 @@ namespace SharpFile {
 				OnUpdatePath(path);
 			}
 		}
+
 		#endregion
 
 		public void AddTab() {

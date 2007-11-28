@@ -1,14 +1,20 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using SharpFile.UI;
 using SharpFile.IO;
-using SharpFile.Infrastructure;
 
 namespace SharpFile {
-	public partial class MdiParent : BaseParent {
-		public MdiParent() : base() {
-			InitializeComponent();
+	public class MdiParent : BaseParent {
+		protected ToolStripMenuItem windowsMenu = new ToolStripMenuItem();
+		protected ToolStripMenuItem newWindowToolStripMenuItem = new ToolStripMenuItem();
+		protected ToolStripMenuItem cascadeToolStripMenuItem = new ToolStripMenuItem();
+		protected ToolStripMenuItem tileVerticalToolStripMenuItem = new ToolStripMenuItem();
+		protected ToolStripMenuItem tileHorizontalToolStripMenuItem = new ToolStripMenuItem();
+		protected ToolStripMenuItem closeAllToolStripMenuItem = new ToolStripMenuItem();
+		protected ToolStripMenuItem arrangeIconsToolStripMenuItem = new ToolStripMenuItem();
+
+		public MdiParent() {
+			this.IsMdiContainer = true;
 
 			ShowNewForm(null, EventArgs.Empty);
 
@@ -16,7 +22,7 @@ namespace SharpFile {
 				this.MdiChildren[0].WindowState = FormWindowState.Maximized;
 			}
 
-			this.MdiChildActivate += delegate(object sender, EventArgs e) {
+			this.MdiChildActivate += delegate {
 				((MdiChild)this.ActiveMdiChild).Child.OnUpdatePath += delegate(string path) {
 					this.Text = string.Format("{0} - {1}",
 							formName,
@@ -63,46 +69,6 @@ namespace SharpFile {
 			};
 		}
 
-		private void OpenFile(object sender, EventArgs e) {
-			OpenFileDialog openFileDialog = new OpenFileDialog();
-			openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			openFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-			if (openFileDialog.ShowDialog(this) == DialogResult.OK) {
-				string FileName = openFileDialog.FileName;
-				// TODO: Add code here to open the file.
-			}
-		}
-
-		private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e) {
-			SaveFileDialog saveFileDialog = new SaveFileDialog();
-			saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-			saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-			if (saveFileDialog.ShowDialog(this) == DialogResult.OK) {
-				string FileName = saveFileDialog.FileName;
-				// TODO: Add code here to save the current contents of the form to a file.
-			}
-		}
-
-		private void ExitToolsStripMenuItem_Click(object sender, EventArgs e) {
-			Application.Exit();
-		}
-
-		private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
-			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
-		}
-
-		private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
-			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
-		}
-
-		private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
-			// TODO: Use System.Windows.Forms.Clipboard.GetText() or System.Windows.Forms.GetData to retrieve information from the clipboard.
-		}
-
-		private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
-			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
-		}
-
 		private void CascadeToolStripMenuItem_Click(object sender, EventArgs e) {
 			LayoutMdi(MdiLayout.Cascade);
 		}
@@ -123,6 +89,55 @@ namespace SharpFile {
 			foreach (Form childForm in MdiChildren) {
 				childForm.Close();
 			}
+		}
+
+		protected override void addMenuStripItems()
+		{
+			base.menuStrip.Items.AddRange(new ToolStripItem[]
+			                              	{
+			                              		base.fileMenu,
+			                              		base.editMenu,
+			                              		base.viewMenu,
+			                              		base.toolsMenu,
+			                              		this.windowsMenu,
+			                              		base.helpMenu
+			                              	});
+
+			base.menuStrip.MdiWindowListItem = this.windowsMenu;
+
+			this.windowsMenu.DropDownItems.AddRange(new ToolStripItem[] {
+            this.newWindowToolStripMenuItem,
+            this.cascadeToolStripMenuItem,
+            this.tileVerticalToolStripMenuItem,
+            this.tileHorizontalToolStripMenuItem,
+            this.closeAllToolStripMenuItem,
+            this.arrangeIconsToolStripMenuItem});
+			this.windowsMenu.Size = new System.Drawing.Size(62, 20);
+			this.windowsMenu.Text = "&Windows";
+
+			this.newWindowToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.newWindowToolStripMenuItem.Text = "&New Window";
+			this.newWindowToolStripMenuItem.Click += this.ShowNewForm;
+
+			this.cascadeToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.cascadeToolStripMenuItem.Text = "&Cascade";
+			this.cascadeToolStripMenuItem.Click += this.CascadeToolStripMenuItem_Click;
+
+			this.tileVerticalToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.tileVerticalToolStripMenuItem.Text = "Tile &Vertical";
+			this.tileVerticalToolStripMenuItem.Click += this.TileVerticleToolStripMenuItem_Click;
+			
+			this.tileHorizontalToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.tileHorizontalToolStripMenuItem.Text = "Tile &Horizontal";
+			this.tileHorizontalToolStripMenuItem.Click += this.TileHorizontalToolStripMenuItem_Click;
+			
+			this.closeAllToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.closeAllToolStripMenuItem.Text = "C&lose All";
+			this.closeAllToolStripMenuItem.Click += this.CloseAllToolStripMenuItem_Click;
+			
+			this.arrangeIconsToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+			this.arrangeIconsToolStripMenuItem.Text = "&Arrange Icons";
+			this.arrangeIconsToolStripMenuItem.Click += this.ArrangeIconsToolStripMenuItem_Click;
 		}
 	}
 }

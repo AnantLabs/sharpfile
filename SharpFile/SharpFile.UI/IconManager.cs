@@ -1,7 +1,6 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Reflection;
 using SharpFile.IO.ParentResources;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO;
@@ -10,8 +9,6 @@ namespace SharpFile.UI {
 	public static class IconManager {
 		private const string openFolderKey = ":OPEN_FOLDER:";
 		private const string closedFolderKey = ":CLOSED_FOLDER:";
-
-		private readonly static object lockObject = new object();
 
 		private static Icon getFileIcon(string path) {
 			return getFileIcon(path, false);

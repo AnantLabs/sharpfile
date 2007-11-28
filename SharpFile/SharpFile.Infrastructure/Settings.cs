@@ -1,9 +1,7 @@
 using System;
 using System.Windows.Forms;
-using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.IO;
-using Common;
 
 namespace SharpFile.Infrastructure {
 	public enum ParentType {

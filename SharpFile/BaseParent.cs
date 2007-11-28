@@ -1,11 +1,14 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using ProgressDisk;
 using SharpFile.Infrastructure;
-using System.ComponentModel;
 
-namespace SharpFile {
-	public class BaseParent : Form {
+namespace SharpFile
+{
+	public class BaseParent : Form
+	{
 		protected const string formName = "SharpFile";
 
 		protected Timer timer = new Timer();
@@ -15,7 +18,6 @@ namespace SharpFile {
 		protected MenuStrip menuStrip = new MenuStrip();
 
 		protected ToolStripMenuItem fileMenu = new ToolStripMenuItem();
-		protected ToolStripMenuItem newToolStripMenuItem = new ToolStripMenuItem();
 		protected ToolStripMenuItem exitToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem editMenu = new ToolStripMenuItem();
@@ -26,7 +28,6 @@ namespace SharpFile {
 		protected ToolStripMenuItem pasteToolStripMenuItem = new ToolStripMenuItem();
 		protected ToolStripMenuItem selectAllToolStripMenuItem = new ToolStripMenuItem();
 
-		protected ToolStripSeparator toolStripSeparator5 = new ToolStripSeparator();
 		protected ToolStripSeparator toolStripSeparator6 = new ToolStripSeparator();
 		protected ToolStripSeparator toolStripSeparator7 = new ToolStripSeparator();
 
@@ -37,177 +38,183 @@ namespace SharpFile {
 		protected ToolStripMenuItem optionsToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem helpMenu = new ToolStripMenuItem();
-		protected ToolStripMenuItem aboutToolStripMenuItem = new ToolStripMenuItem();		
+		protected ToolStripMenuItem aboutToolStripMenuItem = new ToolStripMenuItem();
 
-		public BaseParent() {
+		public BaseParent()
+		{
 			initializeComponents();
-
 			this.DoubleBuffered = true;
 
 			SetStyle(ControlStyles.AllPaintingInWmPaint |
-				ControlStyles.OptimizedDoubleBuffer, true);
+			         ControlStyles.OptimizedDoubleBuffer, true);
 
 			this.FormClosing += BaseParent_FormClosing;
 			this.Load += BaseParent_Load;
 
-			this.Resize += delegate(object sender, EventArgs e) {
-				this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
-					base.ClientSize.Height - 18);
-			};
+			this.Resize += delegate
+			               	{
+			               		this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
+			               		                                       base.ClientSize.Height - 18);
+			               	};
 
 			timer.Enabled = true;
-			timer.Tick += delegate {
-				progressDisk.Value = (progressDisk.Value + 1) % 12;
-			};
+			timer.Tick += delegate
+			              	{
+			              		progressDisk.Value = (progressDisk.Value + 1)%12;
+			              	};
 		}
 
-		void BaseParent_Load(object sender, EventArgs e) {
+		private void BaseParent_Load(object sender, EventArgs e)
+		{
 			this.Width = Settings.Instance.Width;
 			this.Height = Settings.Instance.Height;
 
 			onFormLoad();
 		}
 
-		void BaseParent_FormClosing(object sender, FormClosingEventArgs e) {
+		private void BaseParent_FormClosing(object sender, FormClosingEventArgs e)
+		{
 			Settings.Instance.Width = this.Width;
 			Settings.Instance.Height = this.Height;
 
 			onFormClosing();
 		}
 
-		private void initializeComponents() {
-			ComponentResourceManager resources = new ComponentResourceManager(typeof(BaseParent));
+		private void initializeComponents()
+		{
+			ComponentResourceManager resources = new ComponentResourceManager(typeof (BaseParent));
 
 			this.menuStrip.SuspendLayout();
 			this.statusStrip.SuspendLayout();
 			this.SuspendLayout();
 
-			this.menuStrip.BackColor = System.Drawing.SystemColors.Control;
-			this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.fileMenu,
-				this.editMenu,
-				this.viewMenu,
-				this.toolsMenu,
-				//this.windowsMenu,
-				this.helpMenu});
-			//this.menuStrip.MdiWindowListItem = this.windowsMenu;
-			this.menuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			addMenuStripItems();
+			this.menuStrip.BackColor = SystemColors.Control;
+			this.menuStrip.RenderMode = ToolStripRenderMode.System;
 			this.menuStrip.TabIndex = 0;
 
-			this.fileMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.newToolStripMenuItem,
-				this.toolStripSeparator5,
-				this.exitToolStripMenuItem});
-			this.fileMenu.ImageTransparentColor = System.Drawing.SystemColors.ActiveBorder;
-			this.fileMenu.Size = new System.Drawing.Size(35, 20);
+			this.fileMenu.DropDownItems.AddRange(new ToolStripItem[]
+			                                     	{
+																							this.exitToolStripMenuItem
+			                                     	});
+			this.fileMenu.ImageTransparentColor = SystemColors.ActiveBorder;
+			this.fileMenu.Size = new Size(35, 20);
 			this.fileMenu.Text = "&File";
 
-			this.toolStripSeparator5.Size = new System.Drawing.Size(142, 6);
-
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+			this.exitToolStripMenuItem.Size = new Size(145, 22);
 			this.exitToolStripMenuItem.Text = "E&xit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolsStripMenuItem_Click);
+			this.exitToolStripMenuItem.Click += this.ExitToolsStripMenuItem_Click;
 
-			this.editMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.undoToolStripMenuItem,
-				this.redoToolStripMenuItem,
-				this.toolStripSeparator6,
-				this.cutToolStripMenuItem,
-				this.copyToolStripMenuItem,
-				this.pasteToolStripMenuItem,
-				this.toolStripSeparator7,
-				this.selectAllToolStripMenuItem});
-			this.editMenu.Size = new System.Drawing.Size(37, 20);
+			this.editMenu.DropDownItems.AddRange(new ToolStripItem[]
+			                                     	{
+			                                     		this.undoToolStripMenuItem,
+			                                     		this.redoToolStripMenuItem,
+			                                     		this.toolStripSeparator6,
+			                                     		this.cutToolStripMenuItem,
+			                                     		this.copyToolStripMenuItem,
+			                                     		this.pasteToolStripMenuItem,
+			                                     		this.toolStripSeparator7,
+			                                     		this.selectAllToolStripMenuItem
+			                                     	});
+			this.editMenu.Size = new Size(37, 20);
 			this.editMenu.Text = "&Edit";
 
-			this.undoToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("undoToolStripMenuItem.Image")));
-			this.undoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-			this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-			this.undoToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+			this.undoToolStripMenuItem.Image = ((Image) (resources.GetObject("undoToolStripMenuItem.Image")));
+			this.undoToolStripMenuItem.ImageTransparentColor = Color.Black;
+			this.undoToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.Z);
+			this.undoToolStripMenuItem.Size = new Size(167, 22);
 			this.undoToolStripMenuItem.Text = "&Undo";
 
-			this.redoToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("redoToolStripMenuItem.Image")));
-			this.redoToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-			this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
-			this.redoToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+			this.redoToolStripMenuItem.Image = (Image) (resources.GetObject("redoToolStripMenuItem.Image"));
+			this.redoToolStripMenuItem.ImageTransparentColor = Color.Black;
+			this.redoToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.Y);
+			this.redoToolStripMenuItem.Size = new Size(167, 22);
 			this.redoToolStripMenuItem.Text = "&Redo";
 
-			this.toolStripSeparator6.Size = new System.Drawing.Size(164, 6);
+			this.toolStripSeparator6.Size = new Size(164, 6);
 
-			this.cutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripMenuItem.Image")));
-			this.cutToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-			this.cutToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
-			this.cutToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+			this.cutToolStripMenuItem.Image = (Image) (resources.GetObject("cutToolStripMenuItem.Image"));
+			this.cutToolStripMenuItem.ImageTransparentColor = Color.Black;
+			this.cutToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.X);
+			this.cutToolStripMenuItem.Size = new Size(167, 22);
 			this.cutToolStripMenuItem.Text = "Cu&t";
-			this.cutToolStripMenuItem.Click += new System.EventHandler(this.CutToolStripMenuItem_Click);
+			this.cutToolStripMenuItem.Click += this.CutToolStripMenuItem_Click;
 
-			this.copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripMenuItem.Image")));
-			this.copyToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-			this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-			this.copyToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+			this.copyToolStripMenuItem.Image = (Image) (resources.GetObject("copyToolStripMenuItem.Image"));
+			this.copyToolStripMenuItem.ImageTransparentColor = Color.Black;
+			this.copyToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.C);
+			this.copyToolStripMenuItem.Size = new Size(167, 22);
 			this.copyToolStripMenuItem.Text = "&Copy";
-			this.copyToolStripMenuItem.Click += new System.EventHandler(this.CopyToolStripMenuItem_Click);
+			this.copyToolStripMenuItem.Click += this.CopyToolStripMenuItem_Click;
 
-			this.pasteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pasteToolStripMenuItem.Image")));
-			this.pasteToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Black;
-			this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
-			this.pasteToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+			this.pasteToolStripMenuItem.Image = (Image) (resources.GetObject("pasteToolStripMenuItem.Image"));
+			this.pasteToolStripMenuItem.ImageTransparentColor = Color.Black;
+			this.pasteToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.V);
+			this.pasteToolStripMenuItem.Size = new Size(167, 22);
 			this.pasteToolStripMenuItem.Text = "&Paste";
-			this.pasteToolStripMenuItem.Click += new System.EventHandler(this.PasteToolStripMenuItem_Click);
+			this.pasteToolStripMenuItem.Click += this.PasteToolStripMenuItem_Click;
 
-			this.toolStripSeparator7.Size = new System.Drawing.Size(164, 6);
+			this.toolStripSeparator7.Size = new Size(164, 6);
 
-			this.selectAllToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.A)));
-			this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+			this.selectAllToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.A);
+			this.selectAllToolStripMenuItem.Size = new Size(167, 22);
 			this.selectAllToolStripMenuItem.Text = "Select &All";
 
-			this.viewMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.statusBarToolStripMenuItem});
-			this.viewMenu.Size = new System.Drawing.Size(41, 20);
+			this.viewMenu.DropDownItems.AddRange(new ToolStripItem[]
+			                                     	{
+			                                     		this.statusBarToolStripMenuItem
+			                                     	});
+			this.viewMenu.Size = new Size(41, 20);
 			this.viewMenu.Text = "&View";
 
 			this.statusBarToolStripMenuItem.Checked = true;
 			this.statusBarToolStripMenuItem.CheckOnClick = true;
-			this.statusBarToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.statusBarToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+			this.statusBarToolStripMenuItem.CheckState = CheckState.Checked;
+			this.statusBarToolStripMenuItem.Size = new Size(135, 22);
 			this.statusBarToolStripMenuItem.Text = "&Status Bar";
-			this.statusBarToolStripMenuItem.Click += new System.EventHandler(this.StatusBarToolStripMenuItem_Click);
+			this.statusBarToolStripMenuItem.Click += this.StatusBarToolStripMenuItem_Click;
 
-			this.toolsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.optionsToolStripMenuItem});
-			this.toolsMenu.Size = new System.Drawing.Size(44, 20);
+			this.toolsMenu.DropDownItems.AddRange(new ToolStripItem[]
+			                                      	{
+			                                      		this.optionsToolStripMenuItem
+			                                      	});
+			this.toolsMenu.Size = new Size(44, 20);
 			this.toolsMenu.Text = "&Tools";
 
-			this.optionsToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+			this.optionsToolStripMenuItem.Size = new Size(122, 22);
 			this.optionsToolStripMenuItem.Text = "&Options";
 
-			this.helpMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				this.aboutToolStripMenuItem});
-			this.helpMenu.Size = new System.Drawing.Size(40, 20);
+			this.helpMenu.DropDownItems.AddRange(new ToolStripItem[]
+			                                     	{
+			                                     		this.aboutToolStripMenuItem
+			                                     	});
+			this.helpMenu.Size = new Size(40, 20);
 			this.helpMenu.Text = "&Help";
 
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+			this.aboutToolStripMenuItem.Size = new Size(173, 22);
 			this.aboutToolStripMenuItem.Text = "&About ...";
 
-			this.progressDisk.ActiveForeColor1 = System.Drawing.Color.LightGray;
-			this.progressDisk.ActiveForeColor2 = System.Drawing.Color.White;
-			this.progressDisk.BackGroundColor = System.Drawing.Color.Transparent;
-			this.progressDisk.BlockSize = ProgressDisk.BlockSize.Medium;
-			this.progressDisk.InactiveForeColor1 = System.Drawing.Color.DimGray;
-			this.progressDisk.InactiveForeColor2 = System.Drawing.Color.DarkGray;
-			this.progressDisk.Location = new System.Drawing.Point(597, 435);
-			this.progressDisk.Size = new System.Drawing.Size(16, 16);
+			this.progressDisk.ActiveForeColor1 = Color.LightGray;
+			this.progressDisk.ActiveForeColor2 = Color.White;
+			this.progressDisk.BackGroundColor = Color.Transparent;
+			this.progressDisk.BlockSize = BlockSize.Medium;
+			this.progressDisk.InactiveForeColor1 = Color.DimGray;
+			this.progressDisk.InactiveForeColor2 = Color.DarkGray;
+			this.progressDisk.Location = new Point(597, 435);
+			this.progressDisk.Size = new Size(16, 16);
 			this.progressDisk.SquareSize = 16;
 			this.progressDisk.TabIndex = 4;
 
-			this.statusStrip.Items.AddRange(new ToolStripItem[] {
-			    this.toolStripStatus});
-			this.statusStrip.Location = new System.Drawing.Point(0, 431);
-			this.statusStrip.Size = new System.Drawing.Size(632, 22);
+			this.statusStrip.Items.AddRange(new ToolStripItem[]
+			                                	{
+			                                		this.toolStripStatus
+			                                	});
+			this.statusStrip.Location = new Point(0, 431);
+			this.statusStrip.Size = new Size(632, 22);
 			this.statusStrip.Dock = DockStyle.Bottom;
 			this.statusStrip.Visible = true;
 
-			this.toolStripStatus.Size = new System.Drawing.Size(0, 10);
+			this.toolStripStatus.Size = new Size(0, 10);
 			this.toolStripStatus.Dock = DockStyle.Bottom;
 
 			addControls();
@@ -216,64 +223,69 @@ namespace SharpFile {
 			this.Controls.Add(this.progressDisk);
 			this.Controls.Add(this.statusStrip);
 
+			this.MainMenuStrip = this.menuStrip;
+
 			this.menuStrip.ResumeLayout(false);
+			this.menuStrip.PerformLayout();
 			this.statusStrip.ResumeLayout(false);
+			this.statusStrip.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 		}
 
-		private void ExitToolsStripMenuItem_Click(object sender, EventArgs e) {
+		private void ExitToolsStripMenuItem_Click(object sender, EventArgs e)
+		{
 			Application.Exit();
 		}
 
-		private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void CutToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
 		}
 
-		private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
 		}
 
-		private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 			// TODO: Use System.Windows.Forms.Clipboard.GetText() or System.Windows.Forms.GetData to retrieve information from the clipboard.
 		}
 
-		private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e)
+		{
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
 
-		private void CascadeToolStripMenuItem_Click(object sender, EventArgs e) {
-			LayoutMdi(MdiLayout.Cascade);
+		protected virtual void addControls()
+		{
 		}
 
-		private void TileVerticleToolStripMenuItem_Click(object sender, EventArgs e) {
-			LayoutMdi(MdiLayout.TileVertical);
+		protected virtual void onFormClosing()
+		{
 		}
 
-		private void TileHorizontalToolStripMenuItem_Click(object sender, EventArgs e) {
-			LayoutMdi(MdiLayout.TileHorizontal);
+		protected virtual void onFormLoad()
+		{
 		}
 
-		private void ArrangeIconsToolStripMenuItem_Click(object sender, EventArgs e) {
-			LayoutMdi(MdiLayout.ArrangeIcons);
+		protected virtual void addMenuStripItems()
+		{
+			this.menuStrip.Items.AddRange(new ToolStripItem[]
+			                              	{
+			                              		this.fileMenu,
+			                              		this.editMenu,
+			                              		this.viewMenu,
+			                              		this.toolsMenu,
+			                              		this.helpMenu
+			                              	});
 		}
 
-		private void CloseAllToolStripMenuItem_Click(object sender, EventArgs e) {
-			foreach (Form childForm in MdiChildren) {
-				childForm.Close();
-			}
-		}
-
-		protected virtual void addControls() {
-		}
-
-		protected virtual void onFormClosing() {
-		}
-
-		protected virtual void onFormLoad() {
-		}
-
-		public ImageList ImageList {
-			get {
+		public ImageList ImageList
+		{
+			get
+			{
 				return Settings.Instance.ImageList;
 			}
 		}

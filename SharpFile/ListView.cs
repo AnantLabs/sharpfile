@@ -1,13 +1,18 @@
 using System;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using Common;
+using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
 using SharpFile.UI;
-using SharpFile.IO;
-using Common;
+using DirectoryInfo=SharpFile.IO.ChildResources.DirectoryInfo;
+using FileInfo=SharpFile.IO.ChildResources.FileInfo;
+using IOException=SharpFile.IO.IOException;
+using View=SharpFile.IO.View;
 
 namespace SharpFile {
 	public class ListView : System.Windows.Forms.ListView, IView {
@@ -20,10 +25,10 @@ namespace SharpFile {
 		private long totalSelectedSize = 0;
 		private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
 
-		public event SharpFile.IO.View.OnUpdateStatusDelegate OnUpdateStatus;
-		public event SharpFile.IO.View.OnUpdateProgressDelegate OnUpdateProgress;
-		public event SharpFile.IO.View.OnGetImageIndexDelegate OnGetImageIndex;
-		public event SharpFile.IO.View.OnUpdatePathDelegate OnUpdatePath;
+		public event View.OnUpdateStatusDelegate OnUpdateStatus;
+		public event View.OnUpdateProgressDelegate OnUpdateProgress;
+		public event View.OnGetImageIndexDelegate OnGetImageIndex;
+		public event View.OnUpdatePathDelegate OnUpdatePath;
 
 		public ListView() {
 			// This prevents flicker in the listview. 
@@ -68,6 +73,7 @@ namespace SharpFile {
 		}
 
 		#region Delegate methods
+
 		/// <summary>
 		/// Passes the status to any listening events.
 		/// </summary>
@@ -110,13 +116,15 @@ namespace SharpFile {
 
 			return -1;
 		}
+
 		#endregion
 
 		#region Events.
+
 		/// <summary>
 		/// Fires when the list view gets focus.
 		/// </summary>
-		void listView_GotFocus(object sender, EventArgs e) {
+		private void listView_GotFocus(object sender, EventArgs e) {
 			UpdatePath(Path);
 		}
 
@@ -140,11 +148,11 @@ namespace SharpFile {
 		private void listView_KeyDown(object sender, KeyEventArgs e) {
 			if (e.KeyCode == Keys.Space) {
 				if (this.SelectedItems != null &&
-					this.SelectedItems.Count > 0) {
+				    this.SelectedItems.Count > 0) {
 					int maxIndex = 0;
 
 					foreach (ListViewItem item in this.SelectedItems) {
-						IChildResource fileSystemInfo = (IChildResource)item.Tag;
+						IChildResource fileSystemInfo = (IChildResource) item.Tag;
 
 						if (item.Index > maxIndex) {
 							maxIndex = item.Index;
@@ -165,38 +173,41 @@ namespace SharpFile {
 								long size = 0;
 
 								if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
-									fileSystemInfo is DirectoryInfo) {
+								    fileSystemInfo is DirectoryInfo) {
 									using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
 										backgroundWorker.WorkerReportsProgress = true;
 
 										backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
-											backgroundWorker.ReportProgress(50);
-											item.SubItems[sizeIndex].Text = "...";
-											eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
-											backgroundWorker.ReportProgress(100);
-										};
+										                           	backgroundWorker.ReportProgress(50);
+										                           	item.SubItems[sizeIndex].Text = "...";
+										                           	eventArgs.Result = ((DirectoryInfo) eventArgs.Argument).GetSize();
+										                           	backgroundWorker.ReportProgress(100);
+										                           };
 
 										backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-											UpdateProgress(eventArgs.ProgressPercentage);
-										};
+										                                    	UpdateProgress(eventArgs.ProgressPercentage);
+										                                    };
 
-										backgroundWorker.RunWorkerCompleted += delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-											if (eventArgs.Error == null &&
-												eventArgs.Result != null) {
-												size = (long)eventArgs.Result;
+										backgroundWorker.RunWorkerCompleted +=
+											delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+												if (eventArgs.Error == null &&
+												    eventArgs.Result != null) {
+													size = (long) eventArgs.Result;
 
-												item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
-												updateSelectedTotalSize(size);
-											}
-										};
+													item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
+													updateSelectedTotalSize(size);
+												}
+											};
 
 										backgroundWorker.RunWorkerAsync(fileSystemInfo);
 									}
-								} else {
+								}
+								else {
 									updateSelectedTotalSize(fileSystemInfo.Size);
 								}
 							}
-						} else {
+						}
+						else {
 							item.ForeColor = Color.Black;
 							selectedFileSystemInfos.Remove(fileSystemInfo);
 							updateSelectedTotalSize(-fileSystemInfo.Size);
@@ -227,9 +238,11 @@ namespace SharpFile {
 					List<string> paths = getSelectedPaths();
 
 					contextMenuResult = menu.PopupMenu(paths, this.Handle);
-				} else if (this.SelectedItems.Count == 1) {
+				}
+				else if (this.SelectedItems.Count == 1) {
 					contextMenuResult = menu.PopupMenu(this.SelectedItems[0].Name, this.Handle);
-				} else {
+				}
+				else {
 					contextMenuResult = menu.PopupMenu(Path, this.Handle);
 				}
 			}
@@ -244,14 +257,14 @@ namespace SharpFile {
 				return;
 			}
 
-			string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
+			string[] fileDrops = (string[]) e.Data.GetData(DataFormats.FileDrop);
 			foreach (string fileDrop in fileDrops) {
 				IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop);
 
 				if (resource != null) {
 					string destination = string.Format(@"{0}{1}",
-						Path,
-						resource.Name);
+					                                   Path,
+					                                   resource.Name);
 
 					try {
 						switch (e.Effect) {
@@ -265,9 +278,12 @@ namespace SharpFile {
 								// TODO: Need to handle links.
 								break;
 						}
-					} catch (IOException ex) {
-						MessageBox.Show(this, "Failed to perform the specified operation:\n\n" + ex.Message, "File operation failed", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-					} catch (Exception ex) {
+					}
+					catch (IOException ex) {
+						MessageBox.Show(this, "Failed to perform the specified operation:\n\n" + ex.Message, "File operation failed",
+						                MessageBoxButtons.OK, MessageBoxIcon.Stop);
+					}
+					catch (Exception ex) {
 						MessageBox.Show(this, "Shit went down:\n\n" + ex.Message, "Oh no.", MessageBoxButtons.OK, MessageBoxIcon.Stop);
 					}
 				}
@@ -296,24 +312,27 @@ namespace SharpFile {
 				e.Effect = DragDropEffects.Link;
 			} else*/
 			if ((e.KeyState & SHIFT) == SHIFT &&
-				(e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move) {
+			    (e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move) {
 				e.Effect = DragDropEffects.Move;
-			} else if ((e.KeyState & CTRL) == CTRL &&
-				(e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
+			}
+			else if ((e.KeyState & CTRL) == CTRL &&
+			         (e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
 				e.Effect = DragDropEffects.Copy;
-			} else if ((e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move) {
+			}
+			else if ((e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move) {
 				// By default, the drop action should be move, if allowed.
 				e.Effect = DragDropEffects.Move;
 
 				// Implement the rather strange behaviour of explorer that if the disk
 				// is different, then default to a COPY operation
-				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+				string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
 
 				if (files.Length > 0 && !files[0].ToUpper().StartsWith(Path) &&
-				(e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
+				    (e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
 					e.Effect = DragDropEffects.Copy;
 				}
-			} else {
+			}
+			else {
 				e.Effect = DragDropEffects.None;
 			}
 		}
@@ -326,7 +345,7 @@ namespace SharpFile {
 
 			if (paths.Count > 0) {
 				DoDragDrop(new DataObject(DataFormats.FileDrop, paths.ToArray()),
-					DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
+				           DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 			}
 		}
 
@@ -349,23 +368,26 @@ namespace SharpFile {
 		private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			if (!string.IsNullOrEmpty(e.Label)) {
 				ListViewItem item = this.Items[e.Item];
-				IChildResource resource = (IChildResource)item.Tag;
+				IChildResource resource = (IChildResource) item.Tag;
 
 				string destination = string.Format("{0}{1}",
-					Path,
-					e.Label);
+				                                   Path,
+				                                   e.Label);
 
 				try {
 					resource.Move(destination);
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					e.CancelEdit = true;
 					MessageBox.Show(ex.Message);
 				}
 			}
 		}
+
 		#endregion
 
 		#region Public methods.
+
 		/// <summary>
 		/// Clears the listview.
 		/// </summary>
@@ -404,9 +426,10 @@ namespace SharpFile {
 				this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
 				UpdateStatus(string.Format("Folders: {0}; Files: {1}",
-                   folderCount,
-                   fileCount));
-			} catch (Exception ex) {
+				                           folderCount,
+				                           fileCount));
+			}
+			catch (Exception ex) {
 				MessageBox.Show(ex.Message + ex.StackTrace);
 			}
 		}
@@ -427,9 +450,10 @@ namespace SharpFile {
 					this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
 					UpdateStatus(string.Format("Folders: {0}; Files: {1}",
-						folderCount,
-						fileCount));
-				} catch (Exception ex) {
+					                           folderCount,
+					                           fileCount));
+				}
+				catch (Exception ex) {
 					MessageBox.Show(ex.Message + ex.StackTrace);
 				}
 			}
@@ -440,7 +464,7 @@ namespace SharpFile {
 		/// </summary>
 		private int getListViewIndex(ListViewItem item) {
 			// Get the filesysteminfo object from the item's tag.
-			IChildResource fsi = (IChildResource)item.Tag;
+			IChildResource fsi = (IChildResource) item.Tag;
 
 			// Copy the items to an array for further processing.
 			ListViewItem[] items = new ListViewItem[this.Items.Count + 1];
@@ -453,40 +477,41 @@ namespace SharpFile {
 			int indexOffset = 0;
 			if (fsi is FileInfo) {
 				indexOffset = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-					return (i.Tag is DirectoryInfo);
-				}).Length;
-			} else if (fsi is DirectoryInfo) {
+				                                                 	return (i.Tag is DirectoryInfo);
+				                                                 }).Length;
+			}
+			else if (fsi is DirectoryInfo) {
 				indexOffset = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-					return (i.Tag is ParentDirectoryInfo ||
-						i.Tag is RootDirectoryInfo);
-				}).Length;
+				                                                 	return (i.Tag is ParentDirectoryInfo ||
+				                                                 	        i.Tag is RootDirectoryInfo);
+				                                                 }).Length;
 			}
 
 			// Filter out any items that are not the same type.
 			items = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-				// TODO: Fix this -- it prevents the parent directory from getting sorted.
-				if (i.Tag.GetType() == fsi.GetType()) {
-					return true;
-				}
+			                                           	// TODO: Fix this -- it prevents the parent directory from getting sorted.
+			                                           	if (i.Tag.GetType() == fsi.GetType()) {
+			                                           		return true;
+			                                           	}
 
-				return false;
-			});
+			                                           	return false;
+			                                           });
 
 			// Sort the array ascending.
 			Array.Sort<ListViewItem>(items, delegate(ListViewItem i1, ListViewItem i2) {
-				// Sort root directories so they appear first.
-				if (i2.Text == RootDirectoryInfo.DisplayName) {
-					return 1;
-				}
+			                                	// Sort root directories so they appear first.
+			                                	if (i2.Text == RootDirectoryInfo.DisplayName) {
+			                                		return 1;
+			                                	}
 
-				// Sort parent directories so they appear second.
-				if (i2.Text == ParentDirectoryInfo.DisplayName) {
-					return 1;
-				}
+			                                	// Sort parent directories so they appear second.
+			                                	if (i2.Text == ParentDirectoryInfo.DisplayName) {
+			                                		return 1;
+			                                	}
 
-				// Sort everything else according to their name.
-				return i1.Name.CompareTo(i2.Name);
-			});
+			                                	// Sort everything else according to their name.
+			                                	return i1.Name.CompareTo(i2.Name);
+			                                });
 
 			// Add the index of the item to the correct offset.
 			int index = Array.IndexOf<ListViewItem>(items, item) + indexOffset;
@@ -508,7 +533,8 @@ namespace SharpFile {
 
 				if (listViewIndex == -1) {
 					this.Items.Insert(0, item);
-				} else {
+				}
+				else {
 					this.Items.Insert(listViewIndex, item);
 				}
 
@@ -531,12 +557,13 @@ namespace SharpFile {
 				imageIndex = GetImageIndex(fileSystemInfo);
 				item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
 				fileCount++;
-			} else {
+			}
+			else {
 				imageIndex = GetImageIndex(fileSystemInfo);
 				item.SubItems.Add(string.Empty);
 
 				if (!(fileSystemInfo is ParentDirectoryInfo) &&
-					!(fileSystemInfo is RootDirectoryInfo)) {
+				    !(fileSystemInfo is RootDirectoryInfo)) {
 					folderCount++;
 				}
 			}
@@ -561,8 +588,8 @@ namespace SharpFile {
 
 			// Convert the listviewitem array into a string array of the paths.
 			string[] nameArray = Array.ConvertAll<ListViewItem, string>(itemArray, delegate(ListViewItem item) {
-				return item.Name;
-			});
+			                                                                       	return item.Name;
+			                                                                       });
 
 			return new List<string>(nameArray);
 		}
@@ -575,8 +602,9 @@ namespace SharpFile {
 			totalSelectedSize += size;
 
 			UpdateStatus(string.Format("Selected items: {0}",
-				General.GetHumanReadableSize(totalSelectedSize.ToString())));
+			                           General.GetHumanReadableSize(totalSelectedSize.ToString())));
 		}
+
 		#endregion
 
 		/// <summary>
@@ -600,9 +628,9 @@ namespace SharpFile {
 		/// <summary>
 		/// Current FileSystemWatcher.
 		/// </summary>
-		public System.IO.FileSystemWatcher FileSystemWatcher {
+		public FileSystemWatcher FileSystemWatcher {
 			get {
-				return Forms.GetPropertyInParent<System.IO.FileSystemWatcher>(this.Parent, "FileSystemWatcher");
+				return Forms.GetPropertyInParent<FileSystemWatcher>(this.Parent, "FileSystemWatcher");
 			}
 		}
 

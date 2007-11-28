@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using SharpFile.IO.Retrievers;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO;
-using Common;
 
 namespace SharpFile.IO.ParentResources {
 	public class DriveInfo : FileSystemInfo, IParentResource, IFileContainer {
@@ -29,7 +28,7 @@ namespace SharpFile.IO.ParentResources {
 
 			this.displayName = string.Format("{0} <{1}>",
 				fullPath,
-				Common.General.GetHumanReadableSize(availableFreeSpace.ToString())); //string.Format("{0:0,0}", availableFreeSpace));
+				Common.General.GetHumanReadableSize(availableFreeSpace.ToString()));
 		}
 
 		public bool IsReady {
