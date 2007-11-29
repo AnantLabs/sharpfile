@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.IO;
@@ -27,6 +28,7 @@ namespace SharpFile.Infrastructure {
 		private int height;
 		private string leftPath;
 		private string rightPath;
+		private Nodes keyCodes;
 
 		// Explicit static constructor to tell C# compiler
 		// not to mark type as beforefieldinit.
@@ -55,6 +57,7 @@ namespace SharpFile.Infrastructure {
 							instance.LeftPath = settings.LeftPath;
 							instance.RightPath = settings.RightPath;
 							instance.ParentType = settings.ParentType;
+							instance.KeyCodes = settings.KeyCodes;
 						}
 
 						settingsLoaded = true;
@@ -69,6 +72,10 @@ namespace SharpFile.Infrastructure {
 					instance.Height = 500;
 					instance.Width = 500;
 					instance.ParentType = ParentType.Dual;
+
+					Nodes defaultKeys = new Nodes();
+					defaultKeys.Add("Rename", Keys.F2);
+					instance.KeyCodes = defaultKeys;
 
 					using (TextWriter tw = new StreamWriter(FilePath)) {
 						xmlSerializer.Serialize(tw, instance);
@@ -99,6 +106,16 @@ namespace SharpFile.Infrastructure {
 			}
 			set {
 				parentType = value;
+			}
+		}
+
+		public Nodes KeyCodes
+		{
+			get {
+				return keyCodes;
+			}
+			set {
+				keyCodes = value;
 			}
 		}
 
