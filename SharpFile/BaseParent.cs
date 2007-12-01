@@ -11,6 +11,7 @@ namespace SharpFile
 	{
 		protected const string formName = "SharpFile";
 
+		protected ToolTip toolTip = new ToolTip();
 		protected Timer timer = new Timer();
 		protected ProgressDisk.ProgressDisk progressDisk = new ProgressDisk.ProgressDisk();
 		protected StatusStrip statusStrip = new StatusStrip();

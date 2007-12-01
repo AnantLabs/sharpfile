@@ -28,6 +28,7 @@ namespace SharpFile.Infrastructure {
 		private int height;
 		private string leftPath;
 		private string rightPath;
+		private int splitterPercentage;
 		private Nodes keyCodes;
 
 		// Explicit static constructor to tell C# compiler
@@ -57,6 +58,7 @@ namespace SharpFile.Infrastructure {
 							instance.LeftPath = settings.LeftPath;
 							instance.RightPath = settings.RightPath;
 							instance.ParentType = settings.ParentType;
+							instance.SplitterPercentage = settings.SplitterPercentage;
 							instance.KeyCodes = settings.KeyCodes;
 						}
 
@@ -71,6 +73,7 @@ namespace SharpFile.Infrastructure {
 				if (!settingsLoaded) {
 					instance.Height = 500;
 					instance.Width = 500;
+					instance.SplitterPercentage = 250;
 					instance.ParentType = ParentType.Dual;
 
 					Nodes defaultKeys = new Nodes();
@@ -109,6 +112,7 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
+		[XmlIgnore]
 		public Nodes KeyCodes
 		{
 			get {
@@ -152,6 +156,15 @@ namespace SharpFile.Infrastructure {
 			}
 			set {
 				rightPath = value;
+			}
+		}
+
+		public int SplitterPercentage {
+			get {
+				return splitterPercentage;
+			}
+			set {
+				splitterPercentage = value;
 			}
 		}
 

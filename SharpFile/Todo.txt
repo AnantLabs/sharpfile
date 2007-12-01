@@ -1,45 +1,64 @@
 BUGS
+- KeyCodes in the settings prevents other settings from loading
 - "System Volume Information folder" never returns any information
+	- recursive file/directory issue?
 - Filesystem events don't correctly update status bar
 - Network drive (z:) not sorted correctly
-- Multiple filewatcher events fire on one file operation -- catch them all and just update once?
+- Multiple filewatcher events fire on one file operation 
+	-catch them all and just update once in a stack
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
+- inconsistent behavior for drag/drop copy/move behavior
+- second context menu sometimes after an action is selected in the first context menu
+- if there is more than one long running operation, the progress disk stops when the first is finished
 
 TODO
+- Specify keycodes for actions
+	- name/value as attributes instead of elements
+	- IAction?
+- SharpFile.Interface.dll
+- right-click context menu for default percentages for dual view
+- ability to collapse either panel or the other
+- swap panels with key
+- ability to use keyboard to tab between elements
+	- panels, tabs, select a drive, etc.
+- special folders in drive drop down
+	- my documents, control panel?, desktop
 - Specify defaults for settings as an attribute on the property
 - No hardcoded parent/child form stuff
-- Update parent form with path info	(done for Dual, needs to be done for others)
 - Log4net support to log detailed debug logs
-- Save the position of the seperator for the dual file view
-- Show title of the currently selected directory in the parent
-- Add file menu to base so that dual has access to it as well; some things will be only in the mdi parent, though
-- Refresh of drive listing when new drives are entered
+- Refresh of drive listing when new drives are entered (usb keys and the like)
 - Refresh button
 - Sorting of listview by column
 - Able to cancel long-running operations (esc?)
 - Drag-and-drop support for links (both ways)
 - thumbnail files when possible (images?)
 - show an icon of the file being dragged around
-- Clean up menus and icons at top (some don't apply)
 - Make sure that all code in UI (child) is neccessary and couldn't be moved to infrastructure/IO
 - Prevent drag-and-drop operation if it is completed in less than some arbitrary time limit (200 ms?)
 - Validate rename before-hand and throw up tooltip or something
 - Information/Property slideable "pane" list like vista's file manager
-- middle-click to close tabs, mouse wheel, ctrl-tab functionality
+- Extra tab functionality: middle-click to close tabs, mouse wheel, ctrl-tab
 - Hot-tracking listview
 - Full-row select
 - test to make sure that filesystemwatcher events still fire even when updating the UI
-- copy/move should show progress (write bytes, as opposed to File.Copy()?) -- should it use built-in copy/move functionality?
+- copy/move should show progress (write bytes, as opposed to File.Copy()?) 
+	- should it use built-in copy/move functionality?
+	- ability to queue items to copy/move
 - Type to find (like servant salamander)
 - preview panel for some filetypes (QuickLook ?)
 - Configuration (view, columns, icon size, extensions to grab icons for)
 - Specifying columns to show in listview (should be done in the childresource?)
+- command line - orthodox specifications
+- FTP drive functionality
+- SCP drive functionality
+- NFS drive functionality
+- Compressed file shows files contained within
 
 VISTA BUGS
-	No icon overlays
-	Ugly child-tab buttons (I want them flat)
-	ProgressDisk in wrong position -- needs to be attached to status bar somehow
+	- No icon overlays
+	- Ugly child-tab buttons (I want them flat)
+	- ProgressDisk in wrong position -- needs to be attached to status bar somehow
 	
 BUILD-RELATED
 - ILMerge in MSBuild/csproj file
