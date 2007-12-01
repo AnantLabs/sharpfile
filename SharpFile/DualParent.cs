@@ -8,7 +8,10 @@ using System;
 
 namespace SharpFile {
 	public class DualParent : BaseParent {
-		protected SplitContainer splitContainer = new SplitContainer();
+		private SplitContainer splitContainer = new SplitContainer();
+		private ToolStripMenuItem displayPanelItem = new ToolStripMenuItem();
+		private ToolStripMenuItem displayLeftPanelItem = new ToolStripMenuItem();
+		private ToolStripMenuItem displayRightPanelItem = new ToolStripMenuItem();
 		private int splitterPercentage;
 
 		public DualParent() {
@@ -94,6 +97,69 @@ namespace SharpFile {
 			splitContainer.SplitterMoved += delegate {
 				toolTip.RemoveAll();
 			};
+
+			MenuItem twentyFivePercentMenuItem = new MenuItem("25%", splitterContextMenuOnClick);
+			MenuItem fiftyPercentMenuItem = new MenuItem("50%", splitterContextMenuOnClick);
+			MenuItem seventyFivePercentMenuItem = new MenuItem("75%", splitterContextMenuOnClick);
+			ContextMenu splitterContextMenu = new ContextMenu(new MenuItem[] {
+				twentyFivePercentMenuItem,
+				fiftyPercentMenuItem,
+				seventyFivePercentMenuItem
+			});
+
+			splitContainer.ContextMenu = splitterContextMenu;
+		}
+
+		private void splitterContextMenuOnClick(object sender, EventArgs e) {
+			MenuItem menuItem = (MenuItem)sender;
+			int parsedPercent = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
+			double percent = Convert.ToDouble(parsedPercent) * 0.01;
+			splitContainer.SplitterDistance = Convert.ToInt32(this.Width * percent);
+		}
+
+		protected override void addMenuStripItems() {
+			this.menuStrip.Items.AddRange(new ToolStripItem[]
+			                              	{
+			                              		this.fileMenu,
+			                              		this.editMenu,
+			                              		this.viewMenu,
+			                              		this.toolsMenu,
+			                              		this.helpMenu
+			                              	});
+
+			this.viewMenu.DropDownItems.Add(displayPanelItem);
+
+			this.displayPanelItem.Text = "Display Panel";
+			this.displayPanelItem.DropDownItems.AddRange(new ToolStripItem[] {
+				this.displayLeftPanelItem,
+				this.displayRightPanelItem
+			});
+
+			this.displayLeftPanelItem.Text = "Left";
+			this.displayLeftPanelItem.Checked = true;
+			this.displayLeftPanelItem.CheckOnClick = true;
+			this.displayLeftPanelItem.CheckStateChanged += delegate(object sender, EventArgs e) {
+				if (!this.splitContainer.Panel2Collapsed) {
+					this.splitContainer.Panel1Collapsed = !this.displayLeftPanelItem.Checked;
+				} else {
+					this.displayLeftPanelItem.Checked = true;
+				}
+			};
+
+			this.displayRightPanelItem.Text = "Right";
+			this.displayRightPanelItem.Checked = true;
+			this.displayRightPanelItem.CheckOnClick = true;
+			this.displayRightPanelItem.CheckStateChanged += delegate(object sender, EventArgs e) {
+				if (!this.splitContainer.Panel1Collapsed) {
+					this.splitContainer.Panel2Collapsed = !this.displayRightPanelItem.Checked;
+				} else {
+					this.displayRightPanelItem.Checked = true;
+				}
+			};
+		}
+
+		void displayLeftPanelItem_CheckStateChanged(object sender, EventArgs e) {
+			throw new NotImplementedException();
 		}
 
 		protected override void addControls() {

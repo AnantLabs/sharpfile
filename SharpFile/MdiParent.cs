@@ -106,12 +106,12 @@ namespace SharpFile {
 			base.menuStrip.MdiWindowListItem = this.windowsMenu;
 
 			this.windowsMenu.DropDownItems.AddRange(new ToolStripItem[] {
-            this.newWindowToolStripMenuItem,
-            this.cascadeToolStripMenuItem,
-            this.tileVerticalToolStripMenuItem,
-            this.tileHorizontalToolStripMenuItem,
-            this.closeAllToolStripMenuItem,
-            this.arrangeIconsToolStripMenuItem});
+				this.newWindowToolStripMenuItem,
+				this.cascadeToolStripMenuItem,
+				this.tileVerticalToolStripMenuItem,
+				this.tileHorizontalToolStripMenuItem,
+				this.closeAllToolStripMenuItem,
+				this.arrangeIconsToolStripMenuItem});
 			this.windowsMenu.Size = new System.Drawing.Size(62, 20);
 			this.windowsMenu.Text = "&Windows";
 

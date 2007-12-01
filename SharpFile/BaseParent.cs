@@ -5,10 +5,8 @@ using System.Windows.Forms;
 using ProgressDisk;
 using SharpFile.Infrastructure;
 
-namespace SharpFile
-{
-	public class BaseParent : Form
-	{
+namespace SharpFile {
+	public class BaseParent : Form {
 		protected const string formName = "SharpFile";
 
 		protected ToolTip toolTip = new ToolTip();
@@ -41,49 +39,43 @@ namespace SharpFile
 		protected ToolStripMenuItem helpMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem aboutToolStripMenuItem = new ToolStripMenuItem();
 
-		public BaseParent()
-		{
+		public BaseParent() {
 			initializeComponents();
 			this.DoubleBuffered = true;
 
 			SetStyle(ControlStyles.AllPaintingInWmPaint |
-			         ControlStyles.OptimizedDoubleBuffer, true);
+					 ControlStyles.OptimizedDoubleBuffer, true);
 
 			this.FormClosing += BaseParent_FormClosing;
 			this.Load += BaseParent_Load;
 
-			this.Resize += delegate
-			               	{
-			               		this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
-			               		                                       base.ClientSize.Height - 18);
-			               	};
+			this.Resize += delegate {
+								this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
+																	   base.ClientSize.Height - 18);
+							};
 
 			timer.Enabled = true;
-			timer.Tick += delegate
-			              	{
-			              		progressDisk.Value = (progressDisk.Value + 1)%12;
-			              	};
+			timer.Tick += delegate {
+								progressDisk.Value = (progressDisk.Value + 1) % 12;
+							};
 		}
 
-		private void BaseParent_Load(object sender, EventArgs e)
-		{
+		private void BaseParent_Load(object sender, EventArgs e) {
 			this.Width = Settings.Instance.Width;
 			this.Height = Settings.Instance.Height;
 
 			onFormLoad();
 		}
 
-		private void BaseParent_FormClosing(object sender, FormClosingEventArgs e)
-		{
+		private void BaseParent_FormClosing(object sender, FormClosingEventArgs e) {
 			Settings.Instance.Width = this.Width;
 			Settings.Instance.Height = this.Height;
 
 			onFormClosing();
 		}
 
-		private void initializeComponents()
-		{
-			ComponentResourceManager resources = new ComponentResourceManager(typeof (BaseParent));
+		private void initializeComponents() {
+			ComponentResourceManager resources = new ComponentResourceManager(typeof(BaseParent));
 
 			this.menuStrip.SuspendLayout();
 			this.statusStrip.SuspendLayout();
@@ -120,13 +112,13 @@ namespace SharpFile
 			this.editMenu.Size = new Size(37, 20);
 			this.editMenu.Text = "&Edit";
 
-			this.undoToolStripMenuItem.Image = ((Image) (resources.GetObject("undoToolStripMenuItem.Image")));
+			this.undoToolStripMenuItem.Image = ((Image)(resources.GetObject("undoToolStripMenuItem.Image")));
 			this.undoToolStripMenuItem.ImageTransparentColor = Color.Black;
 			this.undoToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.Z);
 			this.undoToolStripMenuItem.Size = new Size(167, 22);
 			this.undoToolStripMenuItem.Text = "&Undo";
 
-			this.redoToolStripMenuItem.Image = (Image) (resources.GetObject("redoToolStripMenuItem.Image"));
+			this.redoToolStripMenuItem.Image = (Image)(resources.GetObject("redoToolStripMenuItem.Image"));
 			this.redoToolStripMenuItem.ImageTransparentColor = Color.Black;
 			this.redoToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.Y);
 			this.redoToolStripMenuItem.Size = new Size(167, 22);
@@ -134,21 +126,21 @@ namespace SharpFile
 
 			this.toolStripSeparator6.Size = new Size(164, 6);
 
-			this.cutToolStripMenuItem.Image = (Image) (resources.GetObject("cutToolStripMenuItem.Image"));
+			this.cutToolStripMenuItem.Image = (Image)(resources.GetObject("cutToolStripMenuItem.Image"));
 			this.cutToolStripMenuItem.ImageTransparentColor = Color.Black;
 			this.cutToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.X);
 			this.cutToolStripMenuItem.Size = new Size(167, 22);
 			this.cutToolStripMenuItem.Text = "Cu&t";
 			this.cutToolStripMenuItem.Click += this.CutToolStripMenuItem_Click;
 
-			this.copyToolStripMenuItem.Image = (Image) (resources.GetObject("copyToolStripMenuItem.Image"));
+			this.copyToolStripMenuItem.Image = (Image)(resources.GetObject("copyToolStripMenuItem.Image"));
 			this.copyToolStripMenuItem.ImageTransparentColor = Color.Black;
 			this.copyToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.C);
 			this.copyToolStripMenuItem.Size = new Size(167, 22);
 			this.copyToolStripMenuItem.Text = "&Copy";
 			this.copyToolStripMenuItem.Click += this.CopyToolStripMenuItem_Click;
 
-			this.pasteToolStripMenuItem.Image = (Image) (resources.GetObject("pasteToolStripMenuItem.Image"));
+			this.pasteToolStripMenuItem.Image = (Image)(resources.GetObject("pasteToolStripMenuItem.Image"));
 			this.pasteToolStripMenuItem.ImageTransparentColor = Color.Black;
 			this.pasteToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.V);
 			this.pasteToolStripMenuItem.Size = new Size(167, 22);
@@ -234,59 +226,40 @@ namespace SharpFile
 			this.PerformLayout();
 		}
 
-		private void ExitToolsStripMenuItem_Click(object sender, EventArgs e)
-		{
+		private void ExitToolsStripMenuItem_Click(object sender, EventArgs e) {
 			Application.Exit();
 		}
 
-		private void CutToolStripMenuItem_Click(object sender, EventArgs e)
-		{
+		private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
 			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
 		}
 
-		private void CopyToolStripMenuItem_Click(object sender, EventArgs e)
-		{
+		private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
 			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
 		}
 
-		private void PasteToolStripMenuItem_Click(object sender, EventArgs e)
-		{
+		private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
 			// TODO: Use System.Windows.Forms.Clipboard.GetText() or System.Windows.Forms.GetData to retrieve information from the clipboard.
 		}
 
-		private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e)
-		{
+		private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
 
-		protected virtual void addControls()
-		{
+		protected virtual void addControls() {
 		}
 
-		protected virtual void onFormClosing()
-		{
+		protected virtual void onFormClosing() {
 		}
 
-		protected virtual void onFormLoad()
-		{
+		protected virtual void onFormLoad() {
 		}
 
-		protected virtual void addMenuStripItems()
-		{
-			this.menuStrip.Items.AddRange(new ToolStripItem[]
-			                              	{
-			                              		this.fileMenu,
-			                              		this.editMenu,
-			                              		this.viewMenu,
-			                              		this.toolsMenu,
-			                              		this.helpMenu
-			                              	});
+		protected virtual void addMenuStripItems() {
 		}
 
-		public ImageList ImageList
-		{
-			get
-			{
+		public ImageList ImageList {
+			get {
 				return Settings.Instance.ImageList;
 			}
 		}
