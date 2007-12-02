@@ -28,27 +28,7 @@ namespace SharpFile {
 			};
 
 			child1.OnUpdateProgress += delegate(int value) {
-				// TODO: Consolidate this to one OnUpdateProgress method.
-				lock (lockObject) {
-					if (value < 100) {
-						progressCount++;
-					} else if (value == 100) {
-						progressCount--;
-					}
-
-					if (progressCount > 0) {
-						if (!timer.Enabled) {
-							progressDisk.Value = 4;
-							progressDisk.Visible = true;
-							timer.Enabled = true;
-						}
-					} else {
-						if (timer.Enabled) {
-							progressDisk.Visible = false;
-							timer.Enabled = false;
-						}
-					}
-				}
+                updateProgress(value);
 			};
 
 			child1.OnUpdatePath += delegate(string path) {
@@ -70,27 +50,7 @@ namespace SharpFile {
 			};
 
 			child2.OnUpdateProgress += delegate(int value) {
-				// TODO: Consolidate this to one OnUpdateProgress method.
-				lock (lockObject) {
-					if (value < 100) {
-						progressCount++;
-					} else if (value == 100) {
-						progressCount--;
-					}
-
-					if (progressCount > 0) {
-						if (!timer.Enabled) {
-							progressDisk.Value = 4;
-							progressDisk.Visible = true;
-							timer.Enabled = true;
-						}
-					} else {
-						if (timer.Enabled) {
-							progressDisk.Visible = false;
-							timer.Enabled = false;
-						}
-					}
-				}
+                updateProgress(value);
 			};
 
 			child2.OnUpdatePath += delegate(string path) {
@@ -130,8 +90,8 @@ namespace SharpFile {
 
 		private void splitterContextMenuOnClick(object sender, EventArgs e) {
 			MenuItem menuItem = (MenuItem)sender;
-			int parsedPercent = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
-			double percent = Convert.ToDouble(parsedPercent) * 0.01;
+            splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
+            double percent = Convert.ToDouble(splitterPercentage) * 0.01;
 			splitContainer.SplitterDistance = Convert.ToInt32(this.Width * percent);
 		}
 

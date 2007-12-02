@@ -12,14 +12,12 @@ BUGS
 - second context menu sometimes after an action is selected in the first context menu
 
 TODO
-- Move OnUpdateProgress to the base class since they all parents should be calling in the same basic code
 - Add the timer to the progress disk class with the ability to start/stop it
-- If a long-running thread is running, startinga new operation should cancel the first long running thread
+- If a long-running thread is running, starting a new operation should cancel the first long running thread
 - Specify keycodes for actions
 	- name/value as attributes instead of elements
 	- IAction?
 - SharpFile.Interface.dll
-- right-click context menu for default percentages for dual view
 - ability to collapse either panel or the other
 - swap panels with key
 - ability to use keyboard to tab between elements
