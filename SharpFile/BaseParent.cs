@@ -9,6 +9,9 @@ namespace SharpFile {
 	public class BaseParent : Form {
 		protected const string formName = "SharpFile";
 
+		protected static readonly object lockObject = new object();
+
+		protected int progressCount = 0;
 		protected ToolTip toolTip = new ToolTip();
 		protected Timer timer = new Timer();
 		protected ProgressDisk.ProgressDisk progressDisk = new ProgressDisk.ProgressDisk();
@@ -50,14 +53,14 @@ namespace SharpFile {
 			this.Load += BaseParent_Load;
 
 			this.Resize += delegate {
-								this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
-																	   base.ClientSize.Height - 18);
-							};
+				this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
+													   base.ClientSize.Height - 18);
+			};
 
 			timer.Enabled = true;
 			timer.Tick += delegate {
-								progressDisk.Value = (progressDisk.Value + 1) % 12;
-							};
+				progressDisk.Value = (progressDisk.Value + 1) % 12;
+			};
 		}
 
 		private void BaseParent_Load(object sender, EventArgs e) {

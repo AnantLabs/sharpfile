@@ -10,9 +10,11 @@ BUGS
 - Flickering textboxes when resizing
 - inconsistent behavior for drag/drop copy/move behavior
 - second context menu sometimes after an action is selected in the first context menu
-- if there is more than one long running operation, the progress disk stops when the first is finished
 
 TODO
+- Move OnUpdateProgress to the base class since they all parents should be calling in the same basic code
+- Add the timer to the progress disk class with the ability to start/stop it
+- If a long-running thread is running, startinga new operation should cancel the first long running thread
 - Specify keycodes for actions
 	- name/value as attributes instead of elements
 	- IAction?

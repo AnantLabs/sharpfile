@@ -28,16 +28,25 @@ namespace SharpFile {
 			};
 
 			child1.OnUpdateProgress += delegate(int value) {
-				if (value < 100) {
-					if (!timer.Enabled) {
-						progressDisk.Value = 4;
-						progressDisk.Visible = true;
-						timer.Enabled = true;
+				// TODO: Consolidate this to one OnUpdateProgress method.
+				lock (lockObject) {
+					if (value < 100) {
+						progressCount++;
+					} else if (value == 100) {
+						progressCount--;
 					}
-				} else if (value == 100) {
-					if (timer.Enabled) {
-						progressDisk.Visible = false;
-						timer.Enabled = false;
+
+					if (progressCount > 0) {
+						if (!timer.Enabled) {
+							progressDisk.Value = 4;
+							progressDisk.Visible = true;
+							timer.Enabled = true;
+						}
+					} else {
+						if (timer.Enabled) {
+							progressDisk.Visible = false;
+							timer.Enabled = false;
+						}
 					}
 				}
 			};
@@ -61,16 +70,25 @@ namespace SharpFile {
 			};
 
 			child2.OnUpdateProgress += delegate(int value) {
-				if (value < 100) {
-					if (!timer.Enabled) {
-						progressDisk.Value = 4;
-						progressDisk.Visible = true;
-						timer.Enabled = true;
+				// TODO: Consolidate this to one OnUpdateProgress method.
+				lock (lockObject) {
+					if (value < 100) {
+						progressCount++;
+					} else if (value == 100) {
+						progressCount--;
 					}
-				} else if (value == 100) {
-					if (timer.Enabled) {
-						progressDisk.Visible = false;
-						timer.Enabled = false;
+
+					if (progressCount > 0) {
+						if (!timer.Enabled) {
+							progressDisk.Value = 4;
+							progressDisk.Visible = true;
+							timer.Enabled = true;
+						}
+					} else {
+						if (timer.Enabled) {
+							progressDisk.Visible = false;
+							timer.Enabled = false;
+						}
 					}
 				}
 			};
