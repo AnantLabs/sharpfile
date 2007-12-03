@@ -26,7 +26,7 @@ namespace SharpFile.IO.Retrievers {
                 if (backgroundWorker.CancellationPending) {
                     e.Cancel = true;
                 } else {
-                    e.Result = getFiles(resource, view.Filter);
+                    e.Result = getResources(resource, view.Filter);
                 }
 
                 backgroundWorker.ReportProgress(100);
@@ -73,7 +73,7 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        private IEnumerable<IChildResource> getFiles(IResource resource, string filter) {
+        private IEnumerable<IChildResource> getResources(IResource resource, string filter) {
             IFileContainer container = resource as IFileContainer;
             List<IChildResource> resources = new List<IChildResource>();
 
