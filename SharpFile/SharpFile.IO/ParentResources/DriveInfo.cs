@@ -12,6 +12,7 @@ namespace SharpFile.IO.ParentResources {
 		private DriveType driveType;
 		private bool isReady;
 		private DirectoryInfo directoryInfo;
+        private IChildResourceRetriever childResourceRetriever = new FileRetriever();
 
 		public DriveInfo(System.IO.DriveInfo driveInfo) {
 			this.name = driveInfo.Name;
@@ -87,7 +88,7 @@ namespace SharpFile.IO.ParentResources {
 
 		public IChildResourceRetriever ChildResourceRetriever {
 			get {
-				return new FileRetriever();
+				return childResourceRetriever;
 			}
 		}
 	}

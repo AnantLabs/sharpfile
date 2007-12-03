@@ -10,6 +10,7 @@ BUGS
 - Flickering textboxes when resizing
 - inconsistent behavior for drag/drop copy/move behavior
 - second context menu sometimes after an action is selected in the first context menu
+- Parent and ROot directories should not be able to be renamed
 
 TODO
 - Add the timer to the progress disk class with the ability to start/stop it

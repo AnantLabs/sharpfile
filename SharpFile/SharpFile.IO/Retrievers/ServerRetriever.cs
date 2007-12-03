@@ -5,6 +5,8 @@ using SharpFile.IO;
 
 namespace SharpFile.IO.Retrievers {
 	public class ServerRetriever : IParentResourceRetriever {
+        private IChildResourceRetriever childResourceRetriever = new FileRetriever();
+
 		public IEnumerable<IParentResource> Get() {
 			//ServerEnum serverEnum = new ServerEnum(ResourceScope.RESOURCE_CONNECTED,
 			//                        ResourceType.RESOURCETYPE_DISK,
@@ -20,7 +22,7 @@ namespace SharpFile.IO.Retrievers {
 
 		public IChildResourceRetriever ChildResourceRetriever {
 			get {
-				return new FileRetriever();
+				return childResourceRetriever;
 			}
 		}
 	}

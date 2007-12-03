@@ -6,6 +6,7 @@ using SharpFile.IO;
 namespace SharpFile.IO.ChildResources {
 	public class DirectoryInfo : FileSystemInfo, IChildResource, IFileContainer {
 		private System.IO.DirectoryInfo directoryInfo;
+        private IChildResourceRetriever childResourceRetriever = new FileRetriever();
 
 		public DirectoryInfo(string path)
 			: this(new System.IO.DirectoryInfo(path)) {
@@ -141,7 +142,7 @@ namespace SharpFile.IO.ChildResources {
 
 		public IChildResourceRetriever ChildResourceRetriever {
 			get {
-				return new FileRetriever();
+                return childResourceRetriever;
 			}
 		}
 	}
