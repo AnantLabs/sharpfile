@@ -239,67 +239,66 @@ namespace SharpFile {
 		/// The callback that inserts the information retrieved fromt he resource retriever into the parent dropdown.
 		/// </summary>
 		/// <param name="stateInfo">The resource retriever.</param>
-		private void UpdateParentListing_Callback(object stateInfo) {
-			lock (lockObject) {
-				if (stateInfo is IParentResourceRetriever) {
-					IParentResourceRetriever resourceRetriever = (IParentResourceRetriever) stateInfo;
-					List<IParentResource> resources = new List<IParentResource>(resourceRetriever.Get());
+        private void UpdateParentListing_Callback(object stateInfo) {
+            lock (lockObject) {
+                if (stateInfo is IParentResourceRetriever) {
+                    IParentResourceRetriever resourceRetriever = (IParentResourceRetriever)stateInfo;
+                    List<IParentResource> resources = new List<IParentResource>(resourceRetriever.Get());
 
-					MethodInvoker updater = delegate {
-					                        	bool isLocalDiskFound = false;
+                    MethodInvoker updater = delegate {
+                        bool isLocalDiskFound = false;
 
-					                        	// Create a new menu item in the dropdown for each drive.
-					                        	foreach (IParentResource resource in resources) {
-					                        		ToolStripMenuItem item = new ToolStripMenuItem();
-					                        		item.Text = resource.DisplayName;
-					                        		item.Name = resource.FullPath;
-					                        		item.Tag = resource;
+                        // Create a new menu item in the dropdown for each drive.
+                        foreach (IParentResource resource in resources) {
+                            ToolStripMenuItem item = new ToolStripMenuItem();
+                            item.Text = resource.DisplayName;
+                            item.Name = resource.FullPath;
+                            item.Tag = resource;
 
-					                        		int imageIndex = GetImageIndex(resource);
-					                        		if (imageIndex > -1) {
-					                        			item.Image = ImageList.Images[imageIndex];
-					                        		}
+                            int imageIndex = GetImageIndex(resource);
+                            if (imageIndex > -1) {
+                                item.Image = ImageList.Images[imageIndex];
+                            }
 
-					                        		tlsDrives.DropDownItems.Add(item);
+                            tlsDrives.DropDownItems.Add(item);
 
-					                        		// Gets information about the path already specified or the drive currently being added.
-					                        		if (!isLocalDiskFound) {
-					                        			// If the path has been defined and it is valid, then grab information about it.
-					                        			if (!string.IsNullOrEmpty(Path)) {
-					                        				IChildResource childResource = ChildResourceFactory.GetChildResource(Path);
+                            // Gets information about the path already specified or the drive currently being added.
+                            if (!isLocalDiskFound) {
+                                // If the path has been defined and it is valid, then grab information about it.
+                                if (!string.IsNullOrEmpty(Path)) {
+                                    IChildResource childResource = ChildResourceFactory.GetChildResource(Path);
 
-					                        				if (childResource != null &&
-					                        				    childResource.Root.FullPath == resource.FullPath) {
-					                        					isLocalDiskFound = true;
+                                    if (childResource != null &&
+                                        childResource.Root.FullPath == resource.FullPath) {
+                                        isLocalDiskFound = true;
 
-					                        					highlightParentResource(childResource.Root, item.Image);
-					                        					childResource.Execute(view);
-					                        				}
-					                        			}
+                                        highlightParentResource(childResource.Root, item.Image);
+                                        childResource.Execute(view);
+                                    }
+                                }
 
-					                        			// If the view hasn't been updated and the resource is a drive, then grab some information about it.
-					                        			if (!isLocalDiskFound && resource is DriveInfo) {
-					                        				DriveInfo driveInfo = (DriveInfo) resource;
+                                // If the view hasn't been updated and the resource is a drive, then grab some information about it.
+                                if (!isLocalDiskFound && resource is DriveInfo) {
+                                    DriveInfo driveInfo = (DriveInfo)resource;
 
-					                        				if (driveInfo.DriveType == DriveType.Fixed &&
-					                        				    driveInfo.IsReady) {
-					                        					isLocalDiskFound = true;
+                                    if (driveInfo.DriveType == DriveType.Fixed &&
+                                        driveInfo.IsReady) {
+                                        isLocalDiskFound = true;
 
-					                        					highlightParentResource(driveInfo, item.Image);
-					                        					driveInfo.Execute(view);
-					                        				}
-					                        			}
-					                        		}
-					                        	}
-					                        };
+                                        highlightParentResource(driveInfo, item.Image);
+                                        driveInfo.Execute(view);
+                                    }
+                                }
+                            }
+                        }
+                    };
 
-					if (handleCreated) {
-						this.BeginInvoke(updater);
-					}
-				}
-			}
-		}
-
+                    if (handleCreated) {
+                        this.Invoke(updater);
+                    }
+                }
+            }
+        }
 		#endregion
 
 		#region Private methods.

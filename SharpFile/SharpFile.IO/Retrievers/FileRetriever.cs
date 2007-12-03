@@ -5,7 +5,7 @@ using SharpFile.IO.Retrievers;
 using SharpFile.IO;
 
 namespace SharpFile.IO.Retrievers {
-	public class FileRetriever :IChildResourceRetriever {
+	public class FileRetriever : IChildResourceRetriever {
 		private BackgroundWorker backgroundWorker;
 
 		public void Get(IView view, IResource resource) {

@@ -161,7 +161,8 @@ namespace SharpFile {
 			Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.LeftPath);
 			Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.RightPath);
 
-			decimal percent = Convert.ToDecimal(Settings.Instance.SplitterPercentage * 0.01);
+            splitterPercentage = Settings.Instance.SplitterPercentage;
+			decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
 			int splitterDistance = Convert.ToInt32(percent * this.Width);
 			splitContainer.SplitterDistance = splitterDistance;
 
