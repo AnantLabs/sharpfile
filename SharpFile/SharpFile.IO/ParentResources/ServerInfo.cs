@@ -3,7 +3,7 @@ using SharpFile.IO.Retrievers;
 using SharpFile.IO;
 
 namespace SharpFile.IO.ParentResources {
-	public class ServerInfo : FileSystemInfo, IParentResource {
+	public class ServerInfo : FileSystemInfo, IResource {
 		private string label;
 		private string format;
 		private long availableFreeSpace;

@@ -7,7 +7,7 @@ namespace SharpFile.IO.Retrievers {
 	public class ServerRetriever : IParentResourceRetriever {
         private IChildResourceRetriever childResourceRetriever = new FileRetriever();
 
-		public IEnumerable<IParentResource> Get() {
+        public IEnumerable<IResource> Get() {
 			//ServerEnum serverEnum = new ServerEnum(ResourceScope.RESOURCE_CONNECTED,
 			//                        ResourceType.RESOURCETYPE_DISK,
 			//                        ResourceUsage.RESOURCEUSAGE_ATTACHED,
@@ -17,7 +17,7 @@ namespace SharpFile.IO.Retrievers {
 			//    yield return new ServerInfo(server);
 			//}
 
-			return new List<IParentResource>();
+            return new List<IResource>();
 		}
 
 		public IChildResourceRetriever ChildResourceRetriever {

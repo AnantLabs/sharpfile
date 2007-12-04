@@ -18,12 +18,13 @@ namespace SharpFile.IO {
 		string Filter { get; }
 		FileSystemWatcher FileSystemWatcher { get; }
 		Control Control { get; }
-        void CancelOperations();
+        void CancelChildRetrieverOperations();
 
 		event View.OnGetImageIndexDelegate OnGetImageIndex;
 		event View.OnUpdateProgressDelegate OnUpdateProgress;
 		event View.OnUpdateStatusDelegate OnUpdateStatus;
 		event View.OnUpdatePathDelegate OnUpdatePath;
+        event View.OnCancelOperationsDelegate OnCancelOperations;
 	}
 
 	public static class View {
@@ -31,5 +32,6 @@ namespace SharpFile.IO {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public delegate void OnUpdatePathDelegate(string path);
 		public delegate void OnUpdateStatusDelegate(string status);
+        public delegate void OnCancelOperationsDelegate();
 	}
 }

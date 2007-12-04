@@ -5,91 +5,96 @@ using SharpFile.IO.ChildResources;
 using SharpFile.IO;
 
 namespace SharpFile.IO.ParentResources {
-	public class DriveInfo : FileSystemInfo, IParentResource, IFileContainer {
-		private string label;
-		private string format;
-		private long availableFreeSpace;
-		private DriveType driveType;
-		private bool isReady;
-		private DirectoryInfo directoryInfo;
+    public class DriveInfo : FileSystemInfo, IResource, IFileContainer {
+        private System.IO.DriveInfo driveInfo;
+        private string label;
+        private string format;
+        private long availableFreeSpace;
+        private DriveType driveType;
+        private bool? isReady;
+        private DirectoryInfo directoryInfo;
         private IChildResourceRetriever childResourceRetriever = new FileRetriever();
 
-		public DriveInfo(System.IO.DriveInfo driveInfo) {
-			this.name = driveInfo.Name;
-			this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
-			this.fullPath = name;
-			this.isReady = driveInfo.IsReady;
+        public DriveInfo(System.IO.DriveInfo driveInfo) {
+            this.driveInfo = driveInfo;
+            this.name = driveInfo.Name;
+            this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
+            this.fullPath = name;
 
-			if (driveInfo.IsReady) {
-				this.label = driveInfo.VolumeLabel;
-				this.format = driveInfo.DriveFormat;
-				this.size = driveInfo.TotalSize;
-				this.availableFreeSpace = driveInfo.AvailableFreeSpace;
-			}
+            if (driveInfo.IsReady) {
+                this.label = driveInfo.VolumeLabel;
+                this.format = driveInfo.DriveFormat;
+                this.size = driveInfo.TotalSize;
+                this.availableFreeSpace = driveInfo.AvailableFreeSpace;
+            }
 
-			this.displayName = string.Format("{0} <{1}>",
-				fullPath,
-				Common.General.GetHumanReadableSize(availableFreeSpace.ToString()));
-		}
+            this.displayName = string.Format("{0} <{1}>",
+                fullPath,
+                Common.General.GetHumanReadableSize(availableFreeSpace.ToString()));
+        }
 
-		public bool IsReady {
-			get {
-				return isReady;
-			}
-		}
+        public bool IsReady {
+            get {
+                if (!isReady.HasValue) {
+                    isReady = driveInfo.IsReady;
+                }
 
-		public string Label {
-			get {
-				return label;
-			}
-		}
+                return isReady.Value;
+            }
+        }
 
-		public DriveType DriveType {
-			get {
-				return driveType;
-			}
-		}
+        public string Label {
+            get {
+                return label;
+            }
+        }
 
-		public long AvailableFreeSpace {
-			get {
-				return availableFreeSpace;
-			}
-		}
+        public DriveType DriveType {
+            get {
+                return driveType;
+            }
+        }
 
-		public string Format {
-			get {
-				return format;
-			}
-		}
+        public long AvailableFreeSpace {
+            get {
+                return availableFreeSpace;
+            }
+        }
 
-		public void Execute(IView view) {
-			this.ChildResourceRetriever.Get(view, this);
-		}
+        public string Format {
+            get {
+                return format;
+            }
+        }
 
-		public IEnumerable<IChildResource> GetDirectories() {
-			if (directoryInfo == null) {
-				directoryInfo = new DirectoryInfo(this.FullPath);
-			}
+        public void Execute(IView view) {
+            this.ChildResourceRetriever.Get(view, this);
+        }
 
-			return directoryInfo.GetDirectories();
-		}
+        public IEnumerable<IChildResource> GetDirectories() {
+            if (directoryInfo == null) {
+                directoryInfo = new DirectoryInfo(this.FullPath);
+            }
 
-		public IEnumerable<IChildResource> GetFiles() {
-			return GetFiles(string.Empty);
-		}
+            return directoryInfo.GetDirectories();
+        }
 
-		public IEnumerable<IChildResource> GetFiles(string filter) {
-			if (directoryInfo == null) {
-				directoryInfo = new DirectoryInfo(this.FullPath);
-			}
+        public IEnumerable<IChildResource> GetFiles() {
+            return GetFiles(string.Empty);
+        }
 
-			return directoryInfo.GetFiles(filter);
-		}
+        public IEnumerable<IChildResource> GetFiles(string filter) {
+            if (directoryInfo == null) {
+                directoryInfo = new DirectoryInfo(this.FullPath);
+            }
 
-		public IChildResourceRetriever ChildResourceRetriever {
-			get {
-				return childResourceRetriever;
-			}
-		}
-	}
+            return directoryInfo.GetFiles(filter);
+        }
+
+        public IChildResourceRetriever ChildResourceRetriever {
+            get {
+                return childResourceRetriever;
+            }
+        }
+    }
 }

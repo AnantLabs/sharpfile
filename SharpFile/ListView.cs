@@ -29,6 +29,7 @@ namespace SharpFile {
         public event View.OnUpdateProgressDelegate OnUpdateProgress;
         public event View.OnGetImageIndexDelegate OnGetImageIndex;
         public event View.OnUpdatePathDelegate OnUpdatePath;
+        public event View.OnCancelOperationsDelegate OnCancelOperations;
 
         public ListView() {
             // This prevents flicker in the listview. 
@@ -117,6 +118,14 @@ namespace SharpFile {
             return -1;
         }
 
+        /// <summary>
+        /// Passes the cancel operation action to any listening events.
+        /// </summary>
+        protected void CancelOperations() {
+            if (OnCancelOperations != null) {
+                OnCancelOperations();
+            }
+        }
         #endregion
 
         #region Events.
@@ -136,7 +145,7 @@ namespace SharpFile {
                 IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
 
                 if (resource != null) {
-                    ((FileBrowser)this.Parent).CancelOperations();
+                    CancelOperations();
 
                     resource.Execute(this);
                 }
@@ -382,7 +391,7 @@ namespace SharpFile {
         #endregion
 
         #region Public methods.
-        public void CancelOperations() {
+        public void CancelChildRetrieverOperations() {
             foreach (ListViewItem item in itemDictionary.Values) {
                 IResource resource = (IResource)item.Tag;
 
@@ -636,9 +645,9 @@ namespace SharpFile {
         /// <summary>
         /// Current drive.
         /// </summary>
-        public IParentResource DriveInfo {
+        public IResource DriveInfo {
             get {
-                return Forms.GetPropertyInParent<IParentResource>(this.Parent, "ParentResource");
+                return Forms.GetPropertyInParent<IResource>(this.Parent, "ParentResource");
             }
         }
 

@@ -5,7 +5,7 @@ namespace SharpFile.IO.Retrievers {
 	public class DriveRetriever : IParentResourceRetriever {
         private IChildResourceRetriever childResourceRetriever = new FileRetriever();
 
-		public IEnumerable<IParentResource> Get() {
+        public IEnumerable<IResource> Get() {
 			foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
 				yield return new DriveInfo(driveInfo);
 			}

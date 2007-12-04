@@ -74,7 +74,7 @@ namespace SharpFile {
             initializeComponent();
 
             resourceRetrievers.Add(new DriveRetriever());
-            resourceRetrievers.Add(new ServerRetriever());
+            //resourceRetrievers.Add(new ServerRetriever());
 
             UpdateParentListing(resourceRetrievers);
         }
@@ -84,7 +84,7 @@ namespace SharpFile {
                 resourceRetriever.ChildResourceRetriever.Cancel();
             }
 
-            view.CancelOperations();
+            view.CancelChildRetrieverOperations();
         }
 
         #region Delegate methods
@@ -125,6 +125,7 @@ namespace SharpFile {
             this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
             this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
             this.view.OnUpdatePath += UpdatePath;
+            this.view.OnCancelOperations += CancelOperations;
 
             fileSystemWatcher = new FileSystemWatcher();
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
@@ -172,7 +173,7 @@ namespace SharpFile {
         /// Refreshes the view when a different drive is selected.
         /// </summary>
         private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-            IParentResource resource = (IParentResource)e.ClickedItem.Tag;
+            IResource resource = (IResource)e.ClickedItem.Tag;
             resource.Execute(view);
             highlightParentResource(resource, e.ClickedItem.Image);
         }
@@ -181,7 +182,7 @@ namespace SharpFile {
         /// Refreshes the view with the current root drive.
         /// </summary>
         private void tlsDrives_ButtonClick(object sender, EventArgs e) {
-            IParentResource resource = (IParentResource)tlsDrives.Tag;
+            IResource resource = (IResource)tlsDrives.Tag;
             resource.Execute(view);
         }
 
@@ -243,13 +244,13 @@ namespace SharpFile {
             lock (lockObject) {
                 if (stateInfo is IParentResourceRetriever) {
                     IParentResourceRetriever resourceRetriever = (IParentResourceRetriever)stateInfo;
-                    List<IParentResource> resources = new List<IParentResource>(resourceRetriever.Get());
+                    List<IResource> resources = new List<IResource>(resourceRetriever.Get());
 
                     MethodInvoker updater = delegate {
                         bool isLocalDiskFound = false;
 
                         // Create a new menu item in the dropdown for each drive.
-                        foreach (IParentResource resource in resources) {
+                        foreach (IResource resource in resources) {
                             ToolStripMenuItem item = new ToolStripMenuItem();
                             item.Text = resource.DisplayName;
                             item.Name = resource.FullPath;
@@ -272,8 +273,8 @@ namespace SharpFile {
                                         childResource.Root.FullPath == resource.FullPath) {
                                         isLocalDiskFound = true;
 
-                                        highlightParentResource(childResource.Root, item.Image);
-                                        childResource.Execute(view);
+                                        highlightParentResource(resource.Root, item.Image);
+                                        resource.Execute(view);
                                     }
                                 }
 
@@ -285,8 +286,8 @@ namespace SharpFile {
                                         driveInfo.IsReady) {
                                         isLocalDiskFound = true;
 
-                                        highlightParentResource(driveInfo, item.Image);
-                                        driveInfo.Execute(view);
+                                        highlightParentResource(resource, item.Image);
+                                        resource.Execute(view);
                                     }
                                 }
                             }
@@ -307,7 +308,7 @@ namespace SharpFile {
         /// </summary>
         private void highlightParentResource(IResource resource, Image image) {
             foreach (ToolStripItem item in tlsDrives.DropDownItems) {
-                IParentResource parentResource = ((IParentResource)item.Tag);
+                IResource parentResource = ((IResource)item.Tag);
 
                 if (parentResource.FullPath == resource.FullPath) {
                     item.BackColor = SystemColors.HighlightText;
@@ -383,9 +384,9 @@ namespace SharpFile {
         /// <summary>
         /// The currently selected drive.
         /// </summary>
-        public IParentResource ParentResource {
+        public IResource ParentResource {
             get {
-                return (IParentResource)tlsDrives.Tag;
+                return (IResource)tlsDrives.Tag;
             }
         }
 

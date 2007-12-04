@@ -4,8 +4,8 @@ using SharpFile.IO.ParentResources;
 
 namespace SharpFile.IO.Retrievers {
 	public class NullRetriever : IParentResourceRetriever {
-		public IEnumerable<IParentResource> Get() {
-			List<IParentResource> resources = new List<IParentResource>();
+        public IEnumerable<IResource> Get() {
+            List<IResource> resources = new List<IResource>();
 			resources.Add(new NullInfo());
 			return resources;
 		}

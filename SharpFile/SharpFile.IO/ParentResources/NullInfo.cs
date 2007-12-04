@@ -2,7 +2,7 @@ using System;
 using SharpFile.IO.Retrievers;
 
 namespace SharpFile.IO.ParentResources {
-	public class NullInfo : IParentResource {
+    public class NullInfo : IResource {
 		private const string displayName = "---------";
 
 		#region IParentResource Members
