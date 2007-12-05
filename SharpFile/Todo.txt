@@ -7,7 +7,7 @@ BUGS
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
 - inconsistent behavior for drag/drop copy/move behavior
-- second context menu sometimes after an action is selected in the first context menu
+- splitcontainer context menu shows up after an action is selected in a listview context menu
 - long-running threads to get directories/files invoked from the drive drop down aren't canceled
 	when starting a new operation
 
@@ -17,7 +17,6 @@ TODO
 	- name/value as attributes instead of elements
 	- IAction?
 - SharpFile.Interface.dll
-- swap panels with key
 - ability to use keyboard to tab between elements
 	- panels, tabs, select a drive, etc.
 - special folders in drive drop down
@@ -32,10 +31,9 @@ TODO
 - show an icon of the file being dragged around
 - Make sure that all code in UI (child) is neccessary and couldn't be moved to infrastructure/IO
 - Prevent drag-and-drop operation if it is completed in less than some arbitrary time limit (200 ms?)
-- Validate rename before-hand and throw up tooltip or something
+- Validate rename before-hand and throw up tooltip or something (beforeedit event)
 - Information/Property slideable "pane" list like vista's file manager
 - Extra tab functionality: middle-click to close tabs, mouse wheel, ctrl-tab
-- Hot-tracking listview
 - Full-row select
 - test to make sure that filesystemwatcher events still fire even when updating the UI
 - copy/move should show progress (write bytes, as opposed to File.Copy()?) 
@@ -49,7 +47,7 @@ TODO
 - FTP drive functionality
 - SCP drive functionality
 - NFS drive functionality
-- Compressed file shows files contained within
+- Double-clicking compressed file shows files contained within
 
 VISTA BUGS
 	- No icon overlays

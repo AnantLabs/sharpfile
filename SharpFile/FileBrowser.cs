@@ -267,14 +267,14 @@ namespace SharpFile {
                             if (!isLocalDiskFound) {
                                 // If the path has been defined and it is valid, then grab information about it.
                                 if (!string.IsNullOrEmpty(Path)) {
-                                    IChildResource childResource = ChildResourceFactory.GetChildResource(Path);
+                                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path);
 
-                                    if (childResource != null &&
-                                        childResource.Root.FullPath == resource.FullPath) {
+                                    if (pathResource != null &&
+                                        pathResource.Root.FullPath.Equals(resource.FullPath)) {
                                         isLocalDiskFound = true;
 
                                         highlightParentResource(resource.Root, item.Image);
-                                        resource.Execute(view);
+                                        pathResource.Execute(view);
                                     }
                                 }
 

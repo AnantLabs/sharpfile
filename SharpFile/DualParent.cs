@@ -9,6 +9,7 @@ using System;
 namespace SharpFile {
 	public class DualParent : BaseParent {
 		private SplitContainer splitContainer = new SplitContainer();
+        private ToolStripMenuItem swapPanelItem = new ToolStripMenuItem();
 		private ToolStripMenuItem displayPanelItem = new ToolStripMenuItem();
 		private ToolStripMenuItem displayLeftPanelItem = new ToolStripMenuItem();
 		private ToolStripMenuItem displayRightPanelItem = new ToolStripMenuItem();
@@ -59,6 +60,7 @@ namespace SharpFile {
 										  path);
 			};
 
+            splitContainer.SplitterWidth = 1;
 			splitContainer.Panel1.Controls.Add(child1);
 			splitContainer.Panel2.Controls.Add(child2);
 
@@ -106,6 +108,19 @@ namespace SharpFile {
 			                              	});
 
 			this.viewMenu.DropDownItems.Add(displayPanelItem);
+            this.viewMenu.DropDownItems.Add(swapPanelItem);
+
+            this.swapPanelItem.Text = "Swap Panels";
+            this.swapPanelItem.MouseUp += delegate(object sender, MouseEventArgs e) {
+                Control panel1Control = this.splitContainer.Panel1.Controls[0];
+                Control panel2Control = this.splitContainer.Panel2.Controls[0];
+
+                this.splitContainer.Panel2.Controls.Clear();
+                this.splitContainer.Panel2.Controls.Add(panel1Control);
+
+                this.splitContainer.Panel1.Controls.Clear();
+                this.splitContainer.Panel1.Controls.Add(panel2Control);
+            };
 
 			this.displayPanelItem.Text = "Display Panel";
 			this.displayPanelItem.DropDownItems.AddRange(new ToolStripItem[] {
@@ -134,10 +149,6 @@ namespace SharpFile {
 					this.displayRightPanelItem.Checked = true;
 				}
 			};
-		}
-
-		void displayLeftPanelItem_CheckStateChanged(object sender, EventArgs e) {
-			throw new NotImplementedException();
 		}
 
 		protected override void addControls() {

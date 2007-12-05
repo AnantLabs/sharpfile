@@ -266,16 +266,14 @@ namespace SharpFile {
         private void listView_MouseUp(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Right) {
                 ShellContextMenu menu = new ShellContextMenu();
-                ShellContextMenu.ContextMenuResult contextMenuResult;
 
                 if (this.SelectedItems.Count > 1) {
                     List<string> paths = getSelectedPaths();
-
-                    contextMenuResult = menu.PopupMenu(paths, this.Handle);
+                    menu.PopupMenu(paths, this.Handle);
                 } else if (this.SelectedItems.Count == 1) {
-                    contextMenuResult = menu.PopupMenu(this.SelectedItems[0].Name, this.Handle);
+                    menu.PopupMenu(this.SelectedItems[0].Name, this.Handle);
                 } else {
-                    contextMenuResult = menu.PopupMenu(Path, this.Handle);
+                    menu.PopupMenu(Path, this.Handle);
                 }
             }
         }
