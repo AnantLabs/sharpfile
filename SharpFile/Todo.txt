@@ -1,3 +1,5 @@
+http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
+
 BUGS
 - KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
