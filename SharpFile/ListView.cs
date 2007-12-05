@@ -190,6 +190,7 @@ namespace SharpFile {
                                             backgroundWorker.ReportProgress(50);
                                             item.SubItems[sizeIndex].Text = "...";
                                             eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
+                                            this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
                                             backgroundWorker.ReportProgress(100);
                                         };
 
@@ -205,6 +206,7 @@ namespace SharpFile {
 
                                                     item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
                                                     updateSelectedTotalSize(size);
+                                                    this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
                                                 }
                                             };
 
