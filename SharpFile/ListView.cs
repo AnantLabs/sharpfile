@@ -39,6 +39,7 @@ namespace SharpFile {
             initializeComponent();
         }
 
+        #region Private methods.
         private void initializeComponent() {
             this.DoubleClick += listView_DoubleClick;
             this.KeyDown += listView_KeyDown;
@@ -73,6 +74,104 @@ namespace SharpFile {
                 this.Columns.Add(column);
             }
         }
+
+        /// <summary>
+        /// Calculates the size of the currently selected item.
+        /// </summary>
+        private void calculateSize() {
+            if (this.SelectedItems != null &&
+                        this.SelectedItems.Count > 0) {
+                int maxIndex = 0;
+
+                foreach (ListViewItem item in this.SelectedItems) {
+                    IChildResource fileSystemInfo = (IChildResource)item.Tag;
+
+                    if (item.Index > maxIndex) {
+                        maxIndex = item.Index;
+                    }
+
+                    if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
+                        item.ForeColor = Color.Red;
+                        selectedFileSystemInfos.Add(fileSystemInfo);
+
+                        int sizeIndex = 0;
+                        foreach (ColumnHeader columnHeader in item.ListView.Columns) {
+                            if (columnHeader.Text.Equals("Size")) {
+                                sizeIndex = columnHeader.Index;
+                            }
+                        }
+
+                        if (sizeIndex > 0) {
+                            long size = 0;
+
+                            if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
+                                fileSystemInfo is DirectoryInfo) {
+                                using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                                    backgroundWorker.WorkerReportsProgress = true;
+
+                                    backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
+                                        backgroundWorker.ReportProgress(50);
+                                        item.SubItems[sizeIndex].Text = "...";
+                                        eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
+                                        this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
+                                        backgroundWorker.ReportProgress(100);
+                                    };
+
+                                    backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
+                                        UpdateProgress(eventArgs.ProgressPercentage);
+                                    };
+
+                                    backgroundWorker.RunWorkerCompleted +=
+                                        delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+                                            if (eventArgs.Error == null &&
+                                                eventArgs.Result != null) {
+                                                size = (long)eventArgs.Result;
+
+                                                item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
+                                                updateSelectedTotalSize(size);
+                                                this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
+                                            }
+                                        };
+
+                                    backgroundWorker.RunWorkerAsync(fileSystemInfo);
+                                }
+                            } else {
+                                updateSelectedTotalSize(fileSystemInfo.Size);
+                            }
+                        }
+                    } else {
+                        item.ForeColor = Color.Black;
+                        selectedFileSystemInfos.Remove(fileSystemInfo);
+                        updateSelectedTotalSize(-fileSystemInfo.Size);
+                    }
+
+                    item.Focused = false;
+                    item.Selected = false;
+                }
+
+                int nextIndex = maxIndex + 1;
+                if (this.Items.Count > nextIndex) {
+                    this.Items[nextIndex].Focused = true;
+                    this.Items[nextIndex].Selected = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Executes the currently selected item.
+        /// </summary>
+        private void execute() {
+            if (this.SelectedItems.Count > 0) {
+                IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
+
+                if (resource != null) {
+                    CancelOperations();
+
+                    resource.Execute(this);
+                }
+            }
+        }
+        #endregion
 
         #region Delegate methods
         /// <summary>
@@ -140,98 +239,24 @@ namespace SharpFile {
         /// Refreshes the listview when a file/directory is double-clicked in the listview.
         /// </summary>
         private void listView_DoubleClick(object sender, EventArgs e) {
-            if (this.SelectedItems.Count > 0) {
-                IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
-
-                if (resource != null) {
-                    CancelOperations();
-
-                    resource.Execute(this);
-                }
-            }
+            execute();
         }
 
         /// <summary>
         /// Selects an item in the listview when the Space bar is hit.
         /// </summary>
         private void listView_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.Space) {
-                if (this.SelectedItems != null &&
-                    this.SelectedItems.Count > 0) {
-                    int maxIndex = 0;
-
-                    foreach (ListViewItem item in this.SelectedItems) {
-                        IChildResource fileSystemInfo = (IChildResource)item.Tag;
-
-                        if (item.Index > maxIndex) {
-                            maxIndex = item.Index;
-                        }
-
-                        if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
-                            item.ForeColor = Color.Red;
-                            selectedFileSystemInfos.Add(fileSystemInfo);
-
-                            int sizeIndex = 0;
-                            foreach (ColumnHeader columnHeader in item.ListView.Columns) {
-                                if (columnHeader.Text.Equals("Size")) {
-                                    sizeIndex = columnHeader.Index;
-                                }
-                            }
-
-                            if (sizeIndex > 0) {
-                                long size = 0;
-
-                                if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
-                                    fileSystemInfo is DirectoryInfo) {
-                                    using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-                                        backgroundWorker.WorkerReportsProgress = true;
-
-                                        backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
-                                            backgroundWorker.ReportProgress(50);
-                                            item.SubItems[sizeIndex].Text = "...";
-                                            eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
-                                            this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
-                                            backgroundWorker.ReportProgress(100);
-                                        };
-
-                                        backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-                                            UpdateProgress(eventArgs.ProgressPercentage);
-                                        };
-
-                                        backgroundWorker.RunWorkerCompleted +=
-                                            delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-                                                if (eventArgs.Error == null &&
-                                                    eventArgs.Result != null) {
-                                                    size = (long)eventArgs.Result;
-
-                                                    item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
-                                                    updateSelectedTotalSize(size);
-                                                    this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
-                                                }
-                                            };
-
-                                        backgroundWorker.RunWorkerAsync(fileSystemInfo);
-                                    }
-                                } else {
-                                    updateSelectedTotalSize(fileSystemInfo.Size);
-                                }
-                            }
-                        } else {
-                            item.ForeColor = Color.Black;
-                            selectedFileSystemInfos.Remove(fileSystemInfo);
-                            updateSelectedTotalSize(-fileSystemInfo.Size);
-                        }
-
-                        item.Focused = false;
-                        item.Selected = false;
-                    }
-
-                    int nextIndex = maxIndex + 1;
-                    if (this.Items.Count > nextIndex) {
-                        this.Items[nextIndex].Focused = true;
-                        this.Items[nextIndex].Selected = true;
-                    }
-                }
+            switch (e.KeyCode) {
+                case Keys.Space:
+                    calculateSize();
+                    break;
+                case Keys.Escape:
+                    CancelOperations();
+                    UpdateProgress(100);
+                    break;
+                case Keys.Enter:
+                    execute();
+                    break;
             }
         }
 

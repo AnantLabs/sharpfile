@@ -68,7 +68,9 @@ namespace SharpFile {
                 if (value < 100) {
                     progressCount++;
                 } else if (value == 100) {
-                    progressCount--;
+                    if (progressCount > 0) {
+                        progressCount--;
+                    }
                 }
 
                 if (progressCount > 0) {

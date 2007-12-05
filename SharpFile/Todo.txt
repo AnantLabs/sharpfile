@@ -8,27 +8,25 @@ BUGS
 - Flickering textboxes when resizing
 - inconsistent behavior for drag/drop copy/move behavior
 - second context menu sometimes after an action is selected in the first context menu
+- long-running threads to get directories/files invoked from the drive drop down aren't canceled
+	when starting a new operation
 
 TODO
 - Add the timer to the progress disk class with the ability to start/stop it
-- If a long-running thread is running, starting a new operation should cancel the first long running thread
 - Specify keycodes for actions
 	- name/value as attributes instead of elements
 	- IAction?
 - SharpFile.Interface.dll
-- ability to collapse either panel or the other
 - swap panels with key
 - ability to use keyboard to tab between elements
 	- panels, tabs, select a drive, etc.
 - special folders in drive drop down
 	- my documents, control panel?, desktop
 - Specify defaults for settings as an attribute on the property
-- No hardcoded parent/child form stuff
 - Log4net support to log detailed debug logs
 - Refresh of drive listing when new drives are entered (usb keys and the like)
 - Refresh button
 - Sorting of listview by column
-- Able to cancel long-running operations (esc?)
 - Drag-and-drop support for links (both ways)
 - thumbnail files when possible (images?)
 - show an icon of the file being dragged around
