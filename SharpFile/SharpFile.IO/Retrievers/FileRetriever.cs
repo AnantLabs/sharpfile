@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using SharpFile.IO.ChildResources;
@@ -23,13 +24,18 @@ namespace SharpFile.IO.Retrievers {
                 // Grab the files and report the progress to the parent.
                 backgroundWorker.ReportProgress(50);
 
-                if (backgroundWorker.CancellationPending) {
+                try {
+                    if (backgroundWorker.CancellationPending) {
+                        e.Cancel = true;
+                    } else {
+                        e.Result = getResources(resource, view.Filter);
+                    }
+                } catch (UnauthorizedAccessException ex) {
                     e.Cancel = true;
-                } else {
-                    e.Result = getResources(resource, view.Filter);
+                    view.ShowMessageBox(ex.Message);
+                } finally {
+                    backgroundWorker.ReportProgress(100);
                 }
-
-                backgroundWorker.ReportProgress(100);
             };
 
             // Method that runs when the DoWork method is finished.

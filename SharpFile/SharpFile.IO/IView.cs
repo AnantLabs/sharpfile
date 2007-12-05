@@ -19,6 +19,7 @@ namespace SharpFile.IO {
 		FileSystemWatcher FileSystemWatcher { get; }
 		Control Control { get; }
         void CancelChildRetrieverOperations();
+        void ShowMessageBox(string text);
 
 		event View.OnGetImageIndexDelegate OnGetImageIndex;
 		event View.OnUpdateProgressDelegate OnUpdateProgress;

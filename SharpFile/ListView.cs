@@ -47,6 +47,7 @@ namespace SharpFile {
             this.DragOver += listView_DragOver;
             this.DragDrop += listView_DragDrop;
             this.KeyUp += listView_KeyUp;
+            this.BeforeLabelEdit += listView_BeforeLabelEdit;
             this.AfterLabelEdit += listView_AfterLabelEdit;
             this.GotFocus += listView_GotFocus;
 
@@ -74,7 +75,6 @@ namespace SharpFile {
         }
 
         #region Delegate methods
-
         /// <summary>
         /// Passes the status to any listening events.
         /// </summary>
@@ -129,7 +129,6 @@ namespace SharpFile {
         #endregion
 
         #region Events.
-
         /// <summary>
         /// Fires when the list view gets focus.
         /// </summary>
@@ -367,6 +366,19 @@ namespace SharpFile {
         }
 
         /// <summary>
+        /// Make sure that the item being edited is valid.
+        /// </summary>
+        private void listView_BeforeLabelEdit(object sender, LabelEditEventArgs e) {
+            ListViewItem item = this.Items[e.Item];
+            IResource resource = (IResource)item.Tag;
+
+            if (item.Tag is ParentDirectoryInfo ||
+                item.Tag is RootDirectoryInfo) {
+                e.CancelEdit = true;
+            }
+        }
+
+        /// <summary>
         /// Renames the file/directory that was being edited.
         /// </summary>
         private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
@@ -391,6 +403,17 @@ namespace SharpFile {
         #endregion
 
         #region Public methods.
+        /// <summary>
+        /// Shows a message box.
+        /// </summary>
+        /// <param name="text">Text to show.</param>
+        public void ShowMessageBox(string text) {
+            MessageBox.Show(text);
+        }
+
+        /// <summary>
+        /// Cancels the child retriever operations.
+        /// </summary>
         public void CancelChildRetrieverOperations() {
             foreach (ListViewItem item in itemDictionary.Values) {
                 IResource resource = (IResource)item.Tag;

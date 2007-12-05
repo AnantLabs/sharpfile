@@ -295,7 +295,7 @@ namespace SharpFile {
                     };
 
                     if (handleCreated) {
-                        this.Invoke(updater);
+                        this.BeginInvoke(updater);
                     }
                 }
             }
