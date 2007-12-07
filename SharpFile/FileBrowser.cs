@@ -74,6 +74,7 @@ namespace SharpFile {
             initializeComponent();
 
             resourceRetrievers.Add(new DriveRetriever());
+            resourceRetrievers.Add(new NetworkDriveRetriever());
             //resourceRetrievers.Add(new ServerRetriever());
 
             UpdateParentListing(resourceRetrievers);

@@ -14,6 +14,13 @@ BUGS
 	when starting a new operation
 
 TODO
+- drives/network drives should only be retrieved once and then cached all FileBrowsers -- Singleton?
+- instead of intelligently trying to determine if a remote computer should have a filesystem event set up for it,
+	maybe all network drives should have a manual filesystem watcher (detailed below)
+- wrap all of the filesystemwatchers in my custom filesystemwatcher
+	- queue events so that only one event gets fired for filesystem changes
+	- for systems that don't support filesystem events (i.e. z:\, network drive), 
+		set up a manual refresh every 500 ms or so (configurable)
 - Add the timer to the progress disk class with the ability to start/stop it
 - Specify keycodes for actions
 	- name/value as attributes instead of elements

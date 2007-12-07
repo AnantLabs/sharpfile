@@ -7,7 +7,15 @@ namespace SharpFile.IO.Retrievers {
 
         public IEnumerable<IResource> Get() {
 			foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
-				yield return new DriveInfo(driveInfo);
+                //if (driveInfo.DriveType == System.IO.DriveType.Network) {
+                //    yield return new NetworkDriveInfo(driveInfo);
+                //} else {
+                //    yield return new DriveInfo(driveInfo);
+                //}
+
+                if (driveInfo.DriveType != System.IO.DriveType.Network) {
+                    yield return new DriveInfo(driveInfo);
+                }
 			}
 		}
 
