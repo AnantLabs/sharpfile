@@ -9,6 +9,7 @@ namespace SharpFile.IO {
 		long Size { get; }
 		DriveInfo Root { get; }
 		bool Equals(object obj);
+        string Path { get; }
 
 		void Execute(IView view);
 		IChildResourceRetriever ChildResourceRetriever { get; }

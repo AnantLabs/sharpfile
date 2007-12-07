@@ -8,7 +8,7 @@ BUGS
 	-catch them all and just update once in a stack
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
-- inconsistent behavior for drag/drop copy/move behavior
+- network drives don't get updated with filesystem actions
 - splitcontainer context menu shows up after an action is selected in a listview context menu
 - long-running threads to get directories/files invoked from the drive drop down aren't canceled
 	when starting a new operation

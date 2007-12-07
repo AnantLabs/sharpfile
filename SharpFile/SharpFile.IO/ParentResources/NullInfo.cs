@@ -12,6 +12,12 @@ namespace SharpFile.IO.ParentResources {
 			}
 		}
 
+        public string Path {
+            get {
+                throw new Exception("The method or operation is not implemented.");
+            }
+        }
+
 		public string Name {
 			get { 
 				throw new Exception("The method or operation is not implemented."); 

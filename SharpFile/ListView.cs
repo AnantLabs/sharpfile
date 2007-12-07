@@ -353,9 +353,17 @@ namespace SharpFile {
                 // is different, then default to a COPY operation
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-                if (files.Length > 0 && !files[0].ToUpper().StartsWith(Path) &&
-                    (e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
-                    e.Effect = DragDropEffects.Copy;
+                if (files.Length > 0) {
+                    IChildResource fileResource = ChildResourceFactory.GetChildResource(files[0]);
+                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path);
+
+                    if (!fileResource.Root.FullPath.Equals(pathResource.Root.FullPath)) {
+                        if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
+                            e.Effect = DragDropEffects.Copy;
+                        }
+                    } else if (fileResource.Path.Equals(pathResource.FullPath)) {
+                        e.Effect = DragDropEffects.None;
+                    }
                 }
             } else {
                 e.Effect = DragDropEffects.None;
