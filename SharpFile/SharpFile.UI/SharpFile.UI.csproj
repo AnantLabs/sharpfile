@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DriveDetector.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="IconManager.cs" />
     <Compile Include="IconReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

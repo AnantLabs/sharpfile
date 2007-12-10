@@ -12,6 +12,7 @@ using DriveType=SharpFile.IO.DriveType;
 using View=SharpFile.Infrastructure.View;
 using SharpFile.Infrastructure;
 using Common;
+using SharpFile.UI;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -19,6 +20,7 @@ namespace SharpFile {
 
         private FileSystemWatcher fileSystemWatcher;
         private ImageList imageList;
+        private DriveDetector driveDetector;
         private bool handleCreated = false;
 
         private ToolStrip toolStrip;
@@ -69,6 +71,9 @@ namespace SharpFile {
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
+
+            DriveDetector.DeviceArrived += driveDetector_DeviceChanged;
+            DriveDetector.DeviceRemoved += driveDetector_DeviceChanged;
 
             initializeComponent();
             UpdateParentListing();
@@ -215,6 +220,17 @@ namespace SharpFile {
 
             view.Control.BeginInvoke(updater);
         }
+
+        /// <summary>
+        /// Fires when a drive changes.
+        /// </summary>
+        private void driveDetector_DeviceChanged(object sender, DriveDetectorEventArgs e) {
+            MethodInvoker updater = delegate {
+                UpdateParentListing();
+            };
+
+            this.BeginInvoke(updater);
+        }
         #endregion
 
         #region Public methods
@@ -329,6 +345,22 @@ namespace SharpFile {
                 }
 
                 return imageList;
+            }
+        }
+
+        /// <summary>
+        /// Drive detector.
+        /// </summary>
+        public DriveDetector DriveDetector {
+            get {
+                // TODO: This drive detector should really call the parent's (BaseParent) DriveDetector.
+                driveDetector = new DriveDetector();
+
+                if (driveDetector == null) {
+                    driveDetector = Forms.GetPropertyInParent<DriveDetector>(this.Parent, "DriveDetector");
+                }
+
+                return driveDetector;
             }
         }
 

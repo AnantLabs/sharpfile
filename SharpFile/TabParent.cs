@@ -33,7 +33,7 @@ namespace SharpFile {
 
 		public ImageList ImageList {
 			get {
-				return Settings.Instance.ImageList;
+                return Settings.Instance.ImageList;
 			}
 		}
 	}

@@ -4,12 +4,14 @@ using System.Drawing;
 using System.Windows.Forms;
 using ProgressDisk;
 using SharpFile.Infrastructure;
+using SharpFile.UI;
 
 namespace SharpFile {
 	public class BaseParent : Form {
 		protected const string formName = "SharpFile";
 
 		private static readonly object lockObject = new object();
+        private DriveDetector driveDetector;
 
 		private int progressCount = 0;
 		protected ToolTip toolTip = new ToolTip();
@@ -45,6 +47,8 @@ namespace SharpFile {
 		public BaseParent() {
 			initializeComponents();
 			this.DoubleBuffered = true;
+
+            driveDetector = new DriveDetector();
 
 			SetStyle(ControlStyles.AllPaintingInWmPaint |
 					 ControlStyles.OptimizedDoubleBuffer, true);
@@ -285,6 +289,12 @@ namespace SharpFile {
 
 		protected virtual void addMenuStripItems() {
 		}
+
+        public DriveDetector DriveDetector {
+            get {
+                return driveDetector;
+            }
+        }
 
 		public ImageList ImageList {
 			get {
