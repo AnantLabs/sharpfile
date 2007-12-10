@@ -1,9 +1,8 @@
 using System.IO;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using SharpFile.IO.ChildResources;
 
-namespace SharpFile.IO {
+namespace SharpFile.Infrastructure {
 	// TODO: This might be better somewhere else. Maybe there should be an assembly just for interfaces.
 	public interface IView {
 		void AddItemRange(IEnumerable<IChildResource> childResources);
@@ -16,7 +15,7 @@ namespace SharpFile.IO {
 		void EndUpdate();
 		string Path { get; }
 		string Filter { get; }
-		FileSystemWatcher FileSystemWatcher { get; }
+        SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher { get; }
 		Control Control { get; }
         void CancelChildRetrieverOperations();
         void ShowMessageBox(string text);

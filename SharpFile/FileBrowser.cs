@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
+//using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using Common;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
 using SharpFile.IO.Retrievers;
 using DriveInfo=SharpFile.IO.ParentResources.DriveInfo;
 using DriveType=SharpFile.IO.DriveType;
-using View=SharpFile.IO.View;
+using View = SharpFile.Infrastructure.View;
+using SharpFile.Infrastructure;
+using Common;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -20,7 +21,7 @@ namespace SharpFile {
         private FileSystemWatcher fileSystemWatcher;
         private ImageList imageList;
         private bool handleCreated = false;
-        private List<IParentResourceRetriever> resourceRetrievers = new List<IParentResourceRetriever>();
+        //private List<IResourceRetriever> resourceRetrievers = new List<IResourceRetriever>();
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -73,17 +74,18 @@ namespace SharpFile {
 
             initializeComponent();
 
-            resourceRetrievers.Add(new DriveRetriever());
-            resourceRetrievers.Add(new NetworkDriveRetriever());
+            //resourceRetrievers.Add(new DriveRetriever());
+            //resourceRetrievers.Add(new NetworkDriveRetriever());
             //resourceRetrievers.Add(new ServerRetriever());
 
-            UpdateParentListing(resourceRetrievers);
+            //UpdateParentListing(resourceRetrievers);
+            UpdateParentListing();
         }
 
         public void CancelOperations() {
-            foreach (IParentResourceRetriever resourceRetriever in resourceRetrievers) {
-                resourceRetriever.ChildResourceRetriever.Cancel();
-            }
+            //foreach (IResourceRetriever resourceRetriever in resourceRetrievers) {
+            //    resourceRetriever.ChildResourceRetriever.Cancel();
+            //}
 
             view.CancelChildRetrieverOperations();
         }
@@ -128,11 +130,11 @@ namespace SharpFile {
             this.view.OnUpdatePath += UpdatePath;
             this.view.OnCancelOperations += CancelOperations;
 
-            fileSystemWatcher = new FileSystemWatcher();
+            fileSystemWatcher = new FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
-            fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
-            fileSystemWatcher.Created += fileSystemWatcher_Changed;
-            fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
+            //fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
+            //fileSystemWatcher.Created += fileSystemWatcher_Changed;
+            //fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
         }
         #endregion
 
@@ -190,7 +192,7 @@ namespace SharpFile {
         /// <summary>
         /// Fires when the filesystem watcher sees a filesystem event.
         /// </summary>
-        private void fileSystemWatcher_Changed(object sender, FileSystemEventArgs e) {
+        private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
             string path = e.FullPath;
             IChildResource resource = ChildResourceFactory.GetChildResource(path);
 
@@ -199,18 +201,18 @@ namespace SharpFile {
                 view.BeginUpdate();
 
                 switch (e.ChangeType) {
-                    case WatcherChangeTypes.Changed:
+                    case System.IO.WatcherChangeTypes.Changed:
                         view.RemoveItem(path);
                         view.InsertItem(resource);
                         break;
-                    case WatcherChangeTypes.Created:
+                    case System.IO.WatcherChangeTypes.Created:
                         view.InsertItem(resource);
                         break;
-                    case WatcherChangeTypes.Deleted:
+                    case System.IO.WatcherChangeTypes.Deleted:
                         view.RemoveItem(path);
                         break;
-                    case WatcherChangeTypes.Renamed:
-                        string oldFullPath = ((RenamedEventArgs)e).OldFullPath;
+                    case System.IO.WatcherChangeTypes.Renamed:
+                        string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
                         view.RemoveItem(oldFullPath);
                         view.InsertItem(resource);
                         break;
@@ -227,12 +229,13 @@ namespace SharpFile {
         /// <summary>
         /// Update the drive information contained in the drive dropdown asynchronously.
         /// </summary>
-        public void UpdateParentListing(IEnumerable<IParentResourceRetriever> resourceRetrievers) {
+        //public void UpdateParentListing(IEnumerable<IResourceRetriever> resourceRetrievers) {
+        public void UpdateParentListing() {
             // Clear the dropdown.
             tlsDrives.DropDownItems.Clear();
 
             // Queue all of the resource retrievers onto the threadpool and set up the callback method.
-            foreach (IParentResourceRetriever resourceRetriever in resourceRetrievers) {
+            foreach (IResourceRetriever resourceRetriever in Settings.Instance.ResourceRetrievers) {
                 ThreadPool.QueueUserWorkItem(updateParentListing_Callback, resourceRetriever);
             }
         }
@@ -243,8 +246,8 @@ namespace SharpFile {
         /// <param name="stateInfo">The resource retriever.</param>
         private void updateParentListing_Callback(object stateInfo) {
             lock (lockObject) {
-                if (stateInfo is IParentResourceRetriever) {
-                    IParentResourceRetriever resourceRetriever = (IParentResourceRetriever)stateInfo;
+                if (stateInfo is IResourceRetriever) {
+                    IResourceRetriever resourceRetriever = (IResourceRetriever)stateInfo;
                     List<IResource> resources = new List<IResource>(resourceRetriever.Get());
 
                     MethodInvoker updater = delegate {

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{96C1D4FB-2A4F-4746-A9C0-C28E491CBB8B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -43,21 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IChildResource.cs" />
+    <Compile Include="IChildResourceRetriever.cs" />
+    <Compile Include="IFileContainer.cs" />
+    <Compile Include="IResource.cs" />
+    <Compile Include="IResourceRetriever.cs" />
+    <Compile Include="IView.cs" />
     <Compile Include="Nodes.cs" />
     <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerEnum.cs" />
     <Compile Include="Settings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SharpFile.IO\SharpFile.IO.csproj">
-      <Project>{F9F8A1B7-00C8-411C-8063-987C1F720956}</Project>
-      <Name>SharpFile.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SharpFile.UI\SharpFile.UI.csproj">
-      <Project>{3896D530-3308-45BC-B802-AE953EDAD227}</Project>
-      <Name>SharpFile.UI</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

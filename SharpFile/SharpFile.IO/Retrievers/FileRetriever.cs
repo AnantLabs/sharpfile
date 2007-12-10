@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.Retrievers;
 using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
     public class FileRetriever : IChildResourceRetriever {

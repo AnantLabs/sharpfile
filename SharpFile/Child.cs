@@ -2,14 +2,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using Common;
 using SharpFile.IO;
-using View=SharpFile.IO.View;
+using SharpFile.Infrastructure;
+using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile {
 	public class Child : UserControl {
 		public event View.OnUpdateStatusDelegate OnUpdateStatus;
-		public event View.OnUpdateProgressDelegate OnUpdateProgress;
-		public event View.OnGetImageIndexDelegate OnGetImageIndex;
-		public event View.OnUpdatePathDelegate OnUpdatePath;
+        public event View.OnUpdateProgressDelegate OnUpdateProgress;
+        public event View.OnGetImageIndexDelegate OnGetImageIndex;
+        public event View.OnUpdatePathDelegate OnUpdatePath;
 
 		private TabControl tabControl;
 

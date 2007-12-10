@@ -1,4 +1,5 @@
 using SharpFile.IO.ChildResources;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO {
 	public static class ChildResourceFactory {

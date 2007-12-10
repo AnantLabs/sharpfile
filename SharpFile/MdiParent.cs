@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using SharpFile.IO;
 using SharpFile.UI;
+using SharpFile.Infrastructure;
 
 namespace SharpFile {
     public class MdiParent : BaseParent {

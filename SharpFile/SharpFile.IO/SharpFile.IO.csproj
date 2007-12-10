@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F9F8A1B7-00C8-411C-8063-987C1F720956}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -46,22 +46,14 @@
   <ItemGroup>
     <Compile Include="ChildResourceFactory.cs" />
     <Compile Include="ChildResources\DirectoryInfo.cs" />
-    <Compile Include="IFileContainer.cs" />
-    <Compile Include="IView.cs" />
     <Compile Include="ParentResources\DriveInfo.cs" />
     <Compile Include="DriveType.cs" />
     <Compile Include="ChildResources\FileInfo.cs" />
     <Compile Include="FileSystemInfo.cs" />
     <Compile Include="ParentResources\NetworkDriveInfo.cs" />
-    <Compile Include="Retrievers\IChildResourceRetriever.cs" />
     <Compile Include="IOException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ChildResources\IChildResource.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Retrievers\IParentResourceRetriever.cs" />
-    <Compile Include="IResource.cs" />
     <Compile Include="ParentResources\NullInfo.cs" />
     <Compile Include="ChildResources\ParentDirectoryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,6 +64,12 @@
     <Compile Include="Retrievers\ServerRetriever.cs" />
     <Compile Include="ChildResources\RootDirectoryInfo.cs" />
     <Compile Include="ParentResources\ServerInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharpFile.Infrastructure\SharpFile.Infrastructure.csproj">
+      <Project>{96C1D4FB-2A4F-4746-A9C0-C28E491CBB8B}</Project>
+      <Name>SharpFile.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

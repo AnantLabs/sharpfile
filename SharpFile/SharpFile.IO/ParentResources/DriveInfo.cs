@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SharpFile.IO.Retrievers;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ParentResources {
     public class DriveInfo : FileSystemInfo, IResource, IFileContainer {

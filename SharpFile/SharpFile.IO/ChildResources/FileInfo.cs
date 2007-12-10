@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using SharpFile.IO;
 using SharpFile.IO.Retrievers;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ChildResources {
 	public class FileInfo : FileSystemInfo, IChildResource {

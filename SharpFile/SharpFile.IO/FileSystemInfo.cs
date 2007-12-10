@@ -1,6 +1,7 @@
 using System;
 using SharpFile.IO.ParentResources;
 using SharpFile.IO.ChildResources;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO {
 	public abstract class FileSystemInfo {
@@ -8,7 +9,7 @@ namespace SharpFile.IO {
 		protected string name;
 		protected string fullPath;
 		protected long size;
-		protected DriveInfo root;
+		protected IResource root;
 		protected DateTime lastWriteTime;
 
 		public string DisplayName {
@@ -45,7 +46,7 @@ namespace SharpFile.IO {
 			}
 		}
 
-		public DriveInfo Root {
+		public IResource Root {
 			get {
 				if (root == null) {
 					string rootString = fullPath.Substring(0, FullPath.IndexOf(":"));

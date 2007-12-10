@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SharpFile.IO.Retrievers;
 using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ChildResources {
 	public class DirectoryInfo : FileSystemInfo, IChildResource, IFileContainer {

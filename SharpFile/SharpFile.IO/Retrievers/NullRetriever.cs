@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using SharpFile.IO.ParentResources;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
-	public class NullRetriever : IParentResourceRetriever {
+	public class NullRetriever : IResourceRetriever {
         public IEnumerable<IResource> Get() {
             List<IResource> resources = new List<IResource>();
 			resources.Add(new NullInfo());

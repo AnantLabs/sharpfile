@@ -12,7 +12,8 @@ using SharpFile.UI;
 using DirectoryInfo=SharpFile.IO.ChildResources.DirectoryInfo;
 using FileInfo=SharpFile.IO.ChildResources.FileInfo;
 using IOException=SharpFile.IO.IOException;
-using View=SharpFile.IO.View;
+using View=SharpFile.Infrastructure.View;
+using SharpFile.Infrastructure;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
@@ -692,9 +693,9 @@ namespace SharpFile {
         /// <summary>
         /// Current FileSystemWatcher.
         /// </summary>
-        public FileSystemWatcher FileSystemWatcher {
+        public SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher {
             get {
-                return Forms.GetPropertyInParent<FileSystemWatcher>(this.Parent, "FileSystemWatcher");
+                return Forms.GetPropertyInParent<SharpFile.Infrastructure.FileSystemWatcher>(this.Parent, "FileSystemWatcher");
             }
         }
 

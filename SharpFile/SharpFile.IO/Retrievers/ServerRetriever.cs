@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using SharpFile.IO.ParentResources;
 using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
-	public class ServerRetriever : IParentResourceRetriever {
+	public class ServerRetriever : IResourceRetriever {
         private IChildResourceRetriever childResourceRetriever = new FileRetriever();
 
         public IEnumerable<IResource> Get() {

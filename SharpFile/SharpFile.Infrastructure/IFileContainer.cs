@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using SharpFile.IO.ChildResources;
 
-namespace SharpFile.IO {
+namespace SharpFile.Infrastructure {
 	public interface IFileContainer {
 		IEnumerable<IChildResource> GetFiles();
 		IEnumerable<IChildResource> GetFiles(string filter);

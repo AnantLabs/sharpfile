@@ -1,6 +1,7 @@
 using System;
 using SharpFile.IO.Retrievers;
 using SharpFile.IO;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ParentResources {
 	public class ServerInfo : FileSystemInfo, IResource {

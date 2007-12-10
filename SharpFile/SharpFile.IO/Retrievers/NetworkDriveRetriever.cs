@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using SharpFile.IO.ParentResources;
 using System;
 using System.Runtime.InteropServices;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
-    public class NetworkDriveRetriever : IParentResourceRetriever {
+    public class NetworkDriveRetriever : IResourceRetriever {
         private IChildResourceRetriever childResourceRetriever = new FileRetriever();
         private bool isDetailInfoRetrievable = false;
 

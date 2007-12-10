@@ -1,5 +1,6 @@
 using System;
 using SharpFile.IO.Retrievers;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ParentResources {
     public class NullInfo : IResource {
@@ -36,7 +37,7 @@ namespace SharpFile.IO.ParentResources {
 			}
 		}
 
-		public DriveInfo Root {
+		public IResource Root {
 			get { 
 				throw new Exception("The method or operation is not implemented."); 
 			}

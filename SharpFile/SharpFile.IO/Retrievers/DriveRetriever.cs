@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using SharpFile.IO.ParentResources;
+using System.Runtime.Serialization;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
-	public class DriveRetriever : IParentResourceRetriever {
+	public class DriveRetriever : IResourceRetriever {
         private IChildResourceRetriever childResourceRetriever = new FileRetriever();
 
         public IEnumerable<IResource> Get() {

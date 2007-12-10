@@ -1,7 +1,6 @@
 using System;
-using SharpFile.IO;
 
-namespace SharpFile.IO.ChildResources {
+namespace SharpFile.Infrastructure {
 	public interface IChildResource : IResource {
 		DateTime LastWriteTime { get; }
 		void Copy(string destination);
