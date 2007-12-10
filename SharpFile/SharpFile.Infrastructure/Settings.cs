@@ -227,6 +227,21 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlIgnore]
+        public List<IResource> Resources {
+            get {
+                List<IResource> resources = new List<IResource>();
+
+                if (ResourceRetrievers != null) {
+                    foreach (IResourceRetriever retriever in ResourceRetrievers) {
+                        resources.AddRange(retriever.Get());
+                    }
+                }
+
+                return resources;
+            }
+        }
+
+        [XmlIgnore]
         public List<IResourceRetriever> ResourceRetrievers {
             get {
                 if (resourceRetrievers == null) {

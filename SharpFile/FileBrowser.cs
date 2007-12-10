@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-//using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using SharpFile.IO;
@@ -10,7 +9,7 @@ using SharpFile.IO.ParentResources;
 using SharpFile.IO.Retrievers;
 using DriveInfo=SharpFile.IO.ParentResources.DriveInfo;
 using DriveType=SharpFile.IO.DriveType;
-using View = SharpFile.Infrastructure.View;
+using View=SharpFile.Infrastructure.View;
 using SharpFile.Infrastructure;
 using Common;
 
@@ -21,7 +20,6 @@ namespace SharpFile {
         private FileSystemWatcher fileSystemWatcher;
         private ImageList imageList;
         private bool handleCreated = false;
-        //private List<IResourceRetriever> resourceRetrievers = new List<IResourceRetriever>();
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -73,12 +71,6 @@ namespace SharpFile {
             this.PerformLayout();
 
             initializeComponent();
-
-            //resourceRetrievers.Add(new DriveRetriever());
-            //resourceRetrievers.Add(new NetworkDriveRetriever());
-            //resourceRetrievers.Add(new ServerRetriever());
-
-            //UpdateParentListing(resourceRetrievers);
             UpdateParentListing();
         }
 
@@ -235,9 +227,7 @@ namespace SharpFile {
             tlsDrives.DropDownItems.Clear();
 
             // Queue all of the resource retrievers onto the threadpool and set up the callback method.
-            foreach (IResourceRetriever resourceRetriever in Settings.Instance.ResourceRetrievers) {
-                ThreadPool.QueueUserWorkItem(updateParentListing_Callback, resourceRetriever);
-            }
+            ThreadPool.QueueUserWorkItem(updateParentListing_Callback, Settings.Instance.Resources);
         }
 
         /// <summary>
@@ -246,9 +236,8 @@ namespace SharpFile {
         /// <param name="stateInfo">The resource retriever.</param>
         private void updateParentListing_Callback(object stateInfo) {
             lock (lockObject) {
-                if (stateInfo is IResourceRetriever) {
-                    IResourceRetriever resourceRetriever = (IResourceRetriever)stateInfo;
-                    List<IResource> resources = new List<IResource>(resourceRetriever.Get());
+                if (stateInfo is List<IResource>) {
+                    List<IResource> resources = (List<IResource>)stateInfo;
 
                     MethodInvoker updater = delegate {
                         bool isLocalDiskFound = false;
@@ -298,9 +287,12 @@ namespace SharpFile {
                         }
                     };
 
-                    if (handleCreated) {
-                        this.BeginInvoke(updater);
+                    // Make sure that the handle is created before invoking the updater.
+                    while (!handleCreated) {
+                        System.Threading.Thread.Sleep(100);
                     }
+
+                    this.BeginInvoke(updater);
                 }
             }
         }
