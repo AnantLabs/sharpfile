@@ -4,7 +4,24 @@
 	Beginnings of some settings support (height and width saved).
 	Faster updates of items on file operations.
 	Save current paths on exit.
+	Ability for plug-in retrievers to update the listview.
+	Parent control updated with currently selected path.
+	Menu support for dual view.
+	Switch contents of panel1 with contents of panel2 in dual view.
+	Hide panel1/panel2.
+	Context menu for some set percentages of splitter position.
+	Tooltip for splitter percentage position.
+	Ability to cancel the file retrieval for directories.
+	Show message if a directory is inaccessible.
+	Auto-resize columns when directory sizes are calculated.
+	Execute currently selected item with the Enter key.
+	Get the drives once and store the information, so that it doesn't need to be queried everytime.
+	Newly connected drives now refresh the drive dropdown.
+	Preliminary support for plug-in views and file retrievers.
+	FIX: Prevent renaming root/parent directories.
+	FIX: Better operation of the progress disk so that the disk doesn't continue to spin when the operation is canceled.
 	FIX: Updates on right-click operations now works correctly.
+	FIX: Drag and drop inconsistencies.
 
 0.40
 	Completely flicker-less listview refreshes.

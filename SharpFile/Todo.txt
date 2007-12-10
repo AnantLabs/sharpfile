@@ -8,13 +8,14 @@ BUGS
 	-catch them all and just update once in a stack
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
-- network drives don't get updated with filesystem actions
+- network drives don't get filesystemwatcher events
 - splitcontainer context menu shows up after an action is selected in a listview context menu
 - long-running threads to get directories/files invoked from the drive drop down aren't canceled
 	when starting a new operation
 
 TODO
-- drives/network drives should only be retrieved once and then cached all FileBrowsers -- Singleton?
+
+- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 - instead of intelligently trying to determine if a remote computer should have a filesystem event set up for it,
 	maybe all network drives should have a manual filesystem watcher (detailed below)
 - wrap all of the filesystemwatchers in my custom filesystemwatcher
@@ -25,14 +26,12 @@ TODO
 - Specify keycodes for actions
 	- name/value as attributes instead of elements
 	- IAction?
-- SharpFile.Interface.dll
 - ability to use keyboard to tab between elements
 	- panels, tabs, select a drive, etc.
 - special folders in drive drop down
 	- my documents, control panel?, desktop
 - Specify defaults for settings as an attribute on the property
 - Log4net support to log detailed debug logs
-- Refresh of drive listing when new drives are entered (usb keys and the like)
 - Refresh button
 - Sorting of listview by column
 - Drag-and-drop support for links (both ways)
