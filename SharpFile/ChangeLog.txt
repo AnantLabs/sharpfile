@@ -1,3 +1,6 @@
+0.60
+	Sorting of listview by columns.
+
 0.50
 	Dual view.
 	Drag and drop re-written; directories now supported.

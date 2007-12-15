@@ -45,6 +45,7 @@
     </Compile>
     <Compile Include="IconManager.cs" />
     <Compile Include="IconReader.cs" />
+    <Compile Include="ListViewItemComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShellContextMenu.cs" />
   </ItemGroup>

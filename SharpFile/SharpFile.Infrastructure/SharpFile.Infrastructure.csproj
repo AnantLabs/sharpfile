@@ -46,9 +46,11 @@
     <Compile Include="IChildResource.cs" />
     <Compile Include="IChildResourceRetriever.cs" />
     <Compile Include="IFileContainer.cs" />
+    <Compile Include="IListViewComparer.cs" />
     <Compile Include="IResource.cs" />
     <Compile Include="IResourceRetriever.cs" />
     <Compile Include="IView.cs" />
+    <Compile Include="StringLogicalComparer.cs" />
     <Compile Include="Nodes.cs" />
     <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

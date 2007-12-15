@@ -25,6 +25,11 @@ http://www.codeproject.com/cs/miscctrl/FileBrowser.asp
 DriveDetector which fires when removable drives are added/removed - Jan Dolinay
 http://www.codeproject.com/KB/system/DriveDetector.aspx
 
+http://www.pinvoke.net/default.aspx/shlwapi/StrCmpLogicalW.html
+
+Information on sorting listviews.
+http://www.akadia.com/services/dotnet_listview_sort_dataset.html
+
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
 other articles, tips and tricks.

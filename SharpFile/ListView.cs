@@ -2,18 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using Common;
+using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
-using SharpFile.IO.ParentResources;
 using SharpFile.UI;
-using DirectoryInfo=SharpFile.IO.ChildResources.DirectoryInfo;
-using FileInfo=SharpFile.IO.ChildResources.FileInfo;
-using IOException=SharpFile.IO.IOException;
-using View=SharpFile.Infrastructure.View;
-using SharpFile.Infrastructure;
+using DirectoryInfo = SharpFile.IO.ChildResources.DirectoryInfo;
+using FileInfo = SharpFile.IO.ChildResources.FileInfo;
+using IOException = SharpFile.IO.IOException;
+using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
@@ -25,6 +24,7 @@ namespace SharpFile {
         private IList<IChildResource> selectedFileSystemInfos = new List<IChildResource>();
         private long totalSelectedSize = 0;
         private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
+        private IViewComparer comparer;
 
         public event View.OnUpdateStatusDelegate OnUpdateStatus;
         public event View.OnUpdateProgressDelegate OnUpdateProgress;
@@ -52,6 +52,7 @@ namespace SharpFile {
             this.BeforeLabelEdit += listView_BeforeLabelEdit;
             this.AfterLabelEdit += listView_AfterLabelEdit;
             this.GotFocus += listView_GotFocus;
+            this.ColumnClick += listView_ColumnClick;
 
             // Set some options on the listview.
             // TODO: This should be able to be set via dropdown/settings.
@@ -62,6 +63,9 @@ namespace SharpFile {
             this.FullRowSelect = true;
             this.LabelEdit = true;
             this.UseCompatibleStateImageBehavior = false;
+            this.Sorting = SortOrder.Ascending;
+
+            this.ListViewItemSorter = Comparer;
 
             // TODO: Columns should be set by the IChildResource properties that are actually populated.
             // Maybe there should be a list associated with IParentResources where the columns available are specified.
@@ -229,6 +233,25 @@ namespace SharpFile {
         #endregion
 
         #region Events.
+        void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == Comparer.Column) {
+                // Reverse the current sort direction for this column.
+                if (Comparer.Order == Order.Ascending) {
+                    Comparer.Order = Order.Descending;
+                } else {
+                    Comparer.Order = Order.Ascending;
+                }
+            } else {
+                // Set the column number that is to be sorted; default to ascending.
+                Comparer.Column = e.Column;
+                Comparer.Order = Order.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            this.Sort();
+        }
+
         /// <summary>
         /// Fires when the list view gets focus.
         /// </summary>
@@ -485,22 +508,33 @@ namespace SharpFile {
 
             int fileCount = 0;
             int folderCount = 0;
+            StringBuilder sb = new StringBuilder();
 
-            try {
-                // Create a new listview item with the display name.
-                foreach (IChildResource resource in resources) {
+            // Create a new listview item with the display name.
+            foreach (IChildResource resource in resources) {
+                try {
                     addItem(resource, ref fileCount, ref folderCount);
+                } catch (Exception ex) {
+                    sb.AppendFormat("{0}: {1}",
+                        resource.FullPath,
+                        ex.Message);
                 }
-
-                // Resize the columns based on the column content.
-                this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-                UpdateStatus(string.Format("Folders: {0}; Files: {1}",
-                                           folderCount,
-                                           fileCount));
-            } catch (Exception ex) {
-                MessageBox.Show(ex.Message + ex.StackTrace);
             }
+
+            if (sb.Length > 0) {
+                MessageBox.Show(sb.ToString());
+            }
+
+            Comparer.Column = 0;
+            Comparer.Order = Order.Ascending;
+            this.Sort();
+
+            // Resize the columns based on the column content.
+            this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+            UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+                                       folderCount,
+                                       fileCount));
         }
 
         /// <summary>
@@ -531,6 +565,7 @@ namespace SharpFile {
         /// Retrieves the index that the list view item should be inserted into.
         /// </summary>
         private int getListViewIndex(ListViewItem item) {
+            // TODO: Need to support where user has other columns sorted than the name.
             // Get the filesysteminfo object from the item's tag.
             IChildResource fsi = (IChildResource)item.Tag;
 
@@ -577,7 +612,7 @@ namespace SharpFile {
                 }
 
                 // Sort everything else according to their name.
-                return i1.Name.CompareTo(i2.Name);
+                return Comparer.Compare(i1.Name, i2.Name);
             });
 
             // Add the index of the item to the correct offset.
@@ -711,6 +746,16 @@ namespace SharpFile {
         public Control Control {
             get {
                 return this;
+            }
+        }
+
+        public IViewComparer Comparer {
+            get {
+                if (comparer == null) {
+                    comparer = new ListViewItemComparer();
+                }
+
+                return comparer;
             }
         }
     }

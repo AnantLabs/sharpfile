@@ -1,11 +1,12 @@
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
+- FileSsystemWatcher throws exceptions
 - KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
 - Network drive (z:) not sorted correctly
 - Multiple filewatcher events fire on one file operation 
-	-catch them all and just update once in a stack
+	- catch them all and just update once in a stack
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
 - network drives don't get filesystemwatcher events
@@ -14,7 +15,12 @@ BUGS
 	when starting a new operation
 
 TODO
-
+- Specifying columns to show in listview
+	- childresource specifies what properties are available
+	- xml settings to specify actual columns to show from the available columns
+- sorting by columns
+- allowing the user to do a "real" sort -- directories and files not seperated
+- split settings into more logical sections -- dualview settings would have an element just for their information, etc
 - instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 - instead of intelligently trying to determine if a remote computer should have a filesystem event set up for it,
 	maybe all network drives should have a manual filesystem watcher (detailed below)
@@ -32,16 +38,17 @@ TODO
 	- my documents, control panel?, desktop
 - Specify defaults for settings as an attribute on the property
 - Log4net support to log detailed debug logs
-- Refresh button
-- Sorting of listview by column
-- Drag-and-drop support for links (both ways)
+- Refresh button (or key)
+- Drag-and-drop support for links
 - thumbnail files when possible (images?)
 - show an icon of the file being dragged around
-- Make sure that all code in UI (child) is neccessary and couldn't be moved to infrastructure/IO
 - Prevent drag-and-drop operation if it is completed in less than some arbitrary time limit (200 ms?)
 - Validate rename before-hand and throw up tooltip or something (beforeedit event)
 - Information/Property slideable "pane" list like vista's file manager
-- Extra tab functionality: middle-click to close tabs, mouse wheel, ctrl-tab
+- tab functionality
+	- middle-click to close tabs
+	- mouse wheel
+	- ctrl-tab
 - Full-row select
 - test to make sure that filesystemwatcher events still fire even when updating the UI
 - copy/move should show progress (write bytes, as opposed to File.Copy()?) 
@@ -49,8 +56,10 @@ TODO
 	- ability to queue items to copy/move
 - Type to find (like servant salamander)
 - preview panel for some filetypes (QuickLook ?)
-- Configuration (view, columns, icon size, extensions to grab icons for)
-- Specifying columns to show in listview (should be done in the childresource?)
+- settings
+	- view
+	- icon size
+	- extensions to grab icons for
 - command line - orthodox specifications
 - FTP drive functionality
 - SCP drive functionality

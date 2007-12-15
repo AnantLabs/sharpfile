@@ -19,6 +19,7 @@ namespace SharpFile.Infrastructure {
 		Control Control { get; }
         void CancelChildRetrieverOperations();
         void ShowMessageBox(string text);
+        IViewComparer Comparer { get; }
 
 		event View.OnGetImageIndexDelegate OnGetImageIndex;
 		event View.OnUpdateProgressDelegate OnUpdateProgress;
