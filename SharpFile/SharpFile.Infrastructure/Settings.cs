@@ -6,14 +6,31 @@ using System.Runtime.Remoting;
 using System.Xml.Serialization;
 using System.Xml;
 using System.IO;
+using System.Reflection;
 
 namespace SharpFile.Infrastructure {
+    /// <summary>
+    /// Specifies what "mode" the view should be.
+    /// </summary>
 	public enum ParentType {
+        /// <summary>
+        /// Every view is its own child window.
+        /// </summary>
 		Mdi,
+        /// <summary>
+        /// Every view is its own tab.
+        /// </summary>
 		Tab,
+        /// <summary>
+        /// Two views that fill up the parent window. The default.
+        /// </summary>
 		Dual
 	}
 
+    /// <summary>
+    /// Object that stores the assembly and type name for a type. Cannot be a struct 
+    /// because a parameter-less ctor is required for Xml serialization.
+    /// </summary>
     public class FullyQualifiedType {
         private string assemblyName;
         private string typeName;
@@ -49,7 +66,7 @@ namespace SharpFile.Infrastructure {
 
 	/// <summary>
 	/// Settings singleton.
-	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html
+	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html.
 	/// </summary>
 	[Serializable()]
 	public sealed class Settings {
@@ -66,20 +83,29 @@ namespace SharpFile.Infrastructure {
 		private string rightPath;
 		private int splitterPercentage;
 		private Nodes keyCodes;
-        private List<IResourceRetriever> resourceRetrievers;
+        private List<IResource> resources;
         private List<FullyQualifiedType> resourceRetrieverTypes;
+        private bool sortDirectoriesOnTop;
 
-		// Explicit static constructor to tell C# compiler
-		// not to mark type as beforefieldinit.
+        #region Ctors.
+        /// <summary>
+        /// Explicit static ctor to load settings and to 
+        /// tell C# compiler not to mark type as beforefieldinit.
+        /// </summary>
 		static Settings() {
 			Load();
 		}
 
+        /// <summary>
+        /// Internal instance ctor.
+        /// </summary>
 		private Settings() {
 			lockObject = new object();
 			this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
-		}
+        }
+        #endregion
 
+        #region Static methods.
         public static void Load() {
             lock (lockObject) {
                 XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
@@ -91,18 +117,21 @@ namespace SharpFile.Infrastructure {
                         // Set our instance properties from the Xml file.
                         using (TextReader tr = new StreamReader(FilePath)) {
                             Settings settings = (Settings)xmlSerializer.Deserialize(tr);
-                            instance.Height = settings.Height;
-                            instance.Width = settings.Width;
-                            instance.LeftPath = settings.LeftPath;
-                            instance.RightPath = settings.RightPath;
-                            instance.ParentType = settings.ParentType;
-                            instance.SplitterPercentage = settings.SplitterPercentage;
-                            instance.KeyCodes = settings.KeyCodes;
-                            instance.ResourceRetrieverTypes = settings.ResourceRetrieverTypes;
+
+                            foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
+                                if (propertyInfo.CanWrite) {
+                                    // TODO: Specify to ignore XmlIgnore attrinbutes
+                                    instance.GetType().GetProperty(propertyInfo.Name).SetValue(
+                                        instance,
+                                        propertyInfo.GetValue(settings, null),
+                                        null);
+                                }
+                            }
                         }
 
                         settingsLoaded = true;
-                    } catch {
+                    } catch (Exception ex) {
+                        string blob = ex.Message + ex.StackTrace;
                         settingsLoaded = false;
 
                         // TODO: Show a message saying that default values have been loaded.
@@ -144,13 +173,23 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
-		public static Settings Instance {
+        public static void ClearResources() {
+            lock (lockObject) {
+                instance.resources = null;
+            }
+        }
+        #endregion
+
+        #region Static properties
+        public static Settings Instance {
 			get {
 				return instance;
 			}
-		}
+        }
+        #endregion
 
-		public ParentType ParentType {
+        #region Instance properties
+        public ParentType ParentType {
 			get {
 				return parentType;
 			}
@@ -215,6 +254,15 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
+        public bool SortDirectoriesOnTop {
+            get {
+                return sortDirectoriesOnTop;
+            }
+            set {
+                sortDirectoriesOnTop = value;
+            }
+        }
+
         [XmlArray("ResourceRetrievers")]
         [XmlArrayItem("Type")]
         public List<FullyQualifiedType> ResourceRetrieverTypes {
@@ -226,49 +274,33 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        #region Properties not derived from settings.config.
         [XmlIgnore]
         public List<IResource> Resources {
             get {
-                List<IResource> resources = new List<IResource>();
+                if (resources == null) {
+                    List<IResourceRetriever> resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverTypes.Count);
 
-                if (ResourceRetrievers != null) {
-                    foreach (IResourceRetriever retriever in ResourceRetrievers) {
+                    foreach (FullyQualifiedType fullyQualifiedType in resourceRetrieverTypes) {
+                        ObjectHandle objectHandle = Activator.CreateInstance(
+                                fullyQualifiedType.AssemblyName, fullyQualifiedType.TypeName);
+                        object obj = objectHandle.Unwrap();
+
+                        if (obj is IResourceRetriever) {
+                            resourceRetrievers.Add(obj as IResourceRetriever);
+                        } else {
+                            // TODO: Log an error here. "Unhandled resource type: " + fullyQualifiedType.TypeName
+                        }
+                    }
+
+                    resources = new List<IResource>();
+
+                    foreach (IResourceRetriever retriever in resourceRetrievers) {
                         resources.AddRange(retriever.Get());
                     }
                 }
 
                 return resources;
-            }
-        }
-
-        [XmlIgnore]
-        public List<IResourceRetriever> ResourceRetrievers {
-            get {
-                if (resourceRetrievers == null) {
-                    resourceRetrievers = resourceRetrieverTypes.ConvertAll<IResourceRetriever>(
-                        delegate(FullyQualifiedType fullyQualifiedType) {
-                            ObjectHandle objectHandle = Activator.CreateInstance(
-                                fullyQualifiedType.AssemblyName, fullyQualifiedType.TypeName);
-                            object obj = objectHandle.Unwrap();
-
-                            if (obj is IResourceRetriever) {
-                                return obj as IResourceRetriever;
-                            }
-
-                            throw new Exception("Unhandled resource type: " + fullyQualifiedType.TypeName);
-                        });
-                }
-
-                return resourceRetrievers;
-            }
-            set {
-                resourceRetrievers = value;
-
-                resourceRetrieverTypes = resourceRetrievers.ConvertAll<FullyQualifiedType>(
-                    delegate(IResourceRetriever retriever) {
-                        return new FullyQualifiedType(
-                            retriever.GetType().Assembly.FullName, retriever.GetType().AssemblyQualifiedName);
-                    });
             }
         }
 
@@ -279,6 +311,8 @@ namespace SharpFile.Infrastructure {
 					return imageList;
 				}
 			}
-		}
-	}
+        }
+        #endregion
+        #endregion
+    }
 }
