@@ -75,17 +75,18 @@ namespace SharpFile.Infrastructure {
 		private static readonly Settings instance = new Settings();
 		private static object lockObject = new object();
 
-		private ParentType parentType;
-		private ImageList imageList = new ImageList();
-		private int width;
-		private int height;
+        private ParentType parentType = ParentType.Dual;
+        private int width = 500;
+        private int height = 500;
 		private string leftPath;
 		private string rightPath;
-		private int splitterPercentage;
+        private int splitterPercentage = 50;
 		private Nodes keyCodes;
-        private List<IResource> resources;
         private List<FullyQualifiedType> resourceRetrieverTypes;
-        private bool directoriesSortedFirst;
+        private bool directoriesSortedFirst = true;
+
+        private List<IResourceRetriever> resourceRetrievers;
+        private ImageList imageList = new ImageList();
 
         #region Ctors.
         /// <summary>
@@ -140,11 +141,6 @@ namespace SharpFile.Infrastructure {
 
                 // Set up some defaults, since it doesn't look like any settings were found.
                 if (!settingsLoaded) {
-                    instance.Height = 500;
-                    instance.Width = 500;
-                    instance.SplitterPercentage = 50;
-                    instance.ParentType = ParentType.Dual;
-
                     List<FullyQualifiedType> resourceRetrieverTypes = new List<FullyQualifiedType>();
                     resourceRetrieverTypes.Add(
                         new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.DriveRetriever"));
@@ -172,12 +168,6 @@ namespace SharpFile.Infrastructure {
 				}
 			}
 		}
-
-        public static void ClearResources() {
-            lock (lockObject) {
-                instance.resources = null;
-            }
-        }
         #endregion
 
         #region Static properties
@@ -220,7 +210,7 @@ namespace SharpFile.Infrastructure {
 
 		public int Height {
 			get {
-				return height;
+                return height;
 			}
 			set {
 				height = value;
@@ -247,7 +237,7 @@ namespace SharpFile.Infrastructure {
 
 		public int SplitterPercentage {
 			get {
-				return splitterPercentage;
+                return splitterPercentage;
 			}
 			set {
 				splitterPercentage = value;
@@ -278,8 +268,8 @@ namespace SharpFile.Infrastructure {
         [XmlIgnore]
         public List<IResource> Resources {
             get {
-                if (resources == null) {
-                    List<IResourceRetriever> resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverTypes.Count);
+                if (resourceRetrievers == null) {
+                    resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverTypes.Count);
 
                     foreach (FullyQualifiedType fullyQualifiedType in resourceRetrieverTypes) {
                         ObjectHandle objectHandle = Activator.CreateInstance(
@@ -292,12 +282,12 @@ namespace SharpFile.Infrastructure {
                             // TODO: Log an error here. "Unhandled resource type: " + fullyQualifiedType.TypeName
                         }
                     }
+                }
 
-                    resources = new List<IResource>();
+                List<IResource> resources = new List<IResource>();
 
-                    foreach (IResourceRetriever retriever in resourceRetrievers) {
-                        resources.AddRange(retriever.Get());
-                    }
+                foreach (IResourceRetriever retriever in resourceRetrievers) {
+                    resources.AddRange(retriever.Get());
                 }
 
                 return resources;

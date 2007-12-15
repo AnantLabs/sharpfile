@@ -4,7 +4,6 @@ BUGS
 - FileSsystemWatcher throws exceptions
 - KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
-- Network drive (z:) not sorted correctly
 - Multiple filewatcher events fire on one file operation 
 	- catch them all and just update once in a stack
 - Filter textbox too small to fit
@@ -13,15 +12,15 @@ BUGS
 - splitcontainer context menu shows up after an action is selected in a listview context menu
 - long-running threads to get directories/files invoked from the drive drop down aren't canceled
 	when starting a new operation
+- sort by file size, time doesn't work
+- flicker in drive dropdown when new drive is inserted
+	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 
 TODO
 - Specifying columns to show in listview
 	- childresource specifies what properties are available
 	- xml settings to specify actual columns to show from the available columns
-- sorting by columns
-- allowing the user to do a "real" sort -- directories and files not seperated
 - split settings into more logical sections -- dualview settings would have an element just for their information, etc
-- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 - instead of intelligently trying to determine if a remote computer should have a filesystem event set up for it,
 	maybe all network drives should have a manual filesystem watcher (detailed below)
 - wrap all of the filesystemwatchers in my custom filesystemwatcher

@@ -226,7 +226,7 @@ namespace SharpFile {
         /// </summary>
         private void driveDetector_DeviceChanged(object sender, DriveDetectorEventArgs e) {
             MethodInvoker updater = delegate {
-                Settings.ClearResources();
+                //Settings.ClearResources();
                 UpdateParentListing();
             };
 
