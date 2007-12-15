@@ -85,7 +85,7 @@ namespace SharpFile.Infrastructure {
 		private Nodes keyCodes;
         private List<IResource> resources;
         private List<FullyQualifiedType> resourceRetrieverTypes;
-        private bool sortDirectoriesOnTop;
+        private bool directoriesSortedFirst;
 
         #region Ctors.
         /// <summary>
@@ -119,8 +119,8 @@ namespace SharpFile.Infrastructure {
                             Settings settings = (Settings)xmlSerializer.Deserialize(tr);
 
                             foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
+                                // Only set properties which have a setter.
                                 if (propertyInfo.CanWrite) {
-                                    // TODO: Specify to ignore XmlIgnore attrinbutes
                                     instance.GetType().GetProperty(propertyInfo.Name).SetValue(
                                         instance,
                                         propertyInfo.GetValue(settings, null),
@@ -254,12 +254,12 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
-        public bool SortDirectoriesOnTop {
+        public bool DirectoriesSortedFirst {
             get {
-                return sortDirectoriesOnTop;
+                return directoriesSortedFirst;
             }
             set {
-                sortDirectoriesOnTop = value;
+                directoriesSortedFirst = value;
             }
         }
 

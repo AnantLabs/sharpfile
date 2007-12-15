@@ -11,14 +11,12 @@ namespace SharpFile.UI {
         private int column;
         private Order order;
         private IComparer comparer;
-        private bool sortDirectoriesOnTop = true;
+        private bool directoriesSortedFirst = true;
 
         public ListViewItemComparer() {
             column = 0;
             order = Order.None;
-
-            // TODO: Base this on settings.
-            sortDirectoriesOnTop = true;
+            directoriesSortedFirst = Settings.Instance.DirectoriesSortedFirst;
 
             // Initialize the ObjectComparer.
             comparer = new StringLogicalComparer();
@@ -42,7 +40,7 @@ namespace SharpFile.UI {
             resourceX = (IChildResource)itemX.Tag;
             resourceY = (IChildResource)itemY.Tag;
 
-            if (sortDirectoriesOnTop) {
+            if (directoriesSortedFirst) {
                 if (resourceX is DirectoryInfo && resourceY is DirectoryInfo) {
                     compareResult = comparer.Compare(
                         itemX.SubItems[column].Text,
