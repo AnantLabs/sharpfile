@@ -5,10 +5,13 @@ using SharpFile.IO.ChildResources;
 using SharpFile.IO.Retrievers;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
+using System.Windows.Forms;
+using System.Reflection;
 
 namespace SharpFile.IO.Retrievers {
     public class FileRetriever : IChildResourceRetriever {
         private BackgroundWorker backgroundWorker;
+        private List<ColumnInfo> columnInfos;
 
         public FileRetriever() {
             backgroundWorker = new BackgroundWorker();
@@ -48,6 +51,7 @@ namespace SharpFile.IO.Retrievers {
                     IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
 
                     view.BeginUpdate();
+                    view.ColumnInfos = ColumnInfos;
                     view.ClearView();
                     view.AddItemRange(resources);
                     view.EndUpdate();
@@ -77,6 +81,29 @@ namespace SharpFile.IO.Retrievers {
                 backgroundWorker.IsBusy &&
                 !backgroundWorker.CancellationPending) {
                 backgroundWorker.CancelAsync();
+            }
+        }
+
+        public IEnumerable<ColumnInfo> ColumnInfos {
+            get {
+                if (columnInfos == null) {
+                    columnInfos = new List<ColumnInfo>();
+                    columnInfos.Add(
+                        new ColumnInfo("Filename", "DisplayName", new StringLogicalComparer(), true));
+
+                    ColumnInfo.MyMethod getHumanReadableSizeDelegate = new ColumnInfo.MyMethod(Common.General.GetHumanReadableSize);
+
+                    columnInfos.Add(
+                        new ColumnInfo("Size", "Size", getHumanReadableSizeDelegate, new StringLogicalComparer(), false));
+
+                    columnInfos.Add(
+                        new ColumnInfo("Date", "LastWriteTime", new StringLogicalComparer(), false));
+
+                    //columnInfos.Add(
+                    //    new ColumnInfo("Time", "Time", new StringLogicalComparer()));
+                }
+
+                return columnInfos;
             }
         }
 

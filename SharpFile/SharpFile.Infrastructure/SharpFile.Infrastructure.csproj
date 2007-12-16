@@ -43,10 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColumnInfo.cs" />
     <Compile Include="IChildResource.cs" />
     <Compile Include="IChildResourceRetriever.cs" />
     <Compile Include="IFileContainer.cs" />
-    <Compile Include="IListViewComparer.cs" />
+    <Compile Include="IViewComparer.cs" />
     <Compile Include="IResource.cs" />
     <Compile Include="IResourceRetriever.cs" />
     <Compile Include="IView.cs" />

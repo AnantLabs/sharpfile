@@ -8,17 +8,22 @@ using SharpFile.IO.ChildResources;
 namespace SharpFile.UI {
     // This class is an implementation of the 'IComparer' interface.
     public class ListViewItemComparer : IViewComparer {
-        private int column;
+        private ColumnHeader column;
+        private int columnIndex;
         private Order order;
         private IComparer comparer;
         private bool directoriesSortedFirst = true;
 
         public ListViewItemComparer() {
-            column = 0;
-            order = Order.None;
+            if (column == null) {
+                columnIndex = 0;
+            } else {
+                columnIndex = column.Index;
+            }
+
             directoriesSortedFirst = Settings.Instance.DirectoriesSortedFirst;
 
-            // Initialize the ObjectComparer.
+            // Initialize the comparer.
             comparer = new StringLogicalComparer();
         }
 
@@ -43,19 +48,19 @@ namespace SharpFile.UI {
             if (directoriesSortedFirst) {
                 if (resourceX is DirectoryInfo && resourceY is DirectoryInfo) {
                     compareResult = comparer.Compare(
-                        itemX.SubItems[column].Text,
-                        itemY.SubItems[column].Text);
+                        itemX.SubItems[columnIndex].Text,
+                        itemY.SubItems[columnIndex].Text);
                 } else if (resourceX is DirectoryInfo || resourceY is DirectoryInfo) {
                     compareResult = 0;
                 } else {
                     compareResult = comparer.Compare(
-                        itemX.SubItems[column].Text,
-                        itemY.SubItems[column].Text);
+                        itemX.SubItems[columnIndex].Text,
+                        itemY.SubItems[columnIndex].Text);
                 }
             } else {
                 compareResult = comparer.Compare(
-                        itemX.SubItems[column].Text,
-                        itemY.SubItems[column].Text);
+                        itemX.SubItems[columnIndex].Text,
+                        itemY.SubItems[columnIndex].Text);
             }
 
             // Calculate correct return value based on object comparison.
@@ -73,22 +78,23 @@ namespace SharpFile.UI {
         // Gets or sets the number of the column to which to
         // apply the sorting operation (Defaults to '0').
         public ColumnHeader Column {
-            set {
-                column = value;
-            }
             get {
                 return column;
+            }
+            set {
+                column = value;
+                columnIndex = column.Index;
             }
         }
 
         // Gets or sets the order of sorting to apply
         // (for example, 'Ascending' or 'Descending').
         public Order Order {
-            set {
-                order = value;
-            }
             get {
                 return order;
+            }
+            set {
+                order = value;
             }
         }
     }

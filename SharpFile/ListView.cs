@@ -25,6 +25,7 @@ namespace SharpFile {
         private long totalSelectedSize = 0;
         private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
         private IViewComparer comparer;
+        private IEnumerable<ColumnInfo> columnInfos;
 
         public event View.OnUpdateStatusDelegate OnUpdateStatus;
         public event View.OnUpdateProgressDelegate OnUpdateProgress;
@@ -69,6 +70,7 @@ namespace SharpFile {
 
             // TODO: Columns should be set by the IChildResource properties that are actually populated.
             // Maybe there should be a list associated with IParentResources where the columns available are specified.
+            /*
             List<string> columns = new List<string>();
             columns.Add("Filename");
             columns.Add("Size");
@@ -81,6 +83,7 @@ namespace SharpFile {
                 columnHeader.Tag = "";
                 this.Columns.Add(columnHeader);
             }
+            */
         }
 
         /// <summary>
@@ -238,7 +241,7 @@ namespace SharpFile {
         #region Events.
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
             // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == Comparer.Column) {
+            if (e.Column == Comparer.Column.Index) {
                 // Reverse the current sort direction for this column.
                 if (Comparer.Order == Order.Ascending) {
                     Comparer.Order = Order.Descending;
@@ -247,7 +250,7 @@ namespace SharpFile {
                 }
             } else {
                 // Set the column number that is to be sorted; default to ascending.
-                Comparer.Column = e.Column;
+                Comparer.Column = this.Columns[e.Column];
                 Comparer.Order = Order.Ascending;
             }
 
@@ -528,7 +531,7 @@ namespace SharpFile {
                 MessageBox.Show(sb.ToString());
             }
 
-            Comparer.Column = 0;
+            Comparer.Column = this.Columns[0];
             Comparer.Order = Order.Ascending;
             this.Sort();
 
@@ -652,10 +655,30 @@ namespace SharpFile {
         /// <param name="fileSystemInfo">Filesystem information.</param>
         /// <returns>Listview item that references the filesystem object.</returns>
         private ListViewItem createListViewItem(IChildResource fileSystemInfo, ref int fileCount, ref int folderCount) {
-            ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
+            //ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
+            ListViewItem item = new ListViewItem();
             item.Name = fileSystemInfo.FullPath;
             item.Tag = fileSystemInfo;
 
+            foreach (ColumnInfo columnInfo in ColumnInfos) {
+                string value = fileSystemInfo.GetType().GetProperty(columnInfo.Property).GetValue(
+                    fileSystemInfo, null).ToString();
+
+                if (columnInfo.MethodDelegate != null) {
+                    value = columnInfo.MethodDelegate.Invoke(value);
+                }
+
+                if (columnInfo.PrimaryColumn) {
+                    item.Text = value;
+                } else {
+                    item.SubItems.Add(value);
+                }
+            }
+
+            int imageIndex = GetImageIndex(fileSystemInfo);
+            item.ImageIndex = imageIndex;
+
+            /*
             int imageIndex = 0;
             if (fileSystemInfo is FileInfo) {
                 imageIndex = GetImageIndex(fileSystemInfo);
@@ -674,6 +697,8 @@ namespace SharpFile {
             item.ImageIndex = imageIndex;
             item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortDateString());
             item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortTimeString());
+            */
+
             return item;
         }
 
@@ -759,6 +784,24 @@ namespace SharpFile {
                 }
 
                 return comparer;
+            }
+        }
+
+        public IEnumerable<ColumnInfo> ColumnInfos {
+            get {
+                return columnInfos;
+            }
+            set {
+                if (columnInfos == null) {
+                    columnInfos = value;
+
+                    foreach (ColumnInfo columnInfo in columnInfos) {
+                        ColumnHeader columnHeader = new ColumnHeader();
+                        columnHeader.Text = columnInfo.Text;
+                        columnHeader.Tag = columnInfo;
+                        this.Columns.Add(columnHeader);
+                    }
+                }
             }
         }
     }
