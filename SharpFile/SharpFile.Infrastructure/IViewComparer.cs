@@ -4,7 +4,7 @@ using System.Windows.Forms;
 namespace SharpFile.Infrastructure {
     public interface IViewComparer : IComparer {
         Order Order { get; set; }
-        ColumnHeader Column { get; set; }
+        int ColumnIndex { get; set; }
     }
 
     public enum Order {

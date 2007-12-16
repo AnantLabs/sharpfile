@@ -13,6 +13,7 @@ using DirectoryInfo = SharpFile.IO.ChildResources.DirectoryInfo;
 using FileInfo = SharpFile.IO.ChildResources.FileInfo;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
+using System.Reflection;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
@@ -67,23 +68,6 @@ namespace SharpFile {
             this.Sorting = SortOrder.Ascending;
 
             this.ListViewItemSorter = Comparer;
-
-            // TODO: Columns should be set by the IChildResource properties that are actually populated.
-            // Maybe there should be a list associated with IParentResources where the columns available are specified.
-            /*
-            List<string> columns = new List<string>();
-            columns.Add("Filename");
-            columns.Add("Size");
-            columns.Add("Date");
-            columns.Add("Time");
-
-            foreach (string column in columns) {
-                ColumnHeader columnHeader = new ColumnHeader();
-                columnHeader.Text = column;
-                columnHeader.Tag = "";
-                this.Columns.Add(columnHeader);
-            }
-            */
         }
 
         /// <summary>
@@ -241,7 +225,7 @@ namespace SharpFile {
         #region Events.
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
             // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == Comparer.Column.Index) {
+            if (e.Column == Comparer.ColumnIndex) {
                 // Reverse the current sort direction for this column.
                 if (Comparer.Order == Order.Ascending) {
                     Comparer.Order = Order.Descending;
@@ -250,7 +234,7 @@ namespace SharpFile {
                 }
             } else {
                 // Set the column number that is to be sorted; default to ascending.
-                Comparer.Column = this.Columns[e.Column];
+                Comparer.ColumnIndex = e.Column;
                 Comparer.Order = Order.Ascending;
             }
 
@@ -531,7 +515,7 @@ namespace SharpFile {
                 MessageBox.Show(sb.ToString());
             }
 
-            Comparer.Column = this.Columns[0];
+            Comparer.ColumnIndex = 0;
             Comparer.Order = Order.Ascending;
             this.Sort();
 
@@ -654,50 +638,38 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fileSystemInfo">Filesystem information.</param>
         /// <returns>Listview item that references the filesystem object.</returns>
-        private ListViewItem createListViewItem(IChildResource fileSystemInfo, ref int fileCount, ref int folderCount) {
-            //ListViewItem item = new ListViewItem(fileSystemInfo.DisplayName);
+        private ListViewItem createListViewItem(IChildResource resource, ref int fileCount, ref int folderCount) {
             ListViewItem item = new ListViewItem();
-            item.Name = fileSystemInfo.FullPath;
-            item.Tag = fileSystemInfo;
+            item.Tag = resource;
 
             foreach (ColumnInfo columnInfo in ColumnInfos) {
-                string value = fileSystemInfo.GetType().GetProperty(columnInfo.Property).GetValue(
-                    fileSystemInfo, null).ToString();
+                PropertyInfo propertyInfo = resource.GetType().GetProperty(columnInfo.Property);
 
-                if (columnInfo.MethodDelegate != null) {
-                    value = columnInfo.MethodDelegate.Invoke(value);
-                }
+                if (propertyInfo != null) {
+                    string text = propertyInfo.GetValue(
+                        resource, null).ToString();
 
-                if (columnInfo.PrimaryColumn) {
-                    item.Text = value;
-                } else {
-                    item.SubItems.Add(value);
-                }
-            }
+                    string tag = text;
 
-            int imageIndex = GetImageIndex(fileSystemInfo);
-            item.ImageIndex = imageIndex;
+                    if (columnInfo.MethodDelegate != null) {
+                        text = columnInfo.MethodDelegate.Invoke(text);
+                    }
 
-            /*
-            int imageIndex = 0;
-            if (fileSystemInfo is FileInfo) {
-                imageIndex = GetImageIndex(fileSystemInfo);
-                item.SubItems.Add(General.GetHumanReadableSize(fileSystemInfo.Size.ToString()));
-                fileCount++;
-            } else {
-                imageIndex = GetImageIndex(fileSystemInfo);
-                item.SubItems.Add(string.Empty);
+                    if (columnInfo.PrimaryColumn) {
+                        item.Text = text;
+                        item.SubItems[0].Tag = tag;
+                    } else {
+                        System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem = new ListViewItem.ListViewSubItem();
+                        listViewSubItem.Text = text;
+                        listViewSubItem.Tag = tag;
 
-                if (!(fileSystemInfo is ParentDirectoryInfo) &&
-                    !(fileSystemInfo is RootDirectoryInfo)) {
-                    folderCount++;
+                        item.SubItems.Add(listViewSubItem);
+                    }
                 }
             }
 
+            int imageIndex = GetImageIndex(resource);
             item.ImageIndex = imageIndex;
-            item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortDateString());
-            item.SubItems.Add(fileSystemInfo.LastWriteTime.ToShortTimeString());
-            */
 
             return item;
         }

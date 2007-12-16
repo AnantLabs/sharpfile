@@ -6,20 +6,28 @@ namespace SharpFile.Infrastructure {
         private string property;
         private IComparer comparer;
         private bool primaryColumn;
-        private MyMethod myMethod;
+        private CustomMethod customMethod;
 
-        public delegate string MyMethod(string val);
+        public delegate string CustomMethod(string val);
 
-        public ColumnInfo(string text, string property, IComparer comparer, bool primaryColumn) :
-            this(text, property, null, comparer, primaryColumn) {
+        public ColumnInfo(string text, string property, IComparer comparer)
+            : this(text, property, null, comparer, false) {
         }
 
-        public ColumnInfo(string text, string property, MyMethod myMethod, IComparer comparer, bool primaryColumn) {
+        public ColumnInfo(string text, string property, IComparer comparer, bool primaryColumn)
+            : this(text, property, null, comparer, primaryColumn) {
+        }
+
+        public ColumnInfo(string text, string property, CustomMethod customMethod, IComparer comparer)
+            : this(text, property, customMethod, comparer, false) {
+        }
+
+        public ColumnInfo(string text, string property, CustomMethod customMethod, IComparer comparer, bool primaryColumn) {
             this.text = text;
             this.property = property;
             this.comparer = comparer;
             this.primaryColumn = primaryColumn;
-            this.myMethod = myMethod;
+            this.customMethod = customMethod;
         }
 
         public string Text {
@@ -46,9 +54,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        public MyMethod MethodDelegate {
+        public CustomMethod MethodDelegate {
             get {
-                return myMethod;
+                return customMethod;
             }
         }
     }

@@ -84,6 +84,28 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        public static string GetDateTimeShortDateString(string dateTime) {
+            string val = dateTime;
+            DateTime parsedDateTime;
+
+            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
+                val = parsedDateTime.ToShortDateString();
+            }
+
+            return val;
+        }
+
+        public static string GetDateTimeShortTimeString(string dateTime) {
+            string val = dateTime;
+            DateTime parsedDateTime;
+
+            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
+                val = parsedDateTime.ToShortTimeString();
+            }
+
+            return val;
+        }
+
         public IEnumerable<ColumnInfo> ColumnInfos {
             get {
                 if (columnInfos == null) {
@@ -91,16 +113,20 @@ namespace SharpFile.IO.Retrievers {
                     columnInfos.Add(
                         new ColumnInfo("Filename", "DisplayName", new StringLogicalComparer(), true));
 
-                    ColumnInfo.MyMethod getHumanReadableSizeDelegate = new ColumnInfo.MyMethod(Common.General.GetHumanReadableSize);
+                    columnInfos.Add(
+                        new ColumnInfo("Size", "Size",
+                            new ColumnInfo.CustomMethod(Common.General.GetHumanReadableSize),
+                            new StringLogicalComparer()));
 
                     columnInfos.Add(
-                        new ColumnInfo("Size", "Size", getHumanReadableSizeDelegate, new StringLogicalComparer(), false));
+                        new ColumnInfo("Date", "LastWriteTime",
+                            new ColumnInfo.CustomMethod(GetDateTimeShortDateString),
+                            new StringLogicalComparer()));
 
                     columnInfos.Add(
-                        new ColumnInfo("Date", "LastWriteTime", new StringLogicalComparer(), false));
-
-                    //columnInfos.Add(
-                    //    new ColumnInfo("Time", "Time", new StringLogicalComparer()));
+                        new ColumnInfo("Time", "LastWriteTime",
+                            new ColumnInfo.CustomMethod(GetDateTimeShortTimeString),
+                            new StringLogicalComparer()));
                 }
 
                 return columnInfos;
