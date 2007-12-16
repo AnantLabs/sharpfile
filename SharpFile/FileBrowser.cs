@@ -194,7 +194,7 @@ namespace SharpFile {
             IChildResource resource = ChildResourceFactory.GetChildResource(path);
 
             // Required to ensure the view update occurs on the calling thread.
-            MethodInvoker updater = delegate {
+            view.Control.BeginInvoke((MethodInvoker)delegate {
                 view.BeginUpdate();
 
                 switch (e.ChangeType) {
@@ -216,21 +216,16 @@ namespace SharpFile {
                 }
 
                 view.EndUpdate();
-            };
-
-            view.Control.BeginInvoke(updater);
+            });
         }
 
         /// <summary>
         /// Fires when a drive changes.
         /// </summary>
         private void driveDetector_DeviceChanged(object sender, DriveDetectorEventArgs e) {
-            MethodInvoker updater = delegate {
-                //Settings.ClearResources();
+            this.BeginInvoke((MethodInvoker)delegate {
                 UpdateParentListing();
-            };
-
-            this.BeginInvoke(updater);
+            });
         }
         #endregion
 
@@ -256,7 +251,12 @@ namespace SharpFile {
                 if (stateInfo is List<IResource>) {
                     List<IResource> resources = (List<IResource>)stateInfo;
 
-                    MethodInvoker updater = delegate {
+                    // Make sure that the handle is created before invoking the updater.
+                    while (!handleCreated) {
+                        System.Threading.Thread.Sleep(100);
+                    }
+
+                    this.BeginInvoke((MethodInvoker)delegate {
                         bool isLocalDiskFound = false;
 
                         // Create a new menu item in the dropdown for each drive.
@@ -302,14 +302,7 @@ namespace SharpFile {
                                 }
                             }
                         }
-                    };
-
-                    // Make sure that the handle is created before invoking the updater.
-                    while (!handleCreated) {
-                        System.Threading.Thread.Sleep(100);
-                    }
-
-                    this.BeginInvoke(updater);
+                    });
                 }
             }
         }

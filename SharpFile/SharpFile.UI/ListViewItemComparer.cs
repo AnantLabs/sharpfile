@@ -72,7 +72,7 @@ namespace SharpFile.UI {
 
         // Gets or sets the number of the column to which to
         // apply the sorting operation (Defaults to '0').
-        public int Column {
+        public ColumnHeader Column {
             set {
                 column = value;
             }

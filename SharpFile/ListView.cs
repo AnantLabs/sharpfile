@@ -76,7 +76,10 @@ namespace SharpFile {
             columns.Add("Time");
 
             foreach (string column in columns) {
-                this.Columns.Add(column);
+                ColumnHeader columnHeader = new ColumnHeader();
+                columnHeader.Text = column;
+                columnHeader.Tag = "";
+                this.Columns.Add(columnHeader);
             }
         }
 
