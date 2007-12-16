@@ -26,7 +26,7 @@ namespace SharpFile.Infrastructure {
 			timer.Elapsed += delegate {
 				lock (lockObject) {
 					if (stack.Count > 0) {
-						stack.Peek().Invoke(null, null);
+    					stack.Peek().Invoke(null, null);
 						stack.Clear();
 					}
 				}
