@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Common;
@@ -10,10 +11,8 @@ using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.UI;
 using DirectoryInfo = SharpFile.IO.ChildResources.DirectoryInfo;
-using FileInfo = SharpFile.IO.ChildResources.FileInfo;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
-using System.Reflection;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {

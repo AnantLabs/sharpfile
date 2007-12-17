@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
 namespace SharpFile.UI {
-    // This class is an implementation of the 'IComparer' interface.
     public class ListViewItemComparer : IViewComparer {
         private int columnIndex;
         private Order order;
@@ -82,8 +79,9 @@ namespace SharpFile.UI {
             }
         }
 
-        // Gets or sets the number of the column to which to
-        // apply the sorting operation (Defaults to '0').
+        /// <summary>
+        /// Index of the column.
+        /// </summary>
         public int ColumnIndex {
             get {
                 return columnIndex;
@@ -93,8 +91,9 @@ namespace SharpFile.UI {
             }
         }
 
-        // Gets or sets the order of sorting to apply
-        // (for example, 'Ascending' or 'Descending').
+        /// <summary>
+        /// Order of sorting.
+        /// </summary>
         public Order Order {
             get {
                 return order;

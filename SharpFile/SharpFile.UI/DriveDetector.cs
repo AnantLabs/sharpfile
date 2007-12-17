@@ -13,15 +13,15 @@ namespace SharpFile.UI {
     /// Hidden Form which we use to receive Windows messages about flash drives
     /// </summary>
     internal class DetectorForm : Form {
-        private Label label1;
-        private DriveDetector mDetector = null;
+        private Label label;
+        private DriveDetector driveDetector = null;
 
         /// <summary>
         /// Set up the hidden form. 
         /// </summary>
         /// <param name="detector">DriveDetector object which will receive notification about USB drives, see WndProc</param>
         public DetectorForm(DriveDetector detector) {
-            mDetector = detector;
+            driveDetector = detector;
             this.MinimizeBox = false;
             this.MaximizeBox = false;
             this.ShowInTaskbar = false;
@@ -51,49 +51,44 @@ namespace SharpFile.UI {
         protected override void WndProc(ref Message m) {
             base.WndProc(ref m);
 
-            if (mDetector != null) {
-                mDetector.WndProc(ref m);
+            if (driveDetector != null) {
+                driveDetector.WndProc(ref m);
             }
         }
 
         private void InitializeComponent() {
-            this.label1 = new System.Windows.Forms.Label();
+            this.label = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // label1
+            // label
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 30);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(314, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "This is invisible form. To see DriveDetector code click View Code";
+            this.label.AutoSize = true;
+            this.label.Location = new System.Drawing.Point(13, 30);
+            this.label.Name = "label";
+            this.label.Size = new System.Drawing.Size(314, 13);
+            this.label.TabIndex = 0;
+            this.label.Text = "This is invisible form. To see DriveDetector code click View Code";
             // 
             // DetectorForm
             // 
             this.ClientSize = new System.Drawing.Size(360, 80);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.label);
             this.Name = "DetectorForm";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
-    }   // class DetectorForm
-
+    }
 
     // Delegate for event handler to handle the device events 
     public delegate void DriveDetectorEventHandler(Object sender, DriveDetectorEventArgs e);
 
     /// <summary>
-    /// Our class for passing in custom arguments to our event handlers 
-    /// 
+    /// Our class for passing in custom arguments to our event handlers.
     /// </summary>
     public class DriveDetectorEventArgs : EventArgs {
-
-
         public DriveDetectorEventArgs() {
             Cancel = false;
-            Drive = "";
+            Drive = string.Empty;
             HookQueryRemove = false;
         }
 
@@ -113,9 +108,7 @@ namespace SharpFile.UI {
         /// QueryRemove event for this drive. 
         /// </summary>
         public bool HookQueryRemove;
-
     }
-
 
     /// <summary>
     /// Detects insertion or removal of removable drives.
@@ -262,7 +255,6 @@ namespace SharpFile.UI {
             }
         }
 
-
         /// <summary>
         /// Unregister and close the file we may have opened on the removable drive. 
         /// Garbage collector will call this method.
@@ -270,7 +262,6 @@ namespace SharpFile.UI {
         public void Dispose() {
             RegisterForDeviceChange(false, null);
         }
-
 
         #region WindowProc
         /// <summary>
@@ -285,12 +276,8 @@ namespace SharpFile.UI {
             if (m.Msg == WM_DEVICECHANGE) {
                 // WM_DEVICECHANGE can have several meanings depending on the WParam value...
                 switch (m.WParam.ToInt32()) {
-
-                    //
                     // New device has just arrived
-                    //
                     case DBT_DEVICEARRIVAL:
-
                         devType = Marshal.ReadInt32(m.LParam, 4);
                         if (devType == DBT_DEVTYP_VOLUME) {
                             DEV_BROADCAST_VOLUME vol;
@@ -300,10 +287,7 @@ namespace SharpFile.UI {
                             // Get the drive letter 
                             c = DriveMaskToLetter(vol.dbcv_unitmask);
 
-
-                            //
                             // Call the client event handler
-                            //
                             // We should create copy of the event before testing it and
                             // calling the delegate - if any
                             DriveDetectorEventHandler tempDeviceArrived = DeviceArrived;
@@ -321,20 +305,12 @@ namespace SharpFile.UI {
 
                                     RegisterQuery(c + ":\\");
                                 }
-                            }     // if  has event handler
-
-
+                            }
                         }
                         break;
-
-
-
-                    //
                     // Device is about to be removed
                     // Any application can cancel the removal
-                    //
                     case DBT_DEVICEQUERYREMOVE:
-
                         devType = Marshal.ReadInt32(m.LParam, 4);
                         if (devType == DBT_DEVTYP_HANDLE) {
                             // TODO: we could get the handle for which this message is sent 
@@ -345,10 +321,7 @@ namespace SharpFile.UI {
                             //   Marshal.PtrToStructure(m.LParam, typeof(DEV_BROADCAST_HANDLE));
                             // if ( vol.dbch_handle ....
 
-
-                            //
                             // Call the event handler in client
-                            //
                             DriveDetectorEventHandler tempQuery = QueryRemove;
                             if (tempQuery != null) {
                                 DriveDetectorEventArgs e = new DriveDetectorEventArgs();
@@ -365,18 +338,13 @@ namespace SharpFile.UI {
                                     // even if some other app cancels the removal we would not know about it...                                    
                                     RegisterForDeviceChange(false, null);   // will also close the mFileOnFlash
                                 }
-
                             }
                         }
                         break;
-
-
-                    //
                     // Device has been removed
-                    //
                     case DBT_DEVICEREMOVECOMPLETE:
-
                         devType = Marshal.ReadInt32(m.LParam, 4);
+
                         if (devType == DBT_DEVTYP_VOLUME) {
                             devType = Marshal.ReadInt32(m.LParam, 4);
                             if (devType == DBT_DEVTYP_VOLUME) {
@@ -385,9 +353,7 @@ namespace SharpFile.UI {
                                     Marshal.PtrToStructure(m.LParam, typeof(DEV_BROADCAST_VOLUME));
                                 c = DriveMaskToLetter(vol.dbcv_unitmask);
 
-                                //
                                 // Call the client event handler
-                                //
                                 DriveDetectorEventHandler tempDeviceRemoved = DeviceRemoved;
                                 if (tempDeviceRemoved != null) {
                                     DriveDetectorEventArgs e = new DriveDetectorEventArgs();
@@ -402,16 +368,11 @@ namespace SharpFile.UI {
                         }
                         break;
                 }
-
             }
-
         }
         #endregion
 
-
-
         #region  Private Area
-
         /// <summary>
         /// New: 28.10.2007 - handle to root directory of flash drive which is opened
         /// for device notification
@@ -442,7 +403,6 @@ namespace SharpFile.UI {
         /// Drive which is currently hooked for query remove
         /// </summary>
         private string mCurrentDrive;
-
 
         // Win32 constants
         private const int DBT_DEVTYP_DEVICEINTERFACE = 5;
@@ -482,7 +442,6 @@ namespace SharpFile.UI {
                     mFileToOpen = Path.Combine(drive, mFileToOpen);
             }
 
-
             try {
                 //mFileOnFlash = new FileStream(mFileToOpen, FileMode.Open);
                 // Change 28.10.2007 - Open the root directory 
@@ -494,7 +453,6 @@ namespace SharpFile.UI {
                 // just do not register if the file could not be opened
                 register = false;
             }
-
 
             if (register) {
                 //RegisterForDeviceChange(true, mFileOnFlash.SafeFileHandle);
@@ -508,10 +466,7 @@ namespace SharpFile.UI {
 
                 mCurrentDrive = drive;
             }
-
-
         }
-
 
         /// <summary>
         /// New version which gets the handle automatically for specified directory
@@ -542,7 +497,6 @@ namespace SharpFile.UI {
             Marshal.StructureToPtr(data, buffer, true);
 
             mDeviceNotifyHandle = Native.RegisterDeviceNotification(mRecipientHandle, buffer, 0);
-
         }
 
         /// <summary>
@@ -580,7 +534,6 @@ namespace SharpFile.UI {
                     Native.UnregisterDeviceNotification(mDeviceNotifyHandle);
                 }
 
-
                 mDeviceNotifyHandle = IntPtr.Zero;
                 mDirHandle = IntPtr.Zero;
 
@@ -590,7 +543,6 @@ namespace SharpFile.UI {
                     mFileOnFlash = null;
                 }
             }
-
         }
 
         /// <summary>
@@ -622,32 +574,7 @@ namespace SharpFile.UI {
 
             return letter;
         }
-
-        /* 28.10.2007 - no longer needed
-        /// <summary>
-        /// Searches for any file in a given path and returns its full path
-        /// </summary>
-        /// <param name="drive">drive to search</param>
-        /// <returns>path of the file or empty string</returns>
-        private string GetAnyFile(string drive)
-        {
-            string file = "";
-            // First try files in the root
-            string[] files = Directory.GetFiles(drive);
-            if (files.Length == 0)
-            {
-                // if no file in the root, search whole drive
-                files = Directory.GetFiles(drive, "*.*", SearchOption.AllDirectories);
-            }
-                
-            if (files.Length > 0)
-                file = files[0];        // get the first file
-
-            // return empty string if no file found
-            return file;
-        }*/
         #endregion
-
 
         #region Native Win32 API
         /// <summary>
@@ -661,7 +588,6 @@ namespace SharpFile.UI {
             [DllImport("user32.dll", CharSet = CharSet.Auto)]
             public static extern uint UnregisterDeviceNotification(IntPtr hHandle);
 
-            //
             // CreateFile  - MSDN
             const uint GENERIC_READ = 0x80000000;
             const uint OPEN_EXISTING = 3;
@@ -670,7 +596,6 @@ namespace SharpFile.UI {
             const uint FILE_ATTRIBUTE_NORMAL = 128;
             const uint FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
             static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-
 
             // should be "static extern unsafe"
             [DllImport("kernel32", SetLastError = true)]
@@ -683,7 +608,6 @@ namespace SharpFile.UI {
                   uint FlagsAndAttributes,            // file attributes
                   int hTemplateFile                   // handle to template file
                   );
-
 
             [DllImport("kernel32", SetLastError = true)]
             static extern bool CloseHandle(
@@ -712,12 +636,10 @@ namespace SharpFile.UI {
                     return handle;
             }
 
-
             public static bool CloseDirectoryHandle(IntPtr handle) {
                 return CloseHandle(handle);
             }
         }
-
 
         // Structure with information for RegisterDeviceNotification.
         [StructLayout(LayoutKind.Sequential)]
@@ -743,6 +665,5 @@ namespace SharpFile.UI {
             public int dbcv_unitmask;
         }
         #endregion
-
     }
 }

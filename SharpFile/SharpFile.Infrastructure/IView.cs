@@ -1,4 +1,3 @@
-using System.IO;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -15,7 +14,7 @@ namespace SharpFile.Infrastructure {
 		void EndUpdate();
 		string Path { get; }
 		string Filter { get; }
-        SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher { get; }
+        FileSystemWatcher FileSystemWatcher { get; }
 		Control Control { get; }
         void CancelChildRetrieverOperations();
         void ShowMessageBox(string text);

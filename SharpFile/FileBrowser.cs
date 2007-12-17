@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using SharpFile.IO;
-using SharpFile.IO.ChildResources;
-using SharpFile.IO.ParentResources;
-using SharpFile.IO.Retrievers;
-using DriveInfo=SharpFile.IO.ParentResources.DriveInfo;
-using DriveType=SharpFile.IO.DriveType;
-using View=SharpFile.Infrastructure.View;
-using SharpFile.Infrastructure;
 using Common;
+using SharpFile.Infrastructure;
+using SharpFile.IO;
 using SharpFile.UI;
+using DriveInfo = SharpFile.IO.ParentResources.DriveInfo;
+using DriveType = SharpFile.IO.DriveType;
+using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -129,11 +126,6 @@ namespace SharpFile {
 
             fileSystemWatcher = new FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
-
-            //fileSystemWatcher = new System.IO.FileSystemWatcher();
-            //fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
-            //fileSystemWatcher.Created += fileSystemWatcher_Changed;
-            //fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
         }
         #endregion
 

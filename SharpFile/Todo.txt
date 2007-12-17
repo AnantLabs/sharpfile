@@ -1,18 +1,14 @@
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
-- FileSsystemWatcher throws exceptions
 - KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
-- Multiple filewatcher events fire on one file operation 
-	- catch them all and just update once in a stack
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
 - network drives don't get filesystemwatcher events
 - splitcontainer context menu shows up after an action is selected in a listview context menu
 - long-running threads to get directories/files invoked from the drive drop down aren't canceled
 	when starting a new operation
-- sort by file size, time doesn't work
 - flicker in drive dropdown when new drive is inserted
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 

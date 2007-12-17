@@ -1,12 +1,7 @@
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using SharpFile.IO.ChildResources;
-using SharpFile.IO.Retrievers;
-using SharpFile.IO;
+using System.ComponentModel;
 using SharpFile.Infrastructure;
-using System.Windows.Forms;
-using System.Reflection;
 
 namespace SharpFile.IO.Retrievers {
     public class FileRetriever : IChildResourceRetriever {
