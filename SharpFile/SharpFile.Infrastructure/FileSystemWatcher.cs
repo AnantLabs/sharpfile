@@ -5,47 +5,46 @@ using System.Timers;
 
 namespace SharpFile.Infrastructure {
 	public class FileSystemWatcher {
-		private System.IO.FileSystemWatcher fileSystemWatcher = new System.IO.FileSystemWatcher();
-		private Stack<ChangedDelegate> stack = new Stack<ChangedDelegate>();
-		private Timer timer = new Timer();
+		private System.IO.FileSystemWatcher fileSystemWatcher;
+		private Timer timer;
 		private ISynchronizeInvoke synchronizingObject;
+        private bool isManualWatcher = false;
 
 		private static object lockObject = new object();
 
-		public delegate void ChangedDelegate(object sender, FileSystemEventArgs e);
-		public event ChangedDelegate Changed;
+        public delegate void ChangedDelegate(object sender, FileSystemEventArgs e);
+        public event ChangedDelegate Changed;
 
 		public FileSystemWatcher(ISynchronizeInvoke synchronizingObject, double interval) {
+            timer = new Timer();
+            fileSystemWatcher = new System.IO.FileSystemWatcher();
 			this.synchronizingObject = synchronizingObject;
 
-			// Set up the timer.
-			timer.SynchronizingObject = synchronizingObject;
-			timer.Interval = interval;
-			timer.Enabled = true;
+            if (isManualWatcher) {
+                // Set up the timer.
+                timer.SynchronizingObject = synchronizingObject;
+                timer.Interval = interval;
+                timer.Enabled = true;
 
-			timer.Elapsed += delegate {
-				lock (lockObject) {
-					if (stack.Count > 0) {
-    					stack.Peek().Invoke(null, null);
-						stack.Clear();
-					}
-				}
-			};
+                timer.Elapsed += delegate {
+                    OnChanged(null, null);
+                };
+            } else {
+                // Set up the watcher.
+                fileSystemWatcher.SynchronizingObject = synchronizingObject;
+                fileSystemWatcher.IncludeSubdirectories = false;
+                fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName |
+                    NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Security | NotifyFilters.Size;
 
-			// Set up the watcher.
-			fileSystemWatcher.SynchronizingObject = synchronizingObject;
-			fileSystemWatcher.IncludeSubdirectories = false;
-			fileSystemWatcher.NotifyFilter = NotifyFilters.Attributes | NotifyFilters.CreationTime | NotifyFilters.DirectoryName | NotifyFilters.FileName |
-				NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.Security | NotifyFilters.Size;
-
-			fileSystemWatcher.Created += fileSystemWatcher_Event;
-			fileSystemWatcher.Changed += fileSystemWatcher_Event;
-			fileSystemWatcher.Deleted += fileSystemWatcher_Event;
-			fileSystemWatcher.Renamed += fileSystemWatcher_Event;
+                fileSystemWatcher.Created += fileSystemWatcher_Event;
+                fileSystemWatcher.Changed += fileSystemWatcher_Event;
+                fileSystemWatcher.Deleted += fileSystemWatcher_Event;
+                fileSystemWatcher.Renamed += fileSystemWatcher_Event;
+            }
 		}
 
 		void fileSystemWatcher_Event(object sender, FileSystemEventArgs e) {
-			stack.Push(OnChanged);
+            OnChanged(sender, e);
 		}
 
 		public void OnChanged(object sender, FileSystemEventArgs e) {

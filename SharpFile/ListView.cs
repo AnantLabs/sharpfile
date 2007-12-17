@@ -537,7 +537,7 @@ namespace SharpFile {
             if (resource != null) {
                 try {
                     // Create a new listview item with the display name.
-                    insertItem(resource, ref fileCount, ref folderCount);
+                    addItem(resource, ref fileCount, ref folderCount);
 
                     // Basic stuff that should happen everytime files are shown.
                     this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -545,6 +545,8 @@ namespace SharpFile {
                     UpdateStatus(string.Format("Folders: {0}; Files: {1}",
                                                folderCount,
                                                fileCount));
+
+                    this.Sort();
                 } catch (Exception ex) {
                     MessageBox.Show(ex.Message + ex.StackTrace);
                 }
@@ -552,84 +554,16 @@ namespace SharpFile {
         }
 
         /// <summary>
-        /// Retrieves the index that the list view item should be inserted into.
+        /// Adds the item to the view.
         /// </summary>
-        private int getListViewIndex(ListViewItem item) {
-            // TODO: Need to support where user has other columns sorted than the name.
-            // Get the filesysteminfo object from the item's tag.
-            IChildResource fsi = (IChildResource)item.Tag;
-
-            // Copy the items to an array for further processing.
-            ListViewItem[] items = new ListViewItem[this.Items.Count + 1];
-            this.Items.CopyTo(items, 0);
-
-            // Add the new listview item to the array of items.
-            items[items.Length - 1] = item;
-
-            // Determine if the file should be pushed further down based on the number of directories above it.
-            int indexOffset = 0;
-            if (fsi is FileInfo) {
-                indexOffset = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-                    return (i.Tag is DirectoryInfo);
-                }).Length;
-            } else if (fsi is DirectoryInfo) {
-                indexOffset = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-                    return (i.Tag is ParentDirectoryInfo ||
-                            i.Tag is RootDirectoryInfo);
-                }).Length;
-            }
-
-            // Filter out any items that are not the same type.
-            items = Array.FindAll<ListViewItem>(items, delegate(ListViewItem i) {
-                // TODO: Fix this -- it prevents the parent directory from getting sorted.
-                if (i.Tag.GetType() == fsi.GetType()) {
-                    return true;
-                }
-
-                return false;
-            });
-
-            // Sort the array ascending.
-            Array.Sort<ListViewItem>(items, delegate(ListViewItem i1, ListViewItem i2) {
-                // Sort root directories so they appear first.
-                if (i2.Text == RootDirectoryInfo.DisplayName) {
-                    return 1;
-                }
-
-                // Sort parent directories so they appear second.
-                if (i2.Text == ParentDirectoryInfo.DisplayName) {
-                    return 1;
-                }
-
-                // Sort everything else according to their name.
-                return Comparer.Compare(i1.Name, i2.Name);
-            });
-
-            // Add the index of the item to the correct offset.
-            int index = Array.IndexOf<ListViewItem>(items, item) + indexOffset;
-            return index;
-        }
-
+        /// <param name="resource">Resource to add.</param>
+        /// <param name="fileCount">Count of files.</param>
+        /// <param name="folderCount">Count of folders.</param>
         private void addItem(IChildResource resource, ref int fileCount, ref int folderCount) {
             if (!itemDictionary.ContainsKey(resource.FullPath)) {
                 ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
                 itemDictionary.Add(resource.FullPath, item);
                 this.Items.Add(item);
-            }
-        }
-
-        private void insertItem(IChildResource resource, ref int fileCount, ref int folderCount) {
-            if (!itemDictionary.ContainsKey(resource.FullPath)) {
-                ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
-                int listViewIndex = getListViewIndex(item);
-
-                if (listViewIndex == -1) {
-                    this.Items.Insert(0, item);
-                } else {
-                    this.Items.Insert(listViewIndex, item);
-                }
-
-                itemDictionary.Add(resource.FullPath, item);
             }
         }
 
@@ -641,14 +575,15 @@ namespace SharpFile {
         private ListViewItem createListViewItem(IChildResource resource, ref int fileCount, ref int folderCount) {
             ListViewItem item = new ListViewItem();
             item.Tag = resource;
+            item.Name = resource.FullPath;
 
             foreach (ColumnInfo columnInfo in ColumnInfos) {
                 PropertyInfo propertyInfo = resource.GetType().GetProperty(columnInfo.Property);
 
                 if (propertyInfo != null) {
-                    string text = propertyInfo.GetValue(
-                        resource, null).ToString();
+                    string text = propertyInfo.GetValue(resource, null).ToString();
 
+                    // The original value will be set on the tag for sort-ability.
                     string tag = text;
 
                     if (columnInfo.MethodDelegate != null) {
@@ -659,7 +594,8 @@ namespace SharpFile {
                         item.Text = text;
                         item.SubItems[0].Tag = tag;
                     } else {
-                        System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem = new ListViewItem.ListViewSubItem();
+                        System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem = 
+                            new ListViewItem.ListViewSubItem();
                         listViewSubItem.Text = text;
                         listViewSubItem.Tag = tag;
 
@@ -728,9 +664,9 @@ namespace SharpFile {
         /// <summary>
         /// Current FileSystemWatcher.
         /// </summary>
-        public SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher {
+        public FileSystemWatcher FileSystemWatcher {
             get {
-                return Forms.GetPropertyInParent<SharpFile.Infrastructure.FileSystemWatcher>(this.Parent, "FileSystemWatcher");
+                return Forms.GetPropertyInParent<FileSystemWatcher>(this.Parent, "FileSystemWatcher");
             }
         }
 

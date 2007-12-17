@@ -129,6 +129,8 @@ namespace SharpFile {
 
             fileSystemWatcher = new FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
+
+            //fileSystemWatcher = new System.IO.FileSystemWatcher();
             //fileSystemWatcher.Renamed += fileSystemWatcher_Changed;
             //fileSystemWatcher.Created += fileSystemWatcher_Changed;
             //fileSystemWatcher.Deleted += fileSystemWatcher_Changed;
