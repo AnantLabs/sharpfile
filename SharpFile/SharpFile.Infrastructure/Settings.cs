@@ -1,12 +1,11 @@
 using System;
-using System.Collections;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Runtime.Remoting;
-using System.Xml.Serialization;
-using System.Xml;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Remoting;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -31,35 +30,61 @@ namespace SharpFile.Infrastructure {
     /// Object that stores the assembly and type name for a type. Cannot be a struct 
     /// because a parameter-less ctor is required for Xml serialization.
     /// </summary>
-    public class FullyQualifiedType {
-        private string assemblyName;
-        private string typeName;
+    public struct FullyQualifiedType {
+        private string assembly;
+        private string name;
 
-        public FullyQualifiedType() {
-        }
-
-        public FullyQualifiedType(string assemblyName, string typeName) {
-            this.assemblyName = assemblyName;
-            this.typeName = typeName;
+        public FullyQualifiedType(string assembly, string name) {
+            this.assembly = assembly;
+            this.name = name;
         }
 
         [XmlAttribute("Assembly")]
-        public string AssemblyName {
+        public string Assembly {
             get {
-                return assemblyName;
+                return assembly;
             }
             set {
-                assemblyName = value;
+                assembly = value;
             }
         }
 
         [XmlAttribute("Name")]
-        public string TypeName {
+        public string Name {
             get {
-                return typeName;
+                return name;
             }
             set {
-                typeName = value;
+                name = value;
+            }
+        }
+    }
+
+    public struct ResourceRetrieverInfo {
+        private FullyQualifiedType fullyQualifiedType;
+        private string name;
+
+        public ResourceRetrieverInfo(string name, FullyQualifiedType fullyQualifiedType) {
+            this.name = name;
+            this.fullyQualifiedType = fullyQualifiedType;
+        }
+
+        [XmlAttribute("Name")]
+        public string Name {
+            get {
+                return name;
+            }
+            set {
+                name = value;
+            }
+        }
+
+        public FullyQualifiedType FullyQualifiedType {
+            get {
+                return fullyQualifiedType;
+            }
+            set {
+                fullyQualifiedType = value;
             }
         }
     }
@@ -82,7 +107,8 @@ namespace SharpFile.Infrastructure {
 		private string rightPath;
         private int splitterPercentage = 50;
 		private Nodes keyCodes;
-        private List<FullyQualifiedType> resourceRetrieverTypes;
+        private List<ResourceRetrieverInfo> resourceRetrieverInfos;
+        private List<FullyQualifiedType> childResourceRetrieverTypes;
         private bool directoriesSortedFirst = true;
 
         private List<IResourceRetriever> resourceRetrievers;
@@ -141,12 +167,12 @@ namespace SharpFile.Infrastructure {
 
                 // Set up some defaults, since it doesn't look like any settings were found.
                 if (!settingsLoaded) {
-                    List<FullyQualifiedType> resourceRetrieverTypes = new List<FullyQualifiedType>();
-                    resourceRetrieverTypes.Add(
-                        new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.DriveRetriever"));
-                    resourceRetrieverTypes.Add(
-                        new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.NetworkDriveRetriever"));
-                    instance.ResourceRetrieverTypes = resourceRetrieverTypes;
+                    List<ResourceRetrieverInfo> resourceRetrieverInfos = new List<ResourceRetrieverInfo>();
+                    resourceRetrieverInfos.Add(new ResourceRetrieverInfo("DriveRetriever",
+                        new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.DriveRetriever")));
+                    resourceRetrieverInfos.Add(new ResourceRetrieverInfo("NetworkDriveRetriever", 
+                        new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.NetworkDriveRetriever")));
+                    instance.ResourceRetrieverInfos = resourceRetrieverInfos;
 
                     Nodes defaultKeys = new Nodes();
                     defaultKeys.Add("Rename", Keys.F2);
@@ -254,13 +280,13 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlArray("ResourceRetrievers")]
-        [XmlArrayItem("Type")]
-        public List<FullyQualifiedType> ResourceRetrieverTypes {
+        [XmlArrayItem("ResourceRetriever")]
+        public List<ResourceRetrieverInfo> ResourceRetrieverInfos {
             get {
-                return resourceRetrieverTypes;
+                return resourceRetrieverInfos;
             }
             set {
-                resourceRetrieverTypes = value;
+                resourceRetrieverInfos = value;
             }
         }
 
@@ -269,11 +295,12 @@ namespace SharpFile.Infrastructure {
         public List<IResource> Resources {
             get {
                 if (resourceRetrievers == null) {
-                    resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverTypes.Count);
+                    resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverInfos.Count);
 
-                    foreach (FullyQualifiedType fullyQualifiedType in resourceRetrieverTypes) {
+                    foreach (ResourceRetrieverInfo resourceRetrieverInfo in resourceRetrieverInfos) {
                         ObjectHandle objectHandle = Activator.CreateInstance(
-                                fullyQualifiedType.AssemblyName, fullyQualifiedType.TypeName);
+                                resourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                resourceRetrieverInfo.FullyQualifiedType.Name);
                         object obj = objectHandle.Unwrap();
 
                         if (obj is IResourceRetriever) {
