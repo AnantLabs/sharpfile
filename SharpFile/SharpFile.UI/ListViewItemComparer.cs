@@ -28,7 +28,7 @@ namespace SharpFile.UI {
         /// <param name="y">The second object to compare.</param>
         /// <returns>Comparison of the first object versus the second.</returns>
         public int Compare(object x, object y) {
-            int compareResult;
+            int compareResult = 0;
 
             ListViewItem itemX = (ListViewItem)x;
             ListViewItem itemY = (ListViewItem)y;
@@ -38,21 +38,36 @@ namespace SharpFile.UI {
             string valueY = (string)itemY.SubItems[columnIndex].Tag;
 
             if (directoriesSortedFirst) {
-                if (resourceX is DirectoryInfo && resourceY is DirectoryInfo) {
+                if (resourceX is RootDirectoryInfo) {
+                    compareResult = 0;
+                } else if (resourceX is ParentDirectoryInfo) {
+                    compareResult = 0;
+                } else if (resourceX is DirectoryInfo && resourceY is DirectoryInfo) {
                     compareResult = comparer.Compare(
                         valueX,
                         valueY);
-                } else if (resourceX is DirectoryInfo || resourceY is DirectoryInfo) {
+                } else if (!(resourceX is DirectoryInfo) && !(resourceY is DirectoryInfo)) {
+                    compareResult = comparer.Compare(
+                        valueX,
+                        valueY);
+                } else if (resourceX is DirectoryInfo && resourceY is FileInfo) {
+                    compareResult = 0;
+                } else if (resourceY is DirectoryInfo && resourceX is FileInfo) {
+                    compareResult = 1;
+                } else {
+                    compareResult = 0;
+                }
+            } else {
+                if (resourceX is RootDirectoryInfo) {
+                    compareResult = 0;
+                } else if (resourceX is ParentDirectoryInfo) {
                     compareResult = 0;
                 } else {
                     compareResult = comparer.Compare(
-                        valueX,
-                        valueY);
+                            valueX,
+                            valueY);
+
                 }
-            } else {
-                compareResult = comparer.Compare(
-                        valueX,
-                        valueY);
             }
 
             // Calculate correct return value based on object comparison.
