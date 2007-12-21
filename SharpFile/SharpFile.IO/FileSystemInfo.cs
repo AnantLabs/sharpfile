@@ -50,7 +50,16 @@ namespace SharpFile.IO {
 			get {
 				if (root == null) {
 					string rootString = fullPath.Substring(0, FullPath.IndexOf(":"));
-					root = new DriveInfo(new System.IO.DriveInfo(rootString));					
+
+                    IResource resource = Settings.Instance.Resources.Find(delegate(IResource r) {
+                        return r.FullPath.ToLower().Equals(fullPath.ToLower());
+                    });
+
+                    if (resource != null) {
+                        root = new DriveInfo(new System.IO.DriveInfo(rootString), resource.ChildResourceRetriever);
+                    } else {
+                        throw new Exception("Root cannot be found.");
+                    }
 				}
 
 				return root;

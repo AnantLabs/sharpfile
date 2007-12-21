@@ -8,9 +8,9 @@ namespace SharpFile.IO {
 		/// </summary>
 		/// <param name="path">Path to retrieve the object for.</param>
 		/// <returns>A IChildResource object, or null if it is not valid.</returns>
-		public static IChildResource GetChildResource(string path) {
+		public static IChildResource GetChildResource(string path, IChildResourceRetriever childResourceRetriever) {
 			if (DirectoryInfo.Exists(path)) {
-				return new DirectoryInfo(path);
+                return new DirectoryInfo(path, childResourceRetriever);
 			} else if (FileInfo.Exists(path)) {
 				return new FileInfo(path);
 			}

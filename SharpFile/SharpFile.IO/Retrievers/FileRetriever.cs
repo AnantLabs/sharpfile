@@ -66,7 +66,8 @@ namespace SharpFile.IO.Retrievers {
                 view.UpdateProgress(e.ProgressPercentage);
             };
 
-            if (!backgroundWorker.CancellationPending) {
+            if (!backgroundWorker.CancellationPending &&
+                !backgroundWorker.IsBusy) {
                 backgroundWorker.RunWorkerAsync();
             }
         }
@@ -79,30 +80,9 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        public static string GetDateTimeShortDateString(string dateTime) {
-            string val = dateTime;
-            DateTime parsedDateTime;
-
-            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
-                val = parsedDateTime.ToShortDateString();
-            }
-
-            return val;
-        }
-
-        public static string GetDateTimeShortTimeString(string dateTime) {
-            string val = dateTime;
-            DateTime parsedDateTime;
-
-            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
-                val = parsedDateTime.ToShortTimeString();
-            }
-
-            return val;
-        }
-
-        public IEnumerable<ColumnInfo> ColumnInfos {
+        public List<ColumnInfo> ColumnInfos {
             get {
+                /*
                 if (columnInfos == null) {
                     columnInfos = new List<ColumnInfo>();
                     columnInfos.Add(
@@ -115,16 +95,28 @@ namespace SharpFile.IO.Retrievers {
 
                     columnInfos.Add(
                         new ColumnInfo("Date", "LastWriteTime",
-                            new ColumnInfo.CustomMethod(GetDateTimeShortDateString),
+                            new ColumnInfo.CustomMethod(Settings.GetDateTimeShortDateString),
                             new StringLogicalComparer()));
 
                     columnInfos.Add(
                         new ColumnInfo("Time", "LastWriteTime",
-                            new ColumnInfo.CustomMethod(GetDateTimeShortTimeString),
+                            new ColumnInfo.CustomMethod(Settings.GetDateTimeShortTimeString),
                             new StringLogicalComparer()));
+                }
+                */
+
+                if (columnInfos == null) {
+                    throw new Exception("No column information has been set.");
+
+                    //columnInfos = new List<ColumnInfo>();
+                    //columnInfos.Add(
+                    //    new ColumnInfo("Filename", "DisplayName", new StringLogicalComparer(), true));
                 }
 
                 return columnInfos;
+            }
+            set {
+                columnInfos = value;
             }
         }
 

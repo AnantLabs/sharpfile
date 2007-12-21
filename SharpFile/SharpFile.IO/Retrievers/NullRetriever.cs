@@ -15,6 +15,9 @@ namespace SharpFile.IO.Retrievers {
 			get {
 				throw new Exception("No child resource specified.");
 			}
+            set {
+                throw new Exception("No child resource specified.");
+            }
 		}
 	}
 }

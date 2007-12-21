@@ -14,13 +14,14 @@ namespace SharpFile.IO.ParentResources {
         private DriveType driveType;
         private bool? isReady;
         private DirectoryInfo directoryInfo;
-        private IChildResourceRetriever childResourceRetriever = new FileRetriever();
+        private IChildResourceRetriever childResourceRetriever;
 
-        public DriveInfo(System.IO.DriveInfo driveInfo) {
+        public DriveInfo(System.IO.DriveInfo driveInfo, IChildResourceRetriever childResourceRetriever) {
             this.driveInfo = driveInfo;
             this.name = driveInfo.Name;
             this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
             this.fullPath = name;
+            this.childResourceRetriever = childResourceRetriever;
 
             if (driveInfo.IsReady) {
                 this.label = driveInfo.VolumeLabel;
@@ -69,12 +70,14 @@ namespace SharpFile.IO.ParentResources {
         }
 
         public void Execute(IView view) {
-            this.ChildResourceRetriever.Get(view, this);
+            if (this.ChildResourceRetriever != null) {
+                this.ChildResourceRetriever.Get(view, this);
+            }
         }
 
         public IEnumerable<IChildResource> GetDirectories() {
             if (directoryInfo == null) {
-                directoryInfo = new DirectoryInfo(this.FullPath);
+                directoryInfo = new DirectoryInfo(this.FullPath, childResourceRetriever);
             }
 
             return directoryInfo.GetDirectories();
@@ -86,7 +89,7 @@ namespace SharpFile.IO.ParentResources {
 
         public IEnumerable<IChildResource> GetFiles(string filter) {
             if (directoryInfo == null) {
-                directoryInfo = new DirectoryInfo(this.FullPath);
+                directoryInfo = new DirectoryInfo(this.FullPath, childResourceRetriever);
             }
 
             return directoryInfo.GetFiles(filter);

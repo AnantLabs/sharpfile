@@ -10,6 +10,7 @@ using SharpFile.UI;
 using DriveInfo = SharpFile.IO.ParentResources.DriveInfo;
 using DriveType = SharpFile.IO.DriveType;
 using View = SharpFile.Infrastructure.View;
+using SharpFile.IO.Retrievers;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -144,7 +145,7 @@ namespace SharpFile {
         /// </summary>
         private void tlsPath_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Enter) {
-                IChildResource resource = ChildResourceFactory.GetChildResource(Path);
+                IChildResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
 
                 if (resource != null) {
                     resource.Execute(view);
@@ -159,7 +160,7 @@ namespace SharpFile {
         /// Refreshes the view when Enter is pressed in the filter textbox.
         /// </summary>
         private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
-            IChildResource resource = ChildResourceFactory.GetChildResource(Path);
+            IChildResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
             resource.Execute(view);
         }
 
@@ -185,7 +186,7 @@ namespace SharpFile {
         /// </summary>
         private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
             string path = e.FullPath;
-            IChildResource resource = ChildResourceFactory.GetChildResource(path);
+            IChildResource resource = ChildResourceFactory.GetChildResource(path, ChildResourceRetriever);
 
             // Required to ensure the view update occurs on the calling thread.
             view.Control.BeginInvoke((MethodInvoker)delegate {
@@ -271,7 +272,7 @@ namespace SharpFile {
                             if (!isLocalDiskFound) {
                                 // If the path has been defined and it is valid, then grab information about it.
                                 if (!string.IsNullOrEmpty(Path)) {
-                                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path);
+                                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, resource.ChildResourceRetriever);
 
                                     if (pathResource != null &&
                                         pathResource.Root.FullPath.Equals(resource.FullPath)) {
@@ -412,6 +413,16 @@ namespace SharpFile {
         public IView View {
             get {
                 return view;
+            }
+        }
+
+        public IChildResourceRetriever ChildResourceRetriever {
+            get {
+                IResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
+
+                return Settings.Instance.Resources.Find(delegate(IResource r) {
+                    return r.FullPath.ToLower().Equals(resource.Root.FullPath.ToLower());
+                }).ChildResourceRetriever;
             }
         }
         #endregion

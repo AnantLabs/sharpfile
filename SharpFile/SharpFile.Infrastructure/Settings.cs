@@ -30,13 +30,16 @@ namespace SharpFile.Infrastructure {
     /// Object that stores the assembly and type name for a type. Cannot be a struct 
     /// because a parameter-less ctor is required for Xml serialization.
     /// </summary>
-    public struct FullyQualifiedType {
+    public class FullyQualifiedType {
         private string assembly;
-        private string name;
+        private string type;
 
-        public FullyQualifiedType(string assembly, string name) {
+        public FullyQualifiedType() {
+        }
+
+        public FullyQualifiedType(string assembly, string type) {
             this.assembly = assembly;
-            this.name = name;
+            this.type = type;
         }
 
         [XmlAttribute("Assembly")]
@@ -49,24 +52,61 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        [XmlAttribute("Name")]
-        public string Name {
+        [XmlAttribute("Type")]
+        public string Type {
             get {
-                return name;
+                return type;
             }
             set {
-                name = value;
+                type = value;
             }
         }
     }
 
-    public struct ResourceRetrieverInfo {
+    public class FullyQualifiedMethod {
+        private FullyQualifiedType fullyQualifiedType;
+        private string method;
+
+        public FullyQualifiedMethod() {
+        }
+
+        public FullyQualifiedMethod(FullyQualifiedType fullyQualifiedType, string method) {
+            this.fullyQualifiedType = fullyQualifiedType;
+            this.method = method;
+        }
+
+        public FullyQualifiedType Type {
+            get {
+                return fullyQualifiedType;
+            }
+            set {
+                fullyQualifiedType = value;
+            }
+        }
+
+        [XmlAttribute("Method")]
+        public string Method {
+            get {
+                return method;
+            }
+            set {
+                method = value;
+            }
+        }
+    }
+
+    public class ResourceRetrieverInfo {
         private FullyQualifiedType fullyQualifiedType;
         private string name;
+        private string childResourceRetriever;
 
-        public ResourceRetrieverInfo(string name, FullyQualifiedType fullyQualifiedType) {
+        public ResourceRetrieverInfo() {
+        }
+
+        public ResourceRetrieverInfo(string name, string childResourceRetriever, FullyQualifiedType fullyQualifiedType) {
             this.name = name;
             this.fullyQualifiedType = fullyQualifiedType;
+            this.childResourceRetriever = childResourceRetriever;
         }
 
         [XmlAttribute("Name")]
@@ -76,6 +116,64 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 name = value;
+            }
+        }
+
+        [XmlAttribute("ChildResourceRetriever")]
+        public string ChildResourceRetriever {
+            get {
+                return childResourceRetriever;
+            }
+            set {
+                childResourceRetriever = value;
+            }
+        }
+
+        public FullyQualifiedType FullyQualifiedType {
+            get {
+                return fullyQualifiedType;
+            }
+            set {
+                fullyQualifiedType = value;
+            }
+        }
+    }
+
+    public class ChildResourceRetrieverInfo {
+        private string name;
+        private FullyQualifiedType fullyQualifiedType;
+        private List<ColumnInfo> columnInfos;
+
+        /// <summary>
+        /// Empty ctor for xml serialization.
+        /// </summary>
+        public ChildResourceRetrieverInfo() {
+        }
+
+        public ChildResourceRetrieverInfo(string name, List<ColumnInfo> columnInfos, FullyQualifiedType fullyQualifiedType) {
+            this.name = name;
+            this.fullyQualifiedType = fullyQualifiedType;
+            this.columnInfos = columnInfos;
+        }
+
+        [XmlAttribute("Name")]
+        public string Name {
+            get {
+                return name;
+            }
+            set {
+                name = value;
+            }
+        }
+
+        [XmlArray("ColumnInfos")]
+        [XmlArrayItem("ColumnInfo")]
+        public List<ColumnInfo> ColumnInfos {
+            get {
+                return columnInfos;
+            }
+            set {
+                columnInfos = value;
             }
         }
 
@@ -93,7 +191,7 @@ namespace SharpFile.Infrastructure {
 	/// Settings singleton.
 	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html.
 	/// </summary>
-	[Serializable()]
+	[Serializable]
 	public sealed class Settings {
 		public const string FilePath = "settings.config";
 
@@ -108,7 +206,7 @@ namespace SharpFile.Infrastructure {
         private int splitterPercentage = 50;
 		private Nodes keyCodes;
         private List<ResourceRetrieverInfo> resourceRetrieverInfos;
-        private List<FullyQualifiedType> childResourceRetrieverTypes;
+        private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private bool directoriesSortedFirst = true;
 
         private List<IResourceRetriever> resourceRetrievers;
@@ -135,54 +233,121 @@ namespace SharpFile.Infrastructure {
         #region Static methods.
         public static void Load() {
             lock (lockObject) {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
-                bool settingsLoaded = false;
+                try {
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
+                    bool settingsLoaded = false;
 
-                // If there is no settings file, create one from some defaults.
-                if (File.Exists(FilePath)) {
-                    try {
-                        // Set our instance properties from the Xml file.
-                        using (TextReader tr = new StreamReader(FilePath)) {
-                            Settings settings = (Settings)xmlSerializer.Deserialize(tr);
+                    // If there is no settings file, create one from some defaults.
+                    if (File.Exists(FilePath)) {
+                        try {
+                            // Set our instance properties from the Xml file.
+                            using (TextReader tr = new StreamReader(FilePath)) {
+                                Settings settings = (Settings)xmlSerializer.Deserialize(tr);
 
-                            foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
-                                // Only set properties which have a setter.
-                                if (propertyInfo.CanWrite) {
-                                    instance.GetType().GetProperty(propertyInfo.Name).SetValue(
-                                        instance,
-                                        propertyInfo.GetValue(settings, null),
-                                        null);
+                                foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
+                                    // Only set properties which have a setter.
+                                    if (propertyInfo.CanWrite) {
+                                        instance.GetType().GetProperty(propertyInfo.Name).SetValue(
+                                            instance,
+                                            propertyInfo.GetValue(settings, null),
+                                            null);
+                                    }
                                 }
                             }
+
+                            settingsLoaded = true;
+                        } catch (Exception ex) {
+                            string blob = ex.Message + ex.StackTrace;
+                            settingsLoaded = false;
+
+                            // TODO: Show a message saying that default values have been loaded.
                         }
-
-                        settingsLoaded = true;
-                    } catch (Exception ex) {
-                        string blob = ex.Message + ex.StackTrace;
-                        settingsLoaded = false;
-
-                        // TODO: Show a message saying that default values have been loaded.
                     }
-                }
 
-                // Set up some defaults, since it doesn't look like any settings were found.
-                if (!settingsLoaded) {
-                    List<ResourceRetrieverInfo> resourceRetrieverInfos = new List<ResourceRetrieverInfo>();
-                    resourceRetrieverInfos.Add(new ResourceRetrieverInfo("DriveRetriever",
-                        new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.DriveRetriever")));
-                    resourceRetrieverInfos.Add(new ResourceRetrieverInfo("NetworkDriveRetriever", 
-                        new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.NetworkDriveRetriever")));
-                    instance.ResourceRetrieverInfos = resourceRetrieverInfos;
+                    // Set up some defaults, since it doesn't look like any settings were found.
+                    if (!settingsLoaded) {
+                        List<ResourceRetrieverInfo> resourceRetrieverInfos = new List<ResourceRetrieverInfo>();
+                        resourceRetrieverInfos.Add(new ResourceRetrieverInfo("DriveRetriever",
+                            "FileRetriever",
+                            new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.DriveRetriever")));
+                        resourceRetrieverInfos.Add(new ResourceRetrieverInfo("NetworkDriveRetriever",
+                            "FileRetriever",
+                            new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.NetworkDriveRetriever")));
+                        instance.ResourceRetrieverInfos = resourceRetrieverInfos;
 
-                    Nodes defaultKeys = new Nodes();
-                    defaultKeys.Add("Rename", Keys.F2);
-                    instance.KeyCodes = defaultKeys;
+                        // TODO: Add FullyQualifiedMethod to the ColumnInfo ctor.
+                        List<ColumnInfo> columnInfos = new List<ColumnInfo>();
+                        columnInfos.Add(
+                            new ColumnInfo("Filename", "DisplayName",
+                                new StringLogicalComparer(), true));
 
-                    using (TextWriter tw = new StreamWriter(FilePath)) {
-                        xmlSerializer.Serialize(tw, instance);
+                        columnInfos.Add(
+                            new ColumnInfo("Size", "Size",
+                                new ColumnInfo.CustomMethod(Common.General.GetHumanReadableSize),
+                                new StringLogicalComparer()));
+
+                        columnInfos.Add(
+                            new ColumnInfo("Date", "LastWriteTime",
+                                new ColumnInfo.CustomMethod(GetDateTimeShortDateString),
+                                new StringLogicalComparer()));
+
+                        columnInfos.Add(
+                            new ColumnInfo("Time", "LastWriteTime",
+                                new ColumnInfo.CustomMethod(GetDateTimeShortTimeString),
+                                new StringLogicalComparer()));
+
+                        List<ChildResourceRetrieverInfo> childResourceRetrieverInfos = new List<ChildResourceRetrieverInfo>();
+                        childResourceRetrieverInfos.Add(new ChildResourceRetrieverInfo("FileRetriever",
+                            columnInfos,
+                            new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.FileRetriever")));
+
+                        instance.ChildResourceRetrieverInfos = childResourceRetrieverInfos;
+
+                        Nodes defaultKeys = new Nodes();
+                        defaultKeys.Add("Rename", Keys.F2);
+                        instance.KeyCodes = defaultKeys;
+
+                        using (TextWriter tw = new StreamWriter(FilePath)) {
+                            xmlSerializer.Serialize(tw, instance);
+                        }
                     }
+                } catch (Exception ex) {
+                    Exception insideException = getInnerException(ex);
+                    string error = insideException.Message + insideException.StackTrace;
+
+                    // Error: Settings object could not be serialized. 
                 }
             }
+        }
+
+        public static Exception getInnerException(Exception ex) {
+            if (ex.InnerException == null) {
+                return ex;
+            }
+
+            return getInnerException(ex.InnerException);
+        }
+
+        public static string GetDateTimeShortDateString(string dateTime) {
+            string val = dateTime;
+            DateTime parsedDateTime;
+
+            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
+                val = parsedDateTime.ToShortDateString();
+            }
+
+            return val;
+        }
+
+        public static string GetDateTimeShortTimeString(string dateTime) {
+            string val = dateTime;
+            DateTime parsedDateTime;
+
+            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
+                val = parsedDateTime.ToShortTimeString();
+            }
+
+            return val;
         }
 
 		public static void Save() {
@@ -194,6 +359,11 @@ namespace SharpFile.Infrastructure {
 				}
 			}
 		}
+
+        public static object InstantiateObject(string assembly, string type) {
+            ObjectHandle objectHandle = Activator.CreateInstance(assembly, type);
+            return objectHandle.Unwrap();
+        }
         #endregion
 
         #region Static properties
@@ -290,23 +460,57 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        [XmlArray("ChildResourceRetrievers")]
+        [XmlArrayItem("ChildResourceRetriever")]
+        public List<ChildResourceRetrieverInfo> ChildResourceRetrieverInfos {
+            get {
+                return childResourceRetrieverInfos;
+            }
+            set {
+                childResourceRetrieverInfos = value;
+            }
+        }
+
         #region Properties not derived from settings.config.
         [XmlIgnore]
         public List<IResource> Resources {
             get {
-                if (resourceRetrievers == null) {
+                if (resourceRetrievers == null || resourceRetrievers.Count == 0) {
                     resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverInfos.Count);
 
                     foreach (ResourceRetrieverInfo resourceRetrieverInfo in resourceRetrieverInfos) {
-                        ObjectHandle objectHandle = Activator.CreateInstance(
-                                resourceRetrieverInfo.FullyQualifiedType.Assembly,
-                                resourceRetrieverInfo.FullyQualifiedType.Name);
-                        object obj = objectHandle.Unwrap();
+                        object resourceRetrieverObject = InstantiateObject(
+                            resourceRetrieverInfo.FullyQualifiedType.Assembly,
+                            resourceRetrieverInfo.FullyQualifiedType.Type);
 
-                        if (obj is IResourceRetriever) {
-                            resourceRetrievers.Add(obj as IResourceRetriever);
+                        if (resourceRetrieverObject is IResourceRetriever) {
+                            IResourceRetriever resourceRetriever = (IResourceRetriever)resourceRetrieverObject;
+                            string childResourceRetrieverName = resourceRetrieverInfo.ChildResourceRetriever;
+
+                            ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
+                                return c.Name == childResourceRetrieverName;
+                            });
+
+                            if (childResourceRetrieverInfo != null) {
+                                object childResourceRetrieverObject = InstantiateObject(
+                                    childResourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                    childResourceRetrieverInfo.FullyQualifiedType.Type);
+
+                                if (childResourceRetrieverObject is IChildResourceRetriever) {
+                                    IChildResourceRetriever childResourceRetriever = (IChildResourceRetriever)childResourceRetrieverObject;
+                                    childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
+
+                                    resourceRetriever.ChildResourceRetriever = childResourceRetriever;
+                                } else {
+                                    // TODO: Log an error: ChildResourceRetriever is not derived from IChildResourceRetriever.
+                                }
+                            } else {
+                                // TODO: Log an error: ChildResourceRetriever could not be found.
+                            }
+
+                            resourceRetrievers.Add(resourceRetriever);
                         } else {
-                            // TODO: Log an error here. "Unhandled resource type: " + fullyQualifiedType.TypeName
+                            // TODO: Log an error here: ResourceRetriever not derived from IResourceRetriever.
                         }
                     }
                 }

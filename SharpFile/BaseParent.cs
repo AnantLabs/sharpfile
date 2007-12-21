@@ -23,6 +23,7 @@ namespace SharpFile {
 
 		protected ToolStripMenuItem fileMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem exitToolStripMenuItem = new ToolStripMenuItem();
+        protected ToolStripMenuItem reloadSettingsStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem editMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem undoToolStripMenuItem = new ToolStripMenuItem();
@@ -115,20 +116,24 @@ namespace SharpFile {
 
 			addMenuStripItems();
 			this.menuStrip.BackColor = SystemColors.Control;
-			this.menuStrip.RenderMode = ToolStripRenderMode.System;
-			this.menuStrip.TabIndex = 0;
+            this.menuStrip.RenderMode = ToolStripRenderMode.System;
+            this.menuStrip.TabIndex = 0;
 
-			this.fileMenu.DropDownItems.AddRange(new ToolStripItem[]
+            this.fileMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
-																							this.exitToolStripMenuItem
+                                                        this.reloadSettingsStripMenuItem,
+														this.exitToolStripMenuItem
 			                                     	});
-			this.fileMenu.ImageTransparentColor = SystemColors.ActiveBorder;
-			this.fileMenu.Size = new Size(35, 20);
-			this.fileMenu.Text = "&File";
+            this.fileMenu.ImageTransparentColor = SystemColors.ActiveBorder;
+            this.fileMenu.Size = new Size(35, 20);
+            this.fileMenu.Text = "&File";
 
-			this.exitToolStripMenuItem.Size = new Size(145, 22);
+            this.exitToolStripMenuItem.Size = new Size(145, 22);
 			this.exitToolStripMenuItem.Text = "E&xit";
 			this.exitToolStripMenuItem.Click += this.ExitToolsStripMenuItem_Click;
+
+            this.reloadSettingsStripMenuItem.Text = "&Reload Settings";
+            this.reloadSettingsStripMenuItem.Click += this.reloadSettingsStripMenuItem_Click;
 
 			this.editMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
@@ -257,6 +262,12 @@ namespace SharpFile {
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+
+        private void reloadSettingsStripMenuItem_Click(object sender, EventArgs e) {
+            Settings.Load();
+
+            // Refresh the screen.
+        }
 
 		private void ExitToolsStripMenuItem_Click(object sender, EventArgs e) {
 			Application.Exit();

@@ -302,7 +302,7 @@ namespace SharpFile {
 
             string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string fileDrop in fileDrops) {
-                IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop);
+                IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop, ChildResourceRetriever);
 
                 if (resource != null) {
                     string destination = string.Format(@"{0}{1}",
@@ -367,8 +367,8 @@ namespace SharpFile {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
                 if (files.Length > 0) {
-                    IChildResource fileResource = ChildResourceFactory.GetChildResource(files[0]);
-                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path);
+                    IChildResource fileResource = ChildResourceFactory.GetChildResource(files[0], ChildResourceRetriever);
+                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
 
                     if (!fileResource.Root.FullPath.Equals(pathResource.Root.FullPath)) {
                         if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
@@ -709,6 +709,12 @@ namespace SharpFile {
                         this.Columns.Add(columnHeader);
                     }
                 }
+            }
+        }
+
+        public IChildResourceRetriever ChildResourceRetriever {
+            get {
+                return Forms.GetPropertyInParent<IChildResourceRetriever>(this.Parent, "ChildResourceRetriever");
             }
         }
     }
