@@ -4,190 +4,12 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Serialization;
+using System.Xml;
+using System.Text;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
-    /// Specifies what "mode" the view should be.
-    /// </summary>
-	public enum ParentType {
-        /// <summary>
-        /// Every view is its own child window.
-        /// </summary>
-		Mdi,
-        /// <summary>
-        /// Every view is its own tab.
-        /// </summary>
-		Tab,
-        /// <summary>
-        /// Two views that fill up the parent window. The default.
-        /// </summary>
-		Dual
-	}
-
-    /// <summary>
-    /// Object that stores the assembly and type name for a type. Cannot be a struct 
-    /// because a parameter-less ctor is required for Xml serialization.
-    /// </summary>
-    public class FullyQualifiedType {
-        private string assembly;
-        private string type;
-
-        public FullyQualifiedType() {
-        }
-
-        public FullyQualifiedType(string assembly, string type) {
-            this.assembly = assembly;
-            this.type = type;
-        }
-
-        [XmlAttribute("Assembly")]
-        public string Assembly {
-            get {
-                return assembly;
-            }
-            set {
-                assembly = value;
-            }
-        }
-
-        [XmlAttribute("Type")]
-        public string Type {
-            get {
-                return type;
-            }
-            set {
-                type = value;
-            }
-        }
-    }
-
-    public class FullyQualifiedMethod {
-        private FullyQualifiedType fullyQualifiedType;
-        private string method;
-
-        public FullyQualifiedMethod() {
-        }
-
-        public FullyQualifiedMethod(FullyQualifiedType fullyQualifiedType, string method) {
-            this.fullyQualifiedType = fullyQualifiedType;
-            this.method = method;
-        }
-
-        public FullyQualifiedType Type {
-            get {
-                return fullyQualifiedType;
-            }
-            set {
-                fullyQualifiedType = value;
-            }
-        }
-
-        [XmlAttribute("Method")]
-        public string Method {
-            get {
-                return method;
-            }
-            set {
-                method = value;
-            }
-        }
-    }
-
-    public class ResourceRetrieverInfo {
-        private FullyQualifiedType fullyQualifiedType;
-        private string name;
-        private string childResourceRetriever;
-
-        public ResourceRetrieverInfo() {
-        }
-
-        public ResourceRetrieverInfo(string name, string childResourceRetriever, FullyQualifiedType fullyQualifiedType) {
-            this.name = name;
-            this.fullyQualifiedType = fullyQualifiedType;
-            this.childResourceRetriever = childResourceRetriever;
-        }
-
-        [XmlAttribute("Name")]
-        public string Name {
-            get {
-                return name;
-            }
-            set {
-                name = value;
-            }
-        }
-
-        [XmlAttribute("ChildResourceRetriever")]
-        public string ChildResourceRetriever {
-            get {
-                return childResourceRetriever;
-            }
-            set {
-                childResourceRetriever = value;
-            }
-        }
-
-        public FullyQualifiedType FullyQualifiedType {
-            get {
-                return fullyQualifiedType;
-            }
-            set {
-                fullyQualifiedType = value;
-            }
-        }
-    }
-
-    public class ChildResourceRetrieverInfo {
-        private string name;
-        private FullyQualifiedType fullyQualifiedType;
-        private List<ColumnInfo> columnInfos;
-
-        /// <summary>
-        /// Empty ctor for xml serialization.
-        /// </summary>
-        public ChildResourceRetrieverInfo() {
-        }
-
-        public ChildResourceRetrieverInfo(string name, List<ColumnInfo> columnInfos, FullyQualifiedType fullyQualifiedType) {
-            this.name = name;
-            this.fullyQualifiedType = fullyQualifiedType;
-            this.columnInfos = columnInfos;
-        }
-
-        [XmlAttribute("Name")]
-        public string Name {
-            get {
-                return name;
-            }
-            set {
-                name = value;
-            }
-        }
-
-        [XmlArray("ColumnInfos")]
-        [XmlArrayItem("ColumnInfo")]
-        public List<ColumnInfo> ColumnInfos {
-            get {
-                return columnInfos;
-            }
-            set {
-                columnInfos = value;
-            }
-        }
-
-        public FullyQualifiedType FullyQualifiedType {
-            get {
-                return fullyQualifiedType;
-            }
-            set {
-                fullyQualifiedType = value;
-            }
-        }
-    }
-
-	/// <summary>
 	/// Settings singleton.
 	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html.
 	/// </summary>
@@ -236,86 +58,63 @@ namespace SharpFile.Infrastructure {
                 try {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
                     bool settingsLoaded = false;
+                    FileInfo fileInfo = new FileInfo(FilePath);
 
                     // If there is no settings file, create one from some defaults.
-                    if (File.Exists(FilePath)) {
+                    if (fileInfo.Exists && fileInfo.Length > 0) {
                         try {
                             // Set our instance properties from the Xml file.
-                            using (TextReader tr = new StreamReader(FilePath)) {
-                                Settings settings = (Settings)xmlSerializer.Deserialize(tr);
-
-                                foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
-                                    // Only set properties which have a setter.
-                                    if (propertyInfo.CanWrite) {
-                                        instance.GetType().GetProperty(propertyInfo.Name).SetValue(
-                                            instance,
-                                            propertyInfo.GetValue(settings, null),
-                                            null);
-                                    }
-                                }
-                            }
+                            deserializeSettings(xmlSerializer);
 
                             settingsLoaded = true;
                         } catch (Exception ex) {
                             string blob = ex.Message + ex.StackTrace;
                             settingsLoaded = false;
 
-                            // TODO: Show a message saying that default values have been loaded.
+                            // TODO: Show a message saying that default values will 
+                            // be loaded because there was an error.
                         }
+                    } else {
+                        // TODO: Show a message saying that default values will 
+                        // be loaded because the file is missing or empty.
                     }
 
-                    // Set up some defaults, since it doesn't look like any settings were found.
+                    // Load up some defaults, since it doesn't look like any settings were found.
                     if (!settingsLoaded) {
-                        List<ResourceRetrieverInfo> resourceRetrieverInfos = new List<ResourceRetrieverInfo>();
-                        resourceRetrieverInfos.Add(new ResourceRetrieverInfo("DriveRetriever",
-                            "FileRetriever",
-                            new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.DriveRetriever")));
-                        resourceRetrieverInfos.Add(new ResourceRetrieverInfo("NetworkDriveRetriever",
-                            "FileRetriever",
-                            new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.NetworkDriveRetriever")));
-                        instance.ResourceRetrieverInfos = resourceRetrieverInfos;
+                        // Retrieve default xml from the resource embedded in this assembly.
+                        XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+                        xmlWriterSettings.Encoding = Encoding.UTF8;
+                        xmlWriterSettings.Indent = true;
 
-                        // TODO: Add FullyQualifiedMethod to the ColumnInfo ctor.
-                        List<ColumnInfo> columnInfos = new List<ColumnInfo>();
-                        columnInfos.Add(
-                            new ColumnInfo("Filename", "DisplayName",
-                                new StringLogicalComparer(), true));
-
-                        columnInfos.Add(
-                            new ColumnInfo("Size", "Size",
-                                new ColumnInfo.CustomMethod(Common.General.GetHumanReadableSize),
-                                new StringLogicalComparer()));
-
-                        columnInfos.Add(
-                            new ColumnInfo("Date", "LastWriteTime",
-                                new ColumnInfo.CustomMethod(GetDateTimeShortDateString),
-                                new StringLogicalComparer()));
-
-                        columnInfos.Add(
-                            new ColumnInfo("Time", "LastWriteTime",
-                                new ColumnInfo.CustomMethod(GetDateTimeShortTimeString),
-                                new StringLogicalComparer()));
-
-                        List<ChildResourceRetrieverInfo> childResourceRetrieverInfos = new List<ChildResourceRetrieverInfo>();
-                        childResourceRetrieverInfos.Add(new ChildResourceRetrieverInfo("FileRetriever",
-                            columnInfos,
-                            new FullyQualifiedType("SharpFile.IO", "SharpFile.IO.Retrievers.FileRetriever")));
-
-                        instance.ChildResourceRetrieverInfos = childResourceRetrieverInfos;
-
-                        Nodes defaultKeys = new Nodes();
-                        defaultKeys.Add("Rename", Keys.F2);
-                        instance.KeyCodes = defaultKeys;
-
-                        using (TextWriter tw = new StreamWriter(FilePath)) {
-                            xmlSerializer.Serialize(tw, instance);
+                        using (XmlWriter xmlWriter = XmlWriter.Create(FilePath, xmlWriterSettings)) {
+                            XmlDocument xml = new XmlDocument();
+                            xml.LoadXml(Resource.settings_config);
+                            xml.WriteTo(xmlWriter);
                         }
+
+                        deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
                     Exception insideException = getInnerException(ex);
                     string error = insideException.Message + insideException.StackTrace;
 
-                    // Error: Settings object could not be serialized. 
+                    // Error: Settings object could not be serialized.
+                }
+            }
+        }
+
+        private static void deserializeSettings(XmlSerializer xmlSerializer) {
+            using (TextReader tr = new StreamReader(FilePath)) {
+                Settings settings = (Settings)xmlSerializer.Deserialize(tr);
+
+                foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
+                    // Only set properties which have a setter.
+                    if (propertyInfo.CanWrite) {
+                        instance.GetType().GetProperty(propertyInfo.Name).SetValue(
+                            instance,
+                            propertyInfo.GetValue(settings, null),
+                            null);
+                    }
                 }
             }
         }

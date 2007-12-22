@@ -92,8 +92,6 @@ namespace SharpFile.Infrastructure {
                         } else {
                             // TODO: Log an error: Comparer does not derive from IComparer.
                         }
-                    } else {
-                        // TODO: Log an error: Comparer is not set.
                     }
                 }
 
@@ -125,12 +123,11 @@ namespace SharpFile.Infrastructure {
             get {
                 if (customMethod == null && methodDelegateType != null) {
                     try {
-                        object obj = Settings.InstantiateObject(methodDelegateType.Type.Assembly,
-                            methodDelegateType.Type.Type);
+                        Type type = Assembly.Load(methodDelegateType.FullyQualifiedType.Assembly)
+                            .GetType(methodDelegateType.FullyQualifiedType.Type, true);
 
                         customMethod = (CustomMethod)Delegate.CreateDelegate(typeof(CustomMethod),
-                            obj.GetType().GetMethod(methodDelegateType.Method,
-                            BindingFlags.Public | BindingFlags.Static));
+                            type.GetMethod(methodDelegateType.Method, BindingFlags.Public | BindingFlags.Static));
                     } catch (Exception ex) {
                         string blob = ex.Message + ex.StackTrace;
                         // Error: Log the error right here.

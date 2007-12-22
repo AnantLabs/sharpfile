@@ -43,7 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildResourceRetrieverInfo.cs" />
     <Compile Include="ColumnInfo.cs" />
+    <Compile Include="FullyQualifiedMethod.cs" />
+    <Compile Include="FullyQualifiedType.cs" />
     <Compile Include="IChildResource.cs" />
     <Compile Include="IChildResourceRetriever.cs" />
     <Compile Include="IFileContainer.cs" />
@@ -51,12 +54,29 @@
     <Compile Include="IResource.cs" />
     <Compile Include="IResourceRetriever.cs" />
     <Compile Include="IView.cs" />
+    <Compile Include="ParentType.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceRetrieverInfo.cs" />
     <Compile Include="StringLogicalComparer.cs" />
     <Compile Include="Nodes.cs" />
     <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerEnum.cs" />
     <Compile Include="Settings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\settings.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
