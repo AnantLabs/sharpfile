@@ -1,5 +1,9 @@
 0.60
 	Sorting of listview by columns.
+	Xml configuration
+		- column headers, sorting, custom methods.
+		- child resource retrievers and relationship to resource retrievers.
+	Disable dropdown, path, filter, listview when switching drives.
 
 0.50
 	Dual view.
