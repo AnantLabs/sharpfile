@@ -10,8 +10,5 @@ namespace SharpFile.Infrastructure {
 
 		void Execute(IView view);
 		IChildResourceRetriever ChildResourceRetriever { get; }
-        void GetComplete();
-
-        event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
 	}
 }

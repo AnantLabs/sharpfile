@@ -9,14 +9,13 @@ namespace SharpFile.Infrastructure {
 		void RemoveItem(string path);
 		void UpdatePath(string path);
 		void UpdateProgress(int progress);
-		void ClearView();
+		void Clear();
 		void BeginUpdate();
 		void EndUpdate();
 		string Path { get; }
 		string Filter { get; }
         FileSystemWatcher FileSystemWatcher { get; }
 		Control Control { get; }
-        void CancelChildRetrieverOperations();
         void ShowMessageBox(string text);
         IViewComparer Comparer { get; }
         IEnumerable<ColumnInfo> ColumnInfos { get; set; }
@@ -27,7 +26,6 @@ namespace SharpFile.Infrastructure {
 		event View.OnUpdateProgressDelegate OnUpdateProgress;
 		event View.OnUpdateStatusDelegate OnUpdateStatus;
 		event View.OnUpdatePathDelegate OnUpdatePath;
-        event View.OnCancelOperationsDelegate OnCancelOperations;
 	}
 
 	public static class View {
@@ -35,6 +33,5 @@ namespace SharpFile.Infrastructure {
 		public delegate void OnUpdateProgressDelegate(int value);
 		public delegate void OnUpdatePathDelegate(string path);
 		public delegate void OnUpdateStatusDelegate(string status);
-        public delegate void OnCancelOperationsDelegate();
 	}
 }

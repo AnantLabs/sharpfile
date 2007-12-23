@@ -7,88 +7,78 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace SharpFile.IO.Retrievers {
     [Serializable]
     public class FileRetriever : IChildResourceRetriever {
-        private BackgroundWorker backgroundWorker;
         private List<ColumnInfo> columnInfos;
 
         public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
 
         public FileRetriever() {
-            backgroundWorker = new BackgroundWorker();
-            backgroundWorker.WorkerSupportsCancellation = true;
-            backgroundWorker.WorkerReportsProgress = true;
         }
 
-        protected void GetComplete() {
+        public void GetComplete() {
             if (OnGetComplete != null) {
                 OnGetComplete();
             }
         }
 
         public void Get(IView view, IResource resource) {
-            // Anonymous method that retrieves the file information.
-            backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-                // Disable the filewatcher.
-                view.FileSystemWatcher.EnableRaisingEvents = false;
+            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                backgroundWorker.WorkerSupportsCancellation = true;
+                backgroundWorker.WorkerReportsProgress = true;
 
-                // Grab the files and report the progress to the parent.
-                backgroundWorker.ReportProgress(50);
+                // Anonymous method that retrieves the file information.
+                backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
+                    // Disable the filewatcher.
+                    view.FileSystemWatcher.EnableRaisingEvents = false;
 
-                try {
-                    if (backgroundWorker.CancellationPending) {
+                    // Grab the files and report the progress to the parent.
+                    backgroundWorker.ReportProgress(50);
+
+                    try {
+                        if (backgroundWorker.CancellationPending) {
+                            e.Cancel = true;
+                        } else {
+                            e.Result = getResources(resource, view.Filter);
+                        }
+                    } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
-                    } else {
-                        e.Result = getResources(resource, view.Filter);
+                        view.ShowMessageBox(ex.Message);
+                    } finally {
+                        backgroundWorker.ReportProgress(100);
                     }
-                } catch (UnauthorizedAccessException ex) {
-                    e.Cancel = true;
-                    view.ShowMessageBox(ex.Message);
-                } finally {
-                    backgroundWorker.ReportProgress(100);
-                }
-            };
+                };
 
-            // Method that runs when the DoWork method is finished.
-            backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
-                if (e.Error == null &&
-                    !e.Cancelled &&
-                    e.Result != null &&
-                    e.Result is IEnumerable<IChildResource>) {
-                    IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
+                // Method that runs when the DoWork method is finished.
+                backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
+                    if (e.Error == null &&
+                        !e.Cancelled &&
+                        e.Result != null &&
+                        e.Result is IEnumerable<IChildResource>) {
+                        IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
 
-                    view.BeginUpdate();
-                    view.ColumnInfos = ColumnInfos;
-                    view.ClearView();
-                    view.AddItemRange(resources);
-                    view.EndUpdate();
+                        view.BeginUpdate();
+                        view.ColumnInfos = ColumnInfos;
+                        view.Clear();
+                        view.AddItemRange(resources);
+                        view.EndUpdate();
 
-                    // Update some information about the current directory.
-                    view.UpdatePath(resource.FullPath);
+                        // Update some information about the current directory.
+                        view.UpdatePath(resource.FullPath);
 
-                    // Set up the watcher.
-                    view.FileSystemWatcher.Path = resource.FullPath;
-                    view.FileSystemWatcher.Filter = view.Filter;
-                    view.FileSystemWatcher.EnableRaisingEvents = true;
+                        // Set up the watcher.
+                        view.FileSystemWatcher.Path = resource.FullPath;
+                        view.FileSystemWatcher.Filter = view.Filter;
+                        view.FileSystemWatcher.EnableRaisingEvents = true;
+                    }
 
                     GetComplete();
-                }
-            };
+                };
 
-            // Anonymous method that updates the status to the parent form.
-            backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
-                view.UpdateProgress(e.ProgressPercentage);
-            };
+                // Anonymous method that updates the status to the parent form.
+                backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
+                    view.UpdateProgress(e.ProgressPercentage);
+                };
 
-            if (!backgroundWorker.CancellationPending &&
-                !backgroundWorker.IsBusy) {
                 backgroundWorker.RunWorkerAsync();
-            }
-        }
-
-        public void Cancel() {
-            if (backgroundWorker != null &&
-                backgroundWorker.IsBusy &&
-                !backgroundWorker.CancellationPending) {
-                backgroundWorker.CancelAsync();
             }
         }
 

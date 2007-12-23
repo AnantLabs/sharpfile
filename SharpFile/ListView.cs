@@ -26,12 +26,12 @@ namespace SharpFile {
         private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
         private IViewComparer comparer;
         private IEnumerable<ColumnInfo> columnInfos;
+        private Dictionary<string, PropertyInfo> propertyInfos = new Dictionary<string, PropertyInfo>();
 
         public event View.OnUpdateStatusDelegate OnUpdateStatus;
         public event View.OnUpdateProgressDelegate OnUpdateProgress;
         public event View.OnGetImageIndexDelegate OnGetImageIndex;
         public event View.OnUpdatePathDelegate OnUpdatePath;
-        public event View.OnCancelOperationsDelegate OnCancelOperations;
 
         public ListView(string name) {
             // This prevents flicker in the listview. 
@@ -160,9 +160,12 @@ namespace SharpFile {
                 IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
 
                 if (resource != null) {
-                    CancelOperations();
+                    resource.ChildResourceRetriever.OnGetComplete += delegate {
+                        //this.Enabled = true;
+                    };
 
                     resource.Execute(this);
+                    //this.Enabled = false;
                 }
             }
         }
@@ -211,15 +214,6 @@ namespace SharpFile {
 
             return -1;
         }
-
-        /// <summary>
-        /// Passes the cancel operation action to any listening events.
-        /// </summary>
-        protected void CancelOperations() {
-            if (OnCancelOperations != null) {
-                OnCancelOperations();
-            }
-        }
         #endregion
 
         #region Events.
@@ -265,7 +259,6 @@ namespace SharpFile {
                     calculateSize();
                     break;
                 case Keys.Escape:
-                    CancelOperations();
                     UpdateProgress(100);
                     break;
                 case Keys.Enter:
@@ -459,22 +452,9 @@ namespace SharpFile {
         }
 
         /// <summary>
-        /// Cancels the child retriever operations.
-        /// </summary>
-        public void CancelChildRetrieverOperations() {
-            foreach (ListViewItem item in itemDictionary.Values) {
-                IResource resource = (IResource)item.Tag;
-
-                if (resource.ChildResourceRetriever != null) {
-                    resource.ChildResourceRetriever.Cancel();
-                }
-            }
-        }
-
-        /// <summary>
         /// Clears the listview.
         /// </summary>
-        public void ClearView() {
+        public new void Clear() {
             this.Items.Clear();
             this.itemDictionary.Clear();
         }
@@ -578,12 +558,20 @@ namespace SharpFile {
             item.Name = resource.FullPath;
 
             foreach (ColumnInfo columnInfo in ColumnInfos) {
-                PropertyInfo propertyInfo = resource.GetType().GetProperty(columnInfo.Property);
+                PropertyInfo propertyInfo;
+                string propertyName = columnInfo.Property;
+
+                if (propertyInfos.ContainsKey(propertyName)) {
+                    propertyInfo = propertyInfos[propertyName];
+                } else {
+                    propertyInfo = resource.GetType().GetProperty(propertyName);
+                    propertyInfos.Add(propertyName, propertyInfo);
+                }
 
                 if (propertyInfo != null) {
                     string text = propertyInfo.GetValue(resource, null).ToString();
 
-                    // The original value will be set on the tag for sort-ability.
+                    // The original value will be set on the tag for sortability.
                     string tag = text;
 
                     if (columnInfo.MethodDelegate != null) {

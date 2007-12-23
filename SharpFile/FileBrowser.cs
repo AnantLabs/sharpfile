@@ -76,14 +76,6 @@ namespace SharpFile {
             UpdateParentListing();
         }
 
-        public void CancelOperations() {
-            //foreach (IResourceRetriever resourceRetriever in resourceRetrievers) {
-            //    resourceRetriever.ChildResourceRetriever.Cancel();
-            //}
-
-            view.CancelChildRetrieverOperations();
-        }
-
         #region Delegate methods
         /// <summary>
         /// Passes the filesystem info to any listening events.
@@ -122,7 +114,6 @@ namespace SharpFile {
             this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
             this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
             this.view.OnUpdatePath += UpdatePath;
-            this.view.OnCancelOperations += CancelOperations;
 
             fileSystemWatcher = new FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
@@ -175,7 +166,7 @@ namespace SharpFile {
             tlsFilter.Enabled = false;
             view.Enabled = false;
 
-            resource.OnGetComplete += delegate {
+            resource.ChildResourceRetriever.OnGetComplete += delegate {
                 highlightParentResource(resource, e.ClickedItem.Image);
                 tlsDrives.Enabled = true;
                 tlsPath.Enabled = true;
