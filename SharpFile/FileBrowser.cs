@@ -169,7 +169,19 @@ namespace SharpFile {
         private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
             IResource resource = (IResource)e.ClickedItem.Tag;
             resource.Execute(view);
-            highlightParentResource(resource, e.ClickedItem.Image);
+
+            tlsDrives.Enabled = false;
+            tlsPath.Enabled = false;
+            tlsFilter.Enabled = false;
+            view.Enabled = false;
+
+            resource.OnGetComplete += delegate {
+                highlightParentResource(resource, e.ClickedItem.Image);
+                tlsDrives.Enabled = true;
+                tlsPath.Enabled = true;
+                tlsFilter.Enabled = true;
+                view.Enabled = true;
+            };
         }
 
         /// <summary>

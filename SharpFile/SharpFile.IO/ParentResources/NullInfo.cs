@@ -4,7 +4,15 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ParentResources {
     public class NullInfo : IResource {
+        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+
 		private const string displayName = "---------";
+
+        public void GetComplete() {
+            if (OnGetComplete != null) {
+                OnGetComplete();
+            }
+        }
 
 		#region IParentResource Members
 		public string DisplayName {

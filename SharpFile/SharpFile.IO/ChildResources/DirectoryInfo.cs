@@ -7,6 +7,8 @@ using SharpFile.Infrastructure;
 namespace SharpFile.IO.ChildResources {
     [Serializable]
     public class DirectoryInfo : FileSystemInfo, IChildResource, IFileContainer {
+        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+
         private System.IO.DirectoryInfo directoryInfo;
         private IChildResourceRetriever childResourceRetriever;
 
@@ -21,6 +23,12 @@ namespace SharpFile.IO.ChildResources {
             this.lastWriteTime = directoryInfo.LastWriteTime;
             this.fullPath = directoryInfo.FullName;
             this.childResourceRetriever = childResourceRetriever;
+        }
+
+        public void GetComplete() {
+            if (OnGetComplete != null) {
+                OnGetComplete();
+            }
         }
 
         public System.IO.DirectoryInfo Parent {

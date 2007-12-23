@@ -18,12 +18,15 @@ namespace SharpFile.IO.ParentResources {
         private DirectoryInfo directoryInfo;
         private IChildResourceRetriever childResourceRetriever;
 
+        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+
         public DriveInfo(System.IO.DriveInfo driveInfo, IChildResourceRetriever childResourceRetriever) {
             this.driveInfo = driveInfo;
             this.name = driveInfo.Name;
             this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
             this.fullPath = name;
             this.childResourceRetriever = childResourceRetriever;
+            this.childResourceRetriever.OnGetComplete += GetComplete;
 
             if (driveInfo.IsReady) {
                 this.label = driveInfo.VolumeLabel;
@@ -35,6 +38,12 @@ namespace SharpFile.IO.ParentResources {
             this.displayName = string.Format("{0} <{1}>",
                 fullPath,
                 Common.General.GetHumanReadableSize(availableFreeSpace.ToString()));
+        }
+
+        public void GetComplete() {
+            if (OnGetComplete != null) {
+                OnGetComplete();
+            }
         }
 
         public bool IsReady {

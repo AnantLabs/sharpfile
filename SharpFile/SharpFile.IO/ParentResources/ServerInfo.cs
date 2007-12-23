@@ -5,6 +5,8 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ParentResources {
 	public class ServerInfo : FileSystemInfo, IResource {
+        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+
 		private string label;
 		private string format;
 		private long availableFreeSpace;
@@ -19,6 +21,12 @@ namespace SharpFile.IO.ParentResources {
 
 			//this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
 		}
+
+        public void GetComplete() {
+            if (OnGetComplete != null) {
+                OnGetComplete();
+            }
+        }
 
 		public bool IsReady {
 			get {

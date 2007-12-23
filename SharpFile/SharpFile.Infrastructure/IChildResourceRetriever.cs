@@ -6,5 +6,11 @@ namespace SharpFile.Infrastructure {
         void Cancel();
         IChildResourceRetriever Clone();
         List<ColumnInfo> ColumnInfos { get; set; }
+
+        event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
 	}
+
+    public static class ChildResourceRetriever {
+        public delegate void OnGetCompleteDelegate();
+    }
 }

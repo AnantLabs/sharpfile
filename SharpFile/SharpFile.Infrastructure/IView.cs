@@ -21,6 +21,7 @@ namespace SharpFile.Infrastructure {
         IViewComparer Comparer { get; }
         IEnumerable<ColumnInfo> ColumnInfos { get; set; }
         string Name { get; set; }
+        bool Enabled { get; set; }
 
 		event View.OnGetImageIndexDelegate OnGetImageIndex;
 		event View.OnUpdateProgressDelegate OnUpdateProgress;

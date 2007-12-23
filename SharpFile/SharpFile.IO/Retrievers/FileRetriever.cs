@@ -10,10 +10,18 @@ namespace SharpFile.IO.Retrievers {
         private BackgroundWorker backgroundWorker;
         private List<ColumnInfo> columnInfos;
 
+        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+
         public FileRetriever() {
             backgroundWorker = new BackgroundWorker();
             backgroundWorker.WorkerSupportsCancellation = true;
             backgroundWorker.WorkerReportsProgress = true;
+        }
+
+        protected void GetComplete() {
+            if (OnGetComplete != null) {
+                OnGetComplete();
+            }
         }
 
         public void Get(IView view, IResource resource) {
@@ -60,6 +68,8 @@ namespace SharpFile.IO.Retrievers {
                     view.FileSystemWatcher.Path = resource.FullPath;
                     view.FileSystemWatcher.Filter = view.Filter;
                     view.FileSystemWatcher.EnableRaisingEvents = true;
+
+                    GetComplete();
                 }
             };
 

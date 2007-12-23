@@ -5,6 +5,8 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ChildResources {
 	public class FileInfo : FileSystemInfo, IChildResource {
+        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+
 		private string extension;
 
 		public FileInfo(string fileName)
@@ -18,6 +20,12 @@ namespace SharpFile.IO.ChildResources {
 			this.fullPath = fileInfo.FullName;
 			this.extension = fileInfo.Extension;
 		}
+
+        public void GetComplete() {
+            if (OnGetComplete != null) {
+                OnGetComplete();
+            }
+        }
 
 		public string Extension {
 			get {
