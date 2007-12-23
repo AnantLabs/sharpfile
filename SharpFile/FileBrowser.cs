@@ -278,28 +278,28 @@ namespace SharpFile {
                                     IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, childResourceRetriever);
 
                                     if (pathResource != null &&
-                                        pathResource.Root.FullPath.Equals(resource.FullPath)) {
+                                        pathResource.Root.FullPath.ToLower().Equals(resource.FullPath.ToLower())) {
                                         isLocalDiskFound = true;
 
-                                        highlightParentResource(resource.Root, item.Image);
                                         pathResource.Execute(view);
+                                        highlightParentResource(resource.Root, item.Image);
                                     }
                                 }
 
-                                /*
-                                // If the view hasn't been updated and the resource is a drive, then grab some information about it.
-                                if (!isLocalDiskFound && resource is DriveInfo) {
-                                    DriveInfo driveInfo = (DriveInfo)resource;
+                                // If there is no defined path to retrieve, then attempt to get 
+                                // information about the the first drive found tha tis local and ready.
+                                if (!isLocalDiskFound && resource is SharpFile.IO.ParentResources.DriveInfo) {
+                                    SharpFile.IO.ParentResources.DriveInfo driveInfo = 
+                                        (SharpFile.IO.ParentResources.DriveInfo)resource;
 
                                     if (driveInfo.DriveType == DriveType.Fixed &&
                                         driveInfo.IsReady) {
                                         isLocalDiskFound = true;
 
-                                        highlightParentResource(resource, item.Image);
                                         resource.Execute(view);
+                                        highlightParentResource(resource, item.Image);
                                     }
                                 }
-                                */
                             }
                         }
 
