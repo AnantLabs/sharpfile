@@ -7,10 +7,7 @@ using Common;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.UI;
-using DriveInfo = SharpFile.IO.ParentResources.DriveInfo;
-using DriveType = SharpFile.IO.DriveType;
 using View = SharpFile.Infrastructure.View;
-using SharpFile.IO.Retrievers;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -19,6 +16,7 @@ namespace SharpFile {
         private FileSystemWatcher fileSystemWatcher;
         private ImageList imageList;
         private DriveDetector driveDetector;
+        private IChildResourceRetriever childResourceRetriever;
         private bool handleCreated = false;
 
         private ToolStrip toolStrip;
@@ -33,12 +31,13 @@ namespace SharpFile {
         /// <summary>
         /// Filebrowser ctor.
         /// </summary>
-        public FileBrowser() {
+        public FileBrowser(string name) {
+            this.Name = name;
             this.toolStrip = new ToolStrip();
             this.tlsDrives = new ToolStripSplitButton();
             this.tlsPath = new ToolStripSpringTextBox();
             this.tlsFilter = new ToolStripTextBox();
-            this.view = new ListView();
+            this.view = new ListView(this.Name);
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
 
@@ -272,7 +271,8 @@ namespace SharpFile {
                             if (!isLocalDiskFound) {
                                 // If the path has been defined and it is valid, then grab information about it.
                                 if (!string.IsNullOrEmpty(Path)) {
-                                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, resource.ChildResourceRetriever);
+                                    childResourceRetriever = resource.ChildResourceRetriever.Clone();
+                                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, childResourceRetriever);
 
                                     if (pathResource != null &&
                                         pathResource.Root.FullPath.Equals(resource.FullPath)) {
@@ -283,6 +283,7 @@ namespace SharpFile {
                                     }
                                 }
 
+                                /*
                                 // If the view hasn't been updated and the resource is a drive, then grab some information about it.
                                 if (!isLocalDiskFound && resource is DriveInfo) {
                                     DriveInfo driveInfo = (DriveInfo)resource;
@@ -295,7 +296,12 @@ namespace SharpFile {
                                         resource.Execute(view);
                                     }
                                 }
+                                */
                             }
+                        }
+
+                        if (childResourceRetriever == null) {
+                            childResourceRetriever = resources[0].ChildResourceRetriever.Clone();
                         }
                     });
                 }
@@ -418,11 +424,7 @@ namespace SharpFile {
 
         public IChildResourceRetriever ChildResourceRetriever {
             get {
-                IResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
-
-                return Settings.Instance.Resources.Find(delegate(IResource r) {
-                    return r.FullPath.ToLower().Equals(resource.Root.FullPath.ToLower());
-                }).ChildResourceRetriever;
+                return childResourceRetriever;
             }
         }
         #endregion

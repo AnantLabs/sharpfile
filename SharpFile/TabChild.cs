@@ -14,7 +14,7 @@ namespace SharpFile {
 			this.Size = new System.Drawing.Size(448, 340);
 			this.ResumeLayout(false);
 
-			child = new Child();
+			child = new Child("tab");
 			child.Dock = DockStyle.Fill;
 			this.Controls.Add(child);
 		}

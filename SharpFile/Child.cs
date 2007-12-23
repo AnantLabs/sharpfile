@@ -14,7 +14,8 @@ namespace SharpFile {
 
 		private TabControl tabControl;
 
-		public Child() {
+		public Child(string name) {
+            this.Name = name;
 			this.tabControl = new TabControl();
 			this.SuspendLayout();
 
@@ -67,7 +68,7 @@ namespace SharpFile {
 		#endregion
 
 		public void AddTab() {
-			FileBrowser fileBrowser = new FileBrowser();
+			FileBrowser fileBrowser = new FileBrowser(this.Name);
 			fileBrowser.OnGetImageIndex += fileBrowser_OnGetImageIndex;
 			fileBrowser.OnUpdatePath += fileBrowser_OnUpdatePath;
 			fileBrowser.View.OnGetImageIndex += fileBrowser_OnGetImageIndex;

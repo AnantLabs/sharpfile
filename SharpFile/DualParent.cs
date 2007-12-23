@@ -16,7 +16,7 @@ namespace SharpFile {
 		private int splitterPercentage;
 
 		public DualParent() {
-			Child child1 = new Child();
+			Child child1 = new Child("view1");
 			child1.TabControl.Appearance = TabAppearance.FlatButtons;
 			child1.TabControl.IsVisible = true;
 			child1.Dock = DockStyle.Fill;
@@ -38,7 +38,7 @@ namespace SharpFile {
 										  path);
 			};
 
-			Child child2 = new Child();
+			Child child2 = new Child("view2");
 			child2.Dock = DockStyle.Fill;
 			child2.TabControl.IsVisible = true;
 			child2.TabControl.Appearance = TabAppearance.FlatButtons;

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharpFile.Infrastructure;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SharpFile.IO.Retrievers {
+    [Serializable]
     public class FileRetriever : IChildResourceRetriever {
         private BackgroundWorker backgroundWorker;
         private List<ColumnInfo> columnInfos;
@@ -80,37 +82,18 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        public IChildResourceRetriever Clone() {
+            IChildResourceRetriever fileRetriever = new FileRetriever();
+            List<ColumnInfo> clonedInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
+            fileRetriever.ColumnInfos = clonedInfos;
+
+            return fileRetriever;
+        }
+
         public List<ColumnInfo> ColumnInfos {
             get {
-                /*
-                if (columnInfos == null) {
-                    columnInfos = new List<ColumnInfo>();
-                    columnInfos.Add(
-                        new ColumnInfo("Filename", "DisplayName", new StringLogicalComparer(), true));
-
-                    columnInfos.Add(
-                        new ColumnInfo("Size", "Size",
-                            new ColumnInfo.CustomMethod(Common.General.GetHumanReadableSize),
-                            new StringLogicalComparer()));
-
-                    columnInfos.Add(
-                        new ColumnInfo("Date", "LastWriteTime",
-                            new ColumnInfo.CustomMethod(Settings.GetDateTimeShortDateString),
-                            new StringLogicalComparer()));
-
-                    columnInfos.Add(
-                        new ColumnInfo("Time", "LastWriteTime",
-                            new ColumnInfo.CustomMethod(Settings.GetDateTimeShortTimeString),
-                            new StringLogicalComparer()));
-                }
-                */
-
                 if (columnInfos == null) {
                     throw new Exception("No column information has been set.");
-
-                    //columnInfos = new List<ColumnInfo>();
-                    //columnInfos.Add(
-                    //    new ColumnInfo("Filename", "DisplayName", new StringLogicalComparer(), true));
                 }
 
                 return columnInfos;

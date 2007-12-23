@@ -20,6 +20,7 @@ namespace SharpFile.Infrastructure {
         void ShowMessageBox(string text);
         IViewComparer Comparer { get; }
         IEnumerable<ColumnInfo> ColumnInfos { get; set; }
+        string Name { get; set; }
 
 		event View.OnGetImageIndexDelegate OnGetImageIndex;
 		event View.OnUpdateProgressDelegate OnUpdateProgress;

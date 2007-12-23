@@ -33,10 +33,11 @@ namespace SharpFile {
         public event View.OnUpdatePathDelegate OnUpdatePath;
         public event View.OnCancelOperationsDelegate OnCancelOperations;
 
-        public ListView() {
+        public ListView(string name) {
             // This prevents flicker in the listview. 
             // It is a protected property, so it is only available if we derive from ListView.
             this.DoubleBuffered = true;
+            this.Name = name;
 
             initializeComponent();
         }

@@ -9,7 +9,7 @@ namespace SharpFile {
 		/// Child ctor.
 		/// </summary>
 		public MdiChild() {
-			this.child = new Child();
+			this.child = new Child("mdi");
 			this.SuspendLayout();
 
 			this.child.Dock = DockStyle.Fill;

@@ -4,6 +4,7 @@ using SharpFile.IO.ChildResources;
 using SharpFile.Infrastructure;
 
 namespace SharpFile.IO {
+    [Serializable]
 	public abstract class FileSystemInfo {
 		protected string displayName;
 		protected string name;
@@ -49,14 +50,19 @@ namespace SharpFile.IO {
 		public IResource Root {
 			get {
 				if (root == null) {
-					string rootString = fullPath.Substring(0, FullPath.IndexOf(":"));
+                    string rootString = string.Empty;
+                    IResource resource = null;
 
-                    IResource resource = Settings.Instance.Resources.Find(delegate(IResource r) {
-                        return r.FullPath.ToLower().Equals(fullPath.ToLower());
-                    });
+                    if (FullPath.Length >= 3) {
+                        rootString = FullPath.Substring(0, 3);
+
+                        resource = Settings.Instance.Resources.Find(delegate(IResource r) {
+                            return r.FullPath.ToLower().Equals(rootString.ToLower());
+                        });
+                    }
 
                     if (resource != null) {
-                        root = new DriveInfo(new System.IO.DriveInfo(rootString), resource.ChildResourceRetriever);
+                        root = new DriveInfo(new System.IO.DriveInfo(rootString.Substring(0, 1)), resource.ChildResourceRetriever);
                     } else {
                         throw new Exception("Root cannot be found.");
                     }

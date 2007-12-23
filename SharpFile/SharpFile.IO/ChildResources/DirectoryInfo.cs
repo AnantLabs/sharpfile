@@ -5,6 +5,7 @@ using SharpFile.IO;
 using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ChildResources {
+    [Serializable]
     public class DirectoryInfo : FileSystemInfo, IChildResource, IFileContainer {
         private System.IO.DirectoryInfo directoryInfo;
         private IChildResourceRetriever childResourceRetriever;
@@ -111,7 +112,6 @@ namespace SharpFile.IO.ChildResources {
         }
 
         public void Execute(IView view) {
-            // This uses the FileRetriever.
             this.ChildResourceRetriever.Get(view, this);
         }
 

@@ -1,6 +1,8 @@
 ﻿using System.Xml.Serialization;
+using System;
 
 namespace SharpFile.Infrastructure {
+    [Serializable]
     public class FullyQualifiedMethod {
         private FullyQualifiedType fullyQualifiedType;
         private string method;

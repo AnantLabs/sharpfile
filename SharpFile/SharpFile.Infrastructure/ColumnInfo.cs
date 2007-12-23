@@ -4,6 +4,7 @@ using System;
 using System.Reflection;
 
 namespace SharpFile.Infrastructure {
+    [Serializable]
     public class ColumnInfo {
         private string text;
         private string property;
@@ -41,7 +42,6 @@ namespace SharpFile.Infrastructure {
                 comparer.GetType().Namespace,
                 comparer.GetType().FullName);
 
-            //this.methodDelegateName = customMethod.Method.Name;
             if (customMethod != null) {
                 this.methodDelegateType = new FullyQualifiedMethod(new FullyQualifiedType(
                     customMethod.Method.DeclaringType.Namespace,

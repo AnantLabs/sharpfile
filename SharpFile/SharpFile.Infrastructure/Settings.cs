@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -95,7 +96,7 @@ namespace SharpFile.Infrastructure {
                         deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
-                    Exception insideException = getInnerException(ex);
+                    Exception insideException = GetInnerException(ex);
                     string error = insideException.Message + insideException.StackTrace;
 
                     // Error: Settings object could not be serialized.
@@ -119,12 +120,20 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        public static Exception getInnerException(Exception ex) {
+        public static T DeepCopy<T>(T obj) {
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            binaryFormatter.Serialize(memoryStream, obj);
+            memoryStream.Position = 0;
+            return (T)binaryFormatter.Deserialize(memoryStream);
+        }
+
+        public static Exception GetInnerException(Exception ex) {
             if (ex.InnerException == null) {
                 return ex;
             }
 
-            return getInnerException(ex.InnerException);
+            return GetInnerException(ex.InnerException);
         }
 
         public static string GetDateTimeShortDateString(string dateTime) {

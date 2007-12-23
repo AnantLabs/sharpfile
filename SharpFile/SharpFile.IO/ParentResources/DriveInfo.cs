@@ -4,8 +4,10 @@ using SharpFile.IO.Retrievers;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
+using System.Runtime.Serialization;
 
 namespace SharpFile.IO.ParentResources {
+    [Serializable]
     public class DriveInfo : FileSystemInfo, IResource, IFileContainer {
         private System.IO.DriveInfo driveInfo;
         private string label;
@@ -70,9 +72,7 @@ namespace SharpFile.IO.ParentResources {
         }
 
         public void Execute(IView view) {
-            if (this.ChildResourceRetriever != null) {
-                this.ChildResourceRetriever.Get(view, this);
-            }
+            this.ChildResourceRetriever.Get(view, this);
         }
 
         public IEnumerable<IChildResource> GetDirectories() {
