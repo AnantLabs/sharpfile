@@ -161,16 +161,16 @@ namespace SharpFile {
 		}
 
 		protected override void onFormClosing() {
-			Settings.Instance.DualParent.LeftPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
-            Settings.Instance.DualParent.RightPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
+			Settings.Instance.DualParent.Panel1Path = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
+            Settings.Instance.DualParent.Panel2Path = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
             Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
 
 			base.onFormClosing();
 		}
 
 		protected override void onFormLoad() {
-            Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.DualParent.LeftPath);
-            Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.DualParent.RightPath);
+            Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.DualParent.Panel1Path);
+            Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.DualParent.Panel2Path);
 
             splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 			decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);

@@ -3,25 +3,25 @@
 namespace SharpFile.Infrastructure {
     [Serializable]
     public sealed class DualParentSettings {
-        private string leftPath;
-        private string rightPath;
+        private string panel1Path;
+        private string panel2Path;
         private int splitterPercentage = 50;
 
-        public string LeftPath {
+        public string Panel1Path {
             get {
-                return leftPath;
+                return panel1Path;
             }
             set {
-                leftPath = value;
+                panel1Path = value;
             }
         }
 
-        public string RightPath {
+        public string Panel2Path {
             get {
-                return rightPath;
+                return panel2Path;
             }
             set {
-                rightPath = value;
+                panel2Path = value;
             }
         }
 
