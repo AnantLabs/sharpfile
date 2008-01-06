@@ -8,10 +8,6 @@
         /// </summary>
         Mdi,
         /// <summary>
-        /// Every view is its own tab.
-        /// </summary>
-        Tab,
-        /// <summary>
         /// Two views that fill up the parent window. The default.
         /// </summary>
         Dual

@@ -18,8 +18,6 @@ namespace SharpFile {
 
 			if (Settings.Instance.ParentType == ParentType.Mdi) {
 				Application.Run(new MdiParent());
-			} else if (Settings.Instance.ParentType == ParentType.Tab) {
-				Application.Run(new TabParent());
 			} else if (Settings.Instance.ParentType == ParentType.Dual) {
 				Application.Run(new DualParent());
 			}

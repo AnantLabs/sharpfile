@@ -160,9 +160,8 @@ namespace SharpFile {
 		void Scroller_TabOpen(object sender, EventArgs e) {
 			if (this.Parent is Child) {
 				((Child)this.Parent).AddTab();
-			} else if (this.Parent is TabParent) {
-				((TabParent)this.Parent).AddTab();
 			}
+
 			UpdateScroller();
 		}
 
