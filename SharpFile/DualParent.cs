@@ -161,18 +161,18 @@ namespace SharpFile {
 		}
 
 		protected override void onFormClosing() {
-			Settings.Instance.LeftPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
-			Settings.Instance.RightPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
-			Settings.Instance.SplitterPercentage = splitterPercentage;
+			Settings.Instance.DualParent.LeftPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
+            Settings.Instance.DualParent.RightPath = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
+            Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
 
 			base.onFormClosing();
 		}
 
 		protected override void onFormLoad() {
-			Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.LeftPath);
-			Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.RightPath);
+            Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.DualParent.LeftPath);
+            Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.DualParent.RightPath);
 
-            splitterPercentage = Settings.Instance.SplitterPercentage;
+            splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 			decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
 			int splitterDistance = Convert.ToInt32(percent * this.Width);
 			splitContainer.SplitterDistance = splitterDistance;

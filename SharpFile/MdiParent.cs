@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using SharpFile.IO;
 using SharpFile.UI;
 using SharpFile.Infrastructure;
+using System.Collections.Generic;
+using Common;
 
 namespace SharpFile {
     public class MdiParent : BaseParent {
@@ -17,22 +19,32 @@ namespace SharpFile {
         public MdiParent() {
             this.IsMdiContainer = true;
 
-            ShowNewForm(null, EventArgs.Empty);
+            //createNewChild();
 
             if (this.MdiChildren.Length == 1) {
                 this.MdiChildren[0].WindowState = FormWindowState.Maximized;
             }
 
-            this.MdiChildActivate += delegate {
-                ((MdiChild)this.ActiveMdiChild).Child.OnUpdatePath += delegate(string path) {
-                    this.Text = string.Format("{0} - {1}",
-                            formName,
-                            path);
+            if (this.ActiveMdiChild != null) {
+                this.MdiChildActivate += delegate {
+                    ((MdiChild)this.ActiveMdiChild).Child.OnUpdatePath += delegate(string path) {
+                        this.Text = string.Format("{0} - {1}",
+                                formName,
+                                path);
+                    };
                 };
-            };
+            }
         }
 
         private void ShowNewForm(object sender, EventArgs e) {
+            createNewChild();
+        }
+
+        private void createNewChild() {
+            createNewChild(null);
+        }
+
+        private void createNewChild(string path) {
             // Create a new instance of the child form.
             MdiChild childForm = new MdiChild();
 
@@ -52,11 +64,15 @@ namespace SharpFile {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
 
-            childForm.Child.OnUpdatePath += delegate(string path) {
+            childForm.Child.OnUpdatePath += delegate(string updatedPath) {
                 this.Text = string.Format("{0} - {1}",
                     formName,
-                    path);
+                    updatedPath);
             };
+
+            if (!string.IsNullOrEmpty(path)) {
+                Forms.SetPropertyInChild<string>(childForm, "Path", path);
+            }
         }
 
         private void CascadeToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -127,6 +143,31 @@ namespace SharpFile {
             this.arrangeIconsToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.arrangeIconsToolStripMenuItem.Text = "&Arrange Icons";
             this.arrangeIconsToolStripMenuItem.Click += this.ArrangeIconsToolStripMenuItem_Click;
+        }
+
+        protected override void onFormClosing() {
+            List<string> paths = new List<string>();
+
+            foreach (Form form in this.MdiChildren) {
+                string path = Forms.GetPropertyInChild<string>(form, "Path");
+                paths.Add(path);
+            }
+
+            Settings.Instance.MdiParent.Paths = paths;
+
+            base.onFormClosing();
+        }
+
+        protected override void onFormLoad() {
+            if (Settings.Instance.MdiParent.Paths.Count == 0) {
+                createNewChild();
+            } else {
+                foreach (string path in Settings.Instance.MdiParent.Paths) {
+                    createNewChild(path);
+                }
+            }
+
+            base.onFormLoad();
         }
     }
 }

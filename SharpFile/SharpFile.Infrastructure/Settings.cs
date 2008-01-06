@@ -24,13 +24,14 @@ namespace SharpFile.Infrastructure {
         private ParentType parentType = ParentType.Dual;
         private int width = 500;
         private int height = 500;
-		private string leftPath;
-		private string rightPath;
-        private int splitterPercentage = 50;
 		private Nodes keyCodes;
         private List<ResourceRetrieverInfo> resourceRetrieverInfos;
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private bool directoriesSortedFirst = true;
+
+        // Settings.
+        private DualParentSettings dualParentSettings;
+        private MdiParentSettings mdiParentSettings;
 
         private List<IResourceRetriever> resourceRetrievers;
         private ImageList imageList = new ImageList();
@@ -48,6 +49,9 @@ namespace SharpFile.Infrastructure {
         /// Internal instance ctor.
         /// </summary>
 		private Settings() {
+            dualParentSettings = new DualParentSettings();
+            mdiParentSettings = new MdiParentSettings();
+
 			lockObject = new object();
 			this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
         }
@@ -221,39 +225,32 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
-		public string LeftPath {
-			get {
-				return leftPath;
-			}
-			set {
-				leftPath = value;
-			}
-		}
-
-		public string RightPath {
-			get {
-				return rightPath;
-			}
-			set {
-				rightPath = value;
-			}
-		}
-
-		public int SplitterPercentage {
-			get {
-                return splitterPercentage;
-			}
-			set {
-				splitterPercentage = value;
-			}
-		}
-
         public bool DirectoriesSortedFirst {
             get {
                 return directoriesSortedFirst;
             }
             set {
                 directoriesSortedFirst = value;
+            }
+        }
+
+        [XmlElement("DualParent")]
+        public DualParentSettings DualParent {
+            get {
+                return dualParentSettings;
+            }
+            set {
+                dualParentSettings = value;
+            }
+        }
+
+        [XmlElement("MdiParent")]
+        public MdiParentSettings MdiParent {
+            get {
+                return mdiParentSettings;
+            }
+            set {
+                mdiParentSettings = value;
             }
         }
 

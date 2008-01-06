@@ -13,8 +13,6 @@ BUGS
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 
 TODO
-- split settings into more logical sections 
-	- dualview settings would have an element just for their information, etc
 - for systems that don't support filesystem events (i.e. z:\, network drive), 
 	set up a timer refresh every 500 ms or so (configurable)
 - Add the timer to the progress disk class with the ability to start/stop it

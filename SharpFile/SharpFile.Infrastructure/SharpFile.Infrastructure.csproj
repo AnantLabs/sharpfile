@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="ChildResourceRetrieverInfo.cs" />
     <Compile Include="ColumnInfo.cs" />
+    <Compile Include="DualParentSettings.cs" />
     <Compile Include="FullyQualifiedMethod.cs" />
     <Compile Include="FullyQualifiedType.cs" />
     <Compile Include="IChildResource.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="IResource.cs" />
     <Compile Include="IResourceRetriever.cs" />
     <Compile Include="IView.cs" />
+    <Compile Include="MdiParentSettings.cs" />
     <Compile Include="ParentType.cs" />
     <Compile Include="Resource.Designer.cs">
       <AutoGen>True</AutoGen>
