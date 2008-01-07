@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting;
-using System.Windows.Forms;
-using System.Xml.Serialization;
-using System.Xml;
-using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -29,9 +29,10 @@ namespace SharpFile.Infrastructure {
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private bool directoriesSortedFirst = true;
 
-        // Settings.
+        // Sub-settings.
         private DualParentSettings dualParentSettings;
         private MdiParentSettings mdiParentSettings;
+        private IconSettings iconSettings;
 
         private List<IResourceRetriever> resourceRetrievers;
         private ImageList imageList = new ImageList();
@@ -51,6 +52,7 @@ namespace SharpFile.Infrastructure {
 		private Settings() {
             dualParentSettings = new DualParentSettings();
             mdiParentSettings = new MdiParentSettings();
+            iconSettings = new IconSettings();
 
 			lockObject = new object();
 			this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -100,7 +102,7 @@ namespace SharpFile.Infrastructure {
                         deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
-                    Exception insideException = GetInnerException(ex);
+                    Exception insideException = Common.General.GetInnerException(ex);
                     string error = insideException.Message + insideException.StackTrace;
 
                     // Error: Settings object could not be serialized.
@@ -132,36 +134,6 @@ namespace SharpFile.Infrastructure {
             return (T)binaryFormatter.Deserialize(memoryStream);
         }
 
-        public static Exception GetInnerException(Exception ex) {
-            if (ex.InnerException == null) {
-                return ex;
-            }
-
-            return GetInnerException(ex.InnerException);
-        }
-
-        public static string GetDateTimeShortDateString(string dateTime) {
-            string val = dateTime;
-            DateTime parsedDateTime;
-
-            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
-                val = parsedDateTime.ToShortDateString();
-            }
-
-            return val;
-        }
-
-        public static string GetDateTimeShortTimeString(string dateTime) {
-            string val = dateTime;
-            DateTime parsedDateTime;
-
-            if (DateTime.TryParse(dateTime, out parsedDateTime)) {
-                val = parsedDateTime.ToShortTimeString();
-            }
-
-            return val;
-        }
-
 		public static void Save() {
 			lock (lockObject) {
 				XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
@@ -172,6 +144,7 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
+        //TODO: Should be in Common assembly.
         public static object InstantiateObject(string assembly, string type) {
             ObjectHandle objectHandle = Activator.CreateInstance(assembly, type);
             return objectHandle.Unwrap();
@@ -234,26 +207,6 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        [XmlElement("DualParent")]
-        public DualParentSettings DualParent {
-            get {
-                return dualParentSettings;
-            }
-            set {
-                dualParentSettings = value;
-            }
-        }
-
-        [XmlElement("MdiParent")]
-        public MdiParentSettings MdiParent {
-            get {
-                return mdiParentSettings;
-            }
-            set {
-                mdiParentSettings = value;
-            }
-        }
-
         [XmlArray("ResourceRetrievers")]
         [XmlArrayItem("ResourceRetriever")]
         public List<ResourceRetrieverInfo> ResourceRetrieverInfos {
@@ -275,6 +228,38 @@ namespace SharpFile.Infrastructure {
                 childResourceRetrieverInfos = value;
             }
         }
+
+        #region Properties for sub-settings.
+        [XmlElement("DualParent")]
+        public DualParentSettings DualParent {
+            get {
+                return dualParentSettings;
+            }
+            set {
+                dualParentSettings = value;
+            }
+        }
+
+        [XmlElement("MdiParent")]
+        public MdiParentSettings MdiParent {
+            get {
+                return mdiParentSettings;
+            }
+            set {
+                mdiParentSettings = value;
+            }
+        }
+
+        [XmlElement("Icons")]
+        public IconSettings Icons {
+            get {
+                return iconSettings;
+            }
+            set {
+                iconSettings = value;
+            }
+        }
+        #endregion
 
         #region Properties not derived from settings.config.
         [XmlIgnore]
@@ -318,6 +303,8 @@ namespace SharpFile.Infrastructure {
                             // TODO: Log an error here: ResourceRetriever not derived from IResourceRetriever.
                         }
                     }
+
+                    Save();
                 }
 
                 List<IResource> resources = new List<IResource>();

@@ -15,7 +15,7 @@ namespace SharpFile.UI {
             directoriesSortedFirst = Settings.Instance.DirectoriesSortedFirst;
 
             // Initialize the comparer.
-            comparer = new StringLogicalComparer();
+            comparer = new Common.StringLogicalComparer();
         }
 
         /// <summary>

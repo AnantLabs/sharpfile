@@ -1,15 +1,13 @@
 using System;
-using System.Windows.Forms;
 using System.Drawing;
-using SharpFile.IO.ParentResources;
-using SharpFile.IO.ChildResources;
-using SharpFile.IO;
+using System.Windows.Forms;
 using SharpFile.Infrastructure;
+using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile.UI {
 	public static class IconManager {
-		private const string openFolderKey = ":OPEN_FOLDER:";
-		private const string closedFolderKey = ":CLOSED_FOLDER:";
+		private const string folderKey = ":FOLDER:";
 
 		private static Icon getFileIcon(string path) {
 			return getFileIcon(path, false);
@@ -31,27 +29,19 @@ namespace SharpFile.UI {
 			return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
 		}
 
-		public static int GetImageIndex(IResource fileSystemInfo, ImageList imageList) {
-			bool showOverlay = true;
+		public static int GetImageIndex(IResource resource, ImageList imageList) {
 			int imageIndex = imageList.Images.Count;
-			string fullPath = fileSystemInfo.FullPath;
+            string fullPath = resource.FullPath;
 
-			if (fileSystemInfo is FileInfo) {
-				string extension = ((FileInfo)fileSystemInfo).Extension;
+            if (resource is FileInfo) {
+                string extension = ((FileInfo)resource).Extension;
 
-				// TODO: Specify the extensions to grab the images from in a config file.
-				if (showOverlay ||
-					(extension.Equals(".exe") ||
-					extension.Equals(".lnk") ||
-					extension.Equals(".dll") ||
-					extension.Equals(".ps") ||
-					extension.Equals(".scr") ||
-					extension.Equals(".ico") ||
-					extension.Equals(".icn") ||
-					string.IsNullOrEmpty(extension))) {
+				if (Settings.Instance.Icons.ShowOverlay ||
+                    (Settings.Instance.Icons.Extensions.Contains(extension) ||
+                    string.IsNullOrEmpty(extension))) {
 					// Add the full name of the file if it is an executable into the the ImageList.
 					if (!imageList.Images.ContainsKey(fullPath)) {
-						Icon icon = getFileIcon(fullPath, showOverlay);
+                        Icon icon = getFileIcon(fullPath, Settings.Instance.Icons.ShowOverlay);
 						imageList.Images.Add(fullPath, icon);
 					}
 
@@ -65,25 +55,22 @@ namespace SharpFile.UI {
 
 					imageIndex = imageList.Images.IndexOfKey(extension);
 				}
-			} else if (fileSystemInfo is DirectoryInfo) {
+            } else if (resource is DirectoryInfo) {
 				// Add the directory information into the ImageList.
-				string folderKey = fileSystemInfo.FullPath;
-				folderKey = closedFolderKey;
-
-				if (!imageList.Images.ContainsKey(closedFolderKey)) {
+				if (!imageList.Images.ContainsKey(folderKey)) {
 					Icon icon = getFolderIcon(null, false);
 					imageList.Images.Add(folderKey, icon);
 				}
 
 				imageIndex = imageList.Images.IndexOfKey(folderKey);
-			} else if (fileSystemInfo is DriveInfo) {
+            } else if (resource is DriveInfo) {
 				if (!imageList.Images.ContainsKey(fullPath)) {
 					Icon icon = getDriveIcon(fullPath);
 					imageList.Images.Add(fullPath, icon);
 				}
 
 				imageIndex = imageList.Images.IndexOfKey(fullPath);
-			} else if (fileSystemInfo is ServerInfo) {
+            } else if (resource is ServerInfo) {
 				if (!imageList.Images.ContainsKey(fullPath)) {
 					Icon icon = getDriveIcon(fullPath);
 					imageList.Images.Add(fullPath, icon);
@@ -91,7 +78,7 @@ namespace SharpFile.UI {
 
 				imageIndex = imageList.Images.IndexOfKey(fullPath);
 			} else {
-				throw new ArgumentException("The object, " + fileSystemInfo.GetType() + ", is not supported.");
+                throw new ArgumentException("The object, " + resource.GetType() + ", is not supported.");
 			}
 
 			return imageIndex;

@@ -1,10 +1,9 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using SharpFile.Infrastructure;
-using SharpFile.IO;
-using SharpFile.UI;
 using Common;
-using System;
+using SharpFile.Infrastructure;
+using SharpFile.UI;
 
 namespace SharpFile {
 	public class DualParent : BaseParent {

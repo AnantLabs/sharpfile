@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Common;
-using SharpFile.IO;
 using SharpFile.Infrastructure;
 using View = SharpFile.Infrastructure.View;
 

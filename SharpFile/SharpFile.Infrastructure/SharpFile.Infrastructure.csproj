@@ -50,6 +50,7 @@
     <Compile Include="FullyQualifiedType.cs" />
     <Compile Include="IChildResource.cs" />
     <Compile Include="IChildResourceRetriever.cs" />
+    <Compile Include="IconSettings.cs" />
     <Compile Include="IFileContainer.cs" />
     <Compile Include="IViewComparer.cs" />
     <Compile Include="IResource.cs" />
@@ -63,7 +64,6 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="ResourceRetrieverInfo.cs" />
-    <Compile Include="StringLogicalComparer.cs" />
     <Compile Include="Nodes.cs" />
     <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
