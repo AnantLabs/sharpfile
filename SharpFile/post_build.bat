@@ -9,6 +9,7 @@ del "%2SharpFile.Infrastructure.dll"
 del "%2SharpFile.IO.dll"
 del "%2SharpFile.UI.dll"
 move /Y "%2tmp\SharpFile.exe" "%2SharpFile.exe"
+copy /Y "%1SharpFile.Infrastructure\Resources\ilmerge_settings.config" "%2settings.config"
 
 :no_ilmerge_exists
 rmdir /S /Q "%2tmp"

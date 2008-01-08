@@ -93,9 +93,26 @@ namespace SharpFile.Infrastructure {
                         xmlWriterSettings.Encoding = Encoding.UTF8;
                         xmlWriterSettings.Indent = true;
 
+                        string settings = Resource.settings;
+
+                        try {
+                            // Check to see if the SharpFile assembly has has the 
+                            // other assemblies ILMerged into it.
+                            Assembly assembly = Assembly.Load("SharpFile");
+
+                            List<Type> types = new List<Type>();
+                            types.AddRange(assembly.GetTypes());
+
+                            if (types.Find(delegate(Type t) {
+                                return t.Namespace.Equals("SharpFile.Infrastructure");
+                            }) != null) {
+                                settings = Resource.ilmerge_settings;
+                            }
+                        } catch { }
+
                         using (XmlWriter xmlWriter = XmlWriter.Create(FilePath, xmlWriterSettings)) {
                             XmlDocument xml = new XmlDocument();
-                            xml.LoadXml(Resource.settings_config);
+                            xml.LoadXml(settings);
                             xml.WriteTo(xmlWriter);
                         }
 

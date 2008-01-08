@@ -61,20 +61,52 @@ namespace SharpFile.Infrastructure {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;Settings xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///   Looks up a localized string similar to &lt;Settings&gt;
         ///  &lt;ParentType&gt;Dual&lt;/ParentType&gt;
         ///  &lt;Width&gt;500&lt;/Width&gt;
         ///  &lt;Height&gt;500&lt;/Height&gt;
         ///  &lt;SplitterPercentage&gt;50&lt;/SplitterPercentage&gt;
         ///  &lt;DirectoriesSortedFirst&gt;true&lt;/DirectoriesSortedFirst&gt;
-        ///  &lt;ResourceRetrievers&gt;
-        ///    &lt;ResourceRetriever Name=&quot;DriveRetriever&quot; ChildResourceRetriever=&quot;FileRetriever&quot;&gt;
-        ///      &lt;FullyQualifiedType Assembly=&quot;SharpFile.IO&quot; Type=&quot;SharpFile.IO [rest of string was truncated]&quot;;.
+        ///  &lt;Icons&gt;
+        ///    &lt;ShowOverlay&gt;true&lt;/ShowOverlay&gt;
+        ///    &lt;Extensions&gt;
+        ///      &lt;Extension&gt;.exe&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.lnk&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.dll&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.ps&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.scr&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.ico&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.icn&lt;/Extension&gt;
+        ///    &lt;/E [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string settings_config {
+        internal static string ilmerge_settings {
             get {
-                return ResourceManager.GetString("settings.config", resourceCulture);
+                return ResourceManager.GetString("ilmerge_settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Settings&gt;
+        ///  &lt;ParentType&gt;Dual&lt;/ParentType&gt;
+        ///  &lt;Width&gt;500&lt;/Width&gt;
+        ///  &lt;Height&gt;500&lt;/Height&gt;
+        ///  &lt;SplitterPercentage&gt;50&lt;/SplitterPercentage&gt;
+        ///  &lt;DirectoriesSortedFirst&gt;true&lt;/DirectoriesSortedFirst&gt;
+        ///  &lt;Icons&gt;
+        ///    &lt;ShowOverlay&gt;true&lt;/ShowOverlay&gt;
+        ///    &lt;Extensions&gt;
+        ///      &lt;Extension&gt;.exe&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.lnk&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.dll&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.ps&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.scr&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.ico&lt;/Extension&gt;
+        ///      &lt;Extension&gt;.icn&lt;/Extension&gt;
+        ///    &lt;/E [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string settings {
+            get {
+                return ResourceManager.GetString("settings", resourceCulture);
             }
         }
     }
