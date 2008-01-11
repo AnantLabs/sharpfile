@@ -1,6 +1,9 @@
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
+- executing a file throws an exception
+- Parent directory shows detailed information just like a regular directory
+- Error messages do not show up on top of the window
 - KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
 - Filter textbox too small to fit
@@ -13,6 +16,9 @@ BUGS
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 
 TODO
+- configuration for parent directory and root directory
+- configuration for what happens when the drive drop down is clicked
+- configuration for toolbar
 - for systems that don't support filesystem events (i.e. z:\, network drive), 
 	set up a timer refresh every 500 ms or so (configurable)
 - Add the timer to the progress disk class with the ability to start/stop it
@@ -35,7 +41,6 @@ TODO
 	- middle-click to close tabs
 	- mouse wheel
 	- ctrl-tab
-- Full-row select
 - test to make sure that filesystemwatcher events still fire even when updating the UI
 - copy/move should show progress (write bytes, as opposed to File.Copy()?) 
 	- should it use built-in copy/move functionality?
@@ -43,9 +48,8 @@ TODO
 - Type to find (like servant salamander)
 - preview panel for some filetypes (QuickLook ?)
 - settings
-	- view
+	- view type (details, list, etc.)
 	- icon size
-	- extensions to grab icons for
 - command line - orthodox specifications
 - FTP drive functionality
 - SCP drive functionality

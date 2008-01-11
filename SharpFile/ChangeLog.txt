@@ -4,6 +4,7 @@
 		- column headers, sorting, custom methods.
 		- child resource retrievers and relationship to resource retrievers.
 	Disable dropdown, path, filter, listview when switching drives.
+	Prevent the application from crashing if the retrievers or column methods are incorrectly configured.
 
 0.50
 	Dual view.
