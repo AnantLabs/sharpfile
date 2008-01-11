@@ -160,9 +160,9 @@ namespace SharpFile {
                 IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
 
                 if (resource != null) {
-                    resource.ChildResourceRetriever.OnGetComplete += delegate {
+										//resource.ChildResourceRetriever.OnGetComplete += delegate {
                         //this.Enabled = true;
-                    };
+										//};
 
                     resource.Execute(this);
                     //this.Enabled = false;
