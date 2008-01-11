@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
+using Common;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -160,12 +161,6 @@ namespace SharpFile.Infrastructure {
 				}
 			}
 		}
-
-        //TODO: Should be in Common assembly.
-        public static object InstantiateObject(string assembly, string type) {
-            ObjectHandle objectHandle = Activator.CreateInstance(assembly, type);
-            return objectHandle.Unwrap();
-        }
         #endregion
 
         #region Static properties
@@ -286,38 +281,46 @@ namespace SharpFile.Infrastructure {
                     resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverInfos.Count);
 
                     foreach (ResourceRetrieverInfo resourceRetrieverInfo in resourceRetrieverInfos) {
-                        object resourceRetrieverObject = InstantiateObject(
-                            resourceRetrieverInfo.FullyQualifiedType.Assembly,
-                            resourceRetrieverInfo.FullyQualifiedType.Type);
+                        try {
+                            object resourceRetrieverObject = Reflection.InstantiateObject(
+                                resourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                resourceRetrieverInfo.FullyQualifiedType.Type);
 
-                        if (resourceRetrieverObject is IResourceRetriever) {
-                            IResourceRetriever resourceRetriever = (IResourceRetriever)resourceRetrieverObject;
-                            string childResourceRetrieverName = resourceRetrieverInfo.ChildResourceRetriever;
+                            if (resourceRetrieverObject is IResourceRetriever) {
+                                IResourceRetriever resourceRetriever = (IResourceRetriever)resourceRetrieverObject;
+                                string childResourceRetrieverName = resourceRetrieverInfo.ChildResourceRetriever;
 
-                            ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
-                                return c.Name == childResourceRetrieverName;
-                            });
+                                ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
+                                    return c.Name == childResourceRetrieverName;
+                                });
 
-                            if (childResourceRetrieverInfo != null) {
-                                object childResourceRetrieverObject = InstantiateObject(
-                                    childResourceRetrieverInfo.FullyQualifiedType.Assembly,
-                                    childResourceRetrieverInfo.FullyQualifiedType.Type);
+                                if (childResourceRetrieverInfo != null) {
+                                    try {
+                                        object childResourceRetrieverObject = Reflection.InstantiateObject(
+                                            childResourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                            childResourceRetrieverInfo.FullyQualifiedType.Type);
 
-                                if (childResourceRetrieverObject is IChildResourceRetriever) {
-                                    IChildResourceRetriever childResourceRetriever = (IChildResourceRetriever)childResourceRetrieverObject;
-                                    childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
+                                        if (childResourceRetrieverObject is IChildResourceRetriever) {
+                                            IChildResourceRetriever childResourceRetriever = (IChildResourceRetriever)childResourceRetrieverObject;
+                                            childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
 
-                                    resourceRetriever.ChildResourceRetriever = childResourceRetriever;
+                                            resourceRetriever.ChildResourceRetriever = childResourceRetriever;
+                                        } else {
+                                            // TODO: Log an error: ChildResourceRetriever is not derived from IChildResourceRetriever.
+                                        }
+                                    } catch (TypeLoadException ex) {
+                                        // TODO: Log an error here: ChildResourceRetriever could not be instantiated.
+                                    }
                                 } else {
-                                    // TODO: Log an error: ChildResourceRetriever is not derived from IChildResourceRetriever.
+                                    // TODO: Log an error: ChildResourceRetriever could not be found.
                                 }
-                            } else {
-                                // TODO: Log an error: ChildResourceRetriever could not be found.
-                            }
 
-                            resourceRetrievers.Add(resourceRetriever);
-                        } else {
-                            // TODO: Log an error here: ResourceRetriever not derived from IResourceRetriever.
+                                resourceRetrievers.Add(resourceRetriever);
+                            } else {
+                                // TODO: Log an error here: ResourceRetriever not derived from IResourceRetriever.
+                            }
+                        } catch (TypeLoadException ex) {
+                            // TODO: Log an error here: ResourceRetriever could not be instantiated.
                         }
                     }
 

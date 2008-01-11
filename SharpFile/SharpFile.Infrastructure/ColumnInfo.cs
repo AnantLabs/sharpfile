@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using System;
 using System.Reflection;
+using Common;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
@@ -84,13 +85,17 @@ namespace SharpFile.Infrastructure {
             get {
                 if (comparer == null) {
                     if (comparerType != null) {
-                        object comparerObject = Settings.InstantiateObject(comparerType.Assembly,
-                            comparerType.Type);
+                        try {
+                            object comparerObject = Reflection.InstantiateObject(comparerType.Assembly,
+                                comparerType.Type);
 
-                        if (comparerObject is IComparer) {
-                            comparer = (IComparer)comparerObject;
-                        } else {
-                            // TODO: Log an error: Comparer does not derive from IComparer.
+                            if (comparerObject is IComparer) {
+                                comparer = (IComparer)comparerObject;
+                            } else {
+                                // TODO: Log an error: Comparer does not derive from IComparer.
+                            }
+                        } catch (TypeLoadException ex) {
+                            // TODO: Log an error: Comparer could not be instantiated.
                         }
                     }
                 }

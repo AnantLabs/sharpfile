@@ -303,7 +303,9 @@ namespace SharpFile {
                             }
                         }
 
-                        if (childResourceRetriever == null) {
+                        if (childResourceRetriever == null && 
+                            resources != null &&
+                            resources.Count > 0) {
                             childResourceRetriever = resources[0].ChildResourceRetriever.Clone();
                         }
                     });
