@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
-    public class FileRetriever : IChildResourceRetriever {
+    public class CompressedFileRetriever : IChildResourceRetriever {
         private List<ColumnInfo> columnInfos;
         private string name;
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
 
-        public FileRetriever() {
+        public CompressedFileRetriever() {
         }
 
         public void OnGetComplete() {
@@ -30,11 +30,6 @@ namespace SharpFile.IO.Retrievers {
         }
 
         public void Execute(IView view, IResource resource) {
-            if (resource is SharpFile.IO.ChildResources.FileInfo) {
-                System.Diagnostics.Process.Start(resource.FullPath);
-                return;
-            }
-
             using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
                 backgroundWorker.WorkerSupportsCancellation = true;
                 backgroundWorker.WorkerReportsProgress = true;
@@ -97,15 +92,15 @@ namespace SharpFile.IO.Retrievers {
         }
 
         public IChildResourceRetriever Clone() {
-            IChildResourceRetriever fileRetriever = new FileRetriever();
+            IChildResourceRetriever childResourceRetriever = new CompressedFileRetriever();
             List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
-            fileRetriever.ColumnInfos = clonedColumnInfos;
-            fileRetriever.Name = name;
+            childResourceRetriever.ColumnInfos = clonedColumnInfos;
+            childResourceRetriever.Name = name;
 
-            fileRetriever.CustomMethod += OnCustomMethod;
-            fileRetriever.GetComplete += OnGetComplete;
+            childResourceRetriever.CustomMethod += OnCustomMethod;
+            childResourceRetriever.GetComplete += OnGetComplete;
 
-            return fileRetriever;
+            return childResourceRetriever;
         }
 
         public List<ColumnInfo> ColumnInfos {
@@ -131,12 +126,18 @@ namespace SharpFile.IO.Retrievers {
         }
 
         private IEnumerable<IChildResource> getResources(IResource resource, string filter) {
+            /*
             IFileContainer container = resource as IFileContainer;
             List<IChildResource> resources = new List<IChildResource>();
 
             resources.AddRange(container.GetDirectories());
             resources.AddRange(container.GetFiles(filter));
 
+            return resources;
+            */
+
+            List<IChildResource> resources = new List<IChildResource>();
+            resources.Add(ChildResourceFactory.GetChildResource(@"c:\#storage\", Settings.Instance.Resources[0].ChildResourceRetrievers));
             return resources;
         }
     }

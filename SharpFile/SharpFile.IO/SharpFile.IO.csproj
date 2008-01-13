@@ -46,24 +46,23 @@
   <ItemGroup>
     <Compile Include="ChildResourceFactory.cs" />
     <Compile Include="ChildResources\DirectoryInfo.cs" />
+    <Compile Include="FileSystemInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ParentResources\DriveInfo.cs" />
     <Compile Include="DriveType.cs" />
     <Compile Include="ChildResources\FileInfo.cs" />
-    <Compile Include="FileSystemInfo.cs" />
     <Compile Include="ParentResources\NetworkDriveInfo.cs" />
     <Compile Include="IOException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ParentResources\NullInfo.cs" />
     <Compile Include="ChildResources\ParentDirectoryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Retrievers\CompressedFileRetriever.cs" />
     <Compile Include="Retrievers\DriveRetriever.cs" />
     <Compile Include="Retrievers\FileRetriever.cs" />
     <Compile Include="Retrievers\NetworkDriveRetriever.cs" />
-    <Compile Include="Retrievers\NullRetriever.cs" />
-    <Compile Include="Retrievers\ServerRetriever.cs" />
     <Compile Include="ChildResources\RootDirectoryInfo.cs" />
-    <Compile Include="ParentResources\ServerInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpFile.Infrastructure\SharpFile.Infrastructure.csproj">

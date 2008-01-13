@@ -39,5 +39,17 @@ namespace SharpFile.Infrastructure {
 
             return false;
         }
+
+        public static bool IsCompressedFile(IResource resource) {
+            if (resource is IChildResource) {
+                System.IO.FileInfo fileInfo = new System.IO.FileInfo(resource.FullPath);
+
+                if (fileInfo.Extension.ToLower().Equals(".zip")) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

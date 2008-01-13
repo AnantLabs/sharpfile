@@ -11,8 +11,6 @@ namespace SharpFile.Infrastructure {
         private ChildResourceRetriever.CustomMethodDelegate customMethod;
         private FullyQualifiedMethod methodDelegateType;
 
-        //public delegate bool CustomMethod(IResource resource);
-
         /// <summary>
         /// Empty ctor for xml serialization.
         /// </summary>

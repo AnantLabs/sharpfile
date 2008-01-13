@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Timers;
+using System;
 
 namespace SharpFile.Infrastructure {
 	public class FileSystemWatcher {
@@ -66,7 +67,14 @@ namespace SharpFile.Infrastructure {
 				return fileSystemWatcher.Path;
 			}
 			set {
-				fileSystemWatcher.Path = value;
+                try {
+                    fileSystemWatcher.Path = value;
+                } catch (ArgumentException) {
+                    // Ignore an argument exception. It just means that the path is not valid to be watched.
+                    // This can happen when using a custom ChildResourceRetriever, like the CompressedFileRetriever.
+                } catch (Exception ex) {
+                    // TODO: Log this exception.
+                }
 			}
 		}
 

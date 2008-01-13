@@ -70,13 +70,13 @@ namespace SharpFile.UI {
 				}
 
 				imageIndex = imageList.Images.IndexOfKey(fullPath);
-            } else if (resource is ServerInfo) {
-				if (!imageList.Images.ContainsKey(fullPath)) {
-					Icon icon = getDriveIcon(fullPath);
-					imageList.Images.Add(fullPath, icon);
-				}
+            //} else if (resource is ServerInfo) {
+            //    if (!imageList.Images.ContainsKey(fullPath)) {
+            //        Icon icon = getDriveIcon(fullPath);
+            //        imageList.Images.Add(fullPath, icon);
+            //    }
 
-				imageIndex = imageList.Images.IndexOfKey(fullPath);
+            //    imageIndex = imageList.Images.IndexOfKey(fullPath);
 			} else {
                 throw new ArgumentException("The object, " + resource.GetType() + ", is not supported.");
 			}
