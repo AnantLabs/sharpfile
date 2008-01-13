@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using SharpFile.IO.Retrievers;
 using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ParentResources {
     public class NullInfo : IResource {
-        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
 		private const string displayName = "---------";
 
-        public void GetComplete() {
-            if (OnGetComplete != null) {
-                OnGetComplete();
+        public void OnGetComplete() {
+            if (GetComplete != null) {
+                GetComplete();
             }
         }
 
@@ -55,7 +56,7 @@ namespace SharpFile.IO.ParentResources {
 			throw new Exception("Execute not defined.");
 		}
 
-		public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
 			get {
 				throw new Exception("ChildResourceRetriever not defined.");
 			}

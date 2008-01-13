@@ -16,7 +16,7 @@ namespace SharpFile {
         private FileSystemWatcher fileSystemWatcher;
         private ImageList imageList;
         private DriveDetector driveDetector;
-        private IChildResourceRetriever childResourceRetriever;
+        private ChildResourceRetrievers childResourceRetrievers;
         private bool handleCreated = false;
 
         private ToolStrip toolStrip;
@@ -135,7 +135,7 @@ namespace SharpFile {
         /// </summary>
         private void tlsPath_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Enter) {
-                IChildResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
+                IChildResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetrievers);
 
                 if (resource != null) {
                     resource.Execute(view);
@@ -150,7 +150,7 @@ namespace SharpFile {
         /// Refreshes the view when Enter is pressed in the filter textbox.
         /// </summary>
         private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
-            IChildResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
+            IChildResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetrievers);
             resource.Execute(view);
         }
 
@@ -166,13 +166,15 @@ namespace SharpFile {
             tlsFilter.Enabled = false;
             view.Enabled = false;
 
-            resource.ChildResourceRetriever.OnGetComplete += delegate {
-                highlightParentResource(resource, e.ClickedItem.Image);
-                tlsDrives.Enabled = true;
-                tlsPath.Enabled = true;
-                tlsFilter.Enabled = true;
-                view.Enabled = true;
-            };
+            foreach (IChildResourceRetriever childResourceRetriever in resource.ChildResourceRetrievers) {
+                childResourceRetriever.GetComplete += delegate {
+                    highlightParentResource(resource, e.ClickedItem.Image);
+                    tlsDrives.Enabled = true;
+                    tlsPath.Enabled = true;
+                    tlsFilter.Enabled = true;
+                    view.Enabled = true;
+                };
+            }
         }
 
         /// <summary>
@@ -188,7 +190,7 @@ namespace SharpFile {
         /// </summary>
         private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
             string path = e.FullPath;
-            IChildResource resource = ChildResourceFactory.GetChildResource(path, ChildResourceRetriever);
+            IChildResource resource = ChildResourceFactory.GetChildResource(path, ChildResourceRetrievers);
 
             // Required to ensure the view update occurs on the calling thread.
             view.Control.BeginInvoke((MethodInvoker)delegate {
@@ -274,22 +276,27 @@ namespace SharpFile {
                             if (!isLocalDiskFound) {
                                 // If the path has been defined and it is valid, then grab information about it.
                                 if (!string.IsNullOrEmpty(Path)) {
-                                    childResourceRetriever = resource.ChildResourceRetriever.Clone();
-                                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, childResourceRetriever);
+                                    childResourceRetrievers = resource.ChildResourceRetrievers.Clone();
 
-                                    if (pathResource != null &&
-                                        pathResource.Root.FullPath.ToLower().Equals(resource.FullPath.ToLower())) {
-                                        isLocalDiskFound = true;
+                                    foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers) {
+                                        IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, childResourceRetrievers);
 
-                                        pathResource.Execute(view);
-                                        highlightParentResource(resource.Root, item.Image);
+                                        if (pathResource != null &&
+                                            pathResource.Root.FullPath.ToLower().Equals(resource.FullPath.ToLower())) {
+                                            isLocalDiskFound = true;
+
+                                            pathResource.Execute(view);
+                                            highlightParentResource(resource.Root, item.Image);
+                                        }
+
+                                        break;
                                     }
                                 }
 
                                 // If there is no defined path to retrieve, then attempt to get 
                                 // information about the the first drive found tha tis local and ready.
                                 if (!isLocalDiskFound && resource is SharpFile.IO.ParentResources.DriveInfo) {
-                                    SharpFile.IO.ParentResources.DriveInfo driveInfo = 
+                                    SharpFile.IO.ParentResources.DriveInfo driveInfo =
                                         (SharpFile.IO.ParentResources.DriveInfo)resource;
 
                                     if (driveInfo.DriveType == DriveType.Fixed &&
@@ -303,10 +310,10 @@ namespace SharpFile {
                             }
                         }
 
-                        if (childResourceRetriever == null && 
+                        if (childResourceRetrievers == null &&
                             resources != null &&
                             resources.Count > 0) {
-                            childResourceRetriever = resources[0].ChildResourceRetriever.Clone();
+                            childResourceRetrievers = resources[0].ChildResourceRetrievers.Clone();
                         }
                     });
                 }
@@ -427,9 +434,9 @@ namespace SharpFile {
             }
         }
 
-        public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
             get {
-                return childResourceRetriever;
+                return childResourceRetrievers;
             }
         }
         #endregion

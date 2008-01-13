@@ -5,7 +5,7 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
 	public class DriveRetriever : IResourceRetriever {
-        private IChildResourceRetriever childResourceRetriever;
+        private ChildResourceRetrievers childResourceRetrievers;
 
         public IEnumerable<IResource> Get() {
 			foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
@@ -16,17 +16,17 @@ namespace SharpFile.IO.Retrievers {
                 //}
 
                 if (driveInfo.DriveType != System.IO.DriveType.Network) {
-                    yield return new DriveInfo(driveInfo, childResourceRetriever);
+                    yield return new DriveInfo(driveInfo, childResourceRetrievers);
                 }
 			}
 		}
 
-		public IChildResourceRetriever ChildResourceRetriever {
+		public ChildResourceRetrievers ChildResourceRetrievers {
 			get {
-				return childResourceRetriever;
+				return childResourceRetrievers;
             }
             set {
-                childResourceRetriever = value;
+                childResourceRetrievers = value;
             }
 		}
 	}

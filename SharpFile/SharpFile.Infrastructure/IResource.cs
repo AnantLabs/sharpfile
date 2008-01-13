@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace SharpFile.Infrastructure {
 	public interface IResource {
 		string DisplayName { get; }
@@ -9,6 +11,6 @@ namespace SharpFile.Infrastructure {
         string Path { get; }
 
 		void Execute(IView view);
-		IChildResourceRetriever ChildResourceRetriever { get; }
+		ChildResourceRetrievers ChildResourceRetrievers { get; }
 	}
 }

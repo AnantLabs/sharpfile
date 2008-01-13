@@ -63,6 +63,9 @@ namespace SharpFile.Infrastructure {
         #region Static methods.
         public static void Load() {
             lock (lockObject) {
+                // Null out the reource retrievers in case settings are being reloaded.
+                instance.resourceRetrievers = null;
+
                 try {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
                     bool settingsLoaded = false;
@@ -94,7 +97,7 @@ namespace SharpFile.Infrastructure {
                         xmlWriterSettings.Encoding = Encoding.UTF8;
                         xmlWriterSettings.Indent = true;
 
-                        string settings = Resource.settings;
+                        string settingsXml = Resource.settings;
 
                         try {
                             // Check to see if the SharpFile assembly has has the 
@@ -107,13 +110,13 @@ namespace SharpFile.Infrastructure {
                             if (types.Find(delegate(Type t) {
                                 return t.Namespace.Equals("SharpFile.Infrastructure");
                             }) != null) {
-                                settings = Resource.ilmerge_settings;
+                                settingsXml = Resource.ilmerge_settings;
                             }
                         } catch { }
 
                         using (XmlWriter xmlWriter = XmlWriter.Create(FilePath, xmlWriterSettings)) {
                             XmlDocument xml = new XmlDocument();
-                            xml.LoadXml(settings);
+                            xml.LoadXml(settingsXml);
                             xml.WriteTo(xmlWriter);
                         }
 
@@ -288,31 +291,37 @@ namespace SharpFile.Infrastructure {
 
                             if (resourceRetrieverObject is IResourceRetriever) {
                                 IResourceRetriever resourceRetriever = (IResourceRetriever)resourceRetrieverObject;
-                                string childResourceRetrieverName = resourceRetrieverInfo.ChildResourceRetriever;
+                                
+                                foreach (string childResourceRetrieverName in resourceRetrieverInfo.ChildResourceRetrievers) {
+                                    ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
+                                        return c.Name == childResourceRetrieverName;
+                                    });
 
-                                ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
-                                    return c.Name == childResourceRetrieverName;
-                                });
+                                    if (childResourceRetrieverInfo != null) {
+                                        try {
+                                            object childResourceRetrieverObject = Reflection.InstantiateObject(
+                                                childResourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                                childResourceRetrieverInfo.FullyQualifiedType.Type);
 
-                                if (childResourceRetrieverInfo != null) {
-                                    try {
-                                        object childResourceRetrieverObject = Reflection.InstantiateObject(
-                                            childResourceRetrieverInfo.FullyQualifiedType.Assembly,
-                                            childResourceRetrieverInfo.FullyQualifiedType.Type);
+                                            if (childResourceRetrieverObject is IChildResourceRetriever) {
+                                                IChildResourceRetriever childResourceRetriever = (IChildResourceRetriever)childResourceRetrieverObject;
+                                                childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
+                                                childResourceRetriever.CustomMethod += childResourceRetrieverInfo.CustomMethod;
 
-                                        if (childResourceRetrieverObject is IChildResourceRetriever) {
-                                            IChildResourceRetriever childResourceRetriever = (IChildResourceRetriever)childResourceRetrieverObject;
-                                            childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
+                                                if (resourceRetriever.ChildResourceRetrievers == null) {
+                                                    resourceRetriever.ChildResourceRetrievers = new ChildResourceRetrievers();
+                                                }
 
-                                            resourceRetriever.ChildResourceRetriever = childResourceRetriever;
-                                        } else {
-                                            // TODO: Log an error: ChildResourceRetriever is not derived from IChildResourceRetriever.
+                                                resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
+                                            } else {
+                                                // TODO: Log an error: ChildResourceRetriever is not derived from IChildResourceRetriever.
+                                            }
+                                        } catch (TypeLoadException ex) {
+                                            // TODO: Log an error here: ChildResourceRetriever could not be instantiated.
                                         }
-                                    } catch (TypeLoadException ex) {
-                                        // TODO: Log an error here: ChildResourceRetriever could not be instantiated.
+                                    } else {
+                                        // TODO: Log an error: ChildResourceRetriever could not be found.
                                     }
-                                } else {
-                                    // TODO: Log an error: ChildResourceRetriever could not be found.
                                 }
 
                                 resourceRetrievers.Add(resourceRetriever);

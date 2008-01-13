@@ -2,10 +2,11 @@ using System;
 using SharpFile.IO.Retrievers;
 using SharpFile.IO;
 using SharpFile.Infrastructure;
+using System.Collections.Generic;
 
 namespace SharpFile.IO.ParentResources {
 	public class ServerInfo : FileSystemInfo, IResource {
-        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
 		private string label;
 		private string format;
@@ -22,9 +23,9 @@ namespace SharpFile.IO.ParentResources {
 			//this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
 		}
 
-        public void GetComplete() {
-            if (OnGetComplete != null) {
-                OnGetComplete();
+        public void OnGetComplete() {
+            if (GetComplete != null) {
+                GetComplete();
             }
         }
 
@@ -62,7 +63,7 @@ namespace SharpFile.IO.ParentResources {
 			throw new Exception("Execute not defined.");
 		}
 
-		public IChildResourceRetriever ChildResourceRetriever {
+		public ChildResourceRetrievers ChildResourceRetrievers {
 			get {
 				throw new Exception("ChildResourceRetriever not defined.");
 			}

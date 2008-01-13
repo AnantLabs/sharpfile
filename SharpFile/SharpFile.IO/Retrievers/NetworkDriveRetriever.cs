@@ -7,7 +7,7 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
     public class NetworkDriveRetriever : IResourceRetriever {
-        private IChildResourceRetriever childResourceRetriever;
+        private ChildResourceRetrievers childResourceRetrievers;
         private bool isDetailInfoRetrievable = false;
 
         public IEnumerable<IResource> Get() {
@@ -26,7 +26,7 @@ namespace SharpFile.IO.Retrievers {
                 }
 
                 NetworkDriveInfo networkDriveInfo = 
-                    new NetworkDriveInfo(driveInfo, this.ChildResourceRetriever, providerName, isFileSystemWatchSupported);
+                    new NetworkDriveInfo(driveInfo, this.ChildResourceRetrievers, providerName, isFileSystemWatchSupported);
 
                 yield return networkDriveInfo;
             }
@@ -79,12 +79,12 @@ namespace SharpFile.IO.Retrievers {
             return isFileSystemWatchSupported;
         }
 
-        public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
             get {
-                return childResourceRetriever;
+                return childResourceRetrievers;
             }
             set {
-                childResourceRetriever = value;
+                childResourceRetrievers = value;
             }
         }
     }

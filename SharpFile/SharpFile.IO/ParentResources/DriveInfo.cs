@@ -16,17 +16,20 @@ namespace SharpFile.IO.ParentResources {
         private DriveType driveType;
         private bool? isReady;
         private DirectoryInfo directoryInfo;
-        private IChildResourceRetriever childResourceRetriever;
+        private ChildResourceRetrievers childResourceRetrievers;
 
-        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
-        public DriveInfo(System.IO.DriveInfo driveInfo, IChildResourceRetriever childResourceRetriever) {
+        public DriveInfo(System.IO.DriveInfo driveInfo, ChildResourceRetrievers childResourceRetrievers) {
             this.driveInfo = driveInfo;
             this.name = driveInfo.Name;
             this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
             this.fullPath = name;
-            this.childResourceRetriever = childResourceRetriever;
-            this.childResourceRetriever.OnGetComplete += GetComplete;
+            this.childResourceRetrievers = childResourceRetrievers;
+
+            foreach (IChildResourceRetriever childResourceRetriever in this.childResourceRetrievers) {
+                childResourceRetriever.GetComplete += OnGetComplete;
+            }
 
             if (driveInfo.IsReady) {
                 this.label = driveInfo.VolumeLabel;
@@ -40,9 +43,9 @@ namespace SharpFile.IO.ParentResources {
                 Common.General.GetHumanReadableSize(availableFreeSpace.ToString()));
         }
 
-        public void GetComplete() {
-            if (OnGetComplete != null) {
-                OnGetComplete();
+        public void OnGetComplete() {
+            if (GetComplete != null) {
+                GetComplete();
             }
         }
 
@@ -81,12 +84,16 @@ namespace SharpFile.IO.ParentResources {
         }
 
         public void Execute(IView view) {
-            this.ChildResourceRetriever.Get(view, this);
+            foreach (IChildResourceRetriever childResourceRetriever in this.ChildResourceRetrievers) {
+                childResourceRetriever.Execute(view, this);
+            }
         }
 
         public IEnumerable<IChildResource> GetDirectories() {
             if (directoryInfo == null) {
-                directoryInfo = new DirectoryInfo(this.FullPath, childResourceRetriever);
+                foreach (IChildResourceRetriever childResourceRetriever in this.childResourceRetrievers) {
+                    directoryInfo = new DirectoryInfo(this.FullPath, childResourceRetrievers);
+                }
             }
 
             return directoryInfo.GetDirectories();
@@ -98,15 +105,15 @@ namespace SharpFile.IO.ParentResources {
 
         public IEnumerable<IChildResource> GetFiles(string filter) {
             if (directoryInfo == null) {
-                directoryInfo = new DirectoryInfo(this.FullPath, childResourceRetriever);
+                directoryInfo = new DirectoryInfo(this.FullPath, childResourceRetrievers);
             }
 
             return directoryInfo.GetFiles(filter);
         }
 
-        public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
             get {
-                return childResourceRetriever;
+                return childResourceRetrievers;
             }
         }
     }

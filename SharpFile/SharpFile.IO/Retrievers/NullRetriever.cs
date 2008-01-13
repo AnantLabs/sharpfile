@@ -11,7 +11,7 @@ namespace SharpFile.IO.Retrievers {
 			return resources;
 		}
 
-		public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
 			get {
 				throw new Exception("No child resource specified.");
 			}

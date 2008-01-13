@@ -62,7 +62,7 @@ namespace SharpFile.IO {
                     }
 
                     if (resource != null) {
-                        root = new DriveInfo(new System.IO.DriveInfo(rootString.Substring(0, 1)), resource.ChildResourceRetriever);
+                        root = new DriveInfo(new System.IO.DriveInfo(rootString.Substring(0, 1)), resource.ChildResourceRetrievers);
                     } else {
                         throw new Exception("Root cannot be found.");
                     }

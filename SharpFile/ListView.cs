@@ -160,12 +160,7 @@ namespace SharpFile {
                 IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
 
                 if (resource != null) {
-										//resource.ChildResourceRetriever.OnGetComplete += delegate {
-                        //this.Enabled = true;
-										//};
-
                     resource.Execute(this);
-                    //this.Enabled = false;
                 }
             }
         }
@@ -296,7 +291,7 @@ namespace SharpFile {
 
             string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string fileDrop in fileDrops) {
-                IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop, ChildResourceRetriever);
+                IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop, ChildResourceRetrievers);
 
                 if (resource != null) {
                     string destination = string.Format(@"{0}{1}",
@@ -361,8 +356,8 @@ namespace SharpFile {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
                 if (files.Length > 0) {
-                    IChildResource fileResource = ChildResourceFactory.GetChildResource(files[0], ChildResourceRetriever);
-                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetriever);
+                    IChildResource fileResource = ChildResourceFactory.GetChildResource(files[0], ChildResourceRetrievers);
+                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetrievers);
 
                     if (!fileResource.Root.FullPath.Equals(pathResource.Root.FullPath)) {
                         if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
@@ -688,22 +683,22 @@ namespace SharpFile {
                 return columnInfos;
             }
             set {
-                if (columnInfos == null) {
-                    columnInfos = value;
+                columnInfos = value;
 
-                    foreach (ColumnInfo columnInfo in columnInfos) {
-                        ColumnHeader columnHeader = new ColumnHeader();
-                        columnHeader.Text = columnInfo.Text;
-                        columnHeader.Tag = columnInfo;
-                        this.Columns.Add(columnHeader);
-                    }
+                this.Columns.Clear();
+
+                foreach (ColumnInfo columnInfo in columnInfos) {
+                    ColumnHeader columnHeader = new ColumnHeader();
+                    columnHeader.Text = columnInfo.Text;
+                    columnHeader.Tag = columnInfo;
+                    this.Columns.Add(columnHeader);
                 }
             }
         }
 
-        public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
             get {
-                return Forms.GetPropertyInParent<IChildResourceRetriever>(this.Parent, "ChildResourceRetriever");
+                return Forms.GetPropertyInParent<ChildResourceRetrievers>(this.Parent, "ChildResourceRetrievers");
             }
         }
     }

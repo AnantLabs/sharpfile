@@ -6,7 +6,7 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
 	public class ServerRetriever : IResourceRetriever {
-        private IChildResourceRetriever childResourceRetriever;
+        private ChildResourceRetrievers childResourceRetrievers;
 
         public IEnumerable<IResource> Get() {
 			//ServerEnum serverEnum = new ServerEnum(ResourceScope.RESOURCE_CONNECTED,
@@ -21,13 +21,13 @@ namespace SharpFile.IO.Retrievers {
             return new List<IResource>();
 		}
 
-		public IChildResourceRetriever ChildResourceRetriever {
-			get {
-				return childResourceRetriever;
+        public ChildResourceRetrievers ChildResourceRetrievers {
+            get {
+                return childResourceRetrievers;
             }
             set {
-                childResourceRetriever = value;
+                childResourceRetrievers = value;
             }
-		}
+        }
 	}
 }

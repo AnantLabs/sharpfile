@@ -1,18 +1,19 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
     public class ResourceRetrieverInfo {
         private FullyQualifiedType fullyQualifiedType;
         private string name;
-        private string childResourceRetriever;
+        private List<string> childResourceRetrievers;
 
         public ResourceRetrieverInfo() {
         }
 
-        public ResourceRetrieverInfo(string name, string childResourceRetriever, FullyQualifiedType fullyQualifiedType) {
+        public ResourceRetrieverInfo(string name, List<string> childResourceRetrievers, FullyQualifiedType fullyQualifiedType) {
             this.name = name;
             this.fullyQualifiedType = fullyQualifiedType;
-            this.childResourceRetriever = childResourceRetriever;
+            this.childResourceRetrievers = childResourceRetrievers;
         }
 
         [XmlAttribute("Name")]
@@ -25,13 +26,14 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        [XmlAttribute("ChildResourceRetriever")]
-        public string ChildResourceRetriever {
+        [XmlArray("ChildResourceRetrievers")]
+        [XmlArrayItem("ChildResourceRetriever")]
+        public List<string> ChildResourceRetrievers {
             get {
-                return childResourceRetriever;
+                return childResourceRetrievers;
             }
             set {
-                childResourceRetriever = value;
+                childResourceRetrievers = value;
             }
         }
 

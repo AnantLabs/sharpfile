@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChildResourceRetrieverInfo.cs" />
+    <Compile Include="ChildResourceRetrievers.cs" />
     <Compile Include="ColumnInfo.cs" />
     <Compile Include="DualParentSettings.cs" />
     <Compile Include="FullyQualifiedMethod.cs" />

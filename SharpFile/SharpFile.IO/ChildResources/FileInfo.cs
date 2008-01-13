@@ -2,28 +2,31 @@ using System.Diagnostics;
 using SharpFile.IO;
 using SharpFile.IO.Retrievers;
 using SharpFile.Infrastructure;
+using System.Collections.Generic;
 
 namespace SharpFile.IO.ChildResources {
 	public class FileInfo : FileSystemInfo, IChildResource {
-        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
 		private string extension;
+        private ChildResourceRetrievers childResourceRetrievers;
 
-		public FileInfo(string fileName)
-			: this(new System.IO.FileInfo(fileName)) {
+		public FileInfo(string fileName, ChildResourceRetrievers childResourceRetrievers)
+            : this(new System.IO.FileInfo(fileName), childResourceRetrievers) {
 		}
 
-		public FileInfo(System.IO.FileInfo fileInfo) {
+        public FileInfo(System.IO.FileInfo fileInfo, ChildResourceRetrievers childResourceRetrievers) {
 			this.name = fileInfo.Name;
 			this.size = fileInfo.Length;
 			this.lastWriteTime = fileInfo.LastWriteTime;
 			this.fullPath = fileInfo.FullName;
 			this.extension = fileInfo.Extension;
+            this.childResourceRetrievers = childResourceRetrievers;
 		}
 
-        public void GetComplete() {
-            if (OnGetComplete != null) {
-                OnGetComplete();
+        public void OnGetComplete() {
+            if (GetComplete != null) {
+                GetComplete();
             }
         }
 
@@ -42,12 +45,14 @@ namespace SharpFile.IO.ChildResources {
 		}
 
 		public void Execute(IView view) {
-			Process.Start(this.FullPath);
+            foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers) {
+                childResourceRetriever.Execute(view, this);
+            }
 		}
 
-		public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
 			get {
-				return null;
+                return childResourceRetrievers;
 			}
 		}
 

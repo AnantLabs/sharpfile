@@ -9,18 +9,32 @@ namespace SharpFile.IO.Retrievers {
     public class FileRetriever : IChildResourceRetriever {
         private List<ColumnInfo> columnInfos;
 
-        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
+        public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
 
         public FileRetriever() {
         }
 
-        public void GetComplete() {
-            if (OnGetComplete != null) {
-                OnGetComplete();
+        public void OnGetComplete() {
+            if (GetComplete != null) {
+                GetComplete();
             }
         }
 
-        public void Get(IView view, IResource resource) {
+        public bool OnCustomMethod(IResource resource) {
+            if (CustomMethod != null) {
+                return CustomMethod(resource);
+            }
+
+            return true;
+        }
+
+        public void Execute(IView view, IResource resource) {
+            if (resource is SharpFile.IO.ChildResources.FileInfo) {
+                System.Diagnostics.Process.Start(resource.FullPath);
+                return;
+            }
+
             using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
                 backgroundWorker.WorkerSupportsCancellation = true;
                 backgroundWorker.WorkerReportsProgress = true;
@@ -70,7 +84,7 @@ namespace SharpFile.IO.Retrievers {
                         view.FileSystemWatcher.EnableRaisingEvents = true;
                     }
 
-                    GetComplete();
+                    OnGetComplete();
                 };
 
                 // Anonymous method that updates the status to the parent form.
@@ -84,8 +98,8 @@ namespace SharpFile.IO.Retrievers {
 
         public IChildResourceRetriever Clone() {
             IChildResourceRetriever fileRetriever = new FileRetriever();
-            List<ColumnInfo> clonedInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
-            fileRetriever.ColumnInfos = clonedInfos;
+            List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
+            fileRetriever.ColumnInfos = clonedColumnInfos;
 
             return fileRetriever;
         }

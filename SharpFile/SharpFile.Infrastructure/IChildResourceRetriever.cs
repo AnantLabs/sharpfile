@@ -2,15 +2,19 @@ using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure {
 	public interface IChildResourceRetriever {
-		void Get(IView view, IResource resource);
-        void GetComplete();
+		void Execute(IView view, IResource resource);
         IChildResourceRetriever Clone();
         List<ColumnInfo> ColumnInfos { get; set; }
 
-        event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+        void OnGetComplete();
+        event ChildResourceRetriever.GetCompleteDelegate GetComplete;
+
+        bool OnCustomMethod(IResource resource);
+        event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
 	}
 
     public static class ChildResourceRetriever {
-        public delegate void OnGetCompleteDelegate();
+        public delegate void GetCompleteDelegate();
+        public delegate bool CustomMethodDelegate(IResource resource);
     }
 }

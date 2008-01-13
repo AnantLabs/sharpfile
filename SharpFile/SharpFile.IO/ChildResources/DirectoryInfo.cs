@@ -7,27 +7,27 @@ using SharpFile.Infrastructure;
 namespace SharpFile.IO.ChildResources {
     [Serializable]
     public class DirectoryInfo : FileSystemInfo, IChildResource, IFileContainer {
-        public event ChildResourceRetriever.OnGetCompleteDelegate OnGetComplete;
+        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
         private System.IO.DirectoryInfo directoryInfo;
-        private IChildResourceRetriever childResourceRetriever;
+        private ChildResourceRetrievers childResourceRetrievers;
 
-        public DirectoryInfo(string path, IChildResourceRetriever childResourceRetriever)
-            : this(new System.IO.DirectoryInfo(path), childResourceRetriever) {
+        public DirectoryInfo(string path, ChildResourceRetrievers childResourceRetrievers)
+            : this(new System.IO.DirectoryInfo(path), childResourceRetrievers) {
         }
 
-        public DirectoryInfo(System.IO.DirectoryInfo directoryInfo, IChildResourceRetriever childResourceRetriever) {
+        public DirectoryInfo(System.IO.DirectoryInfo directoryInfo, ChildResourceRetrievers childResourceRetrievers) {
             this.size = 0;
             this.directoryInfo = directoryInfo;
             this.name = directoryInfo.Name;
             this.lastWriteTime = directoryInfo.LastWriteTime;
             this.fullPath = directoryInfo.FullName;
-            this.childResourceRetriever = childResourceRetriever;
+            this.childResourceRetrievers = childResourceRetrievers;
         }
 
-        public void GetComplete() {
-            if (OnGetComplete != null) {
-                OnGetComplete();
+        public void OnGetComplete() {
+            if (GetComplete != null) {
+                GetComplete();
             }
         }
 
@@ -55,13 +55,13 @@ namespace SharpFile.IO.ChildResources {
             // TODO: Setting that specifies whether to show parent directory or not.
             if (this.Parent != null) {
                 //if (!directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name)) {
-                directories.Add(new ParentDirectoryInfo(this.Parent, this.ChildResourceRetriever));
+                directories.Add(new ParentDirectoryInfo(this.Parent, this.ChildResourceRetrievers));
                 //}
             }
 
             directories.AddRange(Array.ConvertAll<System.IO.DirectoryInfo, DirectoryInfo>(directoryInfos,
                 delegate(System.IO.DirectoryInfo di) {
-                    return new DirectoryInfo(di, this.ChildResourceRetriever);
+                    return new DirectoryInfo(di, this.ChildResourceRetrievers);
                 }));
 
             return directories;
@@ -83,7 +83,7 @@ namespace SharpFile.IO.ChildResources {
 
             return Array.ConvertAll<System.IO.FileInfo, FileInfo>(fileInfos,
                 delegate(System.IO.FileInfo fi) {
-                    return new FileInfo(fi);
+                    return new FileInfo(fi, this.ChildResourceRetrievers);
                 });
         }
 
@@ -120,12 +120,14 @@ namespace SharpFile.IO.ChildResources {
         }
 
         public void Execute(IView view) {
-            this.ChildResourceRetriever.Get(view, this);
+            foreach (IChildResourceRetriever childResourceRetriever in this.ChildResourceRetrievers) {
+                childResourceRetriever.Execute(view, this);
+            }
         }
 
         public static DirectoryInfo Create(string path) {
             System.IO.DirectoryInfo directoryInfo = System.IO.Directory.CreateDirectory(path);
-            return new DirectoryInfo(directoryInfo, new FileRetriever());
+            return new DirectoryInfo(directoryInfo, new ChildResourceRetrievers() { new FileRetriever() });
         }
 
         public static bool Exists(string path) {
@@ -150,9 +152,9 @@ namespace SharpFile.IO.ChildResources {
             return totalSize;
         }
 
-        public IChildResourceRetriever ChildResourceRetriever {
+        public ChildResourceRetrievers ChildResourceRetrievers {
             get {
-                return childResourceRetriever;
+                return childResourceRetrievers;
             }
         }
     }
