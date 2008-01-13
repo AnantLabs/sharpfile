@@ -16,7 +16,7 @@ BUGS
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 
 TODO
-- If ther eis no customer method for a childresourceretriever, there should just be one by default in the code
+- Specify view to use for each child resource retriever
 - Ability to reload settings made manually and the settings take affect immediately
 - Investigate the type command-line argument to sgen
 - Investigate legality of disctributing 7-z, sgen, ilmerge

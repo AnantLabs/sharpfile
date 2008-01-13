@@ -45,8 +45,9 @@ namespace SharpFile.IO.ChildResources {
 		}
 
 		public void Execute(IView view) {
-            foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers) {
+            foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers.Filter(this)) {
                 childResourceRetriever.Execute(view, this);
+                break;
             }
 		}
 

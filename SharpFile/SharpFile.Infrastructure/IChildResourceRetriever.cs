@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure {
 	public interface IChildResourceRetriever {
+        string Name { get; set; }
 		void Execute(IView view, IResource resource);
         IChildResourceRetriever Clone();
         List<ColumnInfo> ColumnInfos { get; set; }

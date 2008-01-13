@@ -305,6 +305,7 @@ namespace SharpFile.Infrastructure {
 
                                             if (childResourceRetrieverObject is IChildResourceRetriever) {
                                                 IChildResourceRetriever childResourceRetriever = (IChildResourceRetriever)childResourceRetrieverObject;
+                                                childResourceRetriever.Name = childResourceRetrieverName;
                                                 childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
                                                 childResourceRetriever.CustomMethod += childResourceRetrieverInfo.CustomMethod;
 

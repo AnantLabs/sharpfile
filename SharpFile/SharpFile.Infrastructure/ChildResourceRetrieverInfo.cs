@@ -88,6 +88,8 @@ namespace SharpFile.Infrastructure {
                         string blob = ex.Message + ex.StackTrace;
                         // Error: Log the error right here.
                     }
+                } else if (customMethod == null && methodDelegateType == null) {
+                    customMethod = ChildResourceRetrievers.DefaultCustomMethod;
                 }
 
                 return customMethod;

@@ -8,6 +8,7 @@ namespace SharpFile.IO.Retrievers {
     [Serializable]
     public class FileRetriever : IChildResourceRetriever {
         private List<ColumnInfo> columnInfos;
+        private string name;
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
@@ -26,7 +27,7 @@ namespace SharpFile.IO.Retrievers {
                 return CustomMethod(resource);
             }
 
-            return true;
+            return false;
         }
 
         public void Execute(IView view, IResource resource) {
@@ -100,6 +101,10 @@ namespace SharpFile.IO.Retrievers {
             IChildResourceRetriever fileRetriever = new FileRetriever();
             List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
             fileRetriever.ColumnInfos = clonedColumnInfos;
+            fileRetriever.Name = name;
+
+            fileRetriever.CustomMethod += OnCustomMethod;
+            fileRetriever.GetComplete += OnGetComplete;
 
             return fileRetriever;
         }
@@ -114,6 +119,15 @@ namespace SharpFile.IO.Retrievers {
             }
             set {
                 columnInfos = value;
+            }
+        }
+
+        public string Name {
+            get {
+                return name;
+            }
+            set {
+                name = value;
             }
         }
 
