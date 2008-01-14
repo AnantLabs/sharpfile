@@ -43,9 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChildResourceRetrieverInfo.cs" />
+    <Compile Include="SettingInfos\LoggerInfo.cs" />
+    <Compile Include="SettingInfos\ChildResourceRetrieverInfo.cs" />
     <Compile Include="ChildResourceRetrievers.cs" />
-    <Compile Include="ColumnInfo.cs" />
+    <Compile Include="SettingInfos\ColumnInfo.cs" />
     <Compile Include="Settings\DualParentSettings.cs" />
     <Compile Include="FullyQualifiedMethod.cs" />
     <Compile Include="FullyQualifiedType.cs" />
@@ -64,7 +65,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
-    <Compile Include="ResourceRetrieverInfo.cs" />
+    <Compile Include="SettingInfos\ResourceRetrieverInfo.cs" />
     <Compile Include="Nodes.cs" />
     <Compile Include="FileSystemWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

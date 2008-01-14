@@ -381,6 +381,9 @@ namespace SharpFile {
                         string.IsNullOrEmpty(ParentResource.FullPath)) {
                         // TODO: This shouldn't be hard-coded.
                         this.tlsPath.Text = @"c:\";
+
+                        Settings.Instance.Logger.Log(@"Path is null; assume c:\ is valid.",
+                                                    LogLevelType.Verbose);
                     } else {
                         this.tlsPath.Text = ParentResource.FullPath;
                     }

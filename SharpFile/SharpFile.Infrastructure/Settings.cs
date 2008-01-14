@@ -29,12 +29,14 @@ namespace SharpFile.Infrastructure {
         private List<ResourceRetrieverInfo> resourceRetrieverInfos;
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private bool directoriesSortedFirst = true;
+        private LoggerInfo loggerInfo;
 
         // Sub-settings.
         private DualParentSettings dualParentSettings;
         private MdiParentSettings mdiParentSettings;
         private IconSettings iconSettings;
 
+        private Logger logger;
         private List<IResourceRetriever> resourceRetrievers;
         private ImageList imageList = new ImageList();
 
@@ -222,6 +224,16 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        [XmlElement("Logger")]
+        public LoggerInfo LoggerInfo {
+            get {
+                return loggerInfo;
+            }
+            set {
+                loggerInfo = value;
+            }
+        }
+
         [XmlArray("ResourceRetrievers")]
         [XmlArrayItem("ResourceRetriever")]
         public List<ResourceRetrieverInfo> ResourceRetrieverInfos {
@@ -278,6 +290,17 @@ namespace SharpFile.Infrastructure {
 
         #region Properties not derived from settings.config.
         [XmlIgnore]
+        public Logger Logger {
+            get {
+                if (logger == null) {
+                    logger = new Logger(loggerInfo.File, loggerInfo.LogLevel);
+                }
+
+                return logger;
+            }
+        }
+
+        [XmlIgnore]
         public List<IResource> Resources {
             get {
                 if (resourceRetrievers == null || resourceRetrievers.Count == 0) {
@@ -315,22 +338,32 @@ namespace SharpFile.Infrastructure {
 
                                                 resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
                                             } else {
-                                                // TODO: Log an error: ChildResourceRetriever is not derived from IChildResourceRetriever.
+                                                Logger.Log("ChildResourceRetriever, {0}, is not derived from IChildResourceRetriever.", 
+                                                    LogLevelType.ErrorsOnly,
+                                                    childResourceRetrieverName);
                                             }
                                         } catch (TypeLoadException ex) {
-                                            // TODO: Log an error here: ChildResourceRetriever could not be instantiated.
+                                            Logger.Log("ChildResourceRetriever, {0}, could not be instantiated.",
+                                                    LogLevelType.ErrorsOnly,
+                                                    childResourceRetrieverName);
                                         }
                                     } else {
-                                        // TODO: Log an error: ChildResourceRetriever could not be found.
+                                        Logger.Log("ChildResourceRetriever, {0}, could not be found.",
+                                                    LogLevelType.ErrorsOnly,
+                                                    childResourceRetrieverName);
                                     }
                                 }
 
                                 resourceRetrievers.Add(resourceRetriever);
                             } else {
-                                // TODO: Log an error here: ResourceRetriever not derived from IResourceRetriever.
+                                Logger.Log("ResourceRetriever, {0}, is not derived from IResourceRetriever.",
+                                                    LogLevelType.ErrorsOnly,
+                                                    resourceRetrieverInfo.Name);
                             }
                         } catch (TypeLoadException ex) {
-                            // TODO: Log an error here: ResourceRetriever could not be instantiated.
+                            Logger.Log("ResourceRetriever, {0}, could not be instantiated.",
+                                                    LogLevelType.ErrorsOnly,
+                                                    resourceRetrieverInfo.Name);
                         }
                     }
 

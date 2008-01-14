@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using SharpFile.Infrastructure;
+using Common;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -30,6 +31,9 @@ namespace SharpFile.IO.Retrievers {
         }
 
         public void Execute(IView view, IResource resource) {
+            Settings.Instance.Logger.Log("Starting to Execute.",
+                            LogLevelType.Verbose);
+
             if (resource is SharpFile.IO.ChildResources.FileInfo) {
                 System.Diagnostics.Process.Start(resource.FullPath);
                 return;
@@ -51,6 +55,9 @@ namespace SharpFile.IO.Retrievers {
                         if (backgroundWorker.CancellationPending) {
                             e.Cancel = true;
                         } else {
+                            Settings.Instance.Logger.Log("Start to get resources.",
+                                LogLevelType.Verbose);
+
                             e.Result = getResources(resource, view.Filter);
                         }
                     } catch (UnauthorizedAccessException ex) {
@@ -67,6 +74,9 @@ namespace SharpFile.IO.Retrievers {
                         !e.Cancelled &&
                         e.Result != null &&
                         e.Result is IEnumerable<IChildResource>) {
+                        Settings.Instance.Logger.Log("Get resources complete.",
+                            LogLevelType.Verbose);
+
                         IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
 
                         view.BeginUpdate();
