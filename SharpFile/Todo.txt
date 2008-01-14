@@ -16,8 +16,9 @@ BUGS
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 
 TODO
+- Tab information needs to be saved for each panel
 - Investigate combining Infrastructure with IO
-- Base class for child resource retrievers
+- Base class for child resource retrievers (namespace conflict)
 - Change delegate/events to standard .NET way
 - Specify view to use for each child resource retriever
 - Ability to reload settings made manually and the settings take affect immediately
