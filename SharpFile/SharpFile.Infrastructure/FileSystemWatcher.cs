@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Timers;
 using System;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
 	public class FileSystemWatcher {
@@ -62,21 +63,23 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
-		public string Path {
-			get {
-				return fileSystemWatcher.Path;
-			}
-			set {
+        public string Path {
+            get {
+                return fileSystemWatcher.Path;
+            }
+            set {
                 try {
                     fileSystemWatcher.Path = value;
                 } catch (ArgumentException) {
                     // Ignore an argument exception. It just means that the path is not valid to be watched.
                     // This can happen when using a custom ChildResourceRetriever, like the CompressedFileRetriever.
                 } catch (Exception ex) {
-                    // TODO: Log this exception.
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "There was an error when setting the file system watcher path to {0}.",
+                                value);
                 }
-			}
-		}
+            }
+        }
 
 		public string Filter {
 			get {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Common.Logger;
 using SharpFile.Infrastructure;
-using Common;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -31,8 +31,8 @@ namespace SharpFile.IO.Retrievers {
         }
 
         public void Execute(IView view, IResource resource) {
-            Settings.Instance.Logger.Log("Starting to Execute.",
-                            LogLevelType.Verbose);
+            Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                "Starting to Execute.");
 
             if (resource is SharpFile.IO.ChildResources.FileInfo) {
                 System.Diagnostics.Process.Start(resource.FullPath);
@@ -55,8 +55,8 @@ namespace SharpFile.IO.Retrievers {
                         if (backgroundWorker.CancellationPending) {
                             e.Cancel = true;
                         } else {
-                            Settings.Instance.Logger.Log("Start to get resources.",
-                                LogLevelType.Verbose);
+                            Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                "Start to get resources.");
 
                             e.Result = getResources(resource, view.Filter);
                         }
@@ -74,8 +74,8 @@ namespace SharpFile.IO.Retrievers {
                         !e.Cancelled &&
                         e.Result != null &&
                         e.Result is IEnumerable<IChildResource>) {
-                        Settings.Instance.Logger.Log("Get resources complete.",
-                            LogLevelType.Verbose);
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                            "Get resources complete.");
 
                         IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
 

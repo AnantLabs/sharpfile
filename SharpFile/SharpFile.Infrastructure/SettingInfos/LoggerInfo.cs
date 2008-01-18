@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Xml.Serialization;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
     public class LoggerInfo {
         private string file;
-        private Common.LogLevelType logLevel;
+        private LogLevelType logLevel;
 
         public LoggerInfo() {
         }
@@ -20,7 +21,7 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlElement("LogLevel")]
-        public Common.LogLevelType LogLevel {
+        public LogLevelType LogLevel {
             get {
                 return logLevel;
             }

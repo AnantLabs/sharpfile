@@ -27,8 +27,12 @@ http://www.codeproject.com/KB/system/DriveDetector.aspx
 
 http://www.pinvoke.net/default.aspx/shlwapi/StrCmpLogicalW.html
 
-Information on sorting listviews.
+Information on sorting listviews
 http://www.akadia.com/services/dotnet_listview_sort_dataset.html
+
+Detailed information on constraining generic methods to delegates - Rich McColllister
+With a comment by Wesner Moise (http://wesnerm.blogs.com/)
+http://geekswithblogs.net/kraki/archive/2006/03/29/73743.aspx
 
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 

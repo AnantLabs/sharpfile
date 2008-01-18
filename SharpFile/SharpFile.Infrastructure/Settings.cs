@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Remoting;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using Common;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -36,7 +36,7 @@ namespace SharpFile.Infrastructure {
         private MdiParentSettings mdiParentSettings;
         private IconSettings iconSettings;
 
-        private Logger logger;
+        private LoggerService logger;
         private List<IResourceRetriever> resourceRetrievers;
         private ImageList imageList = new ImageList();
 
@@ -65,6 +65,8 @@ namespace SharpFile.Infrastructure {
         #region Static methods.
         public static void Load() {
             lock (lockObject) {
+                LoggerService loggerService = new LoggerService("log.txt", LogLevelType.Verbose);
+
                 // Null out the reource retrievers in case settings are being reloaded.
                 instance.resourceRetrievers = null;
 
@@ -81,7 +83,9 @@ namespace SharpFile.Infrastructure {
 
                             settingsLoaded = true;
                         } catch (Exception ex) {
-                            string blob = ex.Message + ex.StackTrace;
+                            loggerService.Log(LogLevelType.Verbose, ex,
+                                "There was an error generating the settings; defaults will be loaded instead.");
+
                             settingsLoaded = false;
 
                             // TODO: Show a message saying that default values will 
@@ -125,10 +129,8 @@ namespace SharpFile.Infrastructure {
                         deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
-                    Exception insideException = Common.General.GetInnerException(ex);
-                    string error = insideException.Message + insideException.StackTrace;
-
-                    // Error: Settings object could not be serialized.
+                    loggerService.Log(LogLevelType.Verbose, ex, 
+                        "There was an error generating the settings.");
                 }
             }
         }
@@ -290,10 +292,10 @@ namespace SharpFile.Infrastructure {
 
         #region Properties not derived from settings.config.
         [XmlIgnore]
-        public Logger Logger {
+        public LoggerService Logger {
             get {
                 if (logger == null) {
-                    logger = new Logger(loggerInfo.File, loggerInfo.LogLevel);
+                    logger = new LoggerService(loggerInfo.File, loggerInfo.LogLevel);
                 }
 
                 return logger;
@@ -338,32 +340,32 @@ namespace SharpFile.Infrastructure {
 
                                                 resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
                                             } else {
-                                                Logger.Log("ChildResourceRetriever, {0}, is not derived from IChildResourceRetriever.", 
-                                                    LogLevelType.ErrorsOnly,
+                                                Logger.Log(LogLevelType.ErrorsOnly, 
+                                                    "ChildResourceRetriever, {0}, is not derived from IChildResourceRetriever.",                                                    
                                                     childResourceRetrieverName);
                                             }
                                         } catch (TypeLoadException ex) {
-                                            Logger.Log("ChildResourceRetriever, {0}, could not be instantiated.",
-                                                    LogLevelType.ErrorsOnly,
-                                                    childResourceRetrieverName);
+                                            Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                                "ChildResourceRetriever, {0}, could not be instantiated.",
+                                                childResourceRetrieverName);
                                         }
                                     } else {
-                                        Logger.Log("ChildResourceRetriever, {0}, could not be found.",
-                                                    LogLevelType.ErrorsOnly,
-                                                    childResourceRetrieverName);
+                                        Logger.Log(LogLevelType.ErrorsOnly, 
+                                            "ChildResourceRetriever, {0}, could not be found.",
+                                            childResourceRetrieverName);
                                     }
                                 }
 
                                 resourceRetrievers.Add(resourceRetriever);
                             } else {
-                                Logger.Log("ResourceRetriever, {0}, is not derived from IResourceRetriever.",
-                                                    LogLevelType.ErrorsOnly,
-                                                    resourceRetrieverInfo.Name);
+                                Logger.Log(LogLevelType.ErrorsOnly, 
+                                    "ResourceRetriever, {0}, is not derived from IResourceRetriever.",
+                                    resourceRetrieverInfo.Name);
                             }
                         } catch (TypeLoadException ex) {
-                            Logger.Log("ResourceRetriever, {0}, could not be instantiated.",
-                                                    LogLevelType.ErrorsOnly,
-                                                    resourceRetrieverInfo.Name);
+                            Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "ResourceRetriever, {0}, could not be instantiated.",
+                                resourceRetrieverInfo.Name);
                         }
                     }
 

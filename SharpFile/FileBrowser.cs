@@ -8,6 +8,7 @@ using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
+using Common.Logger;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -379,11 +380,10 @@ namespace SharpFile {
                 if (string.IsNullOrEmpty(this.tlsPath.Text)) {
                     if (ParentResource == null ||
                         string.IsNullOrEmpty(ParentResource.FullPath)) {
-                        // TODO: This shouldn't be hard-coded.
                         this.tlsPath.Text = @"c:\";
 
-                        Settings.Instance.Logger.Log(@"Path is null; assume c:\ is valid.",
-                                                    LogLevelType.Verbose);
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                            @"Path is null; assume c:\ is valid.");
                     } else {
                         this.tlsPath.Text = ParentResource.FullPath;
                     }

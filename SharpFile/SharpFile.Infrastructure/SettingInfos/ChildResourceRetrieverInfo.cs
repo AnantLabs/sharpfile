@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Serialization;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
     public class ChildResourceRetrieverInfo {
@@ -74,17 +75,15 @@ namespace SharpFile.Infrastructure {
             get {
                 if (customMethod == null && methodDelegateType != null) {
                     try {
-                        // TODO: This should be in Common.
-                        Type type = Assembly.Load(methodDelegateType.FullyQualifiedType.Assembly)
-                            .GetType(methodDelegateType.FullyQualifiedType.Type, true);
-
-                        customMethod = (ChildResourceRetriever.CustomMethodDelegate)Delegate.CreateDelegate(
-                            typeof(ChildResourceRetriever.CustomMethodDelegate),
-                            type.GetMethod(methodDelegateType.Method, 
-                            BindingFlags.Public | BindingFlags.Static));
+                        customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
+                            methodDelegateType.FullyQualifiedType.Assembly,
+                            methodDelegateType.FullyQualifiedType.Type,
+                            methodDelegateType.Method);
                     } catch (Exception ex) {
-                        string blob = ex.Message + ex.StackTrace;
-                        // Error: Log the error right here.
+                        string message = "Creating the CustomMethod, {0}, for the {1} ChildResourceRetriever failed.";
+
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message, 
+                                methodDelegateType.FullyQualifiedType.Type, name);
                     }
                 } else if (customMethod == null && methodDelegateType == null) {
                     customMethod = ChildResourceRetrievers.DefaultCustomMethod;

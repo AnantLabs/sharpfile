@@ -2,7 +2,6 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure {
-	// TODO: This might be better somewhere else. Maybe there should be an assembly just for interfaces.
 	public interface IView {
 		void AddItemRange(IEnumerable<IChildResource> childResources);
 		void InsertItem(IChildResource childResource);

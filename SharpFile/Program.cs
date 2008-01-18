@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
+using Common.Logger;
 
 namespace SharpFile {
     static class Program {
@@ -13,15 +14,21 @@ namespace SharpFile {
             Application.SetCompatibleTextRenderingDefault(false);
 			
 			Application.ApplicationExit += delegate {
-                Settings.Instance.Logger.Log("ApplicationExit", Common.LogLevelType.Verbose);
+                Settings.Instance.Logger.Log(LogLevelType.Verbose, 
+                    "ApplicationExit");
+
 				Settings.Save();
 			};
 
 			if (Settings.Instance.ParentType == ParentType.Mdi) {
-                Settings.Instance.Logger.Log("Start the Mdi program", Common.LogLevelType.Verbose);
+                Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                    "Start the Mdi program");
+
 				Application.Run(new MdiParent());
 			} else if (Settings.Instance.ParentType == ParentType.Dual) {
-                Settings.Instance.Logger.Log("Start the Dual program", Common.LogLevelType.Verbose);
+                Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                    "Start the Dual program");
+
 				Application.Run(new DualParent());
 			}
         }

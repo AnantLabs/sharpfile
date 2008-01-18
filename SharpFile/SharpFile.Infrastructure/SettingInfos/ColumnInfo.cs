@@ -3,6 +3,7 @@ using System.Xml.Serialization;
 using System;
 using System.Reflection;
 using Common;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
@@ -92,10 +93,14 @@ namespace SharpFile.Infrastructure {
                             if (comparerObject is IComparer) {
                                 comparer = (IComparer)comparerObject;
                             } else {
-                                // TODO: Log an error: Comparer does not derive from IComparer.
+                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly,
+                                    "Comparer, {0}, does not inherit from IComparer.",
+                                    comparerType.Type);
                             }
                         } catch (TypeLoadException ex) {
-                            // TODO: Log an error: Comparer could not be instantiated.
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                    "Comparer, {0}, can not be instantiated.",
+                                    comparerType.Type);
                         }
                     }
                 }
@@ -128,14 +133,16 @@ namespace SharpFile.Infrastructure {
             get {
                 if (customMethod == null && methodDelegateType != null) {
                     try {
-                        Type type = Assembly.Load(methodDelegateType.FullyQualifiedType.Assembly)
-                            .GetType(methodDelegateType.FullyQualifiedType.Type, true);
-
-                        customMethod = (CustomMethod)Delegate.CreateDelegate(typeof(CustomMethod),
-                            type.GetMethod(methodDelegateType.Method, BindingFlags.Public | BindingFlags.Static));
+                        customMethod = Common.Reflection.CreateDelegate<CustomMethod>(
+                            methodDelegateType.FullyQualifiedType.Assembly,
+                            methodDelegateType.FullyQualifiedType.Type,
+                            methodDelegateType.Method);
                     } catch (Exception ex) {
-                        string blob = ex.Message + ex.StackTrace;
-                        // Error: Log the error right here.
+                        string message = "Creating the CustomMethod, {0}, for the {1} ColumnInfo failed.";
+
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
+                                methodDelegateType.FullyQualifiedType.Type, text);
+
                     }
                 }
 
