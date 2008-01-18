@@ -1,8 +1,7 @@
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
-- executing a file throws an exception
-- Parent directory shows detailed information just like a regular directory
+- Parent/root directory shows detailed information just like a regular directory
 - Error messages do not show up on top of the window
 - KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
@@ -14,10 +13,15 @@ BUGS
 	when starting a new operation
 - flicker in drive dropdown when new drive is inserted
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
+- multi-selection doesn't work with drag-and-drop
 
 TODO
+- Tab information needs to be saved for each panel for dual
+- Tab information needs to be saved for each window for mdi
+- Move UI classes to the UI directory/namespace ?
+- Drag and drop from another window "into" a directory
+- Move some code in listview into a base view class
 - Settings xsd
-- Tab information needs to be saved for each panel
 - Investigate combining Infrastructure with IO
 - Base class for child resource retrievers (namespace conflict)
 - Change delegate/events to standard .NET way
@@ -64,6 +68,12 @@ TODO
 - SCP drive functionality
 - NFS drive functionality
 - Double-clicking compressed file shows files contained within
+
+KEYCODES TODO:
+- Del
+- Shift-del
+- Ctrl-C
+- Ctrl-V
 
 VISTA BUGS
 	- No icon overlays

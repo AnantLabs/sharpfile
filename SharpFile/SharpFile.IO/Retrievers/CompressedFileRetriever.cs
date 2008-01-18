@@ -136,6 +136,7 @@ namespace SharpFile.IO.Retrievers {
             return resources;
             */
 
+            // TODO: Finish this.
             List<IChildResource> resources = new List<IChildResource>();
             resources.Add(ChildResourceFactory.GetChildResource(@"c:\#storage\", Settings.Instance.Resources[0].ChildResourceRetrievers));
             return resources;

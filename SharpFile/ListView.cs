@@ -13,6 +13,7 @@ using SharpFile.UI;
 using DirectoryInfo = SharpFile.IO.ChildResources.DirectoryInfo;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
+using Common.Logger;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
@@ -298,23 +299,54 @@ namespace SharpFile {
                                                        Path,
                                                        resource.Name);
 
-                    try {
-                        switch (e.Effect) {
-                            case DragDropEffects.Copy:
-                                resource.Copy(destination);
-                                break;
-                            case DragDropEffects.Move:
-                                resource.Move(destination);
-                                break;
-                            case DragDropEffects.Link:
-                                // TODO: Need to handle links.
-                                break;
+                    if (!FileInfo.Exists(destination)) {
+                        try {
+                            switch (e.Effect) {
+                                case DragDropEffects.Copy:
+                                    resource.Copy(destination);
+                                    break;
+                                case DragDropEffects.Move:
+                                    resource.Move(destination);
+                                    break;
+                                case DragDropEffects.Link:
+                                    // TODO: Need to handle links.
+                                    break;
+                            }
+                        } catch (IOException ex) {
+                            string message = "Failed to perform the specified operation for {0}";
+
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
+                                destination);
+
+                            MessageBox.Show(this,
+                                string.Format(message, destination), 
+                                "Operation failed",
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Stop);
+                        } catch (Exception ex) {
+                            string message = "The selected operation could not be completed for {0}.";
+
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message, 
+                                destination);
+
+                            MessageBox.Show(this, 
+                                string.Format(message, destination), 
+                                "Operation error", 
+                                MessageBoxButtons.OK, 
+                                MessageBoxIcon.Stop);
                         }
-                    } catch (IOException ex) {
-                        MessageBox.Show(this, "Failed to perform the specified operation:\n\n" + ex.Message, "File operation failed",
-                                        MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                    } catch (Exception ex) {
-                        MessageBox.Show(this, "Shit went down:\n\n" + ex.Message, "Oh no.", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    } else {
+                        string message = string.Format("The file, {0}, already exists.",
+                            destination);
+
+                        Settings.Instance.Logger.Log(LogLevelType.MildlyVerbose, message,
+                                destination);
+
+                        MessageBox.Show(this, 
+                            message, 
+                            "File already exists", 
+                            MessageBoxButtons.OK, 
+                            MessageBoxIcon.Stop);
                     }
                 }
             }
@@ -359,7 +391,7 @@ namespace SharpFile {
                     IChildResource fileResource = ChildResourceFactory.GetChildResource(files[0], ChildResourceRetrievers);
                     IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetrievers);
 
-                    if (!fileResource.Root.FullPath.Equals(pathResource.Root.FullPath)) {
+                    if (!fileResource.Root.FullPath.ToLower().Equals(pathResource.Root.FullPath.ToLower())) {
                         if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
                             e.Effect = DragDropEffects.Copy;
                         }

@@ -22,7 +22,7 @@ namespace SharpFile.IO.ParentResources {
 
         public DriveInfo(System.IO.DriveInfo driveInfo, ChildResourceRetrievers childResourceRetrievers) {
             this.driveInfo = driveInfo;
-            this.name = driveInfo.Name;
+            this.name = driveInfo.Name.ToUpper();
             this.driveType = (DriveType)Enum.Parse(typeof(DriveType), driveInfo.DriveType.ToString());
             this.fullPath = name;
             this.childResourceRetrievers = childResourceRetrievers;

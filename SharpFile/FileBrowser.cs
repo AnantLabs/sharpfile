@@ -380,10 +380,10 @@ namespace SharpFile {
                 if (string.IsNullOrEmpty(this.tlsPath.Text)) {
                     if (ParentResource == null ||
                         string.IsNullOrEmpty(ParentResource.FullPath)) {
-                        this.tlsPath.Text = @"c:\";
+                        this.tlsPath.Text = @"C:\";
 
                         Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                            @"Path is null; assume c:\ is valid.");
+                            @"Path is null; assume C:\ is valid.");
                     } else {
                         this.tlsPath.Text = ParentResource.FullPath;
                     }
