@@ -16,6 +16,9 @@ BUGS
 - multi-selection doesn't work with drag-and-drop
 
 TODO
+- Compressed file support
+- set properties on CHildResourceRetrievers on-the-fly when constructing them (ReadOnly/interactive view for CompressedFileRetriever)
+- Localization (resource file method)
 - Tab information needs to be saved for each panel for dual
 - Tab information needs to be saved for each window for mdi
 - Move UI classes to the UI directory/namespace ?

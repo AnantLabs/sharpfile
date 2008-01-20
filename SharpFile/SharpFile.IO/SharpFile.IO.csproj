@@ -37,6 +37,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Common.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Management" />
@@ -58,7 +62,9 @@
     </Compile>
     <Compile Include="ChildResources\ParentDirectoryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Retrievers\CompressedFileRetriever.cs" />
+    <Compile Include="Retrievers\CompressedFileRetrievers\CompressedFileRetriever.cs" />
+    <Compile Include="Retrievers\CompressedFileRetrievers\ReadOnlyCompressedFileRetriever.cs" />
+    <Compile Include="Retrievers\CompressedFileRetrievers\ReadWriteCompressedFileRetriever.cs" />
     <Compile Include="Retrievers\DriveRetriever.cs" />
     <Compile Include="Retrievers\FileRetriever.cs" />
     <Compile Include="Retrievers\NetworkDriveRetriever.cs" />
