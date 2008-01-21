@@ -48,13 +48,14 @@ namespace SharpFile.IO.ChildResources {
 		}
 
         public void Execute(IView view) {
-            List<IChildResourceRetriever> childResourceRetrievers = 
-                (List<IChildResourceRetriever>)ChildResourceRetrievers.Filter(this);
+            List<IChildResourceRetriever> childResourceRetrievers = new List<IChildResourceRetriever>(
+                ChildResourceRetrievers.Filter(this));
 
             if (childResourceRetrievers.Count > 0) {
                 IChildResourceRetriever childResourceRetriever = childResourceRetrievers[0];
 
-                if (!view.GetType().Equals(childResourceRetriever.View.GetType())) {
+                if (childResourceRetriever.View != null && 
+                    !view.GetType().Equals(childResourceRetriever.View.GetType())) {
                     view = childResourceRetriever.View;
                 }
 

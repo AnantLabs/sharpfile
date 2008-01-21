@@ -124,15 +124,16 @@ namespace SharpFile.IO.Retrievers {
         }
 
         public IChildResourceRetriever Clone() {
-            IChildResourceRetriever fileRetriever = new FileRetriever();
+            IChildResourceRetriever childResourceRetriever = new FileRetriever();
             List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
-            fileRetriever.ColumnInfos = clonedColumnInfos;
-            fileRetriever.Name = name;
+            childResourceRetriever.ColumnInfos = clonedColumnInfos;
+            childResourceRetriever.Name = name;
+            childResourceRetriever.View = View;
 
-            fileRetriever.CustomMethod += OnCustomMethod;
-            fileRetriever.GetComplete += OnGetComplete;
+            childResourceRetriever.CustomMethod += OnCustomMethod;
+            childResourceRetriever.GetComplete += OnGetComplete;
 
-            return fileRetriever;
+            return childResourceRetriever;
         }
 
         public List<ColumnInfo> ColumnInfos {

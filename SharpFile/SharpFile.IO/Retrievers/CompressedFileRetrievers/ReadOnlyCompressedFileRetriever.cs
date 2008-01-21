@@ -10,6 +10,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
             childResourceRetriever.ColumnInfos = clonedColumnInfos;
             childResourceRetriever.Name = Name;
+            childResourceRetriever.View = View;
 
             childResourceRetriever.CustomMethod += OnCustomMethod;
             childResourceRetriever.GetComplete += OnGetComplete;

@@ -4,11 +4,11 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using Common;
+using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
-using Common.Logger;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {

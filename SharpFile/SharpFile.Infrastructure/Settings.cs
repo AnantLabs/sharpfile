@@ -13,20 +13,20 @@ using System.Collections;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
-	/// Settings singleton.
-	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html.
-	/// </summary>
-	[Serializable]
-	public sealed class Settings {
-		public const string FilePath = "settings.config";
+    /// Settings singleton.
+    /// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html.
+    /// </summary>
+    [Serializable]
+    public sealed class Settings {
+        public const string FilePath = "settings.config";
 
-		private static readonly Settings instance = new Settings();
-		private static object lockObject = new object();
+        private static readonly Settings instance = new Settings();
+        private static object lockObject = new object();
 
         private ParentType parentType = ParentType.Dual;
         private int width = 500;
         private int height = 500;
-		private Nodes keyCodes;
+        private Nodes keyCodes;
         private List<ResourceRetrieverInfo> resourceRetrieverInfos;
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private List<ViewInfo> viewInfos;
@@ -47,20 +47,20 @@ namespace SharpFile.Infrastructure {
         /// Explicit static ctor to load settings and to 
         /// tell C# compiler not to mark type as beforefieldinit.
         /// </summary>
-		static Settings() {
-			Load();
-		}
+        static Settings() {
+            Load();
+        }
 
         /// <summary>
         /// Internal instance ctor.
         /// </summary>
-		private Settings() {
+        private Settings() {
             dualParentSettings = new DualParentSettings();
             mdiParentSettings = new MdiParentSettings();
             iconSettings = new IconSettings();
 
-			lockObject = new object();
-			this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
+            lockObject = new object();
+            this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
         }
         #endregion
 
@@ -131,7 +131,7 @@ namespace SharpFile.Infrastructure {
                         deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
-                    loggerService.Log(LogLevelType.Verbose, ex, 
+                    loggerService.Log(LogLevelType.Verbose, ex,
                         "There was an error generating the settings.");
                 }
             }
@@ -161,63 +161,62 @@ namespace SharpFile.Infrastructure {
             return (T)binaryFormatter.Deserialize(memoryStream);
         }
 
-		public static void Save() {
-			lock (lockObject) {
-				XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
+        public static void Save() {
+            lock (lockObject) {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
 
-				using (TextWriter tw = new StreamWriter(FilePath)) {
-					xmlSerializer.Serialize(tw, Instance);
-				}
-			}
-		}
+                using (TextWriter tw = new StreamWriter(FilePath)) {
+                    xmlSerializer.Serialize(tw, Instance);
+                }
+            }
+        }
         #endregion
 
         #region Static properties
         public static Settings Instance {
-			get {
-				return instance;
-			}
+            get {
+                return instance;
+            }
         }
         #endregion
 
         #region Instance properties
         public ParentType ParentType {
-			get {
-				return parentType;
-			}
-			set {
-				parentType = value;
-			}
-		}
+            get {
+                return parentType;
+            }
+            set {
+                parentType = value;
+            }
+        }
 
-		[XmlIgnore]
-		public Nodes KeyCodes
-		{
-			get {
-				return keyCodes;
-			}
-			set {
-				keyCodes = value;
-			}
-		}
+        [XmlIgnore]
+        public Nodes KeyCodes {
+            get {
+                return keyCodes;
+            }
+            set {
+                keyCodes = value;
+            }
+        }
 
-		public int Width {
-			get {
-				return width;
-			}
-			set {
-				width = value;
-			}
-		}
+        public int Width {
+            get {
+                return width;
+            }
+            set {
+                width = value;
+            }
+        }
 
-		public int Height {
-			get {
+        public int Height {
+            get {
                 return height;
-			}
-			set {
-				height = value;
-			}
-		}
+            }
+            set {
+                height = value;
+            }
+        }
 
         public bool DirectoriesSortedFirst {
             get {
@@ -323,98 +322,73 @@ namespace SharpFile.Infrastructure {
 
                     foreach (ResourceRetrieverInfo resourceRetrieverInfo in resourceRetrieverInfos) {
                         try {
-                            object resourceRetrieverObject = Reflection.InstantiateObject(
+                            IResourceRetriever resourceRetriever = Reflection.InstantiateObject<IResourceRetriever>(
                                 resourceRetrieverInfo.FullyQualifiedType.Assembly,
                                 resourceRetrieverInfo.FullyQualifiedType.Type);
 
-                            if (resourceRetrieverObject is IResourceRetriever) {
-                                IResourceRetriever resourceRetriever = (IResourceRetriever)resourceRetrieverObject;
-                                
-                                foreach (string childResourceRetrieverName in resourceRetrieverInfo.ChildResourceRetrievers) {
-                                    ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
-                                        return c.Name == childResourceRetrieverName;
-                                    });
+                            foreach (string childResourceRetrieverName in resourceRetrieverInfo.ChildResourceRetrievers) {
+                                ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
+                                    return c.Name == childResourceRetrieverName;
+                                });
 
-                                    if (childResourceRetrieverInfo != null) {
-                                        try {
-                                            object childResourceRetrieverObject = Reflection.InstantiateObject(
-                                                childResourceRetrieverInfo.FullyQualifiedType.Assembly,
-                                                childResourceRetrieverInfo.FullyQualifiedType.Type);
+                                if (childResourceRetrieverInfo != null) {
+                                    try {
+                                        IChildResourceRetriever childResourceRetriever = Reflection.InstantiateObject<IChildResourceRetriever>(
+                                            childResourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                            childResourceRetrieverInfo.FullyQualifiedType.Type);
 
-                                            if (childResourceRetrieverObject is IChildResourceRetriever) {
-                                                IChildResourceRetriever childResourceRetriever = (IChildResourceRetriever)childResourceRetrieverObject;
-                                                childResourceRetriever.Name = childResourceRetrieverName;
-                                                childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
-                                                childResourceRetriever.CustomMethod += childResourceRetrieverInfo.CustomMethod;
+                                        childResourceRetriever.Name = childResourceRetrieverName;
+                                        childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
+                                        childResourceRetriever.CustomMethod += childResourceRetrieverInfo.CustomMethod;
 
-                                                ViewInfo viewInfo = viewInfos.Find(delegate(ViewInfo v) {
-                                                    return v.Name == childResourceRetrieverInfo.View;
-                                                });
+                                        ViewInfo viewInfo = viewInfos.Find(delegate(ViewInfo v) {
+                                            return v.Name == childResourceRetrieverInfo.View;
+                                        });
 
-                                                if (viewInfo != null) {
-                                                    object viewObject = Reflection.InstantiateObject(
-                                                        viewInfo.FullyQualifiedType.Assembly,
-                                                        viewInfo.FullyQualifiedType.Type);
+                                        if (viewInfo != null) {
+                                            try {
+                                                IView view = Reflection.InstantiateObject<IView>(
+                                                    viewInfo.FullyQualifiedType.Assembly,
+                                                    viewInfo.FullyQualifiedType.Type);
 
-                                                    if (viewObject is IView) {
-                                                        IView view = (IView)viewObject;
-
-                                                        object comparerObject = Reflection.InstantiateObject(
-                                                            viewInfo.ComparerType.Assembly,
-                                                            viewInfo.ComparerType.Type);
-
-                                                        if (comparerObject is IViewComparer) {
-                                                            view.Comparer = (IViewComparer)comparerObject;
-                                                        } else {
-                                                            Logger.Log(LogLevelType.ErrorsOnly,
-                                                                "ViewComparer, {0}, is not derived from IViewComparer.",
-                                                                viewInfo.ComparerType.Type);
-                                                        }
-
-                                                        childResourceRetriever.View = view;
-                                                    } else {
-                                                        Logger.Log(LogLevelType.ErrorsOnly,
-                                                            "View, {0}, is not derived from IView.",
-                                                            viewInfo.Name);
-                                                    }
-                                                } else {
-                                                    Logger.Log(LogLevelType.ErrorsOnly,
-                                                        "View, {0}, could not be found.",
-                                                        childResourceRetrieverInfo.View);
+                                                if (viewInfo.Comparer != null) {
+                                                    view.Comparer = viewInfo.Comparer;
                                                 }
 
-                                                if (resourceRetriever.ChildResourceRetrievers == null) {
-                                                    resourceRetriever.ChildResourceRetrievers = new ChildResourceRetrievers();
-                                                }
-
-                                                resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
-                                            } else {
+                                                childResourceRetriever.View = view;
+                                            } catch (TypeLoadException ex) {
                                                 Logger.Log(LogLevelType.ErrorsOnly,
-                                                    "ChildResourceRetriever, {0}, is not derived from IChildResourceRetriever.",
-                                                    childResourceRetrieverName);
+                                                    "View, {0}, is not derived from IView.",
+                                                    viewInfo.Name);
                                             }
-                                        } catch (MissingMethodException ex) {
-                                            Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                                "ChildResourceRetriever, {0}, could not be instantiated (is it an abstract class?).",
-                                                childResourceRetrieverName);
-                                        } catch (TypeLoadException ex) {
-                                            Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                                "ChildResourceRetriever, {0}, could not be instantiated.",
-                                                childResourceRetrieverName);
+                                        } else {
+                                            Logger.Log(LogLevelType.ErrorsOnly,
+                                                "View, {0}, could not be found.",
+                                                childResourceRetrieverInfo.View);
                                         }
-                                    } else {
-                                        Logger.Log(LogLevelType.ErrorsOnly, 
-                                            "ChildResourceRetriever, {0}, could not be found.",
+
+                                        if (resourceRetriever.ChildResourceRetrievers == null) {
+                                            resourceRetriever.ChildResourceRetrievers = new ChildResourceRetrievers();
+                                        }
+
+                                        resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
+                                    } catch (MissingMethodException ex) {
+                                        Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                            "ChildResourceRetriever, {0}, could not be instantiated.",
+                                            childResourceRetrieverName);
+                                    } catch (TypeLoadException ex) {
+                                        Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                            "ChildResourceRetriever, {0}, could not be instantiated.",
                                             childResourceRetrieverName);
                                     }
+                                } else {
+                                    Logger.Log(LogLevelType.ErrorsOnly,
+                                        "ChildResourceRetriever, {0}, could not be found.",
+                                        childResourceRetrieverName);
                                 }
-
-                                resourceRetrievers.Add(resourceRetriever);
-                            } else {
-                                Logger.Log(LogLevelType.ErrorsOnly, 
-                                    "ResourceRetriever, {0}, is not derived from IResourceRetriever.",
-                                    resourceRetrieverInfo.Name);
                             }
+
+                            resourceRetrievers.Add(resourceRetriever);
                         } catch (MissingMethodException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "ResourceRetriever, {0}, could not be instantiated (is it an abstract class?).",
@@ -439,13 +413,13 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-		[XmlIgnore]
-		public ImageList ImageList {
-			get {
-				lock (lockObject) {
-					return imageList;
-				}
-			}
+        [XmlIgnore]
+        public ImageList ImageList {
+            get {
+                lock (lockObject) {
+                    return imageList;
+                }
+            }
         }
         #endregion
         #endregion

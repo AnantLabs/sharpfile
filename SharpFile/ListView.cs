@@ -34,6 +34,9 @@ namespace SharpFile {
         public event View.OnGetImageIndexDelegate OnGetImageIndex;
         public event View.OnUpdatePathDelegate OnUpdatePath;
 
+        public ListView() : this("Instantiated") {
+        }
+
         public ListView(string name) {
             // This prevents flicker in the listview. 
             // It is a protected property, so it is only available if we derive from ListView.

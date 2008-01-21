@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Xml.Serialization;
 using Common.Logger;
 
@@ -18,19 +17,6 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         public ChildResourceRetrieverInfo() {
         }
-
-        //public ChildResourceRetrieverInfo(string name, List<ColumnInfo> columnInfos, ChildResourceRetriever.CustomMethodDelegate customMethod, FullyQualifiedType fullyQualifiedType) {
-        //    this.name = name;
-        //    this.fullyQualifiedType = fullyQualifiedType;
-        //    this.columnInfos = columnInfos;
-
-        //    if (customMethod != null) {
-        //        this.methodDelegateType = new FullyQualifiedMethod(new FullyQualifiedType(
-        //            customMethod.Method.DeclaringType.Namespace,
-        //            customMethod.Method.DeclaringType.FullName),
-        //            customMethod.Method.Name);
-        //    }
-        //}
 
         [XmlAttribute("Name")]
         public string Name {

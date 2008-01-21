@@ -35,23 +35,33 @@ namespace SharpFile.Infrastructure {
 
         public static bool IsCompressedFile(IResource resource) {
             if (resource is IChildResource) {
+                if (Common.General.GetExtension(resource.FullPath).ToLower().Equals(".zip")) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool IsCompressedFileThorough(IResource resource) {
+            if (resource is IChildResource) {
                 try {
                     ZipFile zipFile = new ZipFile(resource.FullPath);
                     return true;
                 } catch {
                     // The resource is not a compressed file.
                 }
+            }
 
-                /*
-                System.IO.FileInfo fileInfo = new System.IO.FileInfo(resource.FullPath);
+            return false;
+        }
 
-                if (fileInfo.Extension.ToLower().Equals(".zip")) {
-                    ICSharpCode.SharpZipLib.Zip.ZipFile f = new ICSharpCode.SharpZipLib.Zip.ZipFile(resource.FullPath);
-                    if (f.Count > 0) {
-                        return true;
-                    }
+        public static bool IsMediaFile(IResource resource) {
+            if (resource is IChildResource) {
+
+                if (Common.General.GetExtension(resource.FullPath).ToLower().Equals(".jpg")) {
+                    return true;
                 }
-                */
             }
 
             return false;
