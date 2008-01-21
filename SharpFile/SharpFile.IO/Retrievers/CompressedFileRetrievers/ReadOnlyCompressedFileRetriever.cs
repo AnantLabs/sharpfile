@@ -26,30 +26,20 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             byte[] data = new byte[4096];
 
             using (ZipInputStream s = new ZipInputStream(System.IO.File.OpenRead(resource.FullPath))) {
-                resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path), 
+                resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path),
                     Settings.Instance.Resources[0].ChildResourceRetrievers));
 
                 ZipEntry zipEntry;
 
                 while ((zipEntry = s.GetNextEntry()) != null) {
                     if (zipEntry.IsFile) {
-                        // TODO: Retrieving extensions from filenames should be added back to Common.
-
                         string fileName = zipEntry.Name;
-                        int extensionIndex = fileName.IndexOf('.');
-                        string extension = string.Empty;
+                        string extension = Common.General.GetExtension(fileName);
 
-                        if (extensionIndex > 0) {
-                            extension = fileName.Substring(extensionIndex, fileName.Length - extensionIndex);
-                        }
-
-                        resources.Add(new CompressedFileInfo(fileName, zipEntry.Size, zipEntry.CompressedSize, 
+                        resources.Add(new CompressedFileInfo(fileName, zipEntry.Size, zipEntry.CompressedSize,
                             zipEntry.DateTime, fileName, extension, childResourceRetrievers));
-                    }                   
 
-                    /*
-                    if (zipEntry.IsFile) {
-
+                        /*
                         // Assuming the contents are text may be ok depending on what you are doing
                         // here its fine as its shows how data can be read from a Zip archive.
                         Console.Write("Show entry text (y/n) ?");
@@ -61,8 +51,11 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                                 size = s.Read(data, 0, data.Length);
                             }
                         }
+                        */
+                    } else if (zipEntry.IsDirectory) {
+                        resources.Add(new CompressedDirectoryInfo(zipEntry.Name, zipEntry.Size, zipEntry.CompressedSize,
+                            zipEntry.DateTime, zipEntry.Name, childResourceRetrievers));
                     }
-                     */
                 }
 
                 // Close can be ommitted as the using statement will do it automatically

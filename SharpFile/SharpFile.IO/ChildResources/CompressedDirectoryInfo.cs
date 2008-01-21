@@ -1,53 +1,28 @@
-using System;
-using System.Collections.Generic;
-using Common.Logger;
+﻿using System;
 using SharpFile.Infrastructure;
-using SharpFile.IO.Retrievers;
 
 namespace SharpFile.IO.ChildResources {
-    [Serializable]
-    public class DirectoryInfo : FileSystemInfo, IChildResource, IFileContainer {
-        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
+    public class CompressedDirectoryInfo : DirectoryInfo {
+        private long compressedSize;
 
-        private System.IO.DirectoryInfo directoryInfo;
-        private ChildResourceRetrievers childResourceRetrievers;
-
-        public DirectoryInfo(string path, ChildResourceRetrievers childResourceRetrievers)
-            : this(new System.IO.DirectoryInfo(path), childResourceRetrievers) {
+        public CompressedDirectoryInfo(string name, long size, long compressedSize, DateTime lastWriteTime, string fullPath,
+            ChildResourceRetrievers childResourceRetrievers) :
+            base(name, lastWriteTime, fullPath, null, childResourceRetrievers) {
+            this.size = size;
+            this.compressedSize = compressedSize;
         }
 
-        public DirectoryInfo(System.IO.DirectoryInfo directoryInfo, ChildResourceRetrievers childResourceRetrievers) :
-            this(directoryInfo.Name, directoryInfo.LastWriteTime, directoryInfo.FullName, directoryInfo,
-            childResourceRetrievers) {
-        }
-
-        public DirectoryInfo(string name, DateTime lastWriteTime, string fullPath, 
-            System.IO.DirectoryInfo directoryInfo, ChildResourceRetrievers childResourceRetrievers) {
-            this.size = 0;
-            this.directoryInfo = directoryInfo;
-            this.name = name;
-            this.lastWriteTime = lastWriteTime;
-            this.fullPath = fullPath;
-            this.childResourceRetrievers = childResourceRetrievers;
-        }
-
-        public void OnGetComplete() {
-            if (GetComplete != null) {
-                GetComplete();
-            }
-        }
-
-        public System.IO.DirectoryInfo Parent {
+        public long CompressedSize {
             get {
-                if (directoryInfo.Parent != null) {
-                    return directoryInfo.Parent;
-                } else {
-                    return null;
-                }
+                return compressedSize;
+            }
+            set {
+                compressedSize = value;
             }
         }
 
-        public IEnumerable<IChildResource> GetDirectories() {
+        /*
+         public IEnumerable<IChildResource> GetDirectories() {
             System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
             List<IChildResource> directories = new List<IChildResource>(directoryInfos.Length);
 
@@ -57,6 +32,7 @@ namespace SharpFile.IO.ChildResources {
                 directories.Add(new RootDirectoryInfo(this.Root));
             }
             */
+        /*
 
             // TODO: Setting that specifies whether to show parent directory or not.
             if (this.Parent != null) {
@@ -92,8 +68,10 @@ namespace SharpFile.IO.ChildResources {
                     return new FileInfo(fi, this.ChildResourceRetrievers);
                 });
         }
+        */
 
-        public long GetSize() {
+        /*
+         * public long GetSize() {
             if (size == 0) {
                 size = getSize(directoryInfo);
             }
@@ -161,11 +139,6 @@ namespace SharpFile.IO.ChildResources {
 
             return totalSize;
         }
-
-        public ChildResourceRetrievers ChildResourceRetrievers {
-            get {
-                return childResourceRetrievers;
-            }
-        }
+         */
     }
 }

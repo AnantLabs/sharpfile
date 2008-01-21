@@ -313,40 +313,21 @@ namespace SharpFile {
                                     break;
                             }
                         } catch (IOException ex) {
-                            string message = "Failed to perform the specified operation for {0}";
-
-                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
-                                destination);
-
-                            MessageBox.Show(this,
-                                string.Format(message, destination), 
-                                "Operation failed",
-                                MessageBoxButtons.OK, 
-                                MessageBoxIcon.Stop);
+                            Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Failed to perform the specified operation for {0}", destination);
+                            Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                         } catch (Exception ex) {
-                            string message = "The selected operation could not be completed for {0}.";
-
-                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message, 
-                                destination);
-
-                            MessageBox.Show(this, 
-                                string.Format(message, destination), 
-                                "Operation error", 
-                                MessageBoxButtons.OK, 
-                                MessageBoxIcon.Stop);
+                            Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "The selected operation could not be completed for {0}.", destination);
+                            Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                         }
                     } else {
-                        string message = string.Format("The file, {0}, already exists.",
-                            destination);
-
-                        Settings.Instance.Logger.Log(LogLevelType.MildlyVerbose, message,
-                                destination);
-
-                        MessageBox.Show(this, 
-                            message, 
-                            "File already exists", 
-                            MessageBoxButtons.OK, 
-                            MessageBoxIcon.Stop);
+                        Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                        Settings.Instance.Logger.Log(LogLevelType.MildlyVerbose,
+                            "The file, {0}, already exists.", destination);
+                        Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                     }
                 }
             }
@@ -462,11 +443,11 @@ namespace SharpFile {
                         resource.Move(destination);
                     } catch (Exception ex) {
                         e.CancelEdit = true;
-                        string message = "Renaming the file failed.";
-                        MessageBox.Show(message);
 
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
-                                destination);
+                        Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                            "Renaming to {0} failed.", destination);
+                        Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                     }
                 }
             }
@@ -479,7 +460,7 @@ namespace SharpFile {
         /// </summary>
         /// <param name="text">Text to show.</param>
         public void ShowMessageBox(string text) {
-            MessageBox.Show(text);
+            MessageBox.Show(this, text);
         }
 
         /// <summary>
@@ -516,17 +497,16 @@ namespace SharpFile {
                 try {
                     addItem(resource, ref fileCount, ref folderCount);
                 } catch (Exception ex) {
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Resource, {0}, could not be added to listview.",
-                        resource.FullPath);
-
                     sb.AppendFormat("{0}: {1}",
-                        resource.FullPath,
-                        ex.Message);
+                         resource.FullPath,
+                         ex.Message);
                 }
             }
 
             if (sb.Length > 0) {
-                MessageBox.Show(sb.ToString());
+                Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
+                Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
             }
 
             Comparer.ColumnIndex = 0;
@@ -562,11 +542,10 @@ namespace SharpFile {
 
                     this.Sort();
                 } catch (Exception ex) {
-                    string message = string.Format("Resource, {0} could not be added to the listview.",
-                        resource.FullPath);
-
-                    MessageBox.Show(message);
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message, resource.FullPath);
+                    Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        "Resource, {0} could not be added to the listview.", resource.FullPath);
+                    Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                 }
             }
         }

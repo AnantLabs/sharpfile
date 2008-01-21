@@ -141,7 +141,11 @@ namespace SharpFile {
                 if (resource != null) {
                     resource.Execute(view);
                 } else {
-                    MessageBox.Show("The path, " + Path + ", looks like it is incorrect.");
+                    Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, 
+                        "The path, {0}, looks like it is incorrect.", Path);
+                    Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
+
                     Path = this.Text;
                 }
             }
@@ -193,30 +197,32 @@ namespace SharpFile {
             string path = e.FullPath;
             IChildResource resource = ChildResourceFactory.GetChildResource(path, ChildResourceRetrievers);
 
-            // Required to ensure the view update occurs on the calling thread.
-            view.Control.BeginInvoke((MethodInvoker)delegate {
-                view.BeginUpdate();
+            if (view.Control.IsHandleCreated) {
+                // Required to ensure the view update occurs on the calling thread.
+                view.Control.BeginInvoke((MethodInvoker)delegate {
+                    view.BeginUpdate();
 
-                switch (e.ChangeType) {
-                    case System.IO.WatcherChangeTypes.Changed:
-                        view.RemoveItem(path);
-                        view.InsertItem(resource);
-                        break;
-                    case System.IO.WatcherChangeTypes.Created:
-                        view.InsertItem(resource);
-                        break;
-                    case System.IO.WatcherChangeTypes.Deleted:
-                        view.RemoveItem(path);
-                        break;
-                    case System.IO.WatcherChangeTypes.Renamed:
-                        string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
-                        view.RemoveItem(oldFullPath);
-                        view.InsertItem(resource);
-                        break;
-                }
+                    switch (e.ChangeType) {
+                        case System.IO.WatcherChangeTypes.Changed:
+                            view.RemoveItem(path);
+                            view.InsertItem(resource);
+                            break;
+                        case System.IO.WatcherChangeTypes.Created:
+                            view.InsertItem(resource);
+                            break;
+                        case System.IO.WatcherChangeTypes.Deleted:
+                            view.RemoveItem(path);
+                            break;
+                        case System.IO.WatcherChangeTypes.Renamed:
+                            string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
+                            view.RemoveItem(oldFullPath);
+                            view.InsertItem(resource);
+                            break;
+                    }
 
-                view.EndUpdate();
-            });
+                    view.EndUpdate();
+                });
+            }
         }
 
         /// <summary>

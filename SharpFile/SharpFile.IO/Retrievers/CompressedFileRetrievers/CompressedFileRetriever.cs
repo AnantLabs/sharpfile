@@ -48,11 +48,18 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
-                        string message = string.Format("Access is unauthorized for {0}.",
-                            resource.FullPath);
 
-                        view.ShowMessageBox(message);
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message);
+                        Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                            "Access is unauthorized for {0}.", resource.FullPath);
+                        Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
+                    } catch (Exception ex) {
+                        e.Cancel = true;
+
+                        Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                            "Error when getting compressed file contents for {0}.", resource.FullPath);
+                        Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
                     } finally {
                         backgroundWorker.ReportProgress(100);
                     }
