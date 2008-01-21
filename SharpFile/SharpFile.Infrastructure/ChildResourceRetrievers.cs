@@ -59,7 +59,7 @@ namespace SharpFile.Infrastructure {
         public static bool IsMediaFile(IResource resource) {
             if (resource is IChildResource) {
 
-                if (Common.General.GetExtension(resource.FullPath).ToLower().Equals(".jpg")) {
+                if (Common.General.GetExtension(resource.FullPath).ToLower().Equals(".bmp")) {
                     return true;
                 }
             }

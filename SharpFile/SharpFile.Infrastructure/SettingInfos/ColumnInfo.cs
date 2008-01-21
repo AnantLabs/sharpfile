@@ -7,27 +7,13 @@ namespace SharpFile.Infrastructure {
     public class ColumnInfo {
         private string text;
         private string property;
-        private bool primaryColumn;
+        private bool primaryColumn = false;
         private CustomMethod customMethod;
         private FullyQualifiedMethod methodDelegateType;
 
         public delegate string CustomMethod(string val);
 
         public ColumnInfo() {
-        }
-
-        public ColumnInfo(string text, string property, CustomMethod customMethod, bool primaryColumn) {
-            this.text = text;
-            this.property = property;
-            this.primaryColumn = primaryColumn;
-            this.customMethod = customMethod;
-
-            if (customMethod != null) {
-                this.methodDelegateType = new FullyQualifiedMethod(new FullyQualifiedType(
-                    customMethod.Method.DeclaringType.Namespace,
-                    customMethod.Method.DeclaringType.FullName),
-                    customMethod.Method.Name);
-            }
         }
 
         [XmlAttribute("Text")]
