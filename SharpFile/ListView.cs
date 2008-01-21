@@ -25,7 +25,7 @@ namespace SharpFile {
         private IList<IChildResource> selectedFileSystemInfos = new List<IChildResource>();
         private long totalSelectedSize = 0;
         private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
-        private IViewComparer comparer;
+        private IViewComparer comparer = new ListViewItemComparer();
         private IEnumerable<ColumnInfo> columnInfos;
         private Dictionary<string, PropertyInfo> propertyInfos = new Dictionary<string, PropertyInfo>();
 
@@ -67,8 +67,7 @@ namespace SharpFile {
             this.LabelEdit = true;
             this.UseCompatibleStateImageBehavior = false;
             this.Sorting = SortOrder.Ascending;
-
-            this.ListViewItemSorter = Comparer;
+            this.ListViewItemSorter = comparer;
         }
 
         /// <summary>
@@ -215,17 +214,17 @@ namespace SharpFile {
         #region Events.
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
             // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == Comparer.ColumnIndex) {
+            if (e.Column == comparer.ColumnIndex) {
                 // Reverse the current sort direction for this column.
-                if (Comparer.Order == Order.Ascending) {
-                    Comparer.Order = Order.Descending;
+                if (comparer.Order == Order.Ascending) {
+                    comparer.Order = Order.Descending;
                 } else {
-                    Comparer.Order = Order.Ascending;
+                    comparer.Order = Order.Ascending;
                 }
             } else {
                 // Set the column number that is to be sorted; default to ascending.
-                Comparer.ColumnIndex = e.Column;
-                Comparer.Order = Order.Ascending;
+                comparer.ColumnIndex = e.Column;
+                comparer.Order = Order.Ascending;
             }
 
             // Perform the sort with these new sort options.
@@ -509,8 +508,8 @@ namespace SharpFile {
                 Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
             }
 
-            Comparer.ColumnIndex = 0;
-            Comparer.Order = Order.Ascending;
+            comparer.ColumnIndex = 0;
+            comparer.Order = Order.Ascending;
             this.Sort();
 
             // Resize the columns based on the column content.
@@ -617,7 +616,7 @@ namespace SharpFile {
                     item.Text = text;
                     item.SubItems[0].Tag = tag;
                 } else {
-                    System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem =
+                    ListViewItem.ListViewSubItem listViewSubItem =
                         new ListViewItem.ListViewSubItem();
                     listViewSubItem.Text = text;
                     listViewSubItem.Tag = tag;
@@ -709,11 +708,10 @@ namespace SharpFile {
 
         public IViewComparer Comparer {
             get {
-                if (comparer == null) {
-                    comparer = new ListViewItemComparer();
-                }
-
                 return comparer;
+            }
+            set {
+                comparer = value;
             }
         }
 

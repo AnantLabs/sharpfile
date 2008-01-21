@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Windows.Forms;
+using Common.Comparers;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
@@ -15,7 +16,7 @@ namespace SharpFile.UI {
             directoriesSortedFirst = Settings.Instance.DirectoriesSortedFirst;
 
             // Initialize the comparer.
-            comparer = new Common.StringLogicalComparer();
+            comparer = new StringLogicalComparer();
         }
 
         /// <summary>

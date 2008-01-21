@@ -1,8 +1,5 @@
-﻿using System.Collections;
+﻿using System;
 using System.Xml.Serialization;
-using System;
-using System.Reflection;
-using Common;
 using Common.Logger;
 
 namespace SharpFile.Infrastructure {
@@ -10,8 +7,6 @@ namespace SharpFile.Infrastructure {
     public class ColumnInfo {
         private string text;
         private string property;
-        private IComparer comparer;
-        private FullyQualifiedType comparerType;
         private bool primaryColumn;
         private CustomMethod customMethod;
         private FullyQualifiedMethod methodDelegateType;
@@ -21,28 +16,11 @@ namespace SharpFile.Infrastructure {
         public ColumnInfo() {
         }
 
-        public ColumnInfo(string text, string property, IComparer comparer)
-            : this(text, property, null, comparer, false) {
-        }
-
-        public ColumnInfo(string text, string property, IComparer comparer, bool primaryColumn)
-            : this(text, property, null, comparer, primaryColumn) {
-        }
-
-        public ColumnInfo(string text, string property, CustomMethod customMethod, IComparer comparer)
-            : this(text, property, customMethod, comparer, false) {
-        }
-
-        public ColumnInfo(string text, string property, CustomMethod customMethod, IComparer comparer, bool primaryColumn) {
+        public ColumnInfo(string text, string property, CustomMethod customMethod, bool primaryColumn) {
             this.text = text;
             this.property = property;
-            this.comparer = comparer;
             this.primaryColumn = primaryColumn;
             this.customMethod = customMethod;
-
-            this.comparerType = new FullyQualifiedType(
-                comparer.GetType().Namespace,
-                comparer.GetType().FullName);
 
             if (customMethod != null) {
                 this.methodDelegateType = new FullyQualifiedMethod(new FullyQualifiedType(
@@ -69,47 +47,6 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 property = value;
-            }
-        }
-
-        public FullyQualifiedType ComparerType {
-            get {
-                return comparerType;
-            }
-            set {
-                comparerType = value;
-            }
-        }
-
-        [XmlIgnore]
-        public IComparer Comparer {
-            get {
-                if (comparer == null) {
-                    if (comparerType != null) {
-                        try {
-                            object comparerObject = Reflection.InstantiateObject(comparerType.Assembly,
-                                comparerType.Type);
-
-                            if (comparerObject is IComparer) {
-                                comparer = (IComparer)comparerObject;
-                            } else {
-                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly,
-                                    "Comparer, {0}, does not inherit from IComparer.",
-                                    comparerType.Type);
-                            }
-                        } catch (MissingMethodException ex) {
-                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                "Comparer, {0}, could not be instantiated (is it an abstract class?).",
-                                comparerType.Type);
-                        } catch (TypeLoadException ex) {
-                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                    "Comparer, {0}, can not be instantiated.",
-                                    comparerType.Type);
-                        }
-                    }
-                }
-
-                return comparer;
             }
         }
 
