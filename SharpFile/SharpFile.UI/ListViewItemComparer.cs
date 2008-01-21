@@ -63,7 +63,6 @@ namespace SharpFile.UI {
                     compareResult = comparer.Compare(
                             valueX,
                             valueY);
-
                 }
             }
 

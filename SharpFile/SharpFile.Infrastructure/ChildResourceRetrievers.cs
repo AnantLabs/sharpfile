@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace SharpFile.Infrastructure {
     public class ChildResourceRetrievers : List<IChildResourceRetriever> {
@@ -32,21 +33,12 @@ namespace SharpFile.Infrastructure {
             return true;
         }
 
-        public static bool IsProgrammingDirectory(IResource resource) {
-            if (resource.Name.Equals("Programming")) {
-                return true;
-            }
-
-            return false;
-        }
-
         public static bool IsCompressedFile(IResource resource) {
             if (resource is IChildResource) {
                 try {
-                    ICSharpCode.SharpZipLib.Zip.ZipFile f = new ICSharpCode.SharpZipLib.Zip.ZipFile(resource.FullPath);
-
+                    ZipFile zipFile = new ZipFile(resource.FullPath);
                     return true;
-                } catch { 
+                } catch {
                     // The resource is not a compressed file.
                 }
 

@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Common;
+using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
@@ -13,7 +14,6 @@ using SharpFile.UI;
 using DirectoryInfo = SharpFile.IO.ChildResources.DirectoryInfo;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
-using Common.Logger;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
@@ -592,36 +592,37 @@ namespace SharpFile {
                     propertyInfos.Add(propertyName, propertyInfo);
                 }
 
-                if (propertyInfo != null) {
-                    string text = string.Empty;
+                string text = string.Empty;
+                string tag = string.Empty;
 
-                    // HACK: This is to prevent parent/root directories from showing any information except for their display name.
-                    // TODO: Determine a better way to prevent parent/root directories from showing information.
-                    if (!propertyName.Equals("DisplayName") && 
-                        (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
-                        // Don't show anything for this resource type.
-                    } else {
+                // HACK: This is to prevent parent/root directories from showing any information except for their display name.
+                // TODO: Determine a better way to prevent parent/root directories from showing information.
+                if (!propertyName.Equals("DisplayName") &&
+                    (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
+                    // Don't show anything for this resource type.
+                } else {
+                    if (propertyInfo != null) {
                         text = propertyInfo.GetValue(resource, null).ToString();
 
                         // The original value will be set on the tag for sortability.
-                        string tag = text;
+                        tag = text;
 
                         if (columnInfo.MethodDelegate != null) {
                             text = columnInfo.MethodDelegate.Invoke(text);
                         }
-
-                        if (columnInfo.PrimaryColumn) {
-                            item.Text = text;
-                            item.SubItems[0].Tag = tag;
-                        } else {
-                            System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem =
-                                new ListViewItem.ListViewSubItem();
-                            listViewSubItem.Text = text;
-                            listViewSubItem.Tag = tag;
-
-                            item.SubItems.Add(listViewSubItem);
-                        }
                     }
+                }
+
+                if (columnInfo.PrimaryColumn) {
+                    item.Text = text;
+                    item.SubItems[0].Tag = tag;
+                } else {
+                    System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem =
+                        new ListViewItem.ListViewSubItem();
+                    listViewSubItem.Text = text;
+                    listViewSubItem.Tag = tag;
+
+                    item.SubItems.Add(listViewSubItem);
                 }
             }
 

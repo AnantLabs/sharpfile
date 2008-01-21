@@ -1,8 +1,6 @@
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
-- Parent/root directory shows detailed information just like a regular directory
-- Error messages do not show up on top of the window
 - KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
 - Filter textbox too small to fit
@@ -14,10 +12,11 @@ BUGS
 - flicker in drive dropdown when new drive is inserted
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
 - drag and drop with files inside of a compressed file
-- show folders inside of compressed files
 - right-click support on files inside of compressed files
 
 TODO
+- ColumnInfo comparer type?
+- Store sort position for each column in settings
 - When columns are rearranged, save that to the settings file
 - set properties on ChildResourceRetrievers on-the-fly when constructing them
 - Localization (resource file method)

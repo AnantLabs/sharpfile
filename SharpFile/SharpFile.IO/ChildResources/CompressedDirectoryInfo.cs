@@ -3,22 +3,9 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ChildResources {
     public class CompressedDirectoryInfo : DirectoryInfo {
-        private long compressedSize;
-
-        public CompressedDirectoryInfo(string name, long size, long compressedSize, DateTime lastWriteTime, string fullPath,
+        public CompressedDirectoryInfo(string name, DateTime lastWriteTime, string fullPath,
             ChildResourceRetrievers childResourceRetrievers) :
             base(name, lastWriteTime, fullPath, null, childResourceRetrievers) {
-            this.size = size;
-            this.compressedSize = compressedSize;
-        }
-
-        public long CompressedSize {
-            get {
-                return compressedSize;
-            }
-            set {
-                compressedSize = value;
-            }
         }
 
         /*
