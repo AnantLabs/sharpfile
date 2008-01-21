@@ -16,7 +16,7 @@ namespace SharpFile.Infrastructure {
         FileSystemWatcher FileSystemWatcher { get; }
 		Control Control { get; }
         void ShowMessageBox(string text);
-        IViewComparer Comparer { get; }
+        IViewComparer Comparer { get; set; }
         IEnumerable<ColumnInfo> ColumnInfos { get; set; }
         string Name { get; set; }
         bool Enabled { get; set; }

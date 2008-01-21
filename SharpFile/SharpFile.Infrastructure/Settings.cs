@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
+using System.Collections;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -28,6 +29,7 @@ namespace SharpFile.Infrastructure {
 		private Nodes keyCodes;
         private List<ResourceRetrieverInfo> resourceRetrieverInfos;
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
+        private List<ViewInfo> viewInfos;
         private bool directoriesSortedFirst = true;
         private LoggerInfo loggerInfo;
 
@@ -258,6 +260,17 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        [XmlArray("Views")]
+        [XmlArrayItem("View")]
+        public List<ViewInfo> ViewInfos {
+            get {
+                return viewInfos;
+            }
+            set {
+                viewInfos = value;
+            }
+        }
+
         #region Properties for sub-settings.
         [XmlElement("DualParent")]
         public DualParentSettings DualParent {
@@ -333,6 +346,42 @@ namespace SharpFile.Infrastructure {
                                                 childResourceRetriever.Name = childResourceRetrieverName;
                                                 childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
                                                 childResourceRetriever.CustomMethod += childResourceRetrieverInfo.CustomMethod;
+
+                                                ViewInfo viewInfo = viewInfos.Find(delegate(ViewInfo v) {
+                                                    return v.Name == childResourceRetrieverInfo.View;
+                                                });
+
+                                                if (viewInfo != null) {
+                                                    object viewObject = Reflection.InstantiateObject(
+                                                        viewInfo.FullyQualifiedType.Assembly,
+                                                        viewInfo.FullyQualifiedType.Type);
+
+                                                    if (viewObject is IView) {
+                                                        IView view = (IView)viewObject;
+
+                                                        object comparerObject = Reflection.InstantiateObject(
+                                                            viewInfo.ComparerType.Assembly,
+                                                            viewInfo.ComparerType.Type);
+
+                                                        if (comparerObject is IViewComparer) {
+                                                            view.Comparer = (IViewComparer)comparerObject;
+                                                        } else {
+                                                            Logger.Log(LogLevelType.ErrorsOnly,
+                                                                "ViewComparer, {0}, is not derived from IViewComparer.",
+                                                                viewInfo.ComparerType.Type);
+                                                        }
+
+                                                        childResourceRetriever.View = view;
+                                                    } else {
+                                                        Logger.Log(LogLevelType.ErrorsOnly,
+                                                            "View, {0}, is not derived from IView.",
+                                                            viewInfo.Name);
+                                                    }
+                                                } else {
+                                                    Logger.Log(LogLevelType.ErrorsOnly,
+                                                        "View, {0}, could not be found.",
+                                                        childResourceRetrieverInfo.View);
+                                                }
 
                                                 if (resourceRetriever.ChildResourceRetrievers == null) {
                                                     resourceRetriever.ChildResourceRetrievers = new ChildResourceRetrievers();

@@ -59,7 +59,6 @@ namespace SharpFile {
             this.tlsDrives.Size = new Size(32, 22);
 
             this.tlsPath.Size = new Size(100, 25);
-
             this.tlsFilter.Size = new Size(50, 25);
 
             this.Controls.Add(this.view.Control);
@@ -440,6 +439,9 @@ namespace SharpFile {
         public IView View {
             get {
                 return view;
+            }
+            set {
+                view = value;
             }
         }
 

@@ -15,6 +15,7 @@ BUGS
 - right-click support on files inside of compressed files
 
 TODO
+- Generic version of instantiate object that takes in an interface (line 354 ofSettings)
 - ColumnInfo comparer type?
 - Store sort position for each column in settings
 - When columns are rearranged, save that to the settings file

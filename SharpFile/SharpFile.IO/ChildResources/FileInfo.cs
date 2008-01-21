@@ -1,5 +1,6 @@
 using System;
 using SharpFile.Infrastructure;
+using System.Collections.Generic;
 
 namespace SharpFile.IO.ChildResources {
 	public class FileInfo : FileSystemInfo, IChildResource {
@@ -46,12 +47,20 @@ namespace SharpFile.IO.ChildResources {
 			System.IO.File.Move(this.FullPath, destination);
 		}
 
-		public void Execute(IView view) {
-            foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers.Filter(this)) {
-                childResourceRetriever.Execute(view, this);
-                break;
+        public void Execute(IView view) {
+            List<IChildResourceRetriever> childResourceRetrievers = 
+                (List<IChildResourceRetriever>)ChildResourceRetrievers.Filter(this);
+
+            if (childResourceRetrievers.Count > 0) {
+                IChildResourceRetriever childResourceRetriever = childResourceRetrievers[0];
+
+                if (!view.GetType().Equals(childResourceRetriever.View.GetType())) {
+                    view = childResourceRetriever.View;
+                }
+
+                childResourceRetrievers[0].Execute(view, this);
             }
-		}
+        }
 
         public ChildResourceRetrievers ChildResourceRetrievers {
 			get {

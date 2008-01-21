@@ -599,6 +599,8 @@ namespace SharpFile {
                 if (!propertyName.Equals("DisplayName") &&
                     (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
                     // Don't show anything for this resource type.
+                } else if (propertyName.Equals("Size") && resource is DirectoryInfo) {
+                    // Don't show anything for this resource type.
                 } else {
                     if (propertyInfo != null) {
                         text = propertyInfo.GetValue(resource, null).ToString();

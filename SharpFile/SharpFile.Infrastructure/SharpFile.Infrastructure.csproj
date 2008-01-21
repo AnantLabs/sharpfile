@@ -51,6 +51,7 @@
     <Compile Include="SettingInfos\ChildResourceRetrieverInfo.cs" />
     <Compile Include="ChildResourceRetrievers.cs" />
     <Compile Include="SettingInfos\ColumnInfo.cs" />
+    <Compile Include="SettingInfos\ViewInfo.cs" />
     <Compile Include="Settings\DualParentSettings.cs" />
     <Compile Include="FullyQualifiedMethod.cs" />
     <Compile Include="FullyQualifiedType.cs" />

@@ -9,6 +9,7 @@ namespace SharpFile.IO.Retrievers {
     public class FileRetriever : IChildResourceRetriever {
         private List<ColumnInfo> columnInfos;
         private string name;
+        private IView view;
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
@@ -136,10 +137,6 @@ namespace SharpFile.IO.Retrievers {
 
         public List<ColumnInfo> ColumnInfos {
             get {
-                if (columnInfos == null) {
-                    throw new Exception("No column information has been set.");
-                }
-
                 return columnInfos;
             }
             set {
@@ -153,6 +150,15 @@ namespace SharpFile.IO.Retrievers {
             }
             set {
                 name = value;
+            }
+        }
+
+        public IView View {
+            get {
+                return view;
+            }
+            set {
+                view = value;
             }
         }
 

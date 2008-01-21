@@ -6,6 +6,7 @@ namespace SharpFile.Infrastructure {
 		void Execute(IView view, IResource resource);
         IChildResourceRetriever Clone();
         List<ColumnInfo> ColumnInfos { get; set; }
+        IView View { get; set; }
 
         void OnGetComplete();
         event ChildResourceRetriever.GetCompleteDelegate GetComplete;

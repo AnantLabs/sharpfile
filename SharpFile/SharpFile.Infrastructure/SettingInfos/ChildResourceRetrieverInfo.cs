@@ -11,6 +11,7 @@ namespace SharpFile.Infrastructure {
         private List<ColumnInfo> columnInfos;
         private ChildResourceRetriever.CustomMethodDelegate customMethod;
         private FullyQualifiedMethod methodDelegateType;
+        private string view;
 
         /// <summary>
         /// Empty ctor for xml serialization.
@@ -18,18 +19,18 @@ namespace SharpFile.Infrastructure {
         public ChildResourceRetrieverInfo() {
         }
 
-        public ChildResourceRetrieverInfo(string name, List<ColumnInfo> columnInfos, ChildResourceRetriever.CustomMethodDelegate customMethod, FullyQualifiedType fullyQualifiedType) {
-            this.name = name;
-            this.fullyQualifiedType = fullyQualifiedType;
-            this.columnInfos = columnInfos;
+        //public ChildResourceRetrieverInfo(string name, List<ColumnInfo> columnInfos, ChildResourceRetriever.CustomMethodDelegate customMethod, FullyQualifiedType fullyQualifiedType) {
+        //    this.name = name;
+        //    this.fullyQualifiedType = fullyQualifiedType;
+        //    this.columnInfos = columnInfos;
 
-            if (customMethod != null) {
-                this.methodDelegateType = new FullyQualifiedMethod(new FullyQualifiedType(
-                    customMethod.Method.DeclaringType.Namespace,
-                    customMethod.Method.DeclaringType.FullName),
-                    customMethod.Method.Name);
-            }
-        }
+        //    if (customMethod != null) {
+        //        this.methodDelegateType = new FullyQualifiedMethod(new FullyQualifiedType(
+        //            customMethod.Method.DeclaringType.Namespace,
+        //            customMethod.Method.DeclaringType.FullName),
+        //            customMethod.Method.Name);
+        //    }
+        //}
 
         [XmlAttribute("Name")]
         public string Name {
@@ -67,6 +68,15 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 methodDelegateType = value;
+            }
+        }
+
+        public string View {
+            get {
+                return view;
+            }
+            set {
+                view = value;
             }
         }
 

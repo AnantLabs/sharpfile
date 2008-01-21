@@ -9,6 +9,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
     public abstract class CompressedFileRetriever : IChildResourceRetriever {
         private List<ColumnInfo> columnInfos;
         private string name;
+        private IView view;
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
@@ -102,10 +103,6 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
 
         public List<ColumnInfo> ColumnInfos {
             get {
-                if (columnInfos == null) {
-                    throw new Exception("No column information has been set.");
-                }
-
                 return columnInfos;
             }
             set {
@@ -119,6 +116,15 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             }
             set {
                 name = value;
+            }
+        }
+
+        public IView View {
+            get {
+                return view;
+            }
+            set {
+                view = value;
             }
         }
 

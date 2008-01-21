@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using SharpFile.IO.ChildResources;
-using SharpFile.IO.Retrievers;
 using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ChildResources {
