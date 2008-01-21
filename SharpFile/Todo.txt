@@ -13,11 +13,13 @@ BUGS
 	when starting a new operation
 - flicker in drive dropdown when new drive is inserted
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
-- multi-selection doesn't work with drag-and-drop
+- drag and drop with files inside of a compressed file
+- show folders inside of compressed files
+- right-click support on files inside of compressed files
 
 TODO
-- Compressed file support
-- set properties on CHildResourceRetrievers on-the-fly when constructing them (ReadOnly/interactive view for CompressedFileRetriever)
+- When columns are rearranged, save that to the settings file
+- set properties on ChildResourceRetrievers on-the-fly when constructing them
 - Localization (resource file method)
 - Tab information needs to be saved for each panel for dual
 - Tab information needs to be saved for each window for mdi

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using SharpFile.IO.Retrievers;
-using SharpFile.IO;
+using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.IO.Retrievers;
 
 namespace SharpFile.IO.ChildResources {
     [Serializable]
@@ -148,6 +148,9 @@ namespace SharpFile.IO.ChildResources {
                     totalSize += getSize(subDirectoryInfo);
                 }
             } catch (Exception ex) {
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                    "Directory size could not be determined for {0}.",
+                    directoryInfo.FullName);
             }
 
             return totalSize;

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChildResourceFactory.cs" />
+    <Compile Include="ChildResources\CompressedFileInfo.cs" />
     <Compile Include="ChildResources\DirectoryInfo.cs" />
     <Compile Include="FileSystemInfo.cs">
       <SubType>Code</SubType>

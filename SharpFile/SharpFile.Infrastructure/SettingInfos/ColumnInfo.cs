@@ -97,6 +97,10 @@ namespace SharpFile.Infrastructure {
                                     "Comparer, {0}, does not inherit from IComparer.",
                                     comparerType.Type);
                             }
+                        } catch (MissingMethodException ex) {
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Comparer, {0}, could not be instantiated (is it an abstract class?).",
+                                comparerType.Type);
                         } catch (TypeLoadException ex) {
                             Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                                     "Comparer, {0}, can not be instantiated.",

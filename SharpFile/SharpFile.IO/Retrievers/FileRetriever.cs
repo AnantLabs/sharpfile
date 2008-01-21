@@ -62,7 +62,11 @@ namespace SharpFile.IO.Retrievers {
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
-                        view.ShowMessageBox(ex.Message);
+                        string message = string.Format("Access is unauthorized for {0}.",
+                            resource.FullPath);
+
+                        view.ShowMessageBox(message);
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message);
                     } finally {
                         backgroundWorker.ReportProgress(100);
                     }

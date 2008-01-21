@@ -1,9 +1,10 @@
-using System.Management;
-using System.Collections.Generic;
-using SharpFile.IO.ParentResources;
 using System;
+using System.Collections.Generic;
+using System.Management;
 using System.Runtime.InteropServices;
+using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile.IO.Retrievers {
     public class NetworkDriveRetriever : IResourceRetriever {
@@ -65,9 +66,8 @@ namespace SharpFile.IO.Retrievers {
                     break;
                 }
             } catch (COMException ex) {
-                string blob = ex.Message;
-                // Log some exception somewhere, but I don't really care. 
-                // We just assume we can't get an operating system from this computer.
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Access is unauthorized for {0}.",
+                    providerName);
             }
 
             switch (operatingSystem) {

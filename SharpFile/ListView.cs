@@ -462,7 +462,11 @@ namespace SharpFile {
                         resource.Move(destination);
                     } catch (Exception ex) {
                         e.CancelEdit = true;
-                        MessageBox.Show(ex.Message);
+                        string message = "Renaming the file failed.";
+                        MessageBox.Show(message);
+
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
+                                destination);
                     }
                 }
             }
@@ -512,6 +516,9 @@ namespace SharpFile {
                 try {
                     addItem(resource, ref fileCount, ref folderCount);
                 } catch (Exception ex) {
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Resource, {0}, could not be added to listview.",
+                        resource.FullPath);
+
                     sb.AppendFormat("{0}: {1}",
                         resource.FullPath,
                         ex.Message);
@@ -555,7 +562,11 @@ namespace SharpFile {
 
                     this.Sort();
                 } catch (Exception ex) {
-                    MessageBox.Show(ex.Message + ex.StackTrace);
+                    string message = string.Format("Resource, {0} could not be added to the listview.",
+                        resource.FullPath);
+
+                    MessageBox.Show(message);
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message, resource.FullPath);
                 }
             }
         }
@@ -585,36 +596,52 @@ namespace SharpFile {
             item.Name = resource.FullPath;
 
             foreach (ColumnInfo columnInfo in ColumnInfos) {
-                PropertyInfo propertyInfo;
+                PropertyInfo propertyInfo = null;
                 string propertyName = columnInfo.Property;
 
                 if (propertyInfos.ContainsKey(propertyName)) {
-                    propertyInfo = propertyInfos[propertyName];
+                    // In case a there was no property info generated from a previous resource, try to retrieve the property info.
+                    // This occurs when viewing compressed files with a parent directory as the first resource.
+                    if (propertyInfo == null) {
+                        propertyInfo = resource.GetType().GetProperty(propertyName);
+                        propertyInfos[propertyName] = propertyInfo;
+                    } else {
+                        propertyInfo = propertyInfos[propertyName];
+                    }
                 } else {
                     propertyInfo = resource.GetType().GetProperty(propertyName);
                     propertyInfos.Add(propertyName, propertyInfo);
                 }
 
                 if (propertyInfo != null) {
-                    string text = propertyInfo.GetValue(resource, null).ToString();
+                    string text = string.Empty;
 
-                    // The original value will be set on the tag for sortability.
-                    string tag = text;
-
-                    if (columnInfo.MethodDelegate != null) {
-                        text = columnInfo.MethodDelegate.Invoke(text);
-                    }
-
-                    if (columnInfo.PrimaryColumn) {
-                        item.Text = text;
-                        item.SubItems[0].Tag = tag;
+                    // HACK: This is to prevent parent/root directories from showing any information except for their display name.
+                    // TODO: Determine a better way to prevent parent/root directories from showing information.
+                    if (!propertyName.Equals("DisplayName") && 
+                        (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
+                        // Don't show anything for this resource type.
                     } else {
-                        System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem = 
-                            new ListViewItem.ListViewSubItem();
-                        listViewSubItem.Text = text;
-                        listViewSubItem.Tag = tag;
+                        text = propertyInfo.GetValue(resource, null).ToString();
 
-                        item.SubItems.Add(listViewSubItem);
+                        // The original value will be set on the tag for sortability.
+                        string tag = text;
+
+                        if (columnInfo.MethodDelegate != null) {
+                            text = columnInfo.MethodDelegate.Invoke(text);
+                        }
+
+                        if (columnInfo.PrimaryColumn) {
+                            item.Text = text;
+                            item.SubItems[0].Tag = tag;
+                        } else {
+                            System.Windows.Forms.ListViewItem.ListViewSubItem listViewSubItem =
+                                new ListViewItem.ListViewSubItem();
+                            listViewSubItem.Text = text;
+                            listViewSubItem.Tag = tag;
+
+                            item.SubItems.Add(listViewSubItem);
+                        }
                     }
                 }
             }

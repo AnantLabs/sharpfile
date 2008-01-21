@@ -1,8 +1,5 @@
-using System.Diagnostics;
-using SharpFile.IO;
-using SharpFile.IO.Retrievers;
+using System;
 using SharpFile.Infrastructure;
-using System.Collections.Generic;
 
 namespace SharpFile.IO.ChildResources {
 	public class FileInfo : FileSystemInfo, IChildResource {
@@ -15,14 +12,19 @@ namespace SharpFile.IO.ChildResources {
             : this(new System.IO.FileInfo(fileName), childResourceRetrievers) {
 		}
 
-        public FileInfo(System.IO.FileInfo fileInfo, ChildResourceRetrievers childResourceRetrievers) {
-			this.name = fileInfo.Name;
-			this.size = fileInfo.Length;
-			this.lastWriteTime = fileInfo.LastWriteTime;
-			this.fullPath = fileInfo.FullName;
-			this.extension = fileInfo.Extension;
-            this.childResourceRetrievers = childResourceRetrievers;
+        public FileInfo(System.IO.FileInfo fileInfo, ChildResourceRetrievers childResourceRetrievers) :
+            this(fileInfo.Name, fileInfo.Length, fileInfo.LastWriteTime, fileInfo.FullName,
+            fileInfo.Extension, childResourceRetrievers) {
 		}
+
+        public FileInfo(string name, long size, DateTime lastWriteTime, string fullPath, string extension, ChildResourceRetrievers childResourceRetrievers) {
+            this.name = name;
+            this.size = size;
+            this.lastWriteTime = lastWriteTime;
+            this.fullPath = fullPath;
+            this.extension = extension;
+            this.childResourceRetrievers = childResourceRetrievers;
+        }
 
         public void OnGetComplete() {
             if (GetComplete != null) {

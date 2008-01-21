@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Common.Logger;
 using SharpFile.Infrastructure;
 
-using ICSharpCode.SharpZipLib.BZip2;
-using ICSharpCode.SharpZipLib.Zip;
-using ICSharpCode.SharpZipLib.Zip.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using ICSharpCode.SharpZipLib.GZip;
-using SharpFile.IO.ChildResources;
-
-namespace SharpFile.IO.Retrievers {
+namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
     [Serializable]
     public abstract class CompressedFileRetriever : IChildResourceRetriever {
         private List<ColumnInfo> columnInfos;
@@ -18,9 +12,6 @@ namespace SharpFile.IO.Retrievers {
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
-
-        public CompressedFileRetriever() {
-        }
 
         public void OnGetComplete() {
             if (GetComplete != null) {
@@ -57,7 +48,11 @@ namespace SharpFile.IO.Retrievers {
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
-                        view.ShowMessageBox(ex.Message);
+                        string message = string.Format("Access is unauthorized for {0}.",
+                            resource.FullPath);
+
+                        view.ShowMessageBox(message);
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message);
                     } finally {
                         backgroundWorker.ReportProgress(100);
                     }
@@ -98,18 +93,6 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        //public IChildResourceRetriever Clone() {
-        //    IChildResourceRetriever childResourceRetriever = new CompressedFileRetriever();
-        //    List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
-        //    childResourceRetriever.ColumnInfos = clonedColumnInfos;
-        //    childResourceRetriever.Name = name;
-
-        //    childResourceRetriever.CustomMethod += OnCustomMethod;
-        //    childResourceRetriever.GetComplete += OnGetComplete;
-
-        //    return childResourceRetriever;
-        //}
-
         public List<ColumnInfo> ColumnInfos {
             get {
                 if (columnInfos == null) {
@@ -132,18 +115,8 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        public abstract IChildResourceRetriever Clone();
+
         protected abstract IEnumerable<IChildResource> getResources(IResource resource, string filter);
-
-        /*
-         getResources() {
-            IFileContainer container = resource as IFileContainer;
-            List<IChildResource> resources = new List<IChildResource>();
-
-            resources.AddRange(container.GetDirectories());
-            resources.AddRange(container.GetFiles(filter));
-
-            return resources;
-            }
-        */
     }
 }

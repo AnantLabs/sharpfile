@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
+using ICSharpCode.SharpZipLib.Zip;
 using SharpFile.Infrastructure;
+using SharpFile.IO.ChildResources;
 
 namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
     public class ReadOnlyCompressedFileRetriever : CompressedFileRetriever {
-        public IChildResourceRetriever Clone() {
+        public override IChildResourceRetriever Clone() {
             IChildResourceRetriever childResourceRetriever = new ReadOnlyCompressedFileRetriever();
             List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
             childResourceRetriever.ColumnInfos = clonedColumnInfos;
-            childResourceRetriever.Name = name;
+            childResourceRetriever.Name = Name;
 
             childResourceRetriever.CustomMethod += OnCustomMethod;
             childResourceRetriever.GetComplete += OnGetComplete;
@@ -15,27 +17,35 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return childResourceRetriever;
         }
 
-        protected override IEnumerable<SharpFile.Infrastructure.IChildResource> getResources(IResource resource, string filter) {
-            // TODO: Finish this.
+        protected override IEnumerable<IChildResource> getResources(IResource resource, string filter) {
+            List<IChildResource> resources = new List<IChildResource>();
+
             ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();
             childResourceRetrievers.Add(this);
 
             byte[] data = new byte[4096];
 
             using (ZipInputStream s = new ZipInputStream(System.IO.File.OpenRead(resource.FullPath))) {
+                resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path), 
+                    Settings.Instance.Resources[0].ChildResourceRetrievers));
+
                 ZipEntry zipEntry;
 
                 while ((zipEntry = s.GetNextEntry()) != null) {
-                    //resources.Add(ChildResourceFactory.GetChildResource(@"c:\#storage\", Settings.Instance.Resources[0].ChildResourceRetrievers));
-                    resources.Add(new FileInfo(zipEntry.Name, childResourceRetrievers));
+                    if (zipEntry.IsFile) {
+                        // TODO: Retrieving extensions from filenames should be added back to Common.
 
-                    /*
-                    Console.WriteLine("Name : {0}", zipEntry.Name);
-                    Console.WriteLine("Date : {0}", zipEntry.DateTime);
-                    Console.WriteLine("Size : (-1, if the size information is in the footer)");
-                    Console.WriteLine("      Uncompressed : {0}", zipEntry.Size);
-                    Console.WriteLine("      Compressed   : {0}", zipEntry.CompressedSize);
-                    */
+                        string fileName = zipEntry.Name;
+                        int extensionIndex = fileName.IndexOf('.');
+                        string extension = string.Empty;
+
+                        if (extensionIndex > 0) {
+                            extension = fileName.Substring(extensionIndex, fileName.Length - extensionIndex);
+                        }
+
+                        resources.Add(new CompressedFileInfo(fileName, zipEntry.Size, zipEntry.CompressedSize, 
+                            zipEntry.DateTime, fileName, extension, childResourceRetrievers));
+                    }                   
 
                     /*
                     if (zipEntry.IsFile) {
@@ -51,8 +61,6 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                                 size = s.Read(data, 0, data.Length);
                             }
                         }
-
-                        Console.WriteLine();
                     }
                      */
                 }

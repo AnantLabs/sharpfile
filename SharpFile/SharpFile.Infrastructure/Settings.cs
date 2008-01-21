@@ -340,10 +340,14 @@ namespace SharpFile.Infrastructure {
 
                                                 resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
                                             } else {
-                                                Logger.Log(LogLevelType.ErrorsOnly, 
-                                                    "ChildResourceRetriever, {0}, is not derived from IChildResourceRetriever.",                                                    
+                                                Logger.Log(LogLevelType.ErrorsOnly,
+                                                    "ChildResourceRetriever, {0}, is not derived from IChildResourceRetriever.",
                                                     childResourceRetrieverName);
                                             }
+                                        } catch (MissingMethodException ex) {
+                                            Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                                "ChildResourceRetriever, {0}, could not be instantiated (is it an abstract class?).",
+                                                childResourceRetrieverName);
                                         } catch (TypeLoadException ex) {
                                             Logger.Log(LogLevelType.ErrorsOnly, ex,
                                                 "ChildResourceRetriever, {0}, could not be instantiated.",
@@ -362,6 +366,10 @@ namespace SharpFile.Infrastructure {
                                     "ResourceRetriever, {0}, is not derived from IResourceRetriever.",
                                     resourceRetrieverInfo.Name);
                             }
+                        } catch (MissingMethodException ex) {
+                            Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "ResourceRetriever, {0}, could not be instantiated (is it an abstract class?).",
+                                resourceRetrieverInfo.Name);
                         } catch (TypeLoadException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "ResourceRetriever, {0}, could not be instantiated.",
