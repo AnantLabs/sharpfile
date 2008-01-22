@@ -1,6 +1,7 @@
 using System;
 using SharpFile.Infrastructure;
 using System.Collections.Generic;
+using Common;
 
 namespace SharpFile.IO.ChildResources {
 	public class FileInfo : FileSystemInfo, IChildResource {
@@ -54,8 +55,13 @@ namespace SharpFile.IO.ChildResources {
             if (childResourceRetrievers.Count > 0) {
                 IChildResourceRetriever childResourceRetriever = childResourceRetrievers[0];
 
-                if (childResourceRetriever.View != null && 
+                if (childResourceRetriever.View != null &&
                     !view.GetType().Equals(childResourceRetriever.View.GetType())) {
+                    // TODO: Create a SetPropertyInParent method in Common.
+                    // Set the FileBrowser control (this control's parent) to use this view.
+                    //Forms.SetPropertyInParent<IView>(view.Control.Parent, "View",
+                    //    childResourceRetriever.View);
+
                     view = childResourceRetriever.View;
                 }
 

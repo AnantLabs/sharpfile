@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using System.Drawing;
 
-namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
+namespace SharpFile.IO.Retrievers {
     [Serializable]
-    public abstract class CompressedFileRetriever : IChildResourceRetriever {
+    public class MediaFileRetriever : IChildResourceRetriever {
         private List<ColumnInfo> columnInfos;
         private string name;
         private IView view;
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
+
+        public MediaFileRetriever() {
+        }
 
         public void OnGetComplete() {
             if (GetComplete != null) {
@@ -30,7 +34,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
 
         public void Execute(IView view, IResource resource) {
             Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                "Starting to Execute.");
+                "Starting to Execute in the MediaListView.");
 
             using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
                 backgroundWorker.WorkerSupportsCancellation = true;
@@ -48,7 +52,10 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                         if (backgroundWorker.CancellationPending) {
                             e.Cancel = true;
                         } else {
-                            e.Result = getResources(resource, view.Filter);
+                            Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                "Start to get resources.");
+
+                            e.Result = Image.FromFile(resource.FullPath);
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
@@ -62,7 +69,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
 
                         Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                            "Error when getting compressed file contents for {0}.", resource.FullPath);
+                            "Exception when getting resources for {0}.", resource.FullPath);
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
                     } finally {
                         backgroundWorker.ReportProgress(100);
@@ -74,22 +81,25 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                     if (e.Error == null &&
                         !e.Cancelled &&
                         e.Result != null &&
-                        e.Result is IEnumerable<IChildResource>) {
-                        IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
+                        e.Result is Image) {
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                            "Get resources complete.");
+
+                        Image image = (Image)e.Result;
 
                         view.BeginUpdate();
                         view.ColumnInfos = ColumnInfos;
                         view.Clear();
-                        view.AddItemRange(resources);
+                        view.InsertItem((IChildResource)resource);
                         view.EndUpdate();
 
                         // Update some information about the current directory.
                         view.UpdatePath(resource.FullPath);
 
                         // Set up the watcher.
-                        view.FileSystemWatcher.Path = resource.FullPath;
-                        view.FileSystemWatcher.Filter = view.Filter;
-                        view.FileSystemWatcher.EnableRaisingEvents = true;
+                        //view.FileSystemWatcher.Path = resource.FullPath;
+                        //view.FileSystemWatcher.Filter = view.Filter;
+                        //view.FileSystemWatcher.EnableRaisingEvents = true;
                     }
 
                     OnGetComplete();
@@ -102,6 +112,19 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
 
                 backgroundWorker.RunWorkerAsync();
             }
+        }
+
+        public IChildResourceRetriever Clone() {
+            IChildResourceRetriever childResourceRetriever = new MediaFileRetriever();
+            List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
+            childResourceRetriever.ColumnInfos = clonedColumnInfos;
+            childResourceRetriever.Name = name;
+            childResourceRetriever.View = View;
+
+            childResourceRetriever.CustomMethod += OnCustomMethod;
+            childResourceRetriever.GetComplete += OnGetComplete;
+
+            return childResourceRetriever;
         }
 
         public List<ColumnInfo> ColumnInfos {
@@ -131,8 +154,16 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             }
         }
 
-        public abstract IChildResourceRetriever Clone();
+        /*
+        private IEnumerable<IChildResource> getResources(IResource resource, string filter) {
+            IFileContainer container = resource as IFileContainer;
+            List<IChildResource> resources = new List<IChildResource>();
 
-        protected abstract IEnumerable<IChildResource> getResources(IResource resource, string filter);
+            resources.AddRange(container.GetDirectories());
+            resources.AddRange(container.GetFiles(filter));
+
+            return resources;
+        }
+        */
     }
 }

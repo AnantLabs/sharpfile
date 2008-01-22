@@ -28,6 +28,8 @@ namespace SharpFile {
         private IViewComparer comparer = new ListViewItemComparer();
         private IEnumerable<ColumnInfo> columnInfos;
         private Dictionary<string, PropertyInfo> propertyInfos = new Dictionary<string, PropertyInfo>();
+        private long fileCount = 0;
+        private long folderCount = 0;
 
         public event View.OnUpdateStatusDelegate OnUpdateStatus;
         public event View.OnUpdateProgressDelegate OnUpdateProgress;
@@ -78,7 +80,7 @@ namespace SharpFile {
         /// </summary>
         private void calculateSize() {
             if (this.SelectedItems != null &&
-                        this.SelectedItems.Count > 0) {
+                this.SelectedItems.Count > 0) {
                 int maxIndex = 0;
 
                 foreach (ListViewItem item in this.SelectedItems) {
@@ -111,7 +113,8 @@ namespace SharpFile {
                                         backgroundWorker.ReportProgress(50);
                                         item.SubItems[sizeIndex].Text = "...";
                                         eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
-                                        this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
+                                        this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+
                                         backgroundWorker.ReportProgress(100);
                                     };
 
@@ -127,7 +130,7 @@ namespace SharpFile {
 
                                                 item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
                                                 updateSelectedTotalSize(size);
-                                                this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.HeaderSize);
+                                                this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
                                             }
                                         };
 
@@ -486,54 +489,114 @@ namespace SharpFile {
         /// Parses the file/directory information and updates the listview.
         /// </summary>
         public void AddItemRange(IEnumerable<IChildResource> resources) {
+            Settings.Instance.Logger.Log(LogLevelType.Verbose, "Starting to add item range of resources.");
+
             if (this.SmallImageList == null) {
                 this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
             }
 
-            int fileCount = 0;
-            int folderCount = 0;
-            StringBuilder sb = new StringBuilder();
+            // Set file/folder count to 0 when adding in new resources.
+            fileCount = 0;
+            folderCount = 0;
 
-            // Create a new listview item with the display name.
-            foreach (IChildResource resource in resources) {
-                try {
-                    addItem(resource, ref fileCount, ref folderCount);
-                } catch (Exception ex) {
-                    sb.AppendFormat("{0}: {1}",
-                         resource.FullPath,
-                         ex.Message);
+            bool isBackgroundThread = false;
+
+            if (isBackgroundThread) {
+                using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                    backgroundWorker.WorkerReportsProgress = true;
+
+                    backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
+                        backgroundWorker.ReportProgress(50);
+                        StringBuilder sb = new StringBuilder();
+
+                        // Create a new listview item with the display name.
+                        foreach (IChildResource resource in resources) {
+                            try {
+                                addItem(resource);
+                            } catch (Exception ex) {
+                                sb.AppendFormat("{0}: {1}",
+                                     resource.FullPath,
+                                     ex.Message);
+                            }
+                        }
+
+                        eventArgs.Result = sb;
+                        backgroundWorker.ReportProgress(100);
+                    };
+
+                    backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
+                        UpdateProgress(eventArgs.ProgressPercentage);
+                    };
+
+                    backgroundWorker.RunWorkerCompleted +=
+                        delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+                            if (eventArgs.Error == null &&
+                                eventArgs.Result != null &&
+                                eventArgs.Result is StringBuilder) {
+                                StringBuilder sb = (StringBuilder)eventArgs.Result;
+
+                                if (sb.Length > 0) {
+                                    Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
+                                    Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
+                                }
+
+                                Settings.Instance.Logger.Log(LogLevelType.Verbose, "Sort resources.");
+
+                                comparer.ColumnIndex = 0;
+                                comparer.Order = Order.Ascending;
+                                this.Sort();
+
+                                // Resize the columns based on the column content.
+                                this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+                            }
+                        };
+
+                    backgroundWorker.RunWorkerAsync();
                 }
+            } else {
+                StringBuilder sb = new StringBuilder();
+
+                // Create a new listview item with the display name.
+                foreach (IChildResource resource in resources) {
+                    try {
+                        addItem(resource);
+                    } catch (Exception ex) {
+                        sb.AppendFormat("{0}: {1}",
+                             resource.FullPath,
+                             ex.Message);
+                    }
+                }
+
+                if (sb.Length > 0) {
+                    Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
+                    Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
+                }
+
+                Settings.Instance.Logger.Log(LogLevelType.Verbose, "Sort resources.");
+
+                comparer.ColumnIndex = 0;
+                comparer.Order = Order.Ascending;
+                this.Sort();
+
+                // Resize the columns based on the column content.
+                this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+                UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+                                           folderCount,
+                                           fileCount));
             }
-
-            if (sb.Length > 0) {
-                Settings.Instance.Logger.ProcessContent += ShowMessageBox;
-                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
-                Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
-            }
-
-            comparer.ColumnIndex = 0;
-            comparer.Order = Order.Ascending;
-            this.Sort();
-
-            // Resize the columns based on the column content.
-            this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-            UpdateStatus(string.Format("Folders: {0}; Files: {1}",
-                                       folderCount,
-                                       fileCount));
         }
 
         /// <summary>
         /// Parses the file/directory information and inserts the file info into the listview.
         /// </summary>
         public void InsertItem(IChildResource resource) {
-            int fileCount = 0;
-            int folderCount = 0;
-
             if (resource != null) {
                 try {
                     // Create a new listview item with the display name.
-                    addItem(resource, ref fileCount, ref folderCount);
+                    addItem(resource);
 
                     // Basic stuff that should happen everytime files are shown.
                     this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -556,11 +619,9 @@ namespace SharpFile {
         /// Adds the item to the view.
         /// </summary>
         /// <param name="resource">Resource to add.</param>
-        /// <param name="fileCount">Count of files.</param>
-        /// <param name="folderCount">Count of folders.</param>
-        private void addItem(IChildResource resource, ref int fileCount, ref int folderCount) {
+        private void addItem(IChildResource resource) {
             if (!itemDictionary.ContainsKey(resource.FullPath)) {
-                ListViewItem item = createListViewItem(resource, ref fileCount, ref folderCount);
+                ListViewItem item = createListViewItem(resource);
                 itemDictionary.Add(resource.FullPath, item);
                 this.Items.Add(item);
             }
@@ -571,14 +632,22 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fileSystemInfo">Filesystem information.</param>
         /// <returns>Listview item that references the filesystem object.</returns>
-        private ListViewItem createListViewItem(IChildResource resource, ref int fileCount, ref int folderCount) {
+        private ListViewItem createListViewItem(IChildResource resource) {
             ListViewItem item = new ListViewItem();
             item.Tag = resource;
             item.Name = resource.FullPath;
 
+            if (resource is FileInfo) {
+                fileCount++;
+            } else if (resource is DirectoryInfo) {
+                folderCount++;
+            }
+
             foreach (ColumnInfo columnInfo in ColumnInfos) {
                 PropertyInfo propertyInfo = null;
                 string propertyName = columnInfo.Property;
+                string text = string.Empty;
+                string tag = string.Empty;
 
                 if (propertyInfos.ContainsKey(propertyName)) {
                     // In case a there was no property info generated from a previous resource, try to retrieve the property info.
@@ -593,9 +662,6 @@ namespace SharpFile {
                     propertyInfo = resource.GetType().GetProperty(propertyName);
                     propertyInfos.Add(propertyName, propertyInfo);
                 }
-
-                string text = string.Empty;
-                string tag = string.Empty;
 
                 // HACK: This is to prevent parent/root directories from showing any information except for their display name.
                 // TODO: Determine a better way to prevent parent/root directories from showing information.
