@@ -1,27 +1,33 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
     public sealed class DualParentSettings {
-        private string panel1Path;
-        private string panel2Path;
-        private int splitterPercentage = 50;
+        private List<string> panel1Paths;
+        private List<string> panel2Paths;
+        private int splitterPercentage = 50;        
 
-        public string Panel1Path {
+        [XmlArray("Panel1Paths")]
+        [XmlArrayItem("Path")]
+        public List<string> Panel1Paths {
             get {
-                return panel1Path;
+                return panel1Paths;
             }
             set {
-                panel1Path = value;
+                panel1Paths = value;
             }
         }
 
-        public string Panel2Path {
+        [XmlArray("Panel2Paths")]
+        [XmlArrayItem("Path")]
+        public List<string> Panel2Paths {
             get {
-                return panel2Path;
+                return panel2Paths;
             }
             set {
-                panel2Path = value;
+                panel2Paths = value;
             }
         }
 

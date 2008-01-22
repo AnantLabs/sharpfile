@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
+using System.Collections.Generic;
 
 namespace SharpFile {
 	public class DualParent : BaseParent {
@@ -160,16 +161,16 @@ namespace SharpFile {
 		}
 
 		protected override void onFormClosing() {
-			Settings.Instance.DualParent.Panel1Path = Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "Path");
-            Settings.Instance.DualParent.Panel2Path = Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "Path");
+			Settings.Instance.DualParent.Panel1Paths = Forms.GetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths");
+            Settings.Instance.DualParent.Panel2Paths = Forms.GetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths");
             Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
 
 			base.onFormClosing();
 		}
 
 		protected override void onFormLoad() {
-            Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "Path", Settings.Instance.DualParent.Panel1Path);
-            Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "Path", Settings.Instance.DualParent.Panel2Path);
+            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", Settings.Instance.DualParent.Panel1Paths);
+            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", Settings.Instance.DualParent.Panel2Paths);
 
             splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 			decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
