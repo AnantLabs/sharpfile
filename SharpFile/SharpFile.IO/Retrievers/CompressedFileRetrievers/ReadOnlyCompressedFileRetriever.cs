@@ -22,16 +22,20 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             List<IChildResource> resources = new List<IChildResource>();
 
             ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();
-            //childResourceRetrievers.Add(this);
+            childResourceRetrievers.AddRange(Settings.Instance.Resources[0].ChildResourceRetrievers);
 
-            //if (Settings.Instance.ShowParentDirectory) {
-            //    resources.Add(new RootDirectoryInfo(new System.IO.DirectoryInfo(resource.Root),
-            //                Settings.Instance.Resources[0].ChildResourceRetrievers));
-            //}
+            if (Settings.Instance.ShowRootDirectory) {
+                resources.Add(new RootDirectoryInfo(new System.IO.DirectoryInfo(resource.Root.FullPath),
+                            childResourceRetrievers));
+            }
 
             if (Settings.Instance.ShowParentDirectory) {
-                resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path),
-                            Settings.Instance.Resources[0].ChildResourceRetrievers));
+                if (!Settings.Instance.ShowRootDirectory ||
+                    (Settings.Instance.ShowRootDirectory &&
+                    !resource.Path.ToLower().Equals(resource.Root.Name.ToLower()))) {
+                    resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path),
+                        childResourceRetrievers));
+                }
             }
 
             using (ZipFile zipFile = new ZipFile(resource.FullPath)) {

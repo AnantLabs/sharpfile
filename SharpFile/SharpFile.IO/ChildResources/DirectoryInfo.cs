@@ -54,7 +54,7 @@ namespace SharpFile.IO.ChildResources {
             // Show root directory if specified.
             if (Settings.Instance.ShowRootDirectory) {
                 if (!this.Root.Name.Equals(this.FullPath)) {
-                    //directories.Add(new RootDirectoryInfo(this.Root, this.ChildResourceRetrievers));
+                    directories.Add(new RootDirectoryInfo(new System.IO.DirectoryInfo(this.Root.FullPath), this.ChildResourceRetrievers));
                 }
             }
 
