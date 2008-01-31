@@ -109,7 +109,7 @@ namespace SharpFile {
                 return paths;
             }
             set {
-                if (value == null || value.Count == 0) {
+                if (value.Count == 0) {
                     Settings.Instance.Logger.Log(LogLevelType.Verbose,
                             @"Paths are null or empty for {0}; assume C:\ is valid.", Name);
 

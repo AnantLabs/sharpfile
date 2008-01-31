@@ -168,17 +168,28 @@ namespace SharpFile {
             Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;            
 		}
 
-		protected override void onFormLoad() {
-            base.onFormLoad();
+		protected override void onFormLoad()
+		{
+			base.onFormLoad();
 
-            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", Settings.Instance.DualParent.Panel1Paths);
-            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", Settings.Instance.DualParent.Panel2Paths);
+			// If we don't have any paths, create an empty list, otherwise our SetPropertyInChild doesn't return properly.
+			if (Settings.Instance.DualParent.Panel1Paths == null)
+			{
+				Settings.Instance.DualParent.Panel1Paths = new List<string>();
+			}
+			if (Settings.Instance.DualParent.Panel2Paths == null)
+			{
+				Settings.Instance.DualParent.Panel2Paths = new List<string>();
+			}
 
-            // Calculate the splitter distance based on the percentage stored and the width of the form.
-            splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
+			Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", Settings.Instance.DualParent.Panel1Paths);
+			Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", Settings.Instance.DualParent.Panel2Paths);
+
+			// Calculate the splitter distance based on the percentage stored and the width of the form.
+			splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 			decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
 			int splitterDistance = Convert.ToInt32(percent * this.Width);
-			splitContainer.SplitterDistance = splitterDistance;			
+			splitContainer.SplitterDistance = splitterDistance;
 		}
 	}
 }

@@ -20,7 +20,7 @@ TODO
 - When columns are rearranged, save that to the settings file
 - Drag and drop from another window "into" a directory
 - Move some code in listview into a base view class
-- Settings xsd
+- Settings xsd and xslt to transform old xml to new xml
 - Investigate combining Infrastructure with IO
 - Base class for child resource retrievers (namespace conflict)
 - Change delegate/events to standard .NET way

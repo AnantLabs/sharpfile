@@ -13,12 +13,12 @@ copy /Y "%1SharpFile.Infrastructure\Resources\ilmerge_settings.config" "%2settin
 rmdir /S /Q "%2tmp"
 
 if not exist "%1Tools\sgen.exe" goto display_sgen_message
-"%1Tools\sgen.exe" /a:%2SharpFile.exe
+"%1Tools\sgen.exe" /a:%2SharpFile.exe /t:SharpFile.Infrastructure.Settings /force
 goto compress_files
 
 :no_ilmerge_exists
 if not exist "%1Tools\sgen.exe" goto display_sgen_message
-"%1Tools\sgen.exe" /a:%2SharpFile.Infrastructure.dll
+"%1Tools\sgen.exe" /a:%2SharpFile.Infrastructure.dll /t:SharpFile.Infrastructure.Settings /force
 goto compress_files
 
 :display_sgen_message
