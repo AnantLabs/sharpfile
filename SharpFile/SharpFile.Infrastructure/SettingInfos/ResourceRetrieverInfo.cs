@@ -10,12 +10,6 @@ namespace SharpFile.Infrastructure {
         public ResourceRetrieverInfo() {
         }
 
-        //public ResourceRetrieverInfo(string name, List<string> childResourceRetrievers, FullyQualifiedType fullyQualifiedType) {
-        //    this.name = name;
-        //    this.fullyQualifiedType = fullyQualifiedType;
-        //    this.childResourceRetrievers = childResourceRetrievers;
-        //}
-
         [XmlAttribute("Name")]
         public string Name {
             get {

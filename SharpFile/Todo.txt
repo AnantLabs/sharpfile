@@ -1,3 +1,20 @@
+CURRENT
+Add arguments to FullyQualifiedMethod so that the following could be possible:
+Instead of:
+<MethodDelegateType Method="IsCompressedFile">
+	<FullyQualifiedType Assembly="SharpFile.Infrastructure" Type="SharpFile.Infrastructure.ChildResourceRetrievers" />
+</MethodDelegateType>
+
+Do:
+public bool IsExtension(Iresource resource, params string[] arguments) { } --> will be another delegate with a new signature
+<MethodDelegateType Method="IsExtension">
+	<FullyQualifiedType Assembly="SharpFile.Infrastructure" Type="SharpFile.Infrastructure.ChildResourceRetrievers" />
+	<Arguments>
+		<Argument>.zip</Argument>
+		<Argument>.tar</Argument>
+	</Arguments>
+</MethodDelegateType>
+
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS

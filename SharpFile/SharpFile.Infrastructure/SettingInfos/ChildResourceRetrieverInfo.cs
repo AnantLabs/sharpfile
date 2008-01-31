@@ -81,7 +81,11 @@ namespace SharpFile.Infrastructure {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message, 
                                 methodDelegateType.FullyQualifiedType.Type, name);
                     }
-                } else if (customMethod == null && methodDelegateType == null) {
+                } 
+							
+							  // If the customMethod is still null, then there was an error creating the delegate, 
+								// or the method delegate type was null. Either way, set a default.
+							  if (customMethod == null) {
                     customMethod = ChildResourceRetrievers.DefaultCustomMethod;
                 }
 
