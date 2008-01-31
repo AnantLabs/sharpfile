@@ -1,6 +1,7 @@
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
+- When there is no settings file, no paths are loaded correctly in dual mode
 - Filesystem events don't correctly update status bar
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
@@ -65,6 +66,7 @@ TODO
 NICE TO HAVES
 - Set properties on ChildResourceRetrievers on-the-fly when constructing them
 - Localization (resource file method)
+- Find files (find in files)
 
 KEYCODES TODO:
 - Del
