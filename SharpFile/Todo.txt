@@ -1,7 +1,6 @@
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
-- KeyCodes in the settings prevents other settings from loading
 - Filesystem events don't correctly update status bar
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
@@ -16,23 +15,17 @@ BUGS
 
 TODO
 - Path textbox should be a dropdown that stores the most recent history
-- Generic version of instantiate object that takes in an interface (line 354 of Settings)
 - Store sort position for each column in settings
 - When columns are rearranged, save that to the settings file
-- Set properties on ChildResourceRetrievers on-the-fly when constructing them
-- Localization (resource file method)
-- Move UI classes to the UI directory/namespace ?
 - Drag and drop from another window "into" a directory
 - Move some code in listview into a base view class
 - Settings xsd
 - Investigate combining Infrastructure with IO
 - Base class for child resource retrievers (namespace conflict)
 - Change delegate/events to standard .NET way
-- Specify view to use for each child resource retriever
 - Ability to reload settings made manually and the settings take affect immediately
 - Investigate the type command-line argument to sgen
 - Investigate legality of disctributing 7-z, sgen, ilmerge
-- configuration for parent directory and root directory
 - configuration for what happens when the drive drop down is clicked
 - configuration for toolbar
 - for systems that don't support filesystem events (i.e. z:\, network drive), 
@@ -44,8 +37,7 @@ TODO
 - ability to use keyboard to tab between elements more intelligently
 	- panels, tabs, select a drive, etc.
 - special folders in drive drop down
-	- my documents, control panel?, desktop
-- Log4net support to log detailed debug logs
+	- my documents, control panel, desktop
 - Refresh button (or key)
 - Drag-and-drop support for links
 - thumbnail files when possible (images?)
@@ -57,7 +49,6 @@ TODO
 	- middle-click to close tabs
 	- mouse wheel
 	- ctrl-tab
-- test to make sure that filesystemwatcher events still fire even when updating the UI
 - copy/move should show progress (write bytes, as opposed to File.Copy()?) 
 	- should it use built-in copy/move functionality?
 	- ability to queue items to copy/move
@@ -70,7 +61,10 @@ TODO
 - FTP drive functionality
 - SCP drive functionality
 - NFS drive functionality
-- Double-clicking compressed file shows files contained within
+
+NICE TO HAVES
+- Set properties on ChildResourceRetrievers on-the-fly when constructing them
+- Localization (resource file method)
 
 KEYCODES TODO:
 - Del
