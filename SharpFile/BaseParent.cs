@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Common.Logger;
 using ProgressDisk;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
@@ -93,18 +94,28 @@ namespace SharpFile {
             }
         }
 
-		private void BaseParent_Load(object sender, EventArgs e) {
-			this.Width = Settings.Instance.Width;
-			this.Height = Settings.Instance.Height;
+        private void BaseParent_Load(object sender, EventArgs e) {
+            this.Width = Settings.Instance.Width;
+            this.Height = Settings.Instance.Height;
 
-			onFormLoad();
-		}
+            try {
+                onFormLoad();
+            } catch (Exception ex) {
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                    "Error while trying to save settings when the form was opening.");
+            }
+        }
 
 		private void BaseParent_FormClosing(object sender, FormClosingEventArgs e) {
 			Settings.Instance.Width = this.Width;
 			Settings.Instance.Height = this.Height;
 
-			onFormClosing();
+            try {
+                onFormClosing();
+            } catch (Exception ex) {
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                    "Error while trying to save settings when the form was closing.");
+            }
 		}
 
 		private void initializeComponents() {

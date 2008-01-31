@@ -36,6 +36,7 @@ namespace SharpFile {
         public event View.OnGetImageIndexDelegate OnGetImageIndex;
         public event View.OnUpdatePathDelegate OnUpdatePath;
 
+        // TODO: This empty ListView ctor shouldn't be necessary, but the view can't be instantiated without it.
         public ListView() : this("Instantiated") {
         }
 

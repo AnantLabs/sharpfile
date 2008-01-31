@@ -9,6 +9,7 @@ using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
+using SharpFile.IO.ChildResources;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -388,7 +389,7 @@ namespace SharpFile {
                         this.tlsPath.Text = @"C:\";
 
                         Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                            @"Path is null; assume C:\ is valid.");
+                            @"Path is null for {0}; assume C:\ is valid.", Name);
                     } else {
                         this.tlsPath.Text = ParentResource.FullPath;
                     }
@@ -400,8 +401,12 @@ namespace SharpFile {
                 if (value != null) {
                     string path = value;
 
-                    if (!path.EndsWith(@"\")) {
-                        path += @"\";
+                    IChildResource resource = ChildResourceFactory.GetChildResource(path, this.childResourceRetrievers);
+
+                    if (resource is DirectoryInfo && 
+                        !path.EndsWith(@"\")) {
+                        path = string.Format(@"{0}\",
+                            path);
                     }
 
                     this.tlsPath.Text = path;

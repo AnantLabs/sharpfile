@@ -26,14 +26,6 @@ namespace SharpFile {
 			}
 		}
 
-		public new TabPage SelectedTab {
-			get {
-				return base.SelectedTab;
-			} set {
-				base.SelectedTab = value;
-			}
-		}
-
 		// TabControl overrides dispose to clean up the component list.
 		[PermissionSetAttribute(SecurityAction.Demand, Name = "FullTrust")]
 		protected override void Dispose(bool disposing) {

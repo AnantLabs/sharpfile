@@ -146,6 +146,8 @@ namespace SharpFile {
         }
 
         protected override void onFormClosing() {
+            base.onFormClosing();
+
             List<string> paths = new List<string>();
 
             foreach (Form form in this.MdiChildren) {
@@ -154,11 +156,11 @@ namespace SharpFile {
             }
 
             Settings.Instance.MdiParent.Paths = paths;
-
-            base.onFormClosing();
         }
 
         protected override void onFormLoad() {
+            base.onFormLoad();
+
             if (Settings.Instance.MdiParent.Paths.Count == 0) {
                 createNewChild();
             } else {
@@ -166,8 +168,6 @@ namespace SharpFile {
                     createNewChild(path);
                 }
             }
-
-            base.onFormLoad();
         }
     }
 }

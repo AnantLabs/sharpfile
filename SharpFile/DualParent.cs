@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
-using System.Collections.Generic;
 
 namespace SharpFile {
 	public class DualParent : BaseParent {
@@ -161,23 +161,24 @@ namespace SharpFile {
 		}
 
 		protected override void onFormClosing() {
+            base.onFormClosing();
+
 			Settings.Instance.DualParent.Panel1Paths = Forms.GetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths");
             Settings.Instance.DualParent.Panel2Paths = Forms.GetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths");
-            Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
-
-			base.onFormClosing();
+            Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;            
 		}
 
 		protected override void onFormLoad() {
+            base.onFormLoad();
+
             Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", Settings.Instance.DualParent.Panel1Paths);
             Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", Settings.Instance.DualParent.Panel2Paths);
 
+            // Calculate the splitter distance based on the percentage stored and the width of the form.
             splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 			decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
 			int splitterDistance = Convert.ToInt32(percent * this.Width);
-			splitContainer.SplitterDistance = splitterDistance;
-
-			base.onFormLoad();
+			splitContainer.SplitterDistance = splitterDistance;			
 		}
 	}
 }

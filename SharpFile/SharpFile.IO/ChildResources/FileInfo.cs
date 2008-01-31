@@ -57,10 +57,10 @@ namespace SharpFile.IO.ChildResources {
 
                 if (childResourceRetriever.View != null &&
                     !view.GetType().Equals(childResourceRetriever.View.GetType())) {
-                    // TODO: Create a SetPropertyInParent method in Common.
                     // Set the FileBrowser control (this control's parent) to use this view.
-                    //Forms.SetPropertyInParent<IView>(view.Control.Parent, "View",
-                    //    childResourceRetriever.View);
+                    // TODO: Make View a property on a parent for this control.
+                    Forms.SetPropertyInParent<IView>(view.Control.Parent, "View",
+                        childResourceRetriever.View);
 
                     view = childResourceRetriever.View;
                 }

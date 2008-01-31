@@ -15,7 +15,8 @@ BUGS
 - right-click support on files inside of compressed files
 
 TODO
-- Generic version of instantiate object that takes in an interface (line 354 ofSettings)
+- Path textbox should be a dropdown that stores the most recent history
+- Generic version of instantiate object that takes in an interface (line 354 of Settings)
 - ColumnInfo comparer type?
 - Store sort position for each column in settings
 - When columns are rearranged, save that to the settings file
