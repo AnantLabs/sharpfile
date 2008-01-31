@@ -1,9 +1,5 @@
-﻿using System.Diagnostics;
-using SharpFile.IO;
-using SharpFile.IO.Retrievers;
+﻿using System;
 using SharpFile.Infrastructure;
-using System.Collections.Generic;
-using System;
 
 namespace SharpFile.IO.ChildResources {
     public class CompressedFileInfo : FileInfo {
@@ -22,32 +18,5 @@ namespace SharpFile.IO.ChildResources {
                 compressedSize = value;
             }
         }
-
-        /*
-        public void Copy(string destination) {
-            System.IO.File.Copy(this.FullPath, destination, false);
-        }
-
-        public void Move(string destination) {
-            System.IO.File.Move(this.FullPath, destination);
-        }
-
-        public void Execute(IView view) {
-            foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers.Filter(this)) {
-                childResourceRetriever.Execute(view, this);
-                break;
-            }
-        }
-
-        public ChildResourceRetrievers ChildResourceRetrievers {
-            get {
-                return childResourceRetrievers;
-            }
-        }
-
-        public static bool Exists(string path) {
-            return System.IO.File.Exists(path);
-        }
-        */
     }
 }

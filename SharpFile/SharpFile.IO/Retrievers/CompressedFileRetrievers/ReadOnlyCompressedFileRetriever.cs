@@ -24,8 +24,15 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();
             //childResourceRetrievers.Add(this);
 
-            resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path),
-                        Settings.Instance.Resources[0].ChildResourceRetrievers));
+            //if (Settings.Instance.ShowParentDirectory) {
+            //    resources.Add(new RootDirectoryInfo(new System.IO.DirectoryInfo(resource.Root),
+            //                Settings.Instance.Resources[0].ChildResourceRetrievers));
+            //}
+
+            if (Settings.Instance.ShowParentDirectory) {
+                resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path),
+                            Settings.Instance.Resources[0].ChildResourceRetrievers));
+            }
 
             using (ZipFile zipFile = new ZipFile(resource.FullPath)) {
                 foreach (ZipEntry zipEntry in zipFile) {

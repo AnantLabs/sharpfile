@@ -31,6 +31,8 @@ namespace SharpFile.Infrastructure {
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private List<ViewInfo> viewInfos;
         private bool directoriesSortedFirst = true;
+        private bool showParentDirectory = true;
+        private bool showRootDirectory = false;
         private LoggerInfo loggerInfo;
 
         // Sub-settings.
@@ -224,6 +226,24 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 directoriesSortedFirst = value;
+            }
+        }
+
+        public bool ShowParentDirectory {
+            get {
+                return showParentDirectory;
+            }
+            set {
+                showParentDirectory = value;
+            }
+        }
+
+        public bool ShowRootDirectory {
+            get {
+                return showRootDirectory;
+            }
+            set {
+                showRootDirectory = value;
             }
         }
 

@@ -51,18 +51,22 @@ namespace SharpFile.IO.ChildResources {
             System.IO.DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
             List<IChildResource> directories = new List<IChildResource>(directoryInfos.Length);
 
-            // TODO: Setting that specifies whether to show root directory or not.
-            /*
-            if (!this.Root.Name.Equals(this.FullName)) {
-                directories.Add(new RootDirectoryInfo(this.Root));
+            // Show root directory if specified.
+            if (Settings.Instance.ShowRootDirectory) {
+                if (!this.Root.Name.Equals(this.FullPath)) {
+                    //directories.Add(new RootDirectoryInfo(this.Root, this.ChildResourceRetrievers));
+                }
             }
-            */
 
-            // TODO: Setting that specifies whether to show parent directory or not.
-            if (this.Parent != null) {
-                //if (!directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name)) {
-                directories.Add(new ParentDirectoryInfo(this.Parent, this.ChildResourceRetrievers));
-                //}
+            // Show parent directory if specified.
+            if (Settings.Instance.ShowParentDirectory) {
+                if (this.Parent != null) {
+                    if (!Settings.Instance.ShowRootDirectory ||
+                        (Settings.Instance.ShowRootDirectory &&
+                        !directoryInfo.Parent.Name.Equals(directoryInfo.Root.Name))) {
+                        directories.Add(new ParentDirectoryInfo(this.Parent, this.ChildResourceRetrievers));
+                    }
+                }
             }
 
             directories.AddRange(Array.ConvertAll<System.IO.DirectoryInfo, DirectoryInfo>(directoryInfos,
