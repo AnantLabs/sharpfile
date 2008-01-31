@@ -1,10 +1,9 @@
 using System;
-using System.Windows.Forms;
-using SharpFile.IO;
-using SharpFile.UI;
-using SharpFile.Infrastructure;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using Common;
+using SharpFile.Infrastructure;
+using SharpFile.UI;
 
 namespace SharpFile {
     public class MdiParent : BaseParent {
@@ -18,8 +17,6 @@ namespace SharpFile {
 
         public MdiParent() {
             this.IsMdiContainer = true;
-
-            //createNewChild();
 
             if (this.MdiChildren.Length == 1) {
                 this.MdiChildren[0].WindowState = FormWindowState.Maximized;
@@ -44,7 +41,7 @@ namespace SharpFile {
             createNewChild(null);
         }
 
-        private void createNewChild(string path) {
+        private void createNewChild(List<string> paths) {
             // Create a new instance of the child form.
             MdiChild childForm = new MdiChild();
 
@@ -70,8 +67,12 @@ namespace SharpFile {
                     updatedPath);
             };
 
-            if (!string.IsNullOrEmpty(path)) {
-                Forms.SetPropertyInChild<string>(childForm, "Path", path);
+            if (paths == null || paths.Count == 0) {
+                childForm.Child.AddTab();
+            } else {
+                foreach (string path in paths) {
+                    childForm.Child.AddTab(path, false);
+                }
             }
         }
 
@@ -148,24 +149,28 @@ namespace SharpFile {
         protected override void onFormClosing() {
             base.onFormClosing();
 
-            List<string> paths = new List<string>();
+            List<ChildInfo> children = new List<ChildInfo>();
 
             foreach (Form form in this.MdiChildren) {
-                string path = Forms.GetPropertyInChild<string>(form, "Path");
-                paths.Add(path);
+                ChildInfo child = new ChildInfo();
+
+                List<string> paths = Forms.GetPropertyInChild<List<string>>(form, "Paths");
+                child.Paths = paths;
+
+                children.Add(child);
             }
 
-            Settings.Instance.MdiParent.Paths = paths;
+            Settings.Instance.MdiParent.Children = children;
         }
 
         protected override void onFormLoad() {
             base.onFormLoad();
 
-            if (Settings.Instance.MdiParent.Paths.Count == 0) {
+            if (Settings.Instance.MdiParent.Children.Count == 0) {
                 createNewChild();
             } else {
-                foreach (string path in Settings.Instance.MdiParent.Paths) {
-                    createNewChild(path);
+                foreach (ChildInfo child in Settings.Instance.MdiParent.Children) {
+                    createNewChild(child.Paths);
                 }
             }
         }

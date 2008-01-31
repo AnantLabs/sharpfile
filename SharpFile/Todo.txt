@@ -17,13 +17,10 @@ BUGS
 TODO
 - Path textbox should be a dropdown that stores the most recent history
 - Generic version of instantiate object that takes in an interface (line 354 of Settings)
-- ColumnInfo comparer type?
 - Store sort position for each column in settings
 - When columns are rearranged, save that to the settings file
-- set properties on ChildResourceRetrievers on-the-fly when constructing them
+- Set properties on ChildResourceRetrievers on-the-fly when constructing them
 - Localization (resource file method)
-- Tab information needs to be saved for each panel for dual
-- Tab information needs to be saved for each window for mdi
 - Move UI classes to the UI directory/namespace ?
 - Drag and drop from another window "into" a directory
 - Move some code in listview into a base view class

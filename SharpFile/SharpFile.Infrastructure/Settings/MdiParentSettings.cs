@@ -4,8 +4,11 @@ using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
-    public sealed class MdiParentSettings {
+    public sealed class ChildInfo {
         private List<string> paths;
+
+        public ChildInfo() {
+        }
 
         [XmlArray("Paths")]
         [XmlArrayItem("Path")]
@@ -17,5 +20,21 @@ namespace SharpFile.Infrastructure {
                 paths = value;
             }
         }
+    }
+
+    [Serializable]
+    public sealed class MdiParentSettings {
+        private List<ChildInfo> children;
+
+        [XmlArray("Children")]
+        [XmlArrayItem("Child")]
+        public List<ChildInfo> Children {
+            get {
+                return children;
+            }
+            set {
+                children = value;
+            }
+        }        
     }
 }

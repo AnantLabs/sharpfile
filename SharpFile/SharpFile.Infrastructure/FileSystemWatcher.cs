@@ -54,14 +54,22 @@ namespace SharpFile.Infrastructure {
 			}
 		}
 
-		public bool EnableRaisingEvents {
-			get {
-				return fileSystemWatcher.EnableRaisingEvents;
-			}
-			set {
-				fileSystemWatcher.EnableRaisingEvents = value;
-			}
-		}
+        public bool EnableRaisingEvents {
+            get {
+                return fileSystemWatcher.EnableRaisingEvents;
+            }
+            set {
+                try {
+                    fileSystemWatcher.EnableRaisingEvents = value;
+                } catch (ArgumentException) {
+                    // Ignore an argument exception. It just means that the path is not valid to be watched.
+                    // This can happen when using a custom ChildResourceRetriever, like the CompressedFileRetriever.
+                } catch (Exception ex) {
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "There was an error when enabling the file system watcher.");
+                }
+            }
+        }
 
         public string Path {
             get {

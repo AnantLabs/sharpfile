@@ -3,8 +3,20 @@
 	Xml configuration
 		- column headers, sorting, custom methods.
 		- child resource retrievers and relationship to resource retrievers.
+		- tabs' path information
+		- extensions to retrieve icons for
+		- whether or not to show icon overlays
+	Log debug information to a file.
 	Disable dropdown, path, filter, listview when switching drives.
 	Prevent the application from crashing if the retrievers or column methods are incorrectly configured.
+	Rudimentary, readonly compressed file view (only supports zip files).
+	Add view as configurable per child resource retriever.
+	FIX: Sorting by date/time now works correctly.
+	FIX: Newly created directories sorted correctly.
+	FIX: Show the "Open With" Windows dialog if no program has been associated with an extension.
+	FIX: Don't show file size for folders until it is calculated.
+	FIX: Don't show information about root/parent directories.
+	FIX: Only append a forward slash to directories in the path.
 
 0.50
 	Dual view.
