@@ -359,7 +359,13 @@ namespace SharpFile.Infrastructure {
 
                                         childResourceRetriever.Name = childResourceRetrieverName;
                                         childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
-                                        childResourceRetriever.CustomMethod += childResourceRetrieverInfo.CustomMethod;
+
+                                        if (childResourceRetrieverInfo.CustomMethod is ChildResourceRetriever.CustomMethodWithArgumentsDelegate) {
+                                            childResourceRetriever.CustomMethodWithArguments += (ChildResourceRetriever.CustomMethodWithArgumentsDelegate)childResourceRetrieverInfo.CustomMethod;
+                                            childResourceRetriever.CustomMethodArguments = childResourceRetrieverInfo.CustomMethodArguments;
+                                        } else if (childResourceRetrieverInfo.CustomMethod is ChildResourceRetriever.CustomMethodDelegate) {
+                                            childResourceRetriever.CustomMethod += (ChildResourceRetriever.CustomMethodDelegate)childResourceRetrieverInfo.CustomMethod;
+                                        }
 
                                         ViewInfo viewInfo = viewInfos.Find(delegate(ViewInfo v) {
                                             return v.Name == childResourceRetrieverInfo.View;

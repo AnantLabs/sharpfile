@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using Common.Logger;
 using SharpFile.Infrastructure;
-using System.Drawing;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -11,9 +11,11 @@ namespace SharpFile.IO.Retrievers {
         private List<ColumnInfo> columnInfos;
         private string name;
         private IView view;
+        private List<string> customMethodArguments;
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
+        public event ChildResourceRetriever.CustomMethodWithArgumentsDelegate CustomMethodWithArguments;
 
         public MediaFileRetriever() {
         }
@@ -27,6 +29,14 @@ namespace SharpFile.IO.Retrievers {
         public bool OnCustomMethod(IResource resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
+            }
+
+            return false;
+        }
+
+        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
+            if (CustomMethodWithArguments != null) {
+                return CustomMethodWithArguments(resource, arguments);
             }
 
             return false;
@@ -120,8 +130,10 @@ namespace SharpFile.IO.Retrievers {
             childResourceRetriever.ColumnInfos = clonedColumnInfos;
             childResourceRetriever.Name = name;
             childResourceRetriever.View = View;
+            childResourceRetriever.CustomMethodArguments = CustomMethodArguments;
 
             childResourceRetriever.CustomMethod += OnCustomMethod;
+            childResourceRetriever.CustomMethodWithArguments += OnCustomMethodWithArguments;
             childResourceRetriever.GetComplete += OnGetComplete;
 
             return childResourceRetriever;
@@ -151,6 +163,15 @@ namespace SharpFile.IO.Retrievers {
             }
             set {
                 view = value;
+            }
+        }
+
+        public List<string> CustomMethodArguments {
+            get {
+                return customMethodArguments;
+            }
+            set {
+                customMethodArguments = value;
             }
         }
 

@@ -10,9 +10,11 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
         private List<ColumnInfo> columnInfos;
         private string name;
         private IView view;
+        private List<string> customMethodArguments;
 
         public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
         public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
+        public event ChildResourceRetriever.CustomMethodWithArgumentsDelegate CustomMethodWithArguments;
 
         public void OnGetComplete() {
             if (GetComplete != null) {
@@ -23,6 +25,14 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
         public bool OnCustomMethod(IResource resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
+            }
+
+            return false;
+        }
+
+        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
+            if (CustomMethodWithArguments != null) {
+                return CustomMethodWithArguments(resource, arguments);
             }
 
             return false;
@@ -128,6 +138,15 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             }
             set {
                 view = value;
+            }
+        }
+
+        public List<string> CustomMethodArguments {
+            get {
+                return customMethodArguments;
+            }
+            set {
+                customMethodArguments = value;
             }
         }
 

@@ -1,24 +1,6 @@
-CURRENT
-Add arguments to FullyQualifiedMethod so that the following could be possible:
-Instead of:
-<MethodDelegateType Method="IsCompressedFile">
-	<FullyQualifiedType Assembly="SharpFile.Infrastructure" Type="SharpFile.Infrastructure.ChildResourceRetrievers" />
-</MethodDelegateType>
-
-Do:
-public bool IsExtension(Iresource resource, params string[] arguments) { } --> will be another delegate with a new signature
-<MethodDelegateType Method="IsExtension">
-	<FullyQualifiedType Assembly="SharpFile.Infrastructure" Type="SharpFile.Infrastructure.ChildResourceRetrievers" />
-	<Arguments>
-		<Argument>.zip</Argument>
-		<Argument>.tar</Argument>
-	</Arguments>
-</MethodDelegateType>
-
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS
-- When there is no settings file, no paths are loaded correctly in dual mode
 - Filesystem events don't correctly update status bar
 - Filter textbox too small to fit
 - Flickering textboxes when resizing
@@ -28,10 +10,10 @@ BUGS
 	when starting a new operation
 - flicker in drive dropdown when new drive is inserted
 	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
-- drag and drop with files inside of a compressed file
-- right-click support on files inside of compressed files
 
 TODO
+- Read/Write compressed file support
+- Media file that supports custom view
 - Path textbox should be a dropdown that stores the most recent history
 - Store sort position for each column in settings
 - When columns are rearranged, save that to the settings file
@@ -42,7 +24,7 @@ TODO
 - Base class for child resource retrievers (namespace conflict)
 - Change delegate/events to standard .NET way
 - Ability to reload settings made manually and the settings take affect immediately
-- Investigate the type command-line argument to sgen
+- Ability to save settings from a menu option
 - Investigate legality of disctributing 7-z, sgen, ilmerge
 - configuration for what happens when the drive drop down is clicked
 - configuration for toolbar

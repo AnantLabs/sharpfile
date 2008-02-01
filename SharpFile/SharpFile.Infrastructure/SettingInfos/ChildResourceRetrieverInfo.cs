@@ -8,9 +8,10 @@ namespace SharpFile.Infrastructure {
         private string name;
         private FullyQualifiedType fullyQualifiedType;
         private List<ColumnInfo> columnInfos;
-        private ChildResourceRetriever.CustomMethodDelegate customMethod;
+        private Delegate customMethod;
         private FullyQualifiedMethod methodDelegateType;
         private string view;
+        private List<string> customMethodArguments;
 
         /// <summary>
         /// Empty ctor for xml serialization.
@@ -67,26 +68,51 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlIgnore]
-        public ChildResourceRetriever.CustomMethodDelegate CustomMethod {
+        public List<string> CustomMethodArguments {
+            get {
+                return customMethodArguments;
+            }
+            set {
+                customMethodArguments = value;
+            }
+        }
+
+        [XmlIgnore]
+        public Delegate CustomMethod {
             get {
                 if (customMethod == null && methodDelegateType != null) {
                     try {
-                        customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
-                            methodDelegateType.FullyQualifiedType.Assembly,
-                            methodDelegateType.FullyQualifiedType.Type,
-                            methodDelegateType.Method);
+                        // Create the appropriate method delegate based on whether there were arguments passed in.
+                        if (methodDelegateType.Arguments != null && methodDelegateType.Arguments.Count > 0) {
+                            customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodWithArgumentsDelegate>(
+                               methodDelegateType.FullyQualifiedType.Assembly,
+                               methodDelegateType.FullyQualifiedType.Type,
+                               methodDelegateType.Method);
+
+                            customMethodArguments = methodDelegateType.Arguments;
+                        } else {
+                            customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
+                                methodDelegateType.FullyQualifiedType.Assembly,
+                                methodDelegateType.FullyQualifiedType.Type,
+                                methodDelegateType.Method);
+                        }
                     } catch (Exception ex) {
                         string message = "Creating the CustomMethod, {0}, for the {1} ChildResourceRetriever failed.";
 
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message, 
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
                                 methodDelegateType.FullyQualifiedType.Type, name);
                     }
-                } 
-							
-							  // If the customMethod is still null, then there was an error creating the delegate, 
-								// or the method delegate type was null. Either way, set a default.
-							  if (customMethod == null) {
-                    customMethod = ChildResourceRetrievers.DefaultCustomMethod;
+                }
+
+                // If the customMethod is still null, then there was an error creating the delegate, 
+                // or the method delegate type was null. Either way, set a default.
+                if (customMethod == null) {
+                    customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
+                                "SharpFile.Infrastructure",
+                                "SharpFile.Infrastructure.ChildResourceRetrievers",
+                                "DefaultCustomMethod");
+
+                    //customMethod = ChildResourceRetrievers.DefaultCustomMethod;
                 }
 
                 return customMethod;

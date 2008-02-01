@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Xml.Serialization;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
     public class FullyQualifiedMethod {
         private FullyQualifiedType fullyQualifiedType;
         private string method;
-				private List<string> arguments;
+        private List<string> arguments;
 
         public FullyQualifiedMethod() {
         }
@@ -36,18 +36,15 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-				[XmlArray("Arguments")]
-				[XmlArrayItem("Argument")]
-				public List<string> Arguments
-				{
-					get
-					{
-						return arguments;
-					}
-					set
-					{
-						arguments = value;
-					}
-				}
+        [XmlArray("Arguments")]
+        [XmlArrayItem("Argument")]
+        public List<string> Arguments {
+            get {
+                return arguments;
+            }
+            set {
+                arguments = value;
+            }
+        }
     }
 }

@@ -173,6 +173,6 @@
     -->
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>$(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>rem $(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -15,6 +15,8 @@ namespace SharpFile.Infrastructure {
             foreach (IChildResourceRetriever childResourceRetriever in this) {
                 if (childResourceRetriever.OnCustomMethod(resource)) {
                     yield return childResourceRetriever;
+                } else if (childResourceRetriever.OnCustomMethodWithArguments(resource, childResourceRetriever.CustomMethodArguments)) {
+                    yield return childResourceRetriever;
                 }
             }
         }
@@ -31,6 +33,18 @@ namespace SharpFile.Infrastructure {
 
         public static bool DefaultCustomMethod(IResource resource) {
             return true;
+        }
+
+        public static bool IsFileWithExtension(IResource resource, List<string> extensions) {
+            if (extensions != null && resource is IChildResource) {
+                string extension = Common.General.GetExtension(resource.FullPath).ToLower();
+
+                if (extensions.Contains(extension)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public static bool IsCompressedFile(IResource resource) {
