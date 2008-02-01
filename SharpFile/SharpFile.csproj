@@ -107,7 +107,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ChangeLog.txt" />
-    <Content Include="Thanks.txt" />
+    <Content Include="gpl.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Thanks.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Todo.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -147,20 +155,24 @@
   <Target Name="BeforeBuild" />
   <!--http://blogs.msdn.com/jomo_fisher/archive/2006/03/05/544144.aspx-->
   <!--http://www.hanselman.com/blog/MixingLanguagesInASingleAssemblyInVisualStudioSeamlesslyWithILMergeAndMSBuild.aspx-->
+  <!--
   <Target Name="ILMerge">
     <CreateItem Include="@(ReferencePath)" Condition="'%(CopyLocal)'=='true'">
       <Output TaskParameter="Include" ItemName="IlmergeAssemblies" />
     </CreateItem>
     <Message Text="MERGING: @(IlmergeAssemblies->'%(Filename)')" Importance="High" />
-    <!--<Exec Command="&quot;$(ProjectDir)Tools\Ilmerge.exe&quot; /out:@(MainAssembly) &quot;@(IntermediateAssembly)&quot; @(IlmergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />-->
+    <Exec Command="&quot;$(ProjectDir)Tools\Ilmerge.exe&quot; /out:@(MainAssembly) &quot;@(IntermediateAssembly)&quot; @(IlmergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
   </Target>
-  <Target Name="_CopyFilesMarkedCopyLocal"/> 
+  <Target Name="_CopyFilesMarkedCopyLocal" />
+  -->
   <PropertyGroup>
+    <!--
     <BuildDependsOn>
     	ILMerge;
     </BuildDependsOn>
+    -->
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>rem $(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>$(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
