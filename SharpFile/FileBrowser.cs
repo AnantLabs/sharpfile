@@ -27,8 +27,10 @@ namespace SharpFile {
         private ToolStripTextBox tlsFilter;
         private IView view;
 
-        public event View.OnGetImageIndexDelegate OnGetImageIndex;
-        public event View.OnUpdatePathDelegate OnUpdatePath;
+        public event View.GetImageIndexDelegate GetImageIndex;
+        public event View.UpdatePathDelegate UpdatePath;
+        public event View.UpdateProgressDelegate UpdateProgress;
+        public event View.UpdateStatusDelegate UpdateStatus;
 
         /// <summary>
         /// Filebrowser ctor.
@@ -82,21 +84,33 @@ namespace SharpFile {
         /// Passes the filesystem info to any listening events.
         /// </summary>
         /// <returns>Image index.</returns>
-        protected int GetImageIndex(IResource fsi) {
-            if (OnGetImageIndex != null) {
-                return OnGetImageIndex(fsi);
+        protected int OnGetImageIndex(IResource fsi) {
+            if (GetImageIndex != null) {
+                return GetImageIndex(fsi);
             }
 
             return -1;
         }
 
-        protected void UpdatePath(string path) {
-            if (OnUpdatePath != null) {
-                OnUpdatePath(path);
+        protected void OnUpdatePath(string path) {
+            if (UpdatePath != null) {
+                UpdatePath(path);
             }
 
             this.Text = path;
             Path = path;
+        }
+
+        protected void OnUpdateProgress(int value) {
+            if (UpdateProgress != null) {
+                UpdateProgress(value);
+            }
+        }
+
+        protected void OnUpdateStatus(string status) {
+            if (UpdateStatus != null) {
+                UpdateStatus(status);
+            }
         }
         #endregion
 
@@ -114,8 +128,14 @@ namespace SharpFile {
             this.tlsFilter.KeyUp += tlsFilter_KeyUp;
             this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
             this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
-            this.view.OnUpdatePath += UpdatePath;
 
+            // Wire up the view delegates.
+            this.view.UpdatePath += OnUpdatePath;
+            this.view.GetImageIndex += OnGetImageIndex;
+            this.view.UpdateProgress += OnUpdateProgress;
+            this.view.UpdateStatus += OnUpdateStatus;
+
+            // Wire up the file system watcher.
             fileSystemWatcher = new FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
         }
@@ -439,7 +459,7 @@ namespace SharpFile {
         }
 
         /// <summary>
-        /// The child view.
+        /// The view.
         /// </summary>
         public IView View {
             get {

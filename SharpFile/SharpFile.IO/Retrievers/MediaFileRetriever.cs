@@ -104,7 +104,7 @@ namespace SharpFile.IO.Retrievers {
                         view.EndUpdate();
 
                         // Update some information about the current directory.
-                        view.UpdatePath(resource.FullPath);
+                        view.OnUpdatePath(resource.FullPath);
 
                         // Set up the watcher.
                         //view.FileSystemWatcher.Path = resource.FullPath;
@@ -117,7 +117,7 @@ namespace SharpFile.IO.Retrievers {
 
                 // Anonymous method that updates the status to the parent form.
                 backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
-                    view.UpdateProgress(e.ProgressPercentage);
+                    view.OnUpdateProgress(e.ProgressPercentage);
                 };
 
                 backgroundWorker.RunWorkerAsync();

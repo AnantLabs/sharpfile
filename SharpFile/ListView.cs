@@ -31,10 +31,10 @@ namespace SharpFile {
         private long fileCount = 0;
         private long folderCount = 0;
 
-        public event View.OnUpdateStatusDelegate OnUpdateStatus;
-        public event View.OnUpdateProgressDelegate OnUpdateProgress;
-        public event View.OnGetImageIndexDelegate OnGetImageIndex;
-        public event View.OnUpdatePathDelegate OnUpdatePath;
+        public event View.UpdateStatusDelegate UpdateStatus;
+        public event View.UpdateProgressDelegate UpdateProgress;
+        public event View.GetImageIndexDelegate GetImageIndex;
+        public event View.UpdatePathDelegate UpdatePath;
 
         // TODO: This empty ListView ctor shouldn't be necessary, but the view can't be instantiated without it.
         public ListView() : this("Instantiated") {
@@ -120,7 +120,7 @@ namespace SharpFile {
                                     };
 
                                     backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-                                        UpdateProgress(eventArgs.ProgressPercentage);
+                                        OnUpdateProgress(eventArgs.ProgressPercentage);
                                     };
 
                                     backgroundWorker.RunWorkerCompleted +=
@@ -178,9 +178,9 @@ namespace SharpFile {
         /// Passes the status to any listening events.
         /// </summary>
         /// <param name="status">Status to show.</param>
-        protected void UpdateStatus(string status) {
-            if (OnUpdateStatus != null) {
-                OnUpdateStatus(status);
+        protected void OnUpdateStatus(string status) {
+            if (UpdateStatus != null) {
+                UpdateStatus(status);
             }
         }
 
@@ -188,9 +188,9 @@ namespace SharpFile {
         /// Passes the value to any listening events.
         /// </summary>
         /// <param name="value">Percentage value for status.</param>
-        public void UpdateProgress(int value) {
-            if (OnUpdateProgress != null) {
-                OnUpdateProgress(value);
+        public void OnUpdateProgress(int value) {
+            if (UpdateProgress != null) {
+                UpdateProgress(value);
             }
         }
 
@@ -198,9 +198,9 @@ namespace SharpFile {
         /// Passes the path to any listening events.
         /// </summary>
         /// <param name="path">Path to update.</param>
-        public void UpdatePath(string path) {
-            if (OnUpdatePath != null) {
-                OnUpdatePath(path);
+        public void OnUpdatePath(string path) {
+            if (UpdatePath != null) {
+                UpdatePath(path);
             }
         }
 
@@ -209,9 +209,9 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fsi"></param>
         /// <returns></returns>
-        protected int GetImageIndex(IResource fsi) {
-            if (OnGetImageIndex != null) {
-                return OnGetImageIndex(fsi);
+        protected int OnGetImageIndex(IResource fsi) {
+            if (GetImageIndex != null) {
+                return GetImageIndex(fsi);
             }
 
             return -1;
@@ -242,7 +242,7 @@ namespace SharpFile {
         /// Fires when the list view gets focus.
         /// </summary>
         private void listView_GotFocus(object sender, EventArgs e) {
-            UpdatePath(Path);
+            OnUpdatePath(Path);
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace SharpFile {
                     calculateSize();
                     break;
                 case Keys.Escape:
-                    UpdateProgress(100);
+                    OnUpdateProgress(100);
                     break;
                 case Keys.Enter:
                     execute();
@@ -526,7 +526,7 @@ namespace SharpFile {
                     };
 
                     backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-                        UpdateProgress(eventArgs.ProgressPercentage);
+                        OnUpdateProgress(eventArgs.ProgressPercentage);
                     };
 
                     backgroundWorker.RunWorkerCompleted +=
@@ -584,7 +584,7 @@ namespace SharpFile {
                 // Resize the columns based on the column content.
                 this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
-                UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+                OnUpdateStatus(string.Format("Folders: {0}; Files: {1}",
                                            folderCount,
                                            fileCount));
             }
@@ -602,7 +602,7 @@ namespace SharpFile {
                     // Basic stuff that should happen everytime files are shown.
                     this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
-                    UpdateStatus(string.Format("Folders: {0}; Files: {1}",
+                    OnUpdateStatus(string.Format("Folders: {0}; Files: {1}",
                                                folderCount,
                                                fileCount));
 
@@ -730,7 +730,7 @@ namespace SharpFile {
         private void updateSelectedTotalSize(long size) {
             totalSelectedSize += size;
 
-            UpdateStatus(string.Format("Selected items: {0}",
+            OnUpdateStatus(string.Format("Selected items: {0}",
                                        General.GetHumanReadableSize(totalSelectedSize.ToString())));
         }
 

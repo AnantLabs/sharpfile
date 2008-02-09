@@ -20,19 +20,19 @@ namespace SharpFile {
 			child1.TabControl.Appearance = TabAppearance.FlatButtons;
 			child1.TabControl.IsVisible = true;
 			child1.Dock = DockStyle.Fill;
-			child1.OnGetImageIndex += delegate(IResource fsi) {
+			child1.GetImageIndex += delegate(IResource fsi) {
 				return IconManager.GetImageIndex(fsi, ImageList);
 			};
 
-			child1.OnUpdateStatus += delegate(string status) {
+			child1.UpdateStatus += delegate(string status) {
 				toolStripStatus.Text = status;
 			};
 
-			child1.OnUpdateProgress += delegate(int value) {
+			child1.UpdateProgress += delegate(int value) {
                 updateProgress(value);
 			};
 
-			child1.OnUpdatePath += delegate(string path) {
+			child1.UpdatePath += delegate(string path) {
 				this.Text = string.Format("{0} - {1}",
 										  formName,
 										  path);
@@ -42,19 +42,19 @@ namespace SharpFile {
 			child2.Dock = DockStyle.Fill;
 			child2.TabControl.IsVisible = true;
 			child2.TabControl.Appearance = TabAppearance.FlatButtons;
-			child2.OnGetImageIndex += delegate(IResource fsi) {
+			child2.GetImageIndex += delegate(IResource fsi) {
 				return IconManager.GetImageIndex(fsi, ImageList);
 			};
 
-			child2.OnUpdateStatus += delegate(string status) {
+			child2.UpdateStatus += delegate(string status) {
 				toolStripStatus.Text = status;
 			};
 
-			child2.OnUpdateProgress += delegate(int value) {
+			child2.UpdateProgress += delegate(int value) {
                 updateProgress(value);
 			};
 
-			child2.OnUpdatePath += delegate(string path) {
+			child2.UpdatePath += delegate(string path) {
 				this.Text = string.Format("{0} - {1}",
 										  formName,
 										  path);

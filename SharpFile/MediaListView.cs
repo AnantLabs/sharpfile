@@ -4,7 +4,7 @@
             : base() {
         }
 
-        public new void UpdateStatus(string status) {
+        public new void OnUpdateStatus(string status) {
             ShowMessageBox(status);
         }
     }

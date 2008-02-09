@@ -24,7 +24,7 @@ namespace SharpFile {
 
             if (this.ActiveMdiChild != null) {
                 this.MdiChildActivate += delegate {
-                    ((MdiChild)this.ActiveMdiChild).Child.OnUpdatePath += delegate(string path) {
+                    ((MdiChild)this.ActiveMdiChild).Child.UpdatePath += delegate(string path) {
                         this.Text = string.Format("{0} - {1}",
                                 formName,
                                 path);
@@ -49,19 +49,19 @@ namespace SharpFile {
             childForm.MdiParent = this;
             childForm.Show();
 
-            childForm.Child.OnUpdateStatus += delegate(string status) {
+            childForm.Child.UpdateStatus += delegate(string status) {
                 toolStripStatus.Text = status;
             };
 
-            childForm.Child.OnUpdateProgress += delegate(int value) {
+            childForm.Child.UpdateProgress += delegate(int value) {
                 updateProgress(value);
             };
 
-            childForm.Child.OnGetImageIndex += delegate(IResource fsi) {
+            childForm.Child.GetImageIndex += delegate(IResource fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
 
-            childForm.Child.OnUpdatePath += delegate(string updatedPath) {
+            childForm.Child.UpdatePath += delegate(string updatedPath) {
                 this.Text = string.Format("{0} - {1}",
                     formName,
                     updatedPath);

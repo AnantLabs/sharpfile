@@ -8,10 +8,10 @@ using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile {
     public class Child : UserControl {
-        public event View.OnUpdateStatusDelegate OnUpdateStatus;
-        public event View.OnUpdateProgressDelegate OnUpdateProgress;
-        public event View.OnGetImageIndexDelegate OnGetImageIndex;
-        public event View.OnUpdatePathDelegate OnUpdatePath;
+        public event View.UpdateStatusDelegate UpdateStatus;
+        public event View.UpdateProgressDelegate UpdateProgress;
+        public event View.GetImageIndexDelegate GetImageIndex;
+        public event View.UpdatePathDelegate UpdatePath;
 
         private TabControl tabControl;
 
@@ -31,21 +31,21 @@ namespace SharpFile {
 
         #region Events.
 
-        private void view_OnUpdateStatus(string status) {
-            if (OnUpdateStatus != null) {
-                OnUpdateStatus(status);
+        private void OnUpdateStatus(string status) {
+            if (UpdateStatus != null) {
+                UpdateStatus(status);
             }
         }
 
-        private void view_OnUpdateProgress(int value) {
-            if (OnUpdateProgress != null) {
-                OnUpdateProgress(value);
+        private void OnUpdateProgress(int value) {
+            if (UpdateProgress != null) {
+                UpdateProgress(value);
             }
         }
 
-        private int fileBrowser_OnGetImageIndex(IResource fsi) {
-            if (OnGetImageIndex != null) {
-                return OnGetImageIndex(fsi);
+        private int OnGetImageIndex(IResource fsi) {
+            if (GetImageIndex != null) {
+                return GetImageIndex(fsi);
             }
 
             return -1;
@@ -55,12 +55,12 @@ namespace SharpFile {
             string path = Forms.GetPropertyInChild<string>(this.TabControl.SelectedTab, "Path");
 
             this.Text = path;
-            fileBrowser_OnUpdatePath(path);
+            OnUpdatePath(path);
         }
 
-        private void fileBrowser_OnUpdatePath(string path) {
-            if (OnUpdatePath != null) {
-                OnUpdatePath(path);
+        private void OnUpdatePath(string path) {
+            if (UpdatePath != null) {
+                UpdatePath(path);
             }
         }
 
@@ -72,12 +72,10 @@ namespace SharpFile {
 
         public void AddTab(string path, bool selectNewTab) {
             FileBrowser fileBrowser = new FileBrowser(this.Name);
-            fileBrowser.OnGetImageIndex += fileBrowser_OnGetImageIndex;
-            fileBrowser.OnUpdatePath += fileBrowser_OnUpdatePath;
-            fileBrowser.View.OnGetImageIndex += fileBrowser_OnGetImageIndex;
-            fileBrowser.View.OnUpdateProgress += view_OnUpdateProgress;
-            fileBrowser.View.OnUpdateStatus += view_OnUpdateStatus;
-            fileBrowser.View.OnUpdatePath += fileBrowser_OnUpdatePath;
+            fileBrowser.GetImageIndex += OnGetImageIndex;
+            fileBrowser.UpdatePath += OnUpdatePath;
+            fileBrowser.UpdateProgress += OnUpdateProgress;
+            fileBrowser.UpdateStatus += OnUpdateStatus;            
             fileBrowser.Path = path;
 
             this.TabControl.Controls.Add(fileBrowser);
