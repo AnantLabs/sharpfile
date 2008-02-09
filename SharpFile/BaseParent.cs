@@ -39,6 +39,7 @@ namespace SharpFile {
 
 		protected ToolStripMenuItem viewMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem statusBarToolStripMenuItem = new ToolStripMenuItem();
+        protected ToolStripMenuItem filterToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem toolsMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem optionsToolStripMenuItem = new ToolStripMenuItem();
@@ -141,7 +142,7 @@ namespace SharpFile {
 
             this.exitToolStripMenuItem.Size = new Size(145, 22);
 			this.exitToolStripMenuItem.Text = "E&xit";
-			this.exitToolStripMenuItem.Click += this.ExitToolsStripMenuItem_Click;
+			this.exitToolStripMenuItem.Click += this.exitToolsStripMenuItem_Click;
 
             this.reloadSettingsStripMenuItem.Text = "&Reload Settings";
             this.reloadSettingsStripMenuItem.Click += this.reloadSettingsStripMenuItem_Click;
@@ -179,21 +180,21 @@ namespace SharpFile {
 			this.cutToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.X);
 			this.cutToolStripMenuItem.Size = new Size(167, 22);
 			this.cutToolStripMenuItem.Text = "Cu&t";
-			this.cutToolStripMenuItem.Click += this.CutToolStripMenuItem_Click;
+			this.cutToolStripMenuItem.Click += this.cutToolStripMenuItem_Click;
 
 			this.copyToolStripMenuItem.Image = (Image)(resources.GetObject("copyToolStripMenuItem.Image"));
 			this.copyToolStripMenuItem.ImageTransparentColor = Color.Black;
 			this.copyToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.C);
 			this.copyToolStripMenuItem.Size = new Size(167, 22);
 			this.copyToolStripMenuItem.Text = "&Copy";
-			this.copyToolStripMenuItem.Click += this.CopyToolStripMenuItem_Click;
+			this.copyToolStripMenuItem.Click += this.copyToolStripMenuItem_Click;
 
 			this.pasteToolStripMenuItem.Image = (Image)(resources.GetObject("pasteToolStripMenuItem.Image"));
 			this.pasteToolStripMenuItem.ImageTransparentColor = Color.Black;
 			this.pasteToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.V);
 			this.pasteToolStripMenuItem.Size = new Size(167, 22);
 			this.pasteToolStripMenuItem.Text = "&Paste";
-			this.pasteToolStripMenuItem.Click += this.PasteToolStripMenuItem_Click;
+			this.pasteToolStripMenuItem.Click += this.pasteToolStripMenuItem_Click;
 
 			this.toolStripSeparator7.Size = new Size(164, 6);
 
@@ -203,7 +204,8 @@ namespace SharpFile {
 
 			this.viewMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
-			                                     		this.statusBarToolStripMenuItem
+			                                     		this.statusBarToolStripMenuItem,
+                                                        this.filterToolStripMenuItem
 			                                     	});
 			this.viewMenu.Size = new Size(41, 20);
 			this.viewMenu.Text = "&View";
@@ -213,7 +215,14 @@ namespace SharpFile {
 			this.statusBarToolStripMenuItem.CheckState = CheckState.Checked;
 			this.statusBarToolStripMenuItem.Size = new Size(135, 22);
 			this.statusBarToolStripMenuItem.Text = "&Status Bar";
-			this.statusBarToolStripMenuItem.Click += this.StatusBarToolStripMenuItem_Click;
+			this.statusBarToolStripMenuItem.Click += statusBarToolStripMenuItem_Click;
+
+            this.filterToolStripMenuItem.Checked = true;
+            this.filterToolStripMenuItem.CheckOnClick = true;
+            this.filterToolStripMenuItem.CheckState = CheckState.Checked;
+            this.filterToolStripMenuItem.Size = new Size(135, 22);
+            this.filterToolStripMenuItem.Text = "&Filter";
+            this.filterToolStripMenuItem.Click += filterToolStripMenuItem_Click;
 
 			this.toolsMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                      	{
@@ -281,25 +290,30 @@ namespace SharpFile {
             // Refresh the screen.
         }
 
-		private void ExitToolsStripMenuItem_Click(object sender, EventArgs e) {
+		private void exitToolsStripMenuItem_Click(object sender, EventArgs e) {
 			Application.Exit();
 		}
 
-		private void CutToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void cutToolStripMenuItem_Click(object sender, EventArgs e) {
 			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
 		}
 
-		private void CopyToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
 			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
 		}
 
-		private void PasteToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void pasteToolStripMenuItem_Click(object sender, EventArgs e) {
 			// TODO: Use System.Windows.Forms.Clipboard.GetText() or System.Windows.Forms.GetData to retrieve information from the clipboard.
 		}
 
-		private void StatusBarToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void statusBarToolStripMenuItem_Click(object sender, EventArgs e) {
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
+
+        private void filterToolStripMenuItem_Click(object sender, EventArgs e) {
+            // TODO: This looks like it works, but it throws an exception after the property is set.
+            Common.Forms.SetPropertyInChild<bool>(this, "ShowFilter", false);
+        }
 
 		protected virtual void addControls() {
 		}

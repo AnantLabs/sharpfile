@@ -120,12 +120,13 @@ namespace SharpFile {
         /// </summary>
         private void initializeComponent() {
             this.DoubleBuffered = true;
-            tlsFilter.Text = string.Empty;
+            clearFilter();
 
             // Attach to some events.
             this.HandleCreated += fileBrowser_HandleCreated;
             this.tlsPath.KeyDown += tlsPath_KeyDown;
             this.tlsFilter.KeyUp += tlsFilter_KeyUp;
+            this.tlsFilter.LostFocus += tlsFilter_LostFocus;
             this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
             this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
 
@@ -138,6 +139,13 @@ namespace SharpFile {
             // Wire up the file system watcher.
             fileSystemWatcher = new FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
+        }
+
+        /// <summary>
+        /// Clears the filter.
+        /// </summary>
+        private void clearFilter() {
+            tlsFilter.Text = "*.*";
         }
         #endregion
 
@@ -177,6 +185,18 @@ namespace SharpFile {
         private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
             IChildResource resource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetrievers);
             resource.Execute(view);
+        }
+
+        /// <summary>
+        /// Clears the filter when the focus is lost.
+        /// </summary>
+        private void tlsFilter_LostFocus(object sender, EventArgs e) {
+            if (Filter.Equals(string.Empty) ||
+                Filter.Equals("*") ||
+                Filter.Equals("*.") ||
+                Filter.Equals(".*")) {
+                clearFilter();
+            }
         }
 
         /// <summary>
@@ -437,6 +457,15 @@ namespace SharpFile {
         public string Filter {
             get {
                 return tlsFilter.Text;
+            }
+        }
+
+        public bool ShowFilter {
+            get {
+                return tlsFilter.Visible;
+            }
+            set {
+                tlsFilter.Visible = value;
             }
         }
 
