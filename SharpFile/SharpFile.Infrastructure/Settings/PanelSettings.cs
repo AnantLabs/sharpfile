@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
-	// TODO: Use the PanelSettings class currently used by DualParentSettings.
     [Serializable]
-    public sealed class ChildInfo {
-        private List<string> paths;
+    public sealed class PanelSettings {
+        private List<string> paths = new List<string>();
+        private bool collapsed = false;
+        private bool showFilter = true;
 
         [XmlArray("Paths")]
         [XmlArrayItem("Path")]
@@ -18,20 +19,22 @@ namespace SharpFile.Infrastructure {
                 paths = value;
             }
         }
-    }
 
-    [Serializable]
-    public sealed class MdiParentSettings {
-        private List<ChildInfo> children;
-
-        [XmlArray("Children")]
-        [XmlArrayItem("Child")]
-        public List<ChildInfo> Children {
+        public bool Collapsed {
             get {
-                return children;
+                return collapsed;
             }
             set {
-                children = value;
+                collapsed = value;
+            }
+        }
+
+        public bool ShowFilter {
+            get {
+                return showFilter;
+            }
+            set {
+                showFilter = value;
             }
         }
     }

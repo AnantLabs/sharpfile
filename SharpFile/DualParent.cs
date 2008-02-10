@@ -16,6 +16,10 @@ namespace SharpFile {
         private ToolStripMenuItem panelOrientationItem = new ToolStripMenuItem();
         private ToolStripMenuItem verticalPanelOrientationItem = new ToolStripMenuItem();
         private ToolStripMenuItem horizontalPanelOrientationItem = new ToolStripMenuItem();
+        private ToolStripMenuItem panel1Menu = new ToolStripMenuItem();
+        private ToolStripMenuItem panel2Menu = new ToolStripMenuItem();
+        protected ToolStripMenuItem filterPanel1ToolStripMenuItem = new ToolStripMenuItem();
+        protected ToolStripMenuItem filterPanel2ToolStripMenuItem = new ToolStripMenuItem();
         private int splitterPercentage;
 
         public DualParent() {
@@ -68,23 +72,26 @@ namespace SharpFile {
             splitContainer.Panel2.Controls.Add(child2);
 
             splitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
+                decimal percent = 0;
+                int mouseCursorX = 0;
+                int mouseCursorY = 0;
+
                 if (this.splitContainer.Orientation == Orientation.Vertical) {
-                    decimal percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
-                    splitterPercentage = Convert.ToInt32(percent * 100);
-
-                    string tip = string.Format("{0}%",
-                        splitterPercentage);
-
-                    toolTip.Show(tip, this, e.MouseCursorX - 10, e.MouseCursorY);
+                    percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
+                    mouseCursorX = e.MouseCursorX - 10;
+                    mouseCursorY = e.MouseCursorY;
                 } else {
-                    decimal percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
-                    splitterPercentage = Convert.ToInt32(percent * 100);
-
-                    string tip = string.Format("{0}%",
-                        splitterPercentage);
-
-                    toolTip.Show(tip, this, e.MouseCursorX, e.MouseCursorY - 10);
+                    percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
+                    mouseCursorX = e.MouseCursorX;
+                    mouseCursorY = e.MouseCursorY - 10;
                 }
+
+                splitterPercentage = Convert.ToInt32(percent * 100);
+
+                string tip = string.Format("{0}%",
+                    splitterPercentage);
+
+                toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
             };
 
             splitContainer.SplitterMoved += delegate {
@@ -135,11 +142,43 @@ namespace SharpFile {
             this.menuStrip.Items.AddRange(new ToolStripItem[]
 			                              	{
 			                              		this.fileMenu,
+                                                this.panel1Menu,
 			                              		this.editMenu,
 			                              		this.viewMenu,
 			                              		this.toolsMenu,
+                                                this.panel2Menu,
 			                              		this.helpMenu
 			                              	});
+
+            this.panel1Menu.Text = "Panel &1";
+            this.panel1Menu.DropDownItems.AddRange(new ToolStripItem[] {
+                this.filterPanel1ToolStripMenuItem
+            });
+
+            this.panel2Menu.Text = "Panel &2";
+            this.panel2Menu.DropDownItems.AddRange(new ToolStripItem[] {
+                this.filterPanel2ToolStripMenuItem
+            });
+
+            this.filterPanel1ToolStripMenuItem.Checked = true;
+            this.filterPanel1ToolStripMenuItem.CheckOnClick = true;
+            this.filterPanel1ToolStripMenuItem.CheckState = CheckState.Checked;
+            this.filterPanel1ToolStripMenuItem.Size = new Size(135, 22);
+            this.filterPanel1ToolStripMenuItem.Text = "&Show Filter";
+            this.filterPanel1ToolStripMenuItem.Click += delegate {
+                Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel1, "ShowFilter",
+                    this.filterPanel1ToolStripMenuItem.Checked);
+            };
+
+            this.filterPanel2ToolStripMenuItem.Checked = true;
+            this.filterPanel2ToolStripMenuItem.CheckOnClick = true;
+            this.filterPanel2ToolStripMenuItem.CheckState = CheckState.Checked;
+            this.filterPanel2ToolStripMenuItem.Size = new Size(135, 22);
+            this.filterPanel2ToolStripMenuItem.Text = "&Show Filter";
+            this.filterPanel2ToolStripMenuItem.Click += delegate {
+                Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel2, "ShowFilter",
+                    this.filterPanel2ToolStripMenuItem.Checked);
+            };
 
             this.viewMenu.DropDownItems.AddRange(new ToolStripItem[] {
                 this.displayPanelItem,
@@ -234,30 +273,37 @@ namespace SharpFile {
         protected override void onFormClosing() {
             base.onFormClosing();
 
-            Settings.Instance.DualParent.Panel1Paths = Forms.GetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths");
-            Settings.Instance.DualParent.Panel2Paths = Forms.GetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths");
+            // Save the paths for each panel.
+            Settings.Instance.DualParent.Panel1.Paths = Forms.GetPropertyInChild<List<string>>(
+                this.splitContainer.Panel1, "Paths");
+            Settings.Instance.DualParent.Panel2.Paths = Forms.GetPropertyInChild<List<string>>(
+                this.splitContainer.Panel2, "Paths");
+
+            // Save whether each panel is collapsed or not.
+            Settings.Instance.DualParent.Panel1.Collapsed = this.splitContainer.Panel1Collapsed;
+            Settings.Instance.DualParent.Panel2.Collapsed = this.splitContainer.Panel2Collapsed;
+
+            // Save some non-panel specific information.
+            Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
             Settings.Instance.DualParent.Orientation = this.splitContainer.Orientation;
 
-            Settings.Instance.DualParent.Panel1Collapsed = this.splitContainer.Panel1Collapsed;
-            Settings.Instance.DualParent.Panel2Collapsed = this.splitContainer.Panel2Collapsed;
-
-            Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
+            // Save whether each panel has a visible filter.
+            Settings.Instance.DualParent.Panel1.ShowFilter = Forms.GetPropertyInChild<bool>(
+                this.splitContainer.Panel1, "ShowFilter");
+            Settings.Instance.DualParent.Panel2.ShowFilter = Forms.GetPropertyInChild<bool>(
+                this.splitContainer.Panel2, "ShowFilter");
         }
 
         protected override void onFormLoad() {
             base.onFormLoad();
 
-            // If we don't have any paths, create an empty list, otherwise our SetPropertyInChild doesn't return properly.
-            if (Settings.Instance.DualParent.Panel1Paths == null) {
-                Settings.Instance.DualParent.Panel1Paths = new List<string>();
-            }
-            if (Settings.Instance.DualParent.Panel2Paths == null) {
-                Settings.Instance.DualParent.Panel2Paths = new List<string>();
-            }
+            // Get the paths from the panels.
+            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", 
+                Settings.Instance.DualParent.Panel1.Paths);
+            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", 
+                Settings.Instance.DualParent.Panel2.Paths);
 
-            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", Settings.Instance.DualParent.Panel1Paths);
-            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", Settings.Instance.DualParent.Panel2Paths);
-
+            // Get the split container orientation.
             Orientation orientation = Settings.Instance.DualParent.Orientation;
             this.splitContainer.Orientation = orientation;
 
@@ -265,6 +311,7 @@ namespace SharpFile {
             splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
             setSplitterDistance();
 
+            // Check the appropriate orientation in the menus.
             switch (orientation) {
                 case Orientation.Horizontal:
                     this.horizontalPanelOrientationItem.Checked = true;
@@ -274,11 +321,27 @@ namespace SharpFile {
                     break;
             }
 
-            this.splitContainer.Panel1Collapsed = Settings.Instance.DualParent.Panel1Collapsed;
-            this.displayPanel1Item.Checked = !Settings.Instance.DualParent.Panel1Collapsed;
-            
-            this.splitContainer.Panel2Collapsed = Settings.Instance.DualParent.Panel2Collapsed;
-            this.displayPanel2Item.Checked = !Settings.Instance.DualParent.Panel2Collapsed;
+            // Collapse/check menu panel 1 if appropriate.
+            bool panel1Collapsed = Settings.Instance.DualParent.Panel1.Collapsed;
+            this.splitContainer.Panel1Collapsed = panel1Collapsed;
+            this.displayPanel1Item.Checked = !panel1Collapsed;
+
+            // Collapse/check menu panel 2 if appropriate.
+            bool panel2Collapsed = Settings.Instance.DualParent.Panel2.Collapsed;
+            this.splitContainer.Panel2Collapsed = panel2Collapsed;
+            this.displayPanel2Item.Checked = !panel2Collapsed;
+
+            // Show filter/check menu panel 1 if appropriate.
+            bool panel1ShowFilter = Settings.Instance.DualParent.Panel1.ShowFilter;
+            Forms.SetPropertyInChild<bool>(this.splitContainer.Panel1, "ShowFilter",
+                panel1ShowFilter);
+            this.filterPanel1ToolStripMenuItem.Checked = panel1ShowFilter;
+
+            // Show filter/check menu panel 2 if appropriate.
+            bool panel2ShowFilter = Settings.Instance.DualParent.Panel2.ShowFilter;
+            Forms.SetPropertyInChild<bool>(this.splitContainer.Panel2, "ShowFilter",
+                panel2ShowFilter);
+            this.filterPanel2ToolStripMenuItem.Checked = panel2ShowFilter;
         }
     }
 }

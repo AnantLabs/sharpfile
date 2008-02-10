@@ -13,6 +13,7 @@ using SharpFile.IO.ChildResources;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
+        private const int filterWidth = 50;
         private static readonly object lockObject = new object();
 
         private FileSystemWatcher fileSystemWatcher;
@@ -59,10 +60,8 @@ namespace SharpFile {
 
             this.tlsDrives.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.tlsDrives.ImageTransparentColor = Color.Magenta;
-            this.tlsDrives.Size = new Size(32, 22);
 
-            this.tlsPath.Size = new Size(100, 25);
-            this.tlsFilter.Size = new Size(50, 25);
+            this.tlsFilter.Size = new Size(filterWidth, 25);
 
             this.Controls.Add(this.view.Control);
             this.Controls.Add(this.toolStrip);
@@ -465,7 +464,15 @@ namespace SharpFile {
                 return tlsFilter.Visible;
             }
             set {
-                tlsFilter.Visible = value;
+                bool isVisible = value;
+
+                if (!isVisible) {
+                    tlsFilter.Visible = false;
+                    tlsFilter.Width = 0;
+                } else {
+                    tlsFilter.Width = filterWidth;
+                    tlsFilter.Visible = true;
+                }
             }
         }
 

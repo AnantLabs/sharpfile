@@ -39,7 +39,6 @@ namespace SharpFile {
 
 		protected ToolStripMenuItem viewMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem statusBarToolStripMenuItem = new ToolStripMenuItem();
-        protected ToolStripMenuItem filterToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem toolsMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem optionsToolStripMenuItem = new ToolStripMenuItem();
@@ -204,8 +203,7 @@ namespace SharpFile {
 
 			this.viewMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
-			                                     		this.statusBarToolStripMenuItem,
-                                                        this.filterToolStripMenuItem
+			                                     		this.statusBarToolStripMenuItem
 			                                     	});
 			this.viewMenu.Size = new Size(41, 20);
 			this.viewMenu.Text = "&View";
@@ -216,13 +214,6 @@ namespace SharpFile {
 			this.statusBarToolStripMenuItem.Size = new Size(135, 22);
 			this.statusBarToolStripMenuItem.Text = "&Status Bar";
 			this.statusBarToolStripMenuItem.Click += statusBarToolStripMenuItem_Click;
-
-            this.filterToolStripMenuItem.Checked = true;
-            this.filterToolStripMenuItem.CheckOnClick = true;
-            this.filterToolStripMenuItem.CheckState = CheckState.Checked;
-            this.filterToolStripMenuItem.Size = new Size(135, 22);
-            this.filterToolStripMenuItem.Text = "&Filter";
-            this.filterToolStripMenuItem.Click += filterToolStripMenuItem_Click;
 
 			this.toolsMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                      	{
@@ -309,11 +300,6 @@ namespace SharpFile {
 		private void statusBarToolStripMenuItem_Click(object sender, EventArgs e) {
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
-
-        private void filterToolStripMenuItem_Click(object sender, EventArgs e) {
-            // TODO: This looks like it works, but it throws an exception after the property is set.
-            Common.Forms.SetPropertyInChild<bool>(this, "ShowFilter", false);
-        }
 
 		protected virtual void addControls() {
 		}
