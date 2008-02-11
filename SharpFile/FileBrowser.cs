@@ -502,7 +502,20 @@ namespace SharpFile {
                 return view;
             }
             set {
-                view = value;
+                IView newView = value;
+                newView.GetImageIndex += view.OnGetImageIndex;
+                newView.UpdatePath += view.OnUpdatePath;
+                newView.UpdateProgress += view.OnUpdateProgress;
+                newView.UpdateStatus += view.OnUpdateStatus;
+
+                int index = this.Controls.IndexOf(view.Control);
+                this.Controls.Remove(view.Control);
+
+                view = newView;
+                view.Control.Dock = DockStyle.Fill;
+
+                this.Controls.Add(view.Control);
+                this.Controls.SetChildIndex(view.Control, index);
             }
         }
 

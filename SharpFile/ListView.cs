@@ -178,7 +178,7 @@ namespace SharpFile {
         /// Passes the status to any listening events.
         /// </summary>
         /// <param name="status">Status to show.</param>
-        protected void OnUpdateStatus(string status) {
+        public void OnUpdateStatus(string status) {
             if (UpdateStatus != null) {
                 UpdateStatus(status);
             }
@@ -209,7 +209,7 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fsi"></param>
         /// <returns></returns>
-        protected int OnGetImageIndex(IResource fsi) {
+        public int OnGetImageIndex(IResource fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
             }
@@ -620,7 +620,7 @@ namespace SharpFile {
         /// Adds the item to the view.
         /// </summary>
         /// <param name="resource">Resource to add.</param>
-        private void addItem(IChildResource resource) {
+        protected void addItem(IChildResource resource) {
             if (!itemDictionary.ContainsKey(resource.FullPath)) {
                 ListViewItem item = createListViewItem(resource);
                 itemDictionary.Add(resource.FullPath, item);
@@ -633,7 +633,7 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fileSystemInfo">Filesystem information.</param>
         /// <returns>Listview item that references the filesystem object.</returns>
-        private ListViewItem createListViewItem(IChildResource resource) {
+        protected ListViewItem createListViewItem(IChildResource resource) {
             ListViewItem item = new ListViewItem();
             item.Tag = resource;
             item.Name = resource.FullPath;
@@ -697,7 +697,7 @@ namespace SharpFile {
                 }
             }
 
-            int imageIndex = GetImageIndex(resource);
+            int imageIndex = OnGetImageIndex(resource);
             item.ImageIndex = imageIndex;
 
             return item;

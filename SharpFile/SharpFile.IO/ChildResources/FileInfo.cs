@@ -54,15 +54,18 @@ namespace SharpFile.IO.ChildResources {
 
             if (childResourceRetrievers.Count > 0) {
                 IChildResourceRetriever childResourceRetriever = childResourceRetrievers[0];
+                IView currentView = Forms.GetPropertyInParent<IView>(view.Control.Parent, "View");
 
-                if (childResourceRetriever.View != null &&
-                    !view.GetType().Equals(childResourceRetriever.View.GetType())) {
-                    // Set the FileBrowser control (this control's parent) to use this view.
-                    // TODO: Make View a property on a parent for this control.
-                    Forms.SetPropertyInParent<IView>(view.Control.Parent, "View",
-                        childResourceRetriever.View);
+                if (childResourceRetriever.View != null) {
+                    if (!currentView.GetType().Equals(childResourceRetriever.View.GetType())) {
+                        // Set the FileBrowser control (this control's parent) to use this view.
+                        childResourceRetriever.View.ColumnInfos = childResourceRetriever.ColumnInfos;
 
-                    view = childResourceRetriever.View;
+                        Forms.SetPropertyInParent<IView>(view.Control.Parent, "View",
+                            childResourceRetriever.View);
+
+                        view = childResourceRetriever.View;
+                    }
                 }
 
                 childResourceRetrievers[0].Execute(view, this);

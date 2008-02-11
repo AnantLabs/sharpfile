@@ -6,8 +6,6 @@ namespace SharpFile.Infrastructure {
 		void AddItemRange(IEnumerable<IChildResource> childResources);
 		void InsertItem(IChildResource childResource);
 		void RemoveItem(string path);
-		void OnUpdatePath(string path);
-		void OnUpdateProgress(int progress);
 		void Clear();
 		void BeginUpdate();
 		void EndUpdate();
@@ -20,6 +18,11 @@ namespace SharpFile.Infrastructure {
         IEnumerable<ColumnInfo> ColumnInfos { get; set; }
         string Name { get; set; }
         bool Enabled { get; set; }
+
+        void OnUpdatePath(string path);
+        void OnUpdateProgress(int progress);
+        int OnGetImageIndex(IResource resource);
+        void OnUpdateStatus(string status);
 
 		event View.GetImageIndexDelegate GetImageIndex;
 		event View.UpdateProgressDelegate UpdateProgress;

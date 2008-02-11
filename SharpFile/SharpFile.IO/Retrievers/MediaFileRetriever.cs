@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.IO.ChildResources;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -65,7 +66,7 @@ namespace SharpFile.IO.Retrievers {
                             Settings.Instance.Logger.Log(LogLevelType.Verbose,
                                 "Start to get resources.");
 
-                            e.Result = Image.FromFile(resource.FullPath);
+                            e.Result = resource;
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
@@ -91,15 +92,36 @@ namespace SharpFile.IO.Retrievers {
                     if (e.Error == null &&
                         !e.Cancelled &&
                         e.Result != null &&
-                        e.Result is Image) {
+                        e.Result is IChildResource) {
                         Settings.Instance.Logger.Log(LogLevelType.Verbose,
                             "Get resources complete.");
 
-                        Image image = (Image)e.Result;
+                        //IChildResource resource = (IChildResource)e.Result;
 
                         view.BeginUpdate();
                         view.ColumnInfos = ColumnInfos;
                         view.Clear();
+
+                        List<IChildResource> resources = new List<IChildResource>();
+
+                        ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();
+                        childResourceRetrievers.AddRange(Settings.Instance.Resources[0].ChildResourceRetrievers);
+
+                        if (Settings.Instance.ShowRootDirectory) {
+                            resources.Add(new RootDirectoryInfo(new System.IO.DirectoryInfo(resource.Root.FullPath),
+                                        childResourceRetrievers));
+                        }
+
+                        if (Settings.Instance.ShowParentDirectory) {
+                            if (!Settings.Instance.ShowRootDirectory ||
+                                (Settings.Instance.ShowRootDirectory &&
+                                !resource.Path.ToLower().Equals(resource.Root.Name.ToLower()))) {
+                                resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path),
+                                    childResourceRetrievers));
+                            }
+                        }
+
+                        view.AddItemRange(resources);
                         view.InsertItem((IChildResource)resource);
                         view.EndUpdate();
 
@@ -107,9 +129,9 @@ namespace SharpFile.IO.Retrievers {
                         view.OnUpdatePath(resource.FullPath);
 
                         // Set up the watcher.
-                        //view.FileSystemWatcher.Path = resource.FullPath;
-                        //view.FileSystemWatcher.Filter = view.Filter;
-                        //view.FileSystemWatcher.EnableRaisingEvents = true;
+                        view.FileSystemWatcher.Path = resource.FullPath;
+                        view.FileSystemWatcher.Filter = view.Filter;
+                        view.FileSystemWatcher.EnableRaisingEvents = true;
                     }
 
                     OnGetComplete();
@@ -174,17 +196,5 @@ namespace SharpFile.IO.Retrievers {
                 customMethodArguments = value;
             }
         }
-
-        /*
-        private IEnumerable<IChildResource> getResources(IResource resource, string filter) {
-            IFileContainer container = resource as IFileContainer;
-            List<IChildResource> resources = new List<IChildResource>();
-
-            resources.AddRange(container.GetDirectories());
-            resources.AddRange(container.GetFiles(filter));
-
-            return resources;
-        }
-        */
     }
 }

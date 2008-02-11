@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO.Retrievers;
+using Common;
 
 namespace SharpFile.IO.ChildResources {
     [Serializable]
@@ -130,9 +131,31 @@ namespace SharpFile.IO.ChildResources {
         }
 
         public void Execute(IView view) {
-            foreach (IChildResourceRetriever childResourceRetriever in this.ChildResourceRetrievers.Filter(this)) {
-                childResourceRetriever.Execute(view, this);
-                break;
+            //foreach (IChildResourceRetriever childResourceRetriever in this.ChildResourceRetrievers.Filter(this)) {
+            //    childResourceRetriever.Execute(view, this);
+            //    break;
+            //}
+
+            List<IChildResourceRetriever> childResourceRetrievers = new List<IChildResourceRetriever>(
+                ChildResourceRetrievers.Filter(this));
+
+            if (childResourceRetrievers.Count > 0) {
+                IChildResourceRetriever childResourceRetriever = childResourceRetrievers[0];
+                IView currentView = Forms.GetPropertyInParent<IView>(view.Control.Parent, "View");
+
+                if (childResourceRetriever.View != null) {
+                    if (!currentView.GetType().Equals(childResourceRetriever.View.GetType())) {
+                        // Set the FileBrowser control (this control's parent) to use this view.
+                        childResourceRetriever.View.ColumnInfos = childResourceRetriever.ColumnInfos;
+
+                        Forms.SetPropertyInParent<IView>(view.Control.Parent, "View",
+                            childResourceRetriever.View);
+
+                        view = childResourceRetriever.View;
+                    }
+                }
+
+                childResourceRetrievers[0].Execute(view, this);
             }
         }
 
