@@ -18,31 +18,37 @@ namespace SharpFile.Infrastructure {
     /// </summary>
     [Serializable]
     public sealed class Settings {
+        // Constants.
         public const string FilePath = "settings.config";
 
+        // Statics.
         private static readonly Settings instance = new Settings();
         private static object lockObject = new object();
 
+        // Privates.
+        private ImageList imageList = new ImageList();
         private ParentType parentType = ParentType.Dual;
         private int width = 500;
         private int height = 500;
         private Nodes keyCodes;
-        private List<ResourceRetrieverInfo> resourceRetrieverInfos;
-        private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
-        private List<ViewInfo> viewInfos;
         private bool directoriesSortedFirst = true;
         private bool showParentDirectory = true;
         private bool showRootDirectory = false;
+
+        // Infos.
+        private List<ResourceRetrieverInfo> resourceRetrieverInfos;
+        private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
+        private List<ViewInfo> viewInfos;
         private LoggerInfo loggerInfo;
+
+        // Constructed from infos.
+        private LoggerService logger;
+        private List<IResourceRetriever> resourceRetrievers;
 
         // Sub-settings.
         private DualParentSettings dualParentSettings;
         private MdiParentSettings mdiParentSettings;
         private IconSettings iconSettings;
-
-        private LoggerService logger;
-        private List<IResourceRetriever> resourceRetrievers;
-        private ImageList imageList = new ImageList();
 
         #region Ctors.
         /// <summary>
@@ -67,6 +73,32 @@ namespace SharpFile.Infrastructure {
         #endregion
 
         #region Static methods.
+        /// <summary>
+        /// Deep copies the data from an object to a new object.
+        /// </summary>
+        /// <typeparam name="T">Type of the object.</typeparam>
+        /// <param name="obj">Object to copy.</param>
+        /// <returns>A new version of the object with all of it's values intact.</returns>
+        // TODO: Move this to the Common assembly.
+        // TODO: Provide a way to deepcopy a whole object including delegates that are attached to the original.
+        public static T DeepCopy<T>(T obj) {
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            binaryFormatter.Serialize(memoryStream, obj);
+            memoryStream.Position = 0;
+            return (T)binaryFormatter.Deserialize(memoryStream);
+        }
+
+        /// <summary>
+        /// Clears the resources.
+        /// </summary>
+        public static void ClearResources() {
+            instance.resourceRetrievers = null;
+        }
+
+        /// <summary>
+        /// Loads the settings config file into the singleton instance.
+        /// </summary>
         public static void Load() {
             lock (lockObject) {
                 LoggerService loggerService = new LoggerService("log.txt", LogLevelType.Verbose);
@@ -139,6 +171,23 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Persists the setttings to the config file.
+        /// </summary>
+        public static void Save() {
+            lock (lockObject) {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
+
+                using (TextWriter tw = new StreamWriter(FilePath)) {
+                    xmlSerializer.Serialize(tw, Instance);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Deserializes the settings config file to an object and sets the singleton's properties appropriately.
+        /// </summary>
+        /// <param name="xmlSerializer">XmlSerializer to deserialize.</param>
         private static void deserializeSettings(XmlSerializer xmlSerializer) {
             using (TextReader tr = new StreamReader(FilePath)) {
                 Settings settings = (Settings)xmlSerializer.Deserialize(tr);
@@ -154,27 +203,12 @@ namespace SharpFile.Infrastructure {
                 }
             }
         }
-
-        public static T DeepCopy<T>(T obj) {
-            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            binaryFormatter.Serialize(memoryStream, obj);
-            memoryStream.Position = 0;
-            return (T)binaryFormatter.Deserialize(memoryStream);
-        }
-
-        public static void Save() {
-            lock (lockObject) {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
-
-                using (TextWriter tw = new StreamWriter(FilePath)) {
-                    xmlSerializer.Serialize(tw, Instance);
-                }
-            }
-        }
         #endregion
 
         #region Static properties
+        /// <summary>
+        /// Singleton instance of the settings.
+        /// </summary>
         public static Settings Instance {
             get {
                 return instance;
@@ -183,6 +217,9 @@ namespace SharpFile.Infrastructure {
         #endregion
 
         #region Instance properties
+        /// <summary>
+        /// Parent type.
+        /// </summary>
         public ParentType ParentType {
             get {
                 return parentType;
@@ -192,6 +229,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Key codes.
+        /// </summary>
         [XmlIgnore]
         public Nodes KeyCodes {
             get {
@@ -202,6 +242,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Width of the form.
+        /// </summary>
         public int Width {
             get {
                 return width;
@@ -211,6 +254,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Height of the form.
+        /// </summary>
         public int Height {
             get {
                 return height;
@@ -220,6 +266,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Whether or not the directories are sorted first.
+        /// </summary>
         public bool DirectoriesSortedFirst {
             get {
                 return directoriesSortedFirst;
@@ -229,6 +278,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Whether or not to show the parent directory.
+        /// </summary>
         public bool ShowParentDirectory {
             get {
                 return showParentDirectory;
@@ -238,6 +290,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Whether or not to show the root directory.
+        /// </summary>
         public bool ShowRootDirectory {
             get {
                 return showRootDirectory;
@@ -247,6 +302,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Logger info.
+        /// </summary>
         [XmlElement("Logger")]
         public LoggerInfo LoggerInfo {
             get {
@@ -257,6 +315,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Resource retriever infos.
+        /// </summary>
         [XmlArray("ResourceRetrievers")]
         [XmlArrayItem("ResourceRetriever")]
         public List<ResourceRetrieverInfo> ResourceRetrieverInfos {
@@ -268,6 +329,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Child resource retrievers infos.
+        /// </summary>
         [XmlArray("ChildResourceRetrievers")]
         [XmlArrayItem("ChildResourceRetriever")]
         public List<ChildResourceRetrieverInfo> ChildResourceRetrieverInfos {
@@ -279,6 +343,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// View infos.
+        /// </summary>
         [XmlArray("Views")]
         [XmlArrayItem("View")]
         public List<ViewInfo> ViewInfos {
@@ -291,6 +358,9 @@ namespace SharpFile.Infrastructure {
         }
 
         #region Properties for sub-settings.
+        /// <summary>
+        /// Dual parent settings.
+        /// </summary>
         [XmlElement("DualParent")]
         public DualParentSettings DualParent {
             get {
@@ -301,6 +371,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Mdi parent settings.
+        /// </summary>
         [XmlElement("MdiParent")]
         public MdiParentSettings MdiParent {
             get {
@@ -311,6 +384,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Icon settings.
+        /// </summary>
         [XmlElement("Icons")]
         public IconSettings Icons {
             get {
@@ -323,6 +399,9 @@ namespace SharpFile.Infrastructure {
         #endregion
 
         #region Properties not derived from settings.config.
+        /// <summary>
+        /// Derived Logger service.
+        /// </summary>
         [XmlIgnore]
         public LoggerService Logger {
             get {
@@ -334,6 +413,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Derived resources.
+        /// </summary>
         [XmlIgnore]
         public List<IResource> Resources {
             get {
@@ -439,6 +521,9 @@ namespace SharpFile.Infrastructure {
             }
         }
 
+        /// <summary>
+        /// Shared Imagelist.
+        /// </summary>
         [XmlIgnore]
         public ImageList ImageList {
             get {

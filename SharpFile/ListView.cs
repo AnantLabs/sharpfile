@@ -300,7 +300,7 @@ namespace SharpFile {
 
             string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string fileDrop in fileDrops) {
-                IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop, ChildResourceRetrievers);
+                IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop);
 
                 if (resource != null) {
                     string destination = string.Format(@"{0}{1}",
@@ -377,7 +377,6 @@ namespace SharpFile {
 
                 if (files.Length > 0) {
                     System.IO.FileInfo fileInfo = new System.IO.FileInfo(files[0]);
-
                     string originalPath = fileInfo.FullName.Substring(0, fileInfo.FullName.IndexOf(':')).ToLower();
                     string currentPath = Path.Substring(0, Path.IndexOf(':')).ToLower();
 
