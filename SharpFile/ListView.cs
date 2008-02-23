@@ -372,19 +372,20 @@ namespace SharpFile {
                 // By default, the drop action should be move, if allowed.
                 e.Effect = DragDropEffects.Move;
 
-                // Implement the rather strange behaviour of explorer that if the disk
-                // is different, then default to a COPY operation
+                // If the disk is different, then default to a COPY operation.
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
                 if (files.Length > 0) {
-                    IChildResource fileResource = ChildResourceFactory.GetChildResource(files[0], ChildResourceRetrievers);
-                    IChildResource pathResource = ChildResourceFactory.GetChildResource(Path, ChildResourceRetrievers);
+                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(files[0]);
 
-                    if (!fileResource.Root.FullPath.ToLower().Equals(pathResource.Root.FullPath.ToLower())) {
+                    string originalPath = fileInfo.FullName.Substring(0, fileInfo.FullName.IndexOf(':')).ToLower();
+                    string currentPath = Path.Substring(0, Path.IndexOf(':')).ToLower();
+
+                    if (!originalPath.Equals(currentPath)) {
                         if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
                             e.Effect = DragDropEffects.Copy;
                         }
-                    } else if (fileResource.Path.Equals(pathResource.FullPath)) {
+                    } else if (fileInfo.DirectoryName.ToLower().Equals(Path.ToLower())) {
                         e.Effect = DragDropEffects.None;
                     }
                 }
