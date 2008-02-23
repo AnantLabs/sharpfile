@@ -37,7 +37,8 @@ namespace SharpFile {
         public event View.UpdatePathDelegate UpdatePath;
 
         // TODO: This empty ListView ctor shouldn't be necessary, but the view can't be instantiated without it.
-        public ListView() : this("Instantiated") {
+        public ListView()
+            : this("Instantiated") {
         }
 
         public ListView(string name) {
@@ -243,6 +244,7 @@ namespace SharpFile {
         /// </summary>
         private void listView_GotFocus(object sender, EventArgs e) {
             OnUpdatePath(Path);
+            OnUpdateStatus(Status);
         }
 
         /// <summary>
@@ -584,9 +586,7 @@ namespace SharpFile {
                 // Resize the columns based on the column content.
                 this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
-                OnUpdateStatus(string.Format("Folders: {0}; Files: {1}",
-                                           folderCount,
-                                           fileCount));
+                OnUpdateStatus(Status);
             }
         }
 
@@ -602,9 +602,7 @@ namespace SharpFile {
                     // Basic stuff that should happen everytime files are shown.
                     this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
-                    OnUpdateStatus(string.Format("Folders: {0}; Files: {1}",
-                                               folderCount,
-                                               fileCount));
+                    OnUpdateStatus(Status);
 
                     this.Sort();
                 } catch (Exception ex) {
@@ -640,7 +638,9 @@ namespace SharpFile {
 
             if (resource is FileInfo) {
                 fileCount++;
-            } else if (resource is DirectoryInfo) {
+            } else if (resource is DirectoryInfo &&
+                !(resource is ParentDirectoryInfo) &&
+                !(resource is RootDirectoryInfo)) {
                 folderCount++;
             }
 
@@ -736,6 +736,18 @@ namespace SharpFile {
 
         #endregion
 
+        #region Properties.
+        /// <summary>
+        /// Current status.
+        /// </summary>
+        public string Status {
+            get {
+                return string.Format("Folders: {0}; Files: {1}",
+                                           folderCount,
+                                           fileCount);
+            }
+        }
+
         /// <summary>
         /// Current path.
         /// </summary>
@@ -810,5 +822,6 @@ namespace SharpFile {
                 return Forms.GetPropertyInParent<ChildResourceRetrievers>(this.Parent, "ChildResourceRetrievers");
             }
         }
+        #endregion
     }
 }
