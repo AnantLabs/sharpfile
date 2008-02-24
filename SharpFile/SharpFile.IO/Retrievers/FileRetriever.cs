@@ -53,83 +53,86 @@ namespace SharpFile.IO.Retrievers {
                 System.Diagnostics.Process.Start(processStartInfo);
 
                 return;
-            }
+            } else {
+                using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                    backgroundWorker.WorkerSupportsCancellation = true;
+                    backgroundWorker.WorkerReportsProgress = true;
 
-            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-                backgroundWorker.WorkerSupportsCancellation = true;
-                backgroundWorker.WorkerReportsProgress = true;
+                    // Anonymous method that retrieves the file information.
+                    backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
+                        // Disable the filewatcher.
+                        view.FileSystemWatcher.EnableRaisingEvents = false;
 
-                // Anonymous method that retrieves the file information.
-                backgroundWorker.DoWork += delegate(object sender, DoWorkEventArgs e) {
-                    // Disable the filewatcher.
-                    view.FileSystemWatcher.EnableRaisingEvents = false;
+                        // Grab the files and report the progress to the parent.
+                        backgroundWorker.ReportProgress(50);
 
-                    // Grab the files and report the progress to the parent.
-                    backgroundWorker.ReportProgress(50);
+                        try {
+                            if (backgroundWorker.CancellationPending) {
+                                e.Cancel = true;
+                            } else {
+                                Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                    "Start to get resources.");
 
-                    try {
-                        if (backgroundWorker.CancellationPending) {
+                                e.Result = getResources(resource, view.Filter);
+
+                                Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                    "Finish getting resources.");
+                            }
+                        } catch (UnauthorizedAccessException ex) {
                             e.Cancel = true;
-                        } else {
-                            Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                                "Start to get resources.");
 
-                            e.Result = getResources(resource, view.Filter);
+                            Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Access is unauthorized for {0}.", resource.FullPath);
+                            Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
+                        } catch (Exception ex) {
+                            e.Cancel = true;
+
+                            Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Exception when getting resources for {0}.", resource.FullPath);
+                            Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
+                        } finally {
+                            backgroundWorker.ReportProgress(100);
                         }
-                    } catch (UnauthorizedAccessException ex) {
-                        e.Cancel = true;
+                    };
 
-                        Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                            "Access is unauthorized for {0}.", resource.FullPath);
-                        Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
-                    } catch (Exception ex) {
-                        e.Cancel = true;
+                    // Method that runs when the DoWork method is finished.
+                    backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
+                        if (e.Error == null &&
+                            !e.Cancelled &&
+                            e.Result != null &&
+                            e.Result is IEnumerable<IChildResource>) {
+                            Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                "Get resources complete.");
 
-                        Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                            "Exception when getting resources for {0}.", resource.FullPath);
-                        Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
-                    } finally {
-                        backgroundWorker.ReportProgress(100);
-                    }
-                };
+                            IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
 
-                // Method that runs when the DoWork method is finished.
-                backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
-                    if (e.Error == null &&
-                        !e.Cancelled &&
-                        e.Result != null &&
-                        e.Result is IEnumerable<IChildResource>) {
-                        Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                            "Get resources complete.");
+                            view.BeginUpdate();
+                            view.ColumnInfos = ColumnInfos;
+                            view.Clear();
+                            view.AddItemRange(resources);
+                            view.EndUpdate();
 
-                        IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
+                            // Update some information about the current directory.
+                            view.OnUpdatePath(resource.FullPath);
 
-                        view.BeginUpdate();
-                        view.ColumnInfos = ColumnInfos;
-                        view.Clear();
-                        view.AddItemRange(resources);
-                        view.EndUpdate();
+                            // Set up the watcher.
+                            view.FileSystemWatcher.Path = resource.FullPath;
+                            view.FileSystemWatcher.Filter = view.Filter;
+                            view.FileSystemWatcher.EnableRaisingEvents = true;
+                        }
 
-                        // Update some information about the current directory.
-                        view.OnUpdatePath(resource.FullPath);
+                        OnGetComplete();
+                    };
 
-                        // Set up the watcher.
-                        view.FileSystemWatcher.Path = resource.FullPath;
-                        view.FileSystemWatcher.Filter = view.Filter;
-                        view.FileSystemWatcher.EnableRaisingEvents = true;
-                    }
+                    // Anonymous method that updates the status to the parent form.
+                    backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
+                        view.OnUpdateProgress(e.ProgressPercentage);
+                    };
 
-                    OnGetComplete();
-                };
-
-                // Anonymous method that updates the status to the parent form.
-                backgroundWorker.ProgressChanged += delegate(object sender, ProgressChangedEventArgs e) {
-                    view.OnUpdateProgress(e.ProgressPercentage);
-                };
-
-                backgroundWorker.RunWorkerAsync();
+                    backgroundWorker.RunWorkerAsync();
+                }
             }
         }
 

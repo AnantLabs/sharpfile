@@ -90,7 +90,7 @@ namespace SharpFile.Infrastructure {
         }
 
         /// <summary>
-        /// Clears the resources.
+        /// Clears the current resources.
         /// </summary>
         public static void ClearResources() {
             instance.resourceRetrievers = null;

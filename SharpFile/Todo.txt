@@ -1,3 +1,7 @@
+Slow retrieval:
+On the old Dell: 5s to retrieve from z:\; 4s to display the content; explorer: 1s
+LCG should speed up displaying content. Not sure how to speed up retrieving the content.
+
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
 
 BUGS

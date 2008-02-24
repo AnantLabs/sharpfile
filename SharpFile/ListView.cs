@@ -644,6 +644,7 @@ namespace SharpFile {
                 folderCount++;
             }
 
+            // TODO: Use LCG to retrieve properties here instead of GetProperty. It should be much faster.
             foreach (ColumnInfo columnInfo in ColumnInfos) {
                 PropertyInfo propertyInfo = null;
                 string propertyName = columnInfo.Property;
@@ -697,8 +698,10 @@ namespace SharpFile {
                 }
             }
 
-            int imageIndex = OnGetImageIndex(resource);
-            item.ImageIndex = imageIndex;
+            if (true) {
+                int imageIndex = OnGetImageIndex(resource);
+                item.ImageIndex = imageIndex;
+            }
 
             return item;
         }
