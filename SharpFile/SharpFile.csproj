@@ -14,7 +14,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <PublishUrl>http://localhost/SharpFile/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -55,8 +55,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Common.dll</HintPath>
     </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -76,6 +83,36 @@
     <Compile Include="FileBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Infrastructure\ChildResourceRetrievers.cs" />
+    <Compile Include="Infrastructure\FileSystemWatcher.cs" />
+    <Compile Include="Infrastructure\FullyQualifiedMethod.cs" />
+    <Compile Include="Infrastructure\FullyQualifiedType.cs" />
+    <Compile Include="Infrastructure\Interfaces\IChildResourceRetriever.cs" />
+    <Compile Include="Infrastructure\Interfaces\IResourceRetriever.cs" />
+    <Compile Include="Infrastructure\Interfaces\IView.cs" />
+    <Compile Include="Infrastructure\Interfaces\IViewComparer.cs" />
+    <Compile Include="Infrastructure\Nodes.cs" />
+    <Compile Include="Infrastructure\ParentType.cs" />
+    <Compile Include="Infrastructure\Resource.Designer.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ChildResourceRetrieverInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ColumnInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\LoggerInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ResourceRetrieverInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ViewInfo.cs" />
+    <Compile Include="Infrastructure\Settings.cs" />
+    <Compile Include="Infrastructure\Settings\DualParentSettings.cs" />
+    <Compile Include="Infrastructure\Settings\IconSettings.cs" />
+    <Compile Include="Infrastructure\Settings\MdiParentSettings.cs" />
+    <Compile Include="Infrastructure\Settings\PanelSettings.cs" />
+    <Compile Include="IO\ChildResources\ParentDirectoryInfo.cs" />
+    <Compile Include="IO\ChildResources\RootDirectoryInfo.cs" />
+    <Compile Include="IO\ExtensionMethods\DirectoryInfoExtensionMethods.cs" />
+    <Compile Include="IO\ExtensionMethods\DriveInfoExtensionMethods.cs" />
+    <Compile Include="IO\ExtensionMethods\FileSystemInfoExtensionMethods.cs" />
+    <Compile Include="IO\FileSystemInfoFactory.cs" />
+    <Compile Include="IO\IOException.cs" />
+    <Compile Include="IO\Retrievers\DriveRetriever.cs" />
+    <Compile Include="IO\Retrievers\FileRetriever.cs" />
     <Compile Include="ListView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -94,12 +131,22 @@
       <DependentUpon>BaseParent.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Infrastructure\Resource.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Compile Include="TabControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ToolStripSpringTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\DriveDetector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\IconManager.cs" />
+    <Compile Include="UI\IconReader.cs" />
+    <Compile Include="UI\ListViewItemComparer.cs" />
+    <Compile Include="UI\ShellContextMenu.cs" />
     <Compile Include="UnitDisplayType.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -114,20 +161,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Todo.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="SharpFile.Infrastructure\SharpFile.Infrastructure.csproj">
-      <Project>{96C1D4FB-2A4F-4746-A9C0-C28E491CBB8B}</Project>
-      <Name>SharpFile.Infrastructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="SharpFile.IO\SharpFile.IO.csproj">
-      <Project>{F9F8A1B7-00C8-411C-8063-987C1F720956}</Project>
-      <Name>SharpFile.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="SharpFile.UI\SharpFile.UI.csproj">
-      <Project>{3896D530-3308-45BC-B802-AE953EDAD227}</Project>
-      <Name>SharpFile.UI</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
@@ -147,7 +180,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
+    <None Include="Infrastructure\Resources\ilmerge_settings.config" />
+    <None Include="Infrastructure\Resources\settings.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
