@@ -1,88 +1,74 @@
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
-using SharpFile.IO.ParentResources;
 
 namespace SharpFile.UI {
 	public static class IconManager {
 		private const string folderKey = ":FOLDER:";
 
-		private static Icon getFileIcon(string path) {
-			return getFileIcon(path, false);
-		}
+        /// <summary>
+        /// Get the image index for the file system object.
+        /// </summary>
+        /// <param name="fsi">File system object.</param>
+        /// <param name="imageList">ImageList.</param>
+        /// <returns>Image index.</returns>
+        public static int GetImageIndex(FileSystemInfo fsi, ImageList imageList) {
+            int imageIndex = imageList.Images.Count;
+            string fullPath = fsi.FullName;
 
-		private static Icon getFileIcon(string path, bool showOverlay) {
-			return IconReader.GetFileIcon(path, IconReader.IconSize.Small, showOverlay);
-		}
+            if (fsi is FileInfo) {
+                string extension = ((FileInfo)fsi).Extension;
 
-		private static Icon getFolderIcon(string path) {
-			return getFolderIcon(path, false);
-		}
-
-		private static Icon getFolderIcon(string path, bool showOverlay) {
-			return IconReader.GetFolderIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed, showOverlay);
-		}
-
-		private static Icon getDriveIcon(string path) {
-			return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
-		}
-
-		public static int GetImageIndex(IResource resource, ImageList imageList) {
-			int imageIndex = imageList.Images.Count;
-            string fullPath = resource.FullPath;
-
-            if (resource is FileInfo) {
-                string extension = ((FileInfo)resource).Extension;
-
-				if (Settings.Instance.Icons.ShowOverlay ||
+                if (Settings.Instance.Icons.ShowOverlay ||
                     (Settings.Instance.Icons.Extensions.Contains(extension) ||
                     string.IsNullOrEmpty(extension))) {
-					// Add the full name of the file if it is an executable into the the ImageList.
-					if (!imageList.Images.ContainsKey(fullPath)) {
+                    // Add the full name of the file if it is an executable into the the ImageList.
+                    if (!imageList.Images.ContainsKey(fullPath)) {
                         Icon icon = getFileIcon(fullPath, Settings.Instance.Icons.ShowOverlay);
-						imageList.Images.Add(fullPath, icon);
-					}
+                        imageList.Images.Add(fullPath, icon);
+                    }
 
-					imageIndex = imageList.Images.IndexOfKey(fullPath);
-				} else {
-					// Add the extension into the ImageList.
-					if (!imageList.Images.ContainsKey(extension)) {
-						Icon icon = getFileIcon(fullPath);
-						imageList.Images.Add(extension, icon);
-					}
+                    imageIndex = imageList.Images.IndexOfKey(fullPath);
+                } else {
+                    // Add the extension into the ImageList.
+                    if (!imageList.Images.ContainsKey(extension)) {
+                        Icon icon = getFileIcon(fullPath);
+                        imageList.Images.Add(extension, icon);
+                    }
 
-					imageIndex = imageList.Images.IndexOfKey(extension);
-				}
-            } else if (resource is DirectoryInfo) {
-				// Add the directory information into the ImageList.
-				if (!imageList.Images.ContainsKey(folderKey)) {
-					Icon icon = getFolderIcon(null, false);
-					imageList.Images.Add(folderKey, icon);
-				}
+                    imageIndex = imageList.Images.IndexOfKey(extension);
+                }
+            } else if (fsi is DirectoryInfo || fsi is ParentDirectoryInfo || fsi is RootDirectoryInfo) {
+                DirectoryInfo directoryInfo = Settings.Instance.Resources.Find(delegate(DirectoryInfo di) {
+                    return (di.FullName.ToLower().Equals(fsi.FullName.ToLower()));
+                });
 
-				imageIndex = imageList.Images.IndexOfKey(folderKey);
-            } else if (resource is DriveInfo) {
-				if (!imageList.Images.ContainsKey(fullPath)) {
-					Icon icon = getDriveIcon(fullPath);
-					imageList.Images.Add(fullPath, icon);
-				}
+                if (fsi is DirectoryInfo && directoryInfo != null) {
+                    // Resource is really a drive, so grab its icon.
+                    if (!imageList.Images.ContainsKey(fullPath)) {
+                        Icon icon = getDriveIcon(fullPath);
+                        imageList.Images.Add(fullPath, icon);
+                    }
 
-				imageIndex = imageList.Images.IndexOfKey(fullPath);
-            //} else if (resource is ServerInfo) {
-            //    if (!imageList.Images.ContainsKey(fullPath)) {
-            //        Icon icon = getDriveIcon(fullPath);
-            //        imageList.Images.Add(fullPath, icon);
-            //    }
+                    imageIndex = imageList.Images.IndexOfKey(fullPath);
+                } else {
+                    // Add the directory information into the ImageList.
+                    if (!imageList.Images.ContainsKey(folderKey)) {
+                        Icon icon = getFolderIcon(null, false);
+                        imageList.Images.Add(folderKey, icon);
+                    }
 
-            //    imageIndex = imageList.Images.IndexOfKey(fullPath);
-			} else {
-                throw new ArgumentException("The object, " + resource.GetType() + ", is not supported.");
-			}
+                    imageIndex = imageList.Images.IndexOfKey(folderKey);
+                }
+            } else {
+                throw new ArgumentException("The object, " + fsi.GetType() + ", is not supported.");
+            }
 
-			return imageIndex;
-		}
+            return imageIndex;
+        }
 
 		/*
 		public static int GetImageIndex(string text, Font font, ImageList imageList) {
@@ -138,5 +124,52 @@ namespace SharpFile.UI {
 			//}
 		}
 		*/
+
+        /// <summary>
+        /// Get file icon.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        /// <returns>Icon derived from the path.</returns>
+        private static Icon getFileIcon(string path) {
+            return getFileIcon(path, false);
+        }
+
+        /// <summary>
+        /// Get file icon.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        /// <param name="showOverlay">Whether to show overlay for the file.</param>
+        /// <returns>Icon derived from the path.</returns>
+        private static Icon getFileIcon(string path, bool showOverlay) {
+            return IconReader.GetFileIcon(path, IconReader.IconSize.Small, showOverlay);
+        }
+
+        /// <summary>
+        /// Get folder icon.
+        /// </summary>
+        /// <param name="path">Path</param>
+        /// <returns>Icon derived from the path.</returns>
+        private static Icon getFolderIcon(string path) {
+            return getFolderIcon(path, false);
+        }
+
+        /// <summary>
+        /// Get folder icon.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        /// <param name="showOverlay">Whether or not to show overlay for the folder.</param>
+        /// <returns>Icon derived from the folder.</returns>
+        private static Icon getFolderIcon(string path, bool showOverlay) {
+            return IconReader.GetFolderIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed, showOverlay);
+        }
+
+        /// <summary>
+        /// Get drive icon.
+        /// </summary>
+        /// <param name="path">Path.</param>
+        /// <returns>Icon derived from the drive.</returns>
+        private static Icon getDriveIcon(string path) {
+            return IconReader.GetDriveIcon(path, IconReader.IconSize.Small, IconReader.FolderType.Closed);
+        }
 	}
 }

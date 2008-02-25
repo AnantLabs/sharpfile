@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.IO;
 
 namespace SharpFile.Infrastructure {
 	public interface IView {
-		void AddItemRange(IEnumerable<IChildResource> childResources);
-		void InsertItem(IChildResource childResource);
+        void AddItemRange(IEnumerable<FileSystemInfo> childResources);
+        //void AddItemRange(IEnumerable<FileSystemInfo> childResources);
+        void InsertItem(FileSystemInfo childResource);
 		void RemoveItem(string path);
 		void Clear();
 		void BeginUpdate();
@@ -21,7 +23,7 @@ namespace SharpFile.Infrastructure {
 
         void OnUpdatePath(string path);
         void OnUpdateProgress(int progress);
-        int OnGetImageIndex(IResource resource);
+        int OnGetImageIndex(FileSystemInfo resource);
         void OnUpdateStatus(string status);
 
 		event View.GetImageIndexDelegate GetImageIndex;
@@ -31,7 +33,7 @@ namespace SharpFile.Infrastructure {
 	}
 
 	public static class View {
-		public delegate int GetImageIndexDelegate(IResource fsi);
+        public delegate int GetImageIndexDelegate(FileSystemInfo fsi);
 		public delegate void UpdateProgressDelegate(int value);
 		public delegate void UpdatePathDelegate(string path);
 		public delegate void UpdateStatusDelegate(string status);

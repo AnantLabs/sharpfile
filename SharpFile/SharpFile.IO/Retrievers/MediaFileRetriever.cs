@@ -5,6 +5,7 @@ using System.Drawing;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
+using System.IO;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -27,7 +28,7 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        public bool OnCustomMethod(IResource resource) {
+        public bool OnCustomMethod(FileSystemInfo resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
             }
@@ -35,7 +36,7 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
-        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
+        public bool OnCustomMethodWithArguments(FileSystemInfo resource, List<string> arguments) {
             if (CustomMethodWithArguments != null) {
                 return CustomMethodWithArguments(resource, arguments);
             }
@@ -43,7 +44,7 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
-        public void Execute(IView view, IResource resource) {
+        public void Execute(IView view, FileSystemInfo resource) {
             Settings.Instance.Logger.Log(LogLevelType.Verbose,
                 "Starting to Execute in the MediaListView.");
 

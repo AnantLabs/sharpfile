@@ -40,6 +40,10 @@ namespace SharpFile {
             listView.AddItemRange(childResources);
         }
 
+        public void AddItemRange(IEnumerable<System.IO.FileSystemInfo> resources) {
+            listView.AddItemRange(resources);
+        }
+
         public void RemoveItem(string path) {
             listView.RemoveItem(path);
         }

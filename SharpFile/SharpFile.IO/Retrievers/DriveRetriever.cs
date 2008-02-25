@@ -1,33 +1,49 @@
 using System.Collections.Generic;
-using SharpFile.IO.ParentResources;
-using System.Runtime.Serialization;
+using System.IO;
 using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.Retrievers {
 	public class DriveRetriever : IResourceRetriever {
         private ChildResourceRetrievers childResourceRetrievers;
+        private List<DirectoryInfo> directoryInfos;
 
-        public IEnumerable<IResource> Get() {
-			foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
-                //if (driveInfo.DriveType == System.IO.DriveType.Network) {
-                //    yield return new NetworkDriveInfo(driveInfo);
-                //} else {
-                //    yield return new DriveInfo(driveInfo);
-                //}
+        /// <summary>
+        /// Get a list of drives.
+        /// </summary>
+        /// <returns>List of drives.</returns>
+        public IEnumerable<DirectoryInfo> Get() {
+            directoryInfos = new List<DirectoryInfo>();
 
-                if (driveInfo.DriveType != System.IO.DriveType.Network) {
-                    yield return new DriveInfo(driveInfo, childResourceRetrievers);
-                }
-			}
+            foreach (DriveInfo driveInfo in DriveInfo.GetDrives()) {
+                directoryInfos.Add(driveInfo.RootDirectory);
+
+                yield return driveInfo.RootDirectory;
+            }            
 		}
 
-		public ChildResourceRetrievers ChildResourceRetrievers {
-			get {
-				return childResourceRetrievers;
+        /// <summary>
+        /// Returns a list of drive infos.
+        /// </summary>
+        public List<DirectoryInfo> DirectoryInfos {
+            get {
+                if (directoryInfos == null) {
+                    Get();
+                }
+
+                return directoryInfos;
+            }
+        }
+
+        /// <summary>
+        /// The child resource retrievers for the DriveRetriever.
+        /// </summary>
+        public ChildResourceRetrievers ChildResourceRetrievers {
+            get {
+                return childResourceRetrievers;
             }
             set {
                 childResourceRetrievers = value;
             }
-		}
-	}
+        }
+    }
 }

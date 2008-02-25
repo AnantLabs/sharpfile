@@ -14,6 +14,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,6 +43,9 @@
       <HintPath>..\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -49,30 +53,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChildResourceFactory.cs" />
-    <Compile Include="ChildResources\CompressedDirectoryInfo.cs" />
-    <Compile Include="ChildResources\CompressedFileInfo.cs" />
-    <Compile Include="ChildResources\DirectoryInfo.cs" />
-    <Compile Include="FileSystemInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ParentResources\DriveInfo.cs" />
-    <Compile Include="DriveType.cs" />
-    <Compile Include="ChildResources\FileInfo.cs" />
-    <Compile Include="ParentResources\NetworkDriveInfo.cs" />
+    <Compile Include="FileSystemInfoFactory.cs" />
+    <Compile Include="ChildResources\ParentDirectoryInfo.cs" />
+    <Compile Include="ChildResources\RootDirectoryInfo.cs" />
+    <Compile Include="ExtensionMethods\DirectoryInfoExtensionMethods.cs" />
+    <Compile Include="ExtensionMethods\DriveInfoExtensionMethods.cs" />
+    <Compile Include="ExtensionMethods\FileSystemInfoExtensionMethods.cs" />
     <Compile Include="IOException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ChildResources\ParentDirectoryInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Retrievers\CompressedFileRetrievers\CompressedFileRetriever.cs" />
-    <Compile Include="Retrievers\CompressedFileRetrievers\ReadOnlyCompressedFileRetriever.cs" />
-    <Compile Include="Retrievers\CompressedFileRetrievers\ReadWriteCompressedFileRetriever.cs" />
     <Compile Include="Retrievers\DriveRetriever.cs" />
     <Compile Include="Retrievers\FileRetriever.cs" />
-    <Compile Include="Retrievers\MediaFileRetriever.cs" />
-    <Compile Include="Retrievers\NetworkDriveRetriever.cs" />
-    <Compile Include="ChildResources\RootDirectoryInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SharpFile.Infrastructure\SharpFile.Infrastructure.csproj">

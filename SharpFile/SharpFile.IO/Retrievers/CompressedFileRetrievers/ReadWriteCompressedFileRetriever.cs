@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ICSharpCode.SharpZipLib.Zip;
 using SharpFile.Infrastructure;
+using System.IO;
 
 namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
     public class ReadWriteCompressedFileRetriever : CompressedFileRetriever {
@@ -19,8 +20,8 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return childResourceRetriever;
         }
 
-        protected override IEnumerable<IChildResource> getResources(IResource resource, string filter) {
-            List<IChildResource> resources = new List<IChildResource>();
+        protected override IEnumerable<FileSystemInfo> getResources(FileSystemInfo resource, string filter) {
+            List<FileSystemInfo> resources = new List<FileSystemInfo>();
 
             // TODO: Finish this.
             ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();

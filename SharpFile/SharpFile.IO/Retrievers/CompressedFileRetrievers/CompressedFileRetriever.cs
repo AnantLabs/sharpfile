@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using System.IO;
 
 namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
     [Serializable]
@@ -22,7 +23,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             }
         }
 
-        public bool OnCustomMethod(IResource resource) {
+        public bool OnCustomMethod(FileSystemInfo resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
             }
@@ -30,7 +31,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return false;
         }
 
-        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
+        public bool OnCustomMethodWithArguments(FileSystemInfo resource, List<string> arguments) {
             if (CustomMethodWithArguments != null) {
                 return CustomMethodWithArguments(resource, arguments);
             }
@@ -38,7 +39,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return false;
         }
 
-        public void Execute(IView view, IResource resource) {
+        public void Execute(IView view, FileSystemInfo resource) {
             Settings.Instance.Logger.Log(LogLevelType.Verbose,
                 "Starting to Execute.");
 
@@ -84,8 +85,8 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                     if (e.Error == null &&
                         !e.Cancelled &&
                         e.Result != null &&
-                        e.Result is IEnumerable<IChildResource>) {
-                        IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
+                        e.Result is IEnumerable<FileSystemInfo>) {
+                        IEnumerable<FileSystemInfo> resources = (IEnumerable<FileSystemInfo>)e.Result;
 
                         view.BeginUpdate();
                         view.ColumnInfos = ColumnInfos;
@@ -152,6 +153,6 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
 
         public abstract IChildResourceRetriever Clone();
 
-        protected abstract IEnumerable<IChildResource> getResources(IResource resource, string filter);
+        protected abstract IEnumerable<FileSystemInfo> getResources(FileSystemInfo resource, string filter);
     }
 }

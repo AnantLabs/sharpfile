@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
+using System.IO;
 
 namespace SharpFile {
     public class MdiParent : BaseParent {
@@ -57,7 +58,7 @@ namespace SharpFile {
                 updateProgress(value);
             };
 
-            childForm.Child.GetImageIndex += delegate(IResource fsi) {
+            childForm.Child.GetImageIndex += delegate(FileSystemInfo fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
 

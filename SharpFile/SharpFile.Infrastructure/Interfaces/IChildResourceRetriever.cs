@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace SharpFile.Infrastructure {
 	public interface IChildResourceRetriever {
         string Name { get; set; }
-		void Execute(IView view, IResource resource);
+		void Execute(IView view, FileSystemInfo resource);
         IChildResourceRetriever Clone();
         List<ColumnInfo> ColumnInfos { get; set; }
         IView View { get; set; }
@@ -12,16 +13,16 @@ namespace SharpFile.Infrastructure {
         void OnGetComplete();
         event ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
-        bool OnCustomMethod(IResource resource);
+        bool OnCustomMethod(FileSystemInfo resource);
         event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
 
-        bool OnCustomMethodWithArguments(IResource resource, List<string> arguments);
+        bool OnCustomMethodWithArguments(FileSystemInfo resource, List<string> arguments);
         event ChildResourceRetriever.CustomMethodWithArgumentsDelegate CustomMethodWithArguments;
 	}
 
     public static class ChildResourceRetriever {
         public delegate void GetCompleteDelegate();
-        public delegate bool CustomMethodDelegate(IResource resource);
-        public delegate bool CustomMethodWithArgumentsDelegate(IResource resource, List<string> arguments);
+        public delegate bool CustomMethodDelegate(FileSystemInfo resource);
+        public delegate bool CustomMethodWithArgumentsDelegate(FileSystemInfo resource, List<string> arguments);
     }
 }

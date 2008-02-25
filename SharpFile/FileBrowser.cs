@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using Common;
 using Common.Logger;
+using SharpFile.ExtensionMethods;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
-using SharpFile.IO.ChildResources;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
         private const int filterWidth = 50;
         private static readonly object lockObject = new object();
 
-        private FileSystemWatcher fileSystemWatcher;
+        private SharpFile.Infrastructure.FileSystemWatcher fileSystemWatcher;
         private ImageList imageList;
         private DriveDetector driveDetector;
         private ChildResourceRetrievers childResourceRetrievers;
@@ -83,7 +84,7 @@ namespace SharpFile {
         /// Passes the filesystem info to any listening events.
         /// </summary>
         /// <returns>Image index.</returns>
-        protected int OnGetImageIndex(IResource fsi) {
+        protected int OnGetImageIndex(FileSystemInfo fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
             }
@@ -136,7 +137,7 @@ namespace SharpFile {
             this.view.UpdateStatus += OnUpdateStatus;
 
             // Wire up the file system watcher.
-            fileSystemWatcher = new FileSystemWatcher(this, 100);
+            fileSystemWatcher = new SharpFile.Infrastructure.FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
         }
 
@@ -163,10 +164,10 @@ namespace SharpFile {
         /// </summary>
         private void tlsPath_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Enter) {
-                IChildResource resource = ChildResourceFactory.GetChildResource(Path);
+                FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
 
                 if (resource != null) {
-                    resource.Execute(view);
+                    resource.ExtExecute(view);
                 } else {
                     Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, 
@@ -182,8 +183,8 @@ namespace SharpFile {
         /// Refreshes the view when Enter is pressed in the filter textbox.
         /// </summary>
         private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
-            IChildResource resource = ChildResourceFactory.GetChildResource(Path);
-            resource.Execute(view);
+            FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+            resource.ExtExecute(view);
         }
 
         /// <summary>
@@ -202,15 +203,15 @@ namespace SharpFile {
         /// Refreshes the view when a different drive is selected.
         /// </summary>
         private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-            IResource resource = (IResource)e.ClickedItem.Tag;
-            resource.Execute(view);
+            DriveInfo resource = (DriveInfo)e.ClickedItem.Tag;
+            resource.ExtExecute(view);
 
             tlsDrives.Enabled = false;
             tlsPath.Enabled = false;
             tlsFilter.Enabled = false;
             view.Enabled = false;
 
-            foreach (IChildResourceRetriever childResourceRetriever in resource.ChildResourceRetrievers) {
+            foreach (IChildResourceRetriever childResourceRetriever in resource.RootDirectory.ExtGetChildResourceRetrievers()) {
                 childResourceRetriever.GetComplete += delegate {
                     highlightParentResource(resource, e.ClickedItem.Image);
                     tlsDrives.Enabled = true;
@@ -225,8 +226,8 @@ namespace SharpFile {
         /// Refreshes the view with the current root drive.
         /// </summary>
         private void tlsDrives_ButtonClick(object sender, EventArgs e) {
-            IResource resource = (IResource)tlsDrives.Tag;
-            resource.Execute(view);
+            DriveInfo resource = (DriveInfo)tlsDrives.Tag;
+            resource.ExtExecute(view);
         }
 
         /// <summary>
@@ -234,7 +235,7 @@ namespace SharpFile {
         /// </summary>
         private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
             string path = e.FullPath;
-            IChildResource resource = ChildResourceFactory.GetChildResource(path);
+            FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(path);
 
             if (view.Control.IsHandleCreated) {
                 // Required to ensure the view update occurs on the calling thread.
@@ -318,8 +319,8 @@ namespace SharpFile {
         /// <param name="stateInfo">The resource retriever.</param>
         private void updateParentListing_Callback(object stateInfo) {
             lock (lockObject) {
-                if (stateInfo is List<IResource>) {
-                    List<IResource> resources = (List<IResource>)stateInfo;
+                if (stateInfo is List<DirectoryInfo>) {
+                    List<DirectoryInfo> resources = (List<DirectoryInfo>)stateInfo;
 
                     // Make sure that the handle is created before invoking the updater.
                     while (!handleCreated) {
@@ -330,12 +331,14 @@ namespace SharpFile {
                         bool isLocalDiskFound = false;
 
                         // Create a new menu item in the dropdown for each drive.
-                        foreach (IResource resource in resources) {
-                            if (!tlsDrives.DropDownItems.ContainsKey(resource.FullPath)) {
+                        foreach (DirectoryInfo resource in resources) {
+                            if (!tlsDrives.DropDownItems.ContainsKey(resource.Name)) {
+                                // Create a DriveInfo object for some properties.
+                                DriveInfo driveInfo = new DriveInfo(resource.FullName);
                                 ToolStripMenuItem item = new ToolStripMenuItem();
-                                item.Text = resource.DisplayName;
-                                item.Name = resource.FullPath;
-                                item.Tag = resource;
+                                item.Text = resource.Name;
+                                item.Name = resource.Name;
+                                item.Tag = driveInfo;
 
                                 int imageIndex = GetImageIndex(resource);
                                 if (imageIndex > -1) {
@@ -348,17 +351,18 @@ namespace SharpFile {
                                 if (!isLocalDiskFound) {
                                     // If the path has been defined and it is valid, then grab information about it.
                                     if (!string.IsNullOrEmpty(Path)) {
-                                        childResourceRetrievers = resource.ChildResourceRetrievers.Clone();
+                                        childResourceRetrievers = resource.ExtGetChildResourceRetrievers().Clone();
 
                                         foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers) {
-                                            IChildResource pathResource = ChildResourceFactory.GetChildResource(Path);
+                                            //FileSystemInfo pathResource = ChildResourceFactory.GetChildResource(Path);
+                                            DirectoryInfo directoryInfo = new DirectoryInfo(Path);
 
-                                            if (pathResource != null &&
-                                                pathResource.Root.FullPath.ToLower().Equals(resource.FullPath.ToLower())) {
+                                            if (directoryInfo != null &&
+                                                directoryInfo.Root.Name.ToLower().Equals(resource.Name.ToLower())) {
                                                 isLocalDiskFound = true;
 
-                                                pathResource.Execute(view);
-                                                highlightParentResource(resource.Root, item.Image);
+                                                ((FileSystemInfo)directoryInfo).ExtExecute(view);
+                                                highlightParentResource(driveInfo, item.Image);
                                             }
 
                                             break;
@@ -367,27 +371,24 @@ namespace SharpFile {
 
                                     // If there is no defined path to retrieve, then attempt to get 
                                     // information about the the first drive found tha tis local and ready.
-                                    if (!isLocalDiskFound && resource is SharpFile.IO.ParentResources.DriveInfo) {
-                                        SharpFile.IO.ParentResources.DriveInfo driveInfo =
-                                            (SharpFile.IO.ParentResources.DriveInfo)resource;
-
-                                        if (driveInfo.DriveType == DriveType.Fixed &&
+                                    if (!isLocalDiskFound) {
+                                        if (driveInfo.DriveType == System.IO.DriveType.Fixed &&
                                             driveInfo.IsReady) {
                                             isLocalDiskFound = true;
 
-                                            resource.Execute(view);
-                                            highlightParentResource(resource, item.Image);
+                                            resource.ExtExecute(view);
+                                            highlightParentResource(driveInfo, item.Image);
                                         }
                                     }
                                 }
                             }
                         }
 
-                        if (childResourceRetrievers == null &&
-                            resources != null &&
-                            resources.Count > 0) {
-                            childResourceRetrievers = resources[0].ChildResourceRetrievers.Clone();
-                        }
+                        //if (childResourceRetrievers == null &&
+                        //    resources != null &&
+                        //    resources.Count > 0) {
+                        //    childResourceRetrievers = resources[0].ChildResourceRetrievers.Clone();
+                        //}
                     });
                 }
             }
@@ -398,11 +399,11 @@ namespace SharpFile {
         /// <summary>
         /// Highlights the passed-in drive.
         /// </summary>
-        private void highlightParentResource(IResource resource, Image image) {
+        private void highlightParentResource(DriveInfo resource, Image image) {
             foreach (ToolStripItem item in tlsDrives.DropDownItems) {
-                IResource parentResource = ((IResource)item.Tag);
+                DriveInfo parentResource = ((DriveInfo)item.Tag);
 
-                if (parentResource.FullPath == resource.FullPath) {
+                if (parentResource.Name == resource.Name) {
                     item.BackColor = SystemColors.HighlightText;
 
                     tlsDrives.Image = image;
@@ -451,13 +452,13 @@ namespace SharpFile {
             get {
                 if (string.IsNullOrEmpty(this.tlsPath.Text)) {
                     if (ParentResource == null ||
-                        string.IsNullOrEmpty(ParentResource.FullPath)) {
+                        string.IsNullOrEmpty(ParentResource.Name)) {
                         this.tlsPath.Text = @"C:\";
 
                         Settings.Instance.Logger.Log(LogLevelType.Verbose,
                             @"Path is null for {0}; assume C:\ is valid.", Name);
                     } else {
-                        this.tlsPath.Text = ParentResource.FullPath;
+                        this.tlsPath.Text = ParentResource.Name;
                     }
                 }
 
@@ -467,7 +468,7 @@ namespace SharpFile {
                 if (value != null) {
                     string path = value;
 
-                    IChildResource resource = ChildResourceFactory.GetChildResource(path);
+                    FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(path);
 
                     if (resource is DirectoryInfo && 
                         !path.EndsWith(@"\")) {
@@ -506,7 +507,7 @@ namespace SharpFile {
         /// <summary>
         /// The current FileSystemWatcher.
         /// </summary>
-        public FileSystemWatcher FileSystemWatcher {
+        public SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher {
             get {
                 return fileSystemWatcher;
             }
@@ -515,9 +516,9 @@ namespace SharpFile {
         /// <summary>
         /// The currently selected drive.
         /// </summary>
-        public IResource ParentResource {
+        public DriveInfo ParentResource {
             get {
-                return (IResource)tlsDrives.Tag;
+                return (DriveInfo)tlsDrives.Tag;
             }
         }
 

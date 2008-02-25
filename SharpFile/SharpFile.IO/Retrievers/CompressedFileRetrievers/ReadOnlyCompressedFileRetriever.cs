@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Zip;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
+using System.IO;
 
 namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
     public class ReadOnlyCompressedFileRetriever : CompressedFileRetriever {
@@ -20,23 +21,21 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return childResourceRetriever;
         }
 
-        protected override IEnumerable<IChildResource> getResources(IResource resource, string filter) {
-            List<IChildResource> resources = new List<IChildResource>();
+        protected override IEnumerable<FileSystemInfo> getResources(FileSystemInfo resource, string filter) {
+            List<FileSystemInfo> resources = new List<FileSystemInfo>();
 
             ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();
             childResourceRetrievers.AddRange(Settings.Instance.Resources[0].ChildResourceRetrievers);
 
             if (Settings.Instance.ShowRootDirectory) {
-                resources.Add(new RootDirectoryInfo(new System.IO.DirectoryInfo(resource.Root.FullPath),
-                            childResourceRetrievers));
+                resources.Add(new System.IO.DirectoryInfo(resource.Root.FullPath));
             }
 
             if (Settings.Instance.ShowParentDirectory) {
                 if (!Settings.Instance.ShowRootDirectory ||
                     (Settings.Instance.ShowRootDirectory &&
                     !resource.Path.ToLower().Equals(resource.Root.Name.ToLower()))) {
-                    resources.Add(new ParentDirectoryInfo(new System.IO.DirectoryInfo(resource.Path),
-                        childResourceRetrievers));
+                    resources.Add(new System.IO.DirectoryInfo(resource.Path));
                 }
             }
 

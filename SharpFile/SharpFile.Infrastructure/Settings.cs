@@ -417,7 +417,24 @@ namespace SharpFile.Infrastructure {
         /// Derived resources.
         /// </summary>
         [XmlIgnore]
-        public List<IResource> Resources {
+        public List<DirectoryInfo> Resources {
+            get {
+                List<DirectoryInfo> resources = new List<DirectoryInfo>();
+
+                foreach (IResourceRetriever retriever in ResourceRetrievers) {
+                    resources.AddRange(retriever.Get());
+                }
+
+                return resources;
+            }
+        }
+
+        /*
+        /// <summary>
+        /// Derived resources.
+        /// </summary>
+        [XmlIgnore]
+        public List<DriveInfo> Resources {
             get {
                 if (resourceRetrievers == null || resourceRetrievers.Count == 0) {
                     resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverInfos.Count);
@@ -511,13 +528,113 @@ namespace SharpFile.Infrastructure {
                     Save();
                 }
 
-                List<IResource> resources = new List<IResource>();
+                List<DriveInfo> resources = new List<DriveInfo>();
 
                 foreach (IResourceRetriever retriever in resourceRetrievers) {
                     resources.AddRange(retriever.Get());
                 }
 
                 return resources;
+            }
+        }
+        */
+
+        [XmlIgnore]
+        public List<IResourceRetriever> ResourceRetrievers {
+            get {
+                if (resourceRetrievers == null || resourceRetrievers.Count == 0) {
+                    resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverInfos.Count);
+
+                    foreach (ResourceRetrieverInfo resourceRetrieverInfo in resourceRetrieverInfos) {
+                        try {
+                            IResourceRetriever resourceRetriever = Reflection.InstantiateObject<IResourceRetriever>(
+                                resourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                resourceRetrieverInfo.FullyQualifiedType.Type);
+
+                            foreach (string childResourceRetrieverName in resourceRetrieverInfo.ChildResourceRetrievers) {
+                                ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
+                                    return c.Name == childResourceRetrieverName;
+                                });
+
+                                if (childResourceRetrieverInfo != null) {
+                                    try {
+                                        IChildResourceRetriever childResourceRetriever = Reflection.InstantiateObject<IChildResourceRetriever>(
+                                            childResourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                            childResourceRetrieverInfo.FullyQualifiedType.Type);
+
+                                        childResourceRetriever.Name = childResourceRetrieverName;
+                                        childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
+
+                                        if (childResourceRetrieverInfo.CustomMethod is ChildResourceRetriever.CustomMethodWithArgumentsDelegate) {
+                                            childResourceRetriever.CustomMethodWithArguments += (ChildResourceRetriever.CustomMethodWithArgumentsDelegate)childResourceRetrieverInfo.CustomMethod;
+                                            childResourceRetriever.CustomMethodArguments = childResourceRetrieverInfo.CustomMethodArguments;
+                                        } else if (childResourceRetrieverInfo.CustomMethod is ChildResourceRetriever.CustomMethodDelegate) {
+                                            childResourceRetriever.CustomMethod += (ChildResourceRetriever.CustomMethodDelegate)childResourceRetrieverInfo.CustomMethod;
+                                        }
+
+                                        ViewInfo viewInfo = viewInfos.Find(delegate(ViewInfo v) {
+                                            return v.Name == childResourceRetrieverInfo.View;
+                                        });
+
+                                        if (viewInfo != null) {
+                                            try {
+                                                IView view = Reflection.InstantiateObject<IView>(
+                                                    viewInfo.FullyQualifiedType.Assembly,
+                                                    viewInfo.FullyQualifiedType.Type);
+
+                                                if (viewInfo.Comparer != null) {
+                                                    view.Comparer = viewInfo.Comparer;
+                                                }
+
+                                                childResourceRetriever.View = view;
+                                            } catch (TypeLoadException ex) {
+                                                Logger.Log(LogLevelType.ErrorsOnly,
+                                                    "View, {0}, is not derived from IView.",
+                                                    viewInfo.Name);
+                                            }
+                                        } else {
+                                            Logger.Log(LogLevelType.ErrorsOnly,
+                                                "View, {0}, could not be found.",
+                                                childResourceRetrieverInfo.View);
+                                        }
+
+                                        if (resourceRetriever.ChildResourceRetrievers == null) {
+                                            resourceRetriever.ChildResourceRetrievers = new ChildResourceRetrievers();
+                                        }
+
+                                        resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
+                                    } catch (MissingMethodException ex) {
+                                        Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                            "ChildResourceRetriever, {0}, could not be instantiated.",
+                                            childResourceRetrieverName);
+                                    } catch (TypeLoadException ex) {
+                                        Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                            "ChildResourceRetriever, {0}, could not be instantiated.",
+                                            childResourceRetrieverName);
+                                    }
+                                } else {
+                                    Logger.Log(LogLevelType.ErrorsOnly,
+                                        "ChildResourceRetriever, {0}, could not be found.",
+                                        childResourceRetrieverName);
+                                }
+                            }
+
+                            resourceRetrievers.Add(resourceRetriever);
+                        } catch (MissingMethodException ex) {
+                            Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "ResourceRetriever, {0}, could not be instantiated (is it an abstract class?).",
+                                resourceRetrieverInfo.Name);
+                        } catch (TypeLoadException ex) {
+                            Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "ResourceRetriever, {0}, could not be instantiated.",
+                                resourceRetrieverInfo.Name);
+                        }
+                    }
+
+                    Save();
+                }
+
+                return resourceRetrievers;
             }
         }
 

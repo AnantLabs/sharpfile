@@ -5,6 +5,7 @@ using Common;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using View = SharpFile.Infrastructure.View;
+using System.IO;
 
 namespace SharpFile {
     public class Child : UserControl {
@@ -43,7 +44,7 @@ namespace SharpFile {
             }
         }
 
-        private int OnGetImageIndex(IResource fsi) {
+        private int OnGetImageIndex(FileSystemInfo fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
             }

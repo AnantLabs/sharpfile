@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Common;
 using Common.Logger;
+using SharpFile.ExtensionMethods;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.UI;
-using DirectoryInfo = SharpFile.IO.ChildResources.DirectoryInfo;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
 
@@ -22,7 +23,7 @@ namespace SharpFile {
         private const int SHIFT = 4;
 
         private UnitDisplay unitDisplay = UnitDisplay.Bytes;
-        private IList<IChildResource> selectedFileSystemInfos = new List<IChildResource>();
+        private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
         private long totalSelectedSize = 0;
         private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
         private IViewComparer comparer = new ListViewItemComparer();
@@ -86,7 +87,7 @@ namespace SharpFile {
                 int maxIndex = 0;
 
                 foreach (ListViewItem item in this.SelectedItems) {
-                    IChildResource fileSystemInfo = (IChildResource)item.Tag;
+                    FileSystemInfo fileSystemInfo = (FileSystemInfo)item.Tag;
 
                     if (item.Index > maxIndex) {
                         maxIndex = item.Index;
@@ -114,7 +115,7 @@ namespace SharpFile {
                                     backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
                                         backgroundWorker.ReportProgress(50);
                                         item.SubItems[sizeIndex].Text = "...";
-                                        eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).GetSize();
+                                        eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).ExtGetSize();
                                         this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
 
                                         backgroundWorker.ReportProgress(100);
@@ -139,13 +140,13 @@ namespace SharpFile {
                                     backgroundWorker.RunWorkerAsync(fileSystemInfo);
                                 }
                             } else {
-                                updateSelectedTotalSize(fileSystemInfo.Size);
+                                updateSelectedTotalSize(fileSystemInfo.ExtGetSize());
                             }
                         }
                     } else {
                         item.ForeColor = Color.Black;
                         selectedFileSystemInfos.Remove(fileSystemInfo);
-                        updateSelectedTotalSize(-fileSystemInfo.Size);
+                        updateSelectedTotalSize(-fileSystemInfo.ExtGetSize());
                     }
 
                     item.Focused = false;
@@ -165,10 +166,10 @@ namespace SharpFile {
         /// </summary>
         private void execute() {
             if (this.SelectedItems.Count > 0) {
-                IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
+                FileSystemInfo resource = this.SelectedItems[0].Tag as FileSystemInfo;
 
                 if (resource != null) {
-                    resource.Execute(this);
+                    resource.ExtExecute(this);
                 }
             }
         }
@@ -210,7 +211,7 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fsi"></param>
         /// <returns></returns>
-        public int OnGetImageIndex(IResource fsi) {
+        public int OnGetImageIndex(FileSystemInfo fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
             }
@@ -300,21 +301,21 @@ namespace SharpFile {
 
             string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string fileDrop in fileDrops) {
-                IChildResource resource = ChildResourceFactory.GetChildResource(fileDrop);
+                FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
 
                 if (resource != null) {
                     string destination = string.Format(@"{0}{1}",
                                                        Path,
                                                        resource.Name);
 
-                    if (!FileInfo.Exists(destination)) {
+                    if (!File.Exists(destination)) {
                         try {
                             switch (e.Effect) {
                                 case DragDropEffects.Copy:
-                                    resource.Copy(destination);
+                                    resource.ExtCopy(destination);
                                     break;
                                 case DragDropEffects.Move:
-                                    resource.Move(destination);
+                                    resource.ExtMove(destination);
                                     break;
                                 case DragDropEffects.Link:
                                     // TODO: Need to handle links.
@@ -376,7 +377,7 @@ namespace SharpFile {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
                 if (files.Length > 0) {
-                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(files[0]);
+                    FileInfo fileInfo = new FileInfo(files[0]);
                     string originalPath = fileInfo.FullName.Substring(0, fileInfo.FullName.IndexOf(':')).ToLower();
                     string currentPath = Path.Substring(0, Path.IndexOf(':')).ToLower();
 
@@ -426,7 +427,7 @@ namespace SharpFile {
         /// </summary>
         private void listView_BeforeLabelEdit(object sender, LabelEditEventArgs e) {
             ListViewItem item = this.Items[e.Item];
-            IResource resource = (IResource)item.Tag;
+            FileSystemInfo resource = (FileSystemInfo)item.Tag;
 
             if (item.Tag is ParentDirectoryInfo ||
                 item.Tag is RootDirectoryInfo) {
@@ -440,7 +441,7 @@ namespace SharpFile {
         private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
             if (!string.IsNullOrEmpty(e.Label)) {
                 ListViewItem item = this.Items[e.Item];
-                IChildResource resource = (IChildResource)item.Tag;
+                FileSystemInfo resource = (FileSystemInfo)item.Tag;
 
                 if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
                     string destination = string.Format("{0}{1}",
@@ -448,7 +449,7 @@ namespace SharpFile {
                                                        e.Label);
 
                     try {
-                        resource.Move(destination);
+                        resource.ExtMove(destination);
                     } catch (Exception ex) {
                         e.CancelEdit = true;
 
@@ -491,7 +492,7 @@ namespace SharpFile {
         /// <summary>
         /// Parses the file/directory information and updates the listview.
         /// </summary>
-        public void AddItemRange(IEnumerable<IChildResource> resources) {
+        public void AddItemRange(IEnumerable<FileSystemInfo> resources) {
             Settings.Instance.Logger.Log(LogLevelType.Verbose, "Starting to add item range of resources.");
 
             if (this.SmallImageList == null) {
@@ -513,12 +514,12 @@ namespace SharpFile {
                         StringBuilder sb = new StringBuilder();
 
                         // Create a new listview item with the display name.
-                        foreach (IChildResource resource in resources) {
+                        foreach (FileSystemInfo resource in resources) {
                             try {
                                 addItem(resource);
                             } catch (Exception ex) {
                                 sb.AppendFormat("{0}: {1}",
-                                     resource.FullPath,
+                                     resource.FullName,
                                      ex.Message);
                             }
                         }
@@ -561,12 +562,12 @@ namespace SharpFile {
                 StringBuilder sb = new StringBuilder();
 
                 // Create a new listview item with the display name.
-                foreach (IChildResource resource in resources) {
+                foreach (FileSystemInfo resource in resources) {
                     try {
                         addItem(resource);
                     } catch (Exception ex) {
                         sb.AppendFormat("{0}: {1}",
-                             resource.FullPath,
+                             resource.FullName,
                              ex.Message);
                     }
                 }
@@ -593,7 +594,7 @@ namespace SharpFile {
         /// <summary>
         /// Parses the file/directory information and inserts the file info into the listview.
         /// </summary>
-        public void InsertItem(IChildResource resource) {
+        public void InsertItem(FileSystemInfo resource) {
             if (resource != null) {
                 try {
                     // Create a new listview item with the display name.
@@ -608,7 +609,7 @@ namespace SharpFile {
                 } catch (Exception ex) {
                     Settings.Instance.Logger.ProcessContent += ShowMessageBox;
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Resource, {0} could not be added to the listview.", resource.FullPath);
+                        "Resource, {0} could not be added to the listview.", resource.FullName);
                     Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                 }
             }
@@ -618,10 +619,10 @@ namespace SharpFile {
         /// Adds the item to the view.
         /// </summary>
         /// <param name="resource">Resource to add.</param>
-        protected void addItem(IChildResource resource) {
-            if (!itemDictionary.ContainsKey(resource.FullPath)) {
+        protected void addItem(FileSystemInfo resource) {
+            if (!itemDictionary.ContainsKey(resource.FullName)) {
                 ListViewItem item = createListViewItem(resource);
-                itemDictionary.Add(resource.FullPath, item);
+                itemDictionary.Add(resource.FullName, item);
                 this.Items.Add(item);
             }
         }
@@ -631,10 +632,10 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fileSystemInfo">Filesystem information.</param>
         /// <returns>Listview item that references the filesystem object.</returns>
-        protected ListViewItem createListViewItem(IChildResource resource) {
+        protected ListViewItem createListViewItem(FileSystemInfo resource) {
             ListViewItem item = new ListViewItem();
             item.Tag = resource;
-            item.Name = resource.FullPath;
+            item.Name = resource.FullName;
 
             if (resource is FileInfo) {
                 fileCount++;
@@ -667,10 +668,11 @@ namespace SharpFile {
 
                 // HACK: This is to prevent parent/root directories from showing any information except for their display name.
                 // TODO: Determine a better way to prevent parent/root directories from showing information.
-                if (!propertyName.Equals("DisplayName") &&
+                if (!propertyName.Equals("Name") &&
                     (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
                     // Don't show anything for this resource type.
-                } else if (propertyName.Equals("Size") && resource is DirectoryInfo) {
+                } else 
+                    if (propertyName.Equals("Size") && resource is DirectoryInfo) {
                     // Don't show anything for this resource type.
                 } else {
                     if (propertyInfo != null) {
@@ -772,18 +774,18 @@ namespace SharpFile {
         /// <summary>
         /// Current FileSystemWatcher.
         /// </summary>
-        public FileSystemWatcher FileSystemWatcher {
+        public SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher {
             get {
-                return Forms.GetPropertyInParent<FileSystemWatcher>(this.Parent, "FileSystemWatcher");
+                return Forms.GetPropertyInParent<SharpFile.Infrastructure.FileSystemWatcher>(this.Parent, "FileSystemWatcher");
             }
         }
 
         /// <summary>
         /// Current drive.
         /// </summary>
-        public IResource DriveInfo {
+        public DriveInfo DriveInfo {
             get {
-                return Forms.GetPropertyInParent<IResource>(this.Parent, "ParentResource");
+                return Forms.GetPropertyInParent<DriveInfo>(this.Parent, "ParentResource");
             }
         }
 

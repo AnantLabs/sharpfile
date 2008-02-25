@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
+using System.IO;
 
 namespace SharpFile {
     public class DualParent : BaseParent {
@@ -27,7 +28,7 @@ namespace SharpFile {
             child1.TabControl.Appearance = TabAppearance.FlatButtons;
             child1.TabControl.IsVisible = true;
             child1.Dock = DockStyle.Fill;
-            child1.GetImageIndex += delegate(IResource fsi) {
+            child1.GetImageIndex += delegate(FileSystemInfo fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
 
@@ -49,7 +50,7 @@ namespace SharpFile {
             child2.Dock = DockStyle.Fill;
             child2.TabControl.IsVisible = true;
             child2.TabControl.Appearance = TabAppearance.FlatButtons;
-            child2.GetImageIndex += delegate(IResource fsi) {
+            child2.GetImageIndex += delegate(FileSystemInfo fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
 
