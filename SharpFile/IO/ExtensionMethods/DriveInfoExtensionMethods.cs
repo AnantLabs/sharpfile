@@ -20,8 +20,8 @@ namespace SharpFile.ExtensionMethods {
         /// Get directories.
         /// </summary>
         /// <param name="directoryInfo">DirectoryInfo to get directories for.</param>
-        /// <returns>List of FileSystemInfo objects.</returns>
-        public static IEnumerable<FileSystemInfo> ExtGetDirectories(this DriveInfo driveInfo) {
+        /// <returns>List of IChildResource objects.</returns>
+        public static IEnumerable<IChildResource> ExtGetDirectories(this DriveInfo driveInfo) {
             return driveInfo.RootDirectory.ExtGetDirectories();
         }
 
@@ -29,8 +29,8 @@ namespace SharpFile.ExtensionMethods {
         /// Get files.
         /// </summary>
         /// <param name="directoryInfo">DirectoryInfo to get files for.</param>
-        /// <returns>List of FileSystemInfo objects.</returns>
-        public static IEnumerable<FileSystemInfo> ExtGetFiles(this DriveInfo driveInfo) {
+        /// <returns>List of IChildResource objects.</returns>
+        public static IEnumerable<IChildResource> ExtGetFiles(this DriveInfo driveInfo) {
             return ExtGetFiles(driveInfo, string.Empty);
         }
 
@@ -39,8 +39,8 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="directoryInfo">DirectoryInfo to get files for.</param>
         /// <param name="filter">Filter what is retrieved.</param>
-        /// <returns>List of FileSystemInfo objects.</returns>
-        public static IEnumerable<FileSystemInfo> ExtGetFiles(this DriveInfo driveInfo, string filter) {
+        /// <returns>List of IChildResource objects.</returns>
+        public static IEnumerable<IChildResource> ExtGetFiles(this DriveInfo driveInfo, string filter) {
             return driveInfo.RootDirectory.ExtGetFiles(filter);
         }
     }

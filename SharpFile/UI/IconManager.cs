@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
@@ -15,7 +14,7 @@ namespace SharpFile.UI {
         /// <param name="fsi">File system object.</param>
         /// <param name="imageList">ImageList.</param>
         /// <returns>Image index.</returns>
-        public static int GetImageIndex(FileSystemInfo fsi, ImageList imageList) {
+        public static int GetImageIndex(IChildResource fsi, ImageList imageList) {
             int imageIndex = imageList.Images.Count;
             string fullPath = fsi.FullName;
 
@@ -42,7 +41,7 @@ namespace SharpFile.UI {
                     imageIndex = imageList.Images.IndexOfKey(extension);
                 }
             } else if (fsi is DirectoryInfo || fsi is ParentDirectoryInfo || fsi is RootDirectoryInfo) {
-                DirectoryInfo directoryInfo = Settings.Instance.Resources.Find(delegate(DirectoryInfo di) {
+                IChildResource directoryInfo = Settings.Instance.Resources.Find(delegate(IChildResource di) {
                     return (di.FullName.ToLower().Equals(fsi.FullName.ToLower()));
                 });
 

@@ -12,9 +12,9 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="directoryInfo">DirectoryInfo to get directories for.</param>
         /// <returns>List of FileSystemInfo objects.</returns>
-        public static IEnumerable<FileSystemInfo> ExtGetDirectories(this DirectoryInfo directoryInfo) {
+        public static IEnumerable<IChildResource> ExtGetDirectories(this SharpFile.IO.ChildResources.DirectoryInfo directoryInfo) {
             DirectoryInfo[] directoryInfos = directoryInfo.GetDirectories();
-            List<FileSystemInfo> directories = new List<FileSystemInfo>(directoryInfos.Length + 2);
+            List<IChildResource> directories = new List<IChildResource>(directoryInfos.Length + 2);
 
             // Show root directory if specified.
             if (Settings.Instance.ShowRootDirectory) {
@@ -43,8 +43,8 @@ namespace SharpFile.ExtensionMethods {
         /// Get files.
         /// </summary>
         /// <param name="directoryInfo">DirectoryInfo to get files for.</param>
-        /// <returns>List of FileSystemInfo objects.</returns>
-        public static IEnumerable<FileSystemInfo> ExtGetFiles(this DirectoryInfo directoryInfo) {
+        /// <returns>List of IChildResource objects.</returns>
+        public static IEnumerable<IChildResource> ExtGetFiles(this SharpFile.IO.ChildResources.DirectoryInfo directoryInfo) {
             return ExtGetFiles(directoryInfo, string.Empty);
         }
 
@@ -53,8 +53,8 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="directoryInfo">DirectoryInfo to get files for.</param>
         /// <param name="filter">Filter what is retrieved.</param>
-        /// <returns>List of FileSystemInfo objects.</returns>
-        public static IEnumerable<FileSystemInfo> ExtGetFiles(this DirectoryInfo directoryInfo, string filter) {
+        /// <returns>List of IChildResource objects.</returns>
+        public static IEnumerable<IChildResource> ExtGetFiles(this SharpFile.IO.ChildResources.DirectoryInfo directoryInfo, string filter) {
             System.IO.FileInfo[] fileInfos = null;
 
             if (string.IsNullOrEmpty(filter)) {
@@ -64,7 +64,7 @@ namespace SharpFile.ExtensionMethods {
                     System.IO.SearchOption.TopDirectoryOnly);
             }
 
-            return new List<FileSystemInfo>(fileInfos);
+            return new List<IChildResource>(fileInfos);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="directoryInfo">DirectoryInfo to copy.</param>
         /// <param name="destination">Destination to copy to.</param>
-        public static void ExtCopy(this DirectoryInfo directoryInfo, string destination) {
+        public static void ExtCopy(this SharpFile.IO.ChildResources.DirectoryInfo directoryInfo, string destination) {
             // Make sure the destination is correct.
             if (!destination.EndsWith(@"\")) {
                 destination += @"\";

@@ -10,9 +10,9 @@ namespace SharpFile.ExtensionMethods {
         /// <summary>
         /// Retrieves all child resource retrievers associated with the file system object.
         /// </summary>
-        /// <param name="fsi">FileSystemInfo object.</param>
+        /// <param name="fsi">IChildResource object.</param>
         /// <returns>All child resource retrievers.</returns>
-        public static ChildResourceRetrievers ExtGetChildResourceRetrievers(this FileSystemInfo fsi) {
+        public static ChildResourceRetrievers ExtGetChildResourceRetrievers(this IChildResource fsi) {
             return fsi.ExtGetChildResourceRetrievers(false);
         }
 
@@ -22,7 +22,7 @@ namespace SharpFile.ExtensionMethods {
         /// <param name="fsi">File system object.</param>
         /// <param name="filterByFsi">Whether or not to filter the child resource retrievers by the file system object.</param>
         /// <returns>Appropriate child resource retrievers.</returns>
-        public static ChildResourceRetrievers ExtGetChildResourceRetrievers(this FileSystemInfo fsi, bool filterByFsi) {
+        public static ChildResourceRetrievers ExtGetChildResourceRetrievers(this IChildResource fsi, bool filterByFsi) {
             ChildResourceRetrievers childResourceRetrievers = null;
             int resourceIndex = 0;
 
@@ -54,7 +54,7 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="fsi">File system object.</param>
         /// <param name="view">View to populate.</param>
-        public static void ExtExecute(this FileSystemInfo fsi, IView view) {
+        public static void ExtExecute(this IChildResource fsi, IView view) {
             // Retrieve the correct child resource retrievers for this object.
             List<IChildResourceRetriever> childResourceRetrievers = new List<IChildResourceRetriever>(
                 fsi.ExtGetChildResourceRetrievers(true));
@@ -87,7 +87,7 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="fsi">File system object.</param>
         /// <returns>Size of the file system object.</returns>
-        public static long ExtGetSize(this FileSystemInfo fsi) {
+        public static long ExtGetSize(this IChildResource fsi) {
             long size = getSize(fsi);
 
             return size;
@@ -98,7 +98,7 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="fsi">File system object.</param>
         /// <returns>DriveInfo of the root.</returns>
-        public static DriveInfo ExtGetRoot(this FileSystemInfo fsi) {
+        public static DriveInfo ExtGetRoot(this IChildResource fsi) {
             string root = fsi.FullName.Substring(0, fsi.FullName.IndexOf('\\'));
 
             return new DriveInfo(root);
@@ -109,7 +109,7 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="fsi">File system object to copy.</param>
         /// <param name="destination">Destination to copy the file system object to.</param>
-        public static void ExtCopy(this FileSystemInfo fsi, string destination) {
+        public static void ExtCopy(this IChildResource fsi, string destination) {
             if (fsi is FileInfo) {
                 ((FileInfo)fsi).CopyTo(destination, false);
             } else if (fsi is DirectoryInfo) {
@@ -122,7 +122,7 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="fsi">File system object to move.</param>
         /// <param name="destination">Destination to move the file system object to.</param>
-        public static void ExtMove(this FileSystemInfo fsi, string destination) {
+        public static void ExtMove(this IChildResource fsi, string destination) {
             if (fsi is FileInfo) {
                 ((FileInfo)fsi).MoveTo(destination);
             } else if (fsi is DirectoryInfo) {
@@ -135,7 +135,7 @@ namespace SharpFile.ExtensionMethods {
         /// </summary>
         /// <param name="fsi">File system object.</param>
         /// <returns>Size.</returns>
-        private static long getSize(FileSystemInfo fsi) {
+        private static long getSize(IChildResource fsi) {
             long totalSize = 0;
 
             if (fsi is FileInfo) {

@@ -28,7 +28,7 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        public bool OnCustomMethod(FileSystemInfo resource) {
+        public bool OnCustomMethod(IChildResource resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
             }
@@ -36,7 +36,7 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
-        public bool OnCustomMethodWithArguments(FileSystemInfo resource, List<string> arguments) {
+        public bool OnCustomMethodWithArguments(IChildResource resource, List<string> arguments) {
             if (CustomMethodWithArguments != null) {
                 return CustomMethodWithArguments(resource, arguments);
             }
@@ -44,7 +44,7 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
-        public void Execute(IView view, FileSystemInfo resource) {
+        public void Execute(IView view, IChildResource resource) {
             Settings.Instance.Logger.Log(LogLevelType.Verbose,
                 "Starting to Execute.");
 
@@ -56,7 +56,7 @@ namespace SharpFile.IO.Retrievers {
                 System.Diagnostics.Process.Start(processStartInfo);
 
                 return;
-            } else if (resource is FileSystemInfo) {
+            } else if (resource is IChildResource) {
                 DirectoryInfo directoryInfo = null;
 
                 if (resource is DirectoryInfo) {
@@ -115,11 +115,11 @@ namespace SharpFile.IO.Retrievers {
                         if (e.Error == null &&
                             !e.Cancelled &&
                             e.Result != null &&
-                            e.Result is IEnumerable<FileSystemInfo>) {
+                            e.Result is IEnumerable<IChildResource>) {
                             Settings.Instance.Logger.Log(LogLevelType.Verbose,
                                 "Get resources complete.");
 
-                            IEnumerable<System.IO.FileSystemInfo> resources = (IEnumerable<System.IO.FileSystemInfo>)e.Result;
+                            IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
 
                             view.BeginUpdate();
                             view.ColumnInfos = ColumnInfos;
@@ -200,9 +200,8 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        private IEnumerable<FileSystemInfo> getResources(DirectoryInfo directoryInfo, string filter) {
-            List<FileSystemInfo> resources = new List<FileSystemInfo>();
-
+        private IEnumerable<IChildResource> getResources(SharpFile.IO.ChildResources.DirectoryInfo directoryInfo, string filter) {
+            List<IChildResource> resources = new List<IChildResource>();
             resources.AddRange(directoryInfo.ExtGetDirectories());
             resources.AddRange(directoryInfo.ExtGetFiles(filter));
 

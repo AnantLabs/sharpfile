@@ -84,7 +84,7 @@ namespace SharpFile {
         /// Passes the filesystem info to any listening events.
         /// </summary>
         /// <returns>Image index.</returns>
-        protected int OnGetImageIndex(FileSystemInfo fsi) {
+        protected int OnGetImageIndex(IChildResource fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
             }
@@ -164,7 +164,7 @@ namespace SharpFile {
         /// </summary>
         private void tlsPath_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyData == Keys.Enter) {
-                FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+                IChildResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
 
                 if (resource != null) {
                     resource.ExtExecute(view);
@@ -183,7 +183,7 @@ namespace SharpFile {
         /// Refreshes the view when Enter is pressed in the filter textbox.
         /// </summary>
         private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
-            FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+            IChildResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
             resource.ExtExecute(view);
         }
 
@@ -235,7 +235,7 @@ namespace SharpFile {
         /// </summary>
         private void fileSystemWatcher_Changed(object sender, System.IO.FileSystemEventArgs e) {
             string path = e.FullPath;
-            FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(path);
+            IChildResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
 
             if (view.Control.IsHandleCreated) {
                 // Required to ensure the view update occurs on the calling thread.
@@ -361,7 +361,7 @@ namespace SharpFile {
                                                 directoryInfo.Root.Name.ToLower().Equals(resource.Name.ToLower())) {
                                                 isLocalDiskFound = true;
 
-                                                ((FileSystemInfo)directoryInfo).ExtExecute(view);
+                                                ((IChildResource)directoryInfo).ExtExecute(view);
                                                 highlightParentResource(driveInfo, item.Image);
                                             }
 
@@ -468,7 +468,7 @@ namespace SharpFile {
                 if (value != null) {
                     string path = value;
 
-                    FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(path);
+                    IChildResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
 
                     if (resource is DirectoryInfo && 
                         !path.EndsWith(@"\")) {

@@ -44,7 +44,7 @@ namespace SharpFile {
             }
         }
 
-        private int OnGetImageIndex(FileSystemInfo fsi) {
+        private int OnGetImageIndex(IChildResource fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
             }

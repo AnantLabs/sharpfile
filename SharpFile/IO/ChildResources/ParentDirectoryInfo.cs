@@ -1,8 +1,8 @@
 using SharpFile.Infrastructure;
-using System.IO;
+//using System.IO;
 
 namespace SharpFile.IO.ChildResources {
-    public class ParentDirectoryInfo : FileSystemInfo {
+    public class ParentDirectoryInfo : DirectoryInfo {
         private const string name = "..";
         private DirectoryInfo directoryInfo;
 
@@ -10,6 +10,7 @@ namespace SharpFile.IO.ChildResources {
             directoryInfo = new DirectoryInfo(path);
         }
 
+        /*
         public override void Delete() {
             throw new System.NotImplementedException();
         }
@@ -33,5 +34,6 @@ namespace SharpFile.IO.ChildResources {
                 return directoryInfo;
             }
         }
+         */
     }
 }

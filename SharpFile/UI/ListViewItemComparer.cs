@@ -82,8 +82,8 @@ namespace SharpFile.UI {
             //        return 0;
             //    }
             //} else {
-                System.IO.FileSystemInfo resourceX = (System.IO.FileSystemInfo)itemX.Tag;
-                System.IO.FileSystemInfo resourceY = (System.IO.FileSystemInfo)itemY.Tag;
+            IChildResource resourceX = (IChildResource)itemX.Tag;
+            IChildResource resourceY = (IChildResource)itemY.Tag;
                 string valueX = (string)itemX.SubItems[columnIndex].Tag;
                 string valueY = (string)itemY.SubItems[columnIndex].Tag;
 

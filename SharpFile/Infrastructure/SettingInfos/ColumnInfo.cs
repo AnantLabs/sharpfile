@@ -8,6 +8,7 @@ namespace SharpFile.Infrastructure {
         private string text;
         private string property;
         private bool primaryColumn = false;
+        private bool showForDirectories = true;
         private CustomMethod customMethod;
         private FullyQualifiedMethod methodDelegateType;
 
@@ -43,6 +44,16 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 primaryColumn = value;
+            }
+        }
+
+        [XmlAttribute("ShowForDirectories")]
+        public bool ShowForDirectories {
+            get {
+                return showForDirectories;
+            }
+            set {
+                showForDirectories = value;
             }
         }
 

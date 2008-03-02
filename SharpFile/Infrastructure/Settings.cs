@@ -195,10 +195,14 @@ namespace SharpFile.Infrastructure {
                 foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
                     // Only set properties which have a setter.
                     if (propertyInfo.CanWrite) {
-                        instance.GetType().GetProperty(propertyInfo.Name).SetValue(
-                            instance,
-                            propertyInfo.GetValue(settings, null),
-                            null);
+                        PropertyCaller<Settings, object>.GenGetter getter = PropertyCaller<Settings, object>.CreateGetMethod(propertyInfo);
+                        PropertyCaller<Settings, object>.GenSetter setter = PropertyCaller<Settings, object>.CreateSetMethod(propertyInfo);
+                        setter(instance, getter(settings));
+
+                        //instance.GetType().GetProperty(propertyInfo.Name).SetValue(
+                        //    instance,
+                        //    propertyInfo.GetValue(settings, null),
+                        //    null);
                     }
                 }
             }
@@ -417,9 +421,9 @@ namespace SharpFile.Infrastructure {
         /// Derived resources.
         /// </summary>
         [XmlIgnore]
-        public List<DirectoryInfo> Resources {
+        public List<IChildResource> Resources {
             get {
-                List<DirectoryInfo> resources = new List<DirectoryInfo>();
+                List<IChildResource> resources = new List<IChildResource>();
 
                 foreach (IResourceRetriever retriever in ResourceRetrievers) {
                     resources.AddRange(retriever.Get());

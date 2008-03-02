@@ -15,6 +15,8 @@ using SharpFile.IO.ChildResources;
 using SharpFile.UI;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
+using Phydeaux.Utilities;
+using System.Diagnostics;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
@@ -23,7 +25,7 @@ namespace SharpFile {
         private const int SHIFT = 4;
 
         private UnitDisplay unitDisplay = UnitDisplay.Bytes;
-        private IList<FileSystemInfo> selectedFileSystemInfos = new List<FileSystemInfo>();
+        private IList<IChildResource> selectedFileSystemInfos = new List<IChildResource>();
         private long totalSelectedSize = 0;
         private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
         private IViewComparer comparer = new ListViewItemComparer();
@@ -31,6 +33,7 @@ namespace SharpFile {
         private Dictionary<string, PropertyInfo> propertyInfos = new Dictionary<string, PropertyInfo>();
         private long fileCount = 0;
         private long folderCount = 0;
+        private static readonly object lockObject = new object();
 
         public event View.UpdateStatusDelegate UpdateStatus;
         public event View.UpdateProgressDelegate UpdateProgress;
@@ -87,7 +90,7 @@ namespace SharpFile {
                 int maxIndex = 0;
 
                 foreach (ListViewItem item in this.SelectedItems) {
-                    FileSystemInfo fileSystemInfo = (FileSystemInfo)item.Tag;
+                    IChildResource fileSystemInfo = (IChildResource)item.Tag;
 
                     if (item.Index > maxIndex) {
                         maxIndex = item.Index;
@@ -166,7 +169,7 @@ namespace SharpFile {
         /// </summary>
         private void execute() {
             if (this.SelectedItems.Count > 0) {
-                FileSystemInfo resource = this.SelectedItems[0].Tag as FileSystemInfo;
+                IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
 
                 if (resource != null) {
                     resource.ExtExecute(this);
@@ -211,7 +214,7 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fsi"></param>
         /// <returns></returns>
-        public int OnGetImageIndex(FileSystemInfo fsi) {
+        public int OnGetImageIndex(IChildResource fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
             }
@@ -301,7 +304,7 @@ namespace SharpFile {
 
             string[] fileDrops = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string fileDrop in fileDrops) {
-                FileSystemInfo resource = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
+                IChildResource resource = FileSystemInfoFactory.GetFileSystemInfo(fileDrop);
 
                 if (resource != null) {
                     string destination = string.Format(@"{0}{1}",
@@ -427,7 +430,7 @@ namespace SharpFile {
         /// </summary>
         private void listView_BeforeLabelEdit(object sender, LabelEditEventArgs e) {
             ListViewItem item = this.Items[e.Item];
-            FileSystemInfo resource = (FileSystemInfo)item.Tag;
+            IChildResource resource = (IChildResource)item.Tag;
 
             if (item.Tag is ParentDirectoryInfo ||
                 item.Tag is RootDirectoryInfo) {
@@ -441,7 +444,7 @@ namespace SharpFile {
         private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
             if (!string.IsNullOrEmpty(e.Label)) {
                 ListViewItem item = this.Items[e.Item];
-                FileSystemInfo resource = (FileSystemInfo)item.Tag;
+                IChildResource resource = (IChildResource)item.Tag;
 
                 if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
                     string destination = string.Format("{0}{1}",
@@ -486,14 +489,18 @@ namespace SharpFile {
         /// <param name="path"></param>
         public void RemoveItem(string path) {
             this.Items.RemoveByKey(path);
-            this.itemDictionary.Remove(path);
+
+            lock (lockObject) {
+                this.itemDictionary.Remove(path);
+            }
         }
 
         /// <summary>
         /// Parses the file/directory information and updates the listview.
         /// </summary>
-        public void AddItemRange(IEnumerable<FileSystemInfo> resources) {
-            Settings.Instance.Logger.Log(LogLevelType.Verbose, "Starting to add item range of resources.");
+        public void AddItemRange(IEnumerable<IChildResource> resources) {
+            StringBuilder sb = new StringBuilder();
+            Stopwatch sw = new Stopwatch();
 
             if (this.SmallImageList == null) {
                 this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
@@ -503,20 +510,23 @@ namespace SharpFile {
             fileCount = 0;
             folderCount = 0;
 
-            bool isBackgroundThread = false;
+            bool isBackgroundThread = true;
 
             if (isBackgroundThread) {
                 using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                    List<ListViewItem> listViewItems = new List<ListViewItem>();
                     backgroundWorker.WorkerReportsProgress = true;
 
                     backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
                         backgroundWorker.ReportProgress(50);
-                        StringBuilder sb = new StringBuilder();
+
+                        sw.Start();
 
                         // Create a new listview item with the display name.
-                        foreach (FileSystemInfo resource in resources) {
+                        foreach (IChildResource resource in resources) {
                             try {
-                                addItem(resource);
+                                ListViewItem item = addItem(resource);
+                                listViewItems.Add(item);
                             } catch (Exception ex) {
                                 sb.AppendFormat("{0}: {1}",
                                      resource.FullName,
@@ -524,7 +534,12 @@ namespace SharpFile {
                             }
                         }
 
-                        eventArgs.Result = sb;
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose, "Add resources took {0} ms.",
+                            sw.ElapsedMilliseconds.ToString());
+                        sw.Reset();
+
+                        eventArgs.Result = listViewItems;
+
                         backgroundWorker.ReportProgress(100);
                     };
 
@@ -534,18 +549,17 @@ namespace SharpFile {
 
                     backgroundWorker.RunWorkerCompleted +=
                         delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-                            if (eventArgs.Error == null &&
+                            if (eventArgs.Error == null && 
                                 eventArgs.Result != null &&
-                                eventArgs.Result is StringBuilder) {
-                                StringBuilder sb = (StringBuilder)eventArgs.Result;
+                                eventArgs.Result is List<ListViewItem>) {
+                                List<ListViewItem> items = (List<ListViewItem>)eventArgs.Result;
+                                this.Items.AddRange(items.ToArray());
 
                                 if (sb.Length > 0) {
                                     Settings.Instance.Logger.ProcessContent += ShowMessageBox;
                                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
                                     Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                                 }
-
-                                Settings.Instance.Logger.Log(LogLevelType.Verbose, "Sort resources.");
 
                                 comparer.ColumnIndex = 0;
                                 comparer.Order = Order.Ascending;
@@ -558,13 +572,15 @@ namespace SharpFile {
 
                     backgroundWorker.RunWorkerAsync();
                 }
-            } else {
-                StringBuilder sb = new StringBuilder();
+            } else {           
+                sw.Start();
+                List<ListViewItem> listViewItems = new List<ListViewItem>();
 
                 // Create a new listview item with the display name.
-                foreach (FileSystemInfo resource in resources) {
+                foreach (IChildResource resource in resources) {
                     try {
-                        addItem(resource);
+                        ListViewItem item = addItem(resource);
+                        listViewItems.Add(item);
                     } catch (Exception ex) {
                         sb.AppendFormat("{0}: {1}",
                              resource.FullName,
@@ -572,13 +588,17 @@ namespace SharpFile {
                     }
                 }
 
+                this.Items.AddRange(listViewItems.ToArray());
+
+                Settings.Instance.Logger.Log(LogLevelType.Verbose, "Add resources took {0} ms.",
+                    sw.ElapsedMilliseconds.ToString());
+                sw.Reset();
+
                 if (sb.Length > 0) {
                     Settings.Instance.Logger.ProcessContent += ShowMessageBox;
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
                     Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
                 }
-
-                Settings.Instance.Logger.Log(LogLevelType.Verbose, "Sort resources.");
 
                 comparer.ColumnIndex = 0;
                 comparer.Order = Order.Ascending;
@@ -586,19 +606,20 @@ namespace SharpFile {
 
                 // Resize the columns based on the column content.
                 this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-                OnUpdateStatus(Status);
             }
+
+            OnUpdateStatus(Status);
         }
 
         /// <summary>
         /// Parses the file/directory information and inserts the file info into the listview.
         /// </summary>
-        public void InsertItem(FileSystemInfo resource) {
+        public void InsertItem(IChildResource resource) {
             if (resource != null) {
                 try {
                     // Create a new listview item with the display name.
-                    addItem(resource);
+                    ListViewItem item = addItem(resource);
+                    this.Items.Add(item);
 
                     // Basic stuff that should happen everytime files are shown.
                     this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -619,11 +640,16 @@ namespace SharpFile {
         /// Adds the item to the view.
         /// </summary>
         /// <param name="resource">Resource to add.</param>
-        protected void addItem(FileSystemInfo resource) {
-            if (!itemDictionary.ContainsKey(resource.FullName)) {
-                ListViewItem item = createListViewItem(resource);
-                itemDictionary.Add(resource.FullName, item);
-                this.Items.Add(item);
+        protected ListViewItem addItem(IChildResource resource) {
+            lock (lockObject) {
+                if (!itemDictionary.ContainsKey(resource.FullName)) {
+                    ListViewItem item = createListViewItem(resource);
+                    itemDictionary.Add(resource.FullName, item);
+
+                    return item;
+                } else {
+                    return itemDictionary[resource.FullName];
+                }
             }
         }
 
@@ -632,7 +658,8 @@ namespace SharpFile {
         /// </summary>
         /// <param name="fileSystemInfo">Filesystem information.</param>
         /// <returns>Listview item that references the filesystem object.</returns>
-        protected ListViewItem createListViewItem(FileSystemInfo resource) {
+        protected ListViewItem createListViewItem(IChildResource resource) {
+            resource.Refresh();
             ListViewItem item = new ListViewItem();
             item.Tag = resource;
             item.Name = resource.FullName;
@@ -645,60 +672,136 @@ namespace SharpFile {
                 folderCount++;
             }
 
-            // TODO: Use LCG to retrieve properties here instead of GetProperty. It should be much faster.
-            foreach (ColumnInfo columnInfo in ColumnInfos) {
-                PropertyInfo propertyInfo = null;
-                string propertyName = columnInfo.Property;
-                string text = string.Empty;
-                string tag = string.Empty;
+            //Dictionary<string, string> propertyNameValueHash = new Dictionary<string, string>();
+            //TypeUtility<FileInfo>.MemberGetDelegate<object> fileInfoGetter = null;
+            //TypeUtility<DirectoryInfo>.MemberGetDelegate<object> directoryInfoGetter = null;
 
-                if (propertyInfos.ContainsKey(propertyName)) {
-                    // In case a there was no property info generated from a previous resource, try to retrieve the property info.
-                    // This occurs when viewing compressed files with a parent directory as the first resource.
-                    if (propertyInfo == null) {
-                        propertyInfo = resource.GetType().GetProperty(propertyName);
-                        propertyInfos[propertyName] = propertyInfo;
-                    } else {
-                        propertyInfo = propertyInfos[propertyName];
-                    }
-                } else {
-                    propertyInfo = resource.GetType().GetProperty(propertyName);
-                    propertyInfos.Add(propertyName, propertyInfo);
-                }
+            //string propertyName = "Name";
+            //object getResult = null;
 
-                // HACK: This is to prevent parent/root directories from showing any information except for their display name.
-                // TODO: Determine a better way to prevent parent/root directories from showing information.
-                if (!propertyName.Equals("Name") &&
-                    (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
-                    // Don't show anything for this resource type.
-                } else 
-                    if (propertyName.Equals("Size") && resource is DirectoryInfo) {
-                    // Don't show anything for this resource type.
-                } else {
-                    if (propertyInfo != null) {
-                        text = propertyInfo.GetValue(resource, null).ToString();
+            //if (resource is FileInfo) {
+            //    getResult = Getter<FileInfo>((FileInfo)resource, propertyName);
 
-                        // The original value will be set on the tag for sortability.
-                        tag = text;
+            //    if (TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
+            //        fileInfoGetter = TypeUtility<FileInfo>.GetCachedMemberGetDelegate<object>(propertyName);
+            //        getResult = fileInfoGetter((FileInfo)resource);
+            //    }
+            //} else if (resource is DirectoryInfo) {
+            //    getResult = Getter<DirectoryInfo>((DirectoryInfo)resource, propertyName);
 
-                        if (columnInfo.MethodDelegate != null) {
-                            text = columnInfo.MethodDelegate.Invoke(text);
-                        }
-                    }
-                }
+            //    if (TypeUtility<DirectoryInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
+            //        directoryInfoGetter = TypeUtility<DirectoryInfo>.GetCachedMemberGetDelegate<object>(propertyName);
+            //        getResult = directoryInfoGetter((DirectoryInfo)resource);
+            //    }
+            //}
 
-                if (columnInfo.PrimaryColumn) {
-                    item.Text = text;
-                    item.SubItems[0].Tag = tag;
-                } else {
-                    ListViewItem.ListViewSubItem listViewSubItem =
-                        new ListViewItem.ListViewSubItem();
-                    listViewSubItem.Text = text;
-                    listViewSubItem.Tag = tag;
+            //string name = string.Empty;
+            //if (getResult != null) {
+            //    name = getResult.ToString();
+            //}
 
-                    item.SubItems.Add(listViewSubItem);
-                }
+            if (resource is FileInfo) {
+                item.Text = ((FileInfo)resource).LastWriteTime.ToString();
+                item.SubItems[0].Tag = ((FileInfo)resource).LastWriteTime.ToString();
+            } else {
+                item.Text = string.Empty;
+                item.SubItems[0].Tag = string.Empty;
             }
+
+            return item;
+
+            //Dictionary<string, string> propertyNameValueHash = new Dictionary<string, string>();
+            //TypeUtility<FileInfo>.MemberGetDelegate<object> fileInfoGetter = null;
+            //TypeUtility<DirectoryInfo>.MemberGetDelegate<object> directoryInfoGetter = null;
+
+            //// TODO: Use LCG to retrieve properties here instead of GetProperty. It should be much faster.
+            //foreach (ColumnInfo columnInfo in ColumnInfos) {
+            //    // Exclude for type in ColumnInfo.
+
+            //    //try {
+            //    PropertyInfo propertyInfo = null;
+            //    string propertyName = columnInfo.Property;
+            //    string text = string.Empty;
+            //    string tag = string.Empty;
+
+            //    /*
+            //    // Cache the property infos.
+            //    // In case there was no property info generated from a previous resource, try to retrieve the property info.
+            //    // This occurs when viewing compressed files with a parent directory as the first resource.
+            //    if (propertyInfos.ContainsKey(propertyName) && propertyInfo != null) {
+            //        propertyInfo = propertyInfos[propertyName];
+            //    } else {
+            //        propertyInfo = resource.GetType().GetProperty(propertyName);
+            //        propertyInfos.Add(propertyName, propertyInfo);
+            //    }
+
+            //    propertyInfo = resource.GetType().GetProperty(propertyName);
+
+            //    // HACK: This is to prevent parent/root directories from showing any information except for their display name.
+            //    // TODO: Determine a better way to prevent parent/root directories from showing information.
+            //    if (!propertyName.Equals("Name") &&
+            //        (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
+            //        // Don't show anything for this resource type.
+            //    } else if (propertyName.Equals("Size") && resource is DirectoryInfo) {
+            //        // Don't show anything for this resource type.
+            //    } else {
+            //        if (propertyInfo != null) {
+            //            //PropertyCaller<FileSystemInfo, object>.GenGetter getter =
+            //            //    PropertyCaller<FileSystemInfo, object>.CreateGetMethod(propertyInfo);
+            //     */
+
+            //    if (propertyNameValueHash.ContainsKey(propertyName)) {
+            //        text = propertyNameValueHash[propertyName];
+            //    } else {
+            //        object getResult = null;
+
+            //        if (resource is FileInfo) {
+            //            //getResult = Getter<FileInfo>((FileInfo)resource, propertyName);
+
+            //            if (TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
+            //                fileInfoGetter = TypeUtility<FileInfo>.GetCachedMemberGetDelegate<object>(propertyName);
+            //                getResult = fileInfoGetter((FileInfo)resource);
+            //            }
+            //        } else if (resource is DirectoryInfo) {
+            //            //getResult = Getter<DirectoryInfo>((DirectoryInfo)resource, propertyName);
+
+            //            if (TypeUtility<DirectoryInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
+            //                directoryInfoGetter = TypeUtility<DirectoryInfo>.GetCachedMemberGetDelegate<object>(propertyName);
+            //                getResult = directoryInfoGetter((DirectoryInfo)resource);
+            //            }
+            //        }
+
+            //        if (getResult != null) {
+            //            text = getResult.ToString();
+            //            //text = propertyInfo.GetValue(resource, null).ToString();
+
+            //            propertyNameValueHash.Add(propertyName, text);
+            //        }
+            //    }
+
+            //    // The original value will be set on the tag for sortability.
+            //    tag = text;
+
+            //    if (columnInfo.MethodDelegate != null) {
+            //        text = columnInfo.MethodDelegate.Invoke(text);
+            //    }
+
+            //    if (columnInfo.PrimaryColumn) {
+            //        item.Text = text;
+            //        item.SubItems[0].Tag = tag;
+            //    } else {
+            //        ListViewItem.ListViewSubItem listViewSubItem =
+            //            new ListViewItem.ListViewSubItem();
+            //        listViewSubItem.Text = text;
+            //        listViewSubItem.Tag = tag;
+
+            //        item.SubItems.Add(listViewSubItem);
+            //    }
+            //    //} catch (Exception ex) {
+            //    //    string blob = ex.Message;
+            //    //    // TODO: Record when a column fucks up.
+            //    //}
+            //}
 
             if (true) {
                 int imageIndex = OnGetImageIndex(resource);
@@ -706,6 +809,12 @@ namespace SharpFile {
             }
 
             return item;
+        }
+
+        private static object Getter<T>(T resource, string propertyName) where T : IChildResource {
+            Phydeaux.Utilities.Func<T, object> getter = Dynamic<T>.Instance.Property<object>.Explicit.Getter.CreateDelegate(propertyName);
+
+            return getter(resource);
         }
 
         /// <summary>
