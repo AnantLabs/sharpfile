@@ -1,38 +1,10 @@
-using SharpFile.Infrastructure;
-
 namespace SharpFile.IO.ChildResources {
 	public class RootDirectoryInfo : DirectoryInfo {
-        private const string name = ".";
-        private DirectoryInfo directoryInfo;
+        private const string rootDirectoryName = ".";
 
-        public RootDirectoryInfo(string path) {
-            directoryInfo = new DirectoryInfo(path);
+        public RootDirectoryInfo(string path) : base(path) {
+            name = rootDirectoryName;
+            displayName = rootDirectoryName;
 		}
-
-        /*
-        public override void Delete() {
-            throw new System.NotImplementedException();
-        }
-
-        public override bool Exists {
-            get { throw new System.NotImplementedException(); }
-        }
-
-        public override string Name {
-            get { return name; }
-        }
-
-        public override string FullName {
-            get {
-                return directoryInfo.FullName;
-            }
-        }
-
-        public DirectoryInfo DirectoryInfo {
-            get {
-                return directoryInfo;
-            }
-        }
-         */
     }
 }

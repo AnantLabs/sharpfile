@@ -36,14 +36,14 @@ namespace SharpFile.Infrastructure {
         private bool showRootDirectory = false;
 
         // Infos.
-        private List<ResourceRetrieverInfo> resourceRetrieverInfos;
+        private List<ParentResourceRetrieverInfo> parentResourceRetrieverInfos;
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private List<ViewInfo> viewInfos;
         private LoggerInfo loggerInfo;
 
         // Constructed from infos.
         private LoggerService logger;
-        private List<IResourceRetriever> resourceRetrievers;
+        private List<IParentResourceRetriever> parentResourceRetrievers;
 
         // Sub-settings.
         private DualParentSettings dualParentSettings;
@@ -93,7 +93,7 @@ namespace SharpFile.Infrastructure {
         /// Clears the current resources.
         /// </summary>
         public static void ClearResources() {
-            instance.resourceRetrievers = null;
+            instance.parentResourceRetrievers = null;
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace SharpFile.Infrastructure {
                 LoggerService loggerService = new LoggerService("log.txt", LogLevelType.Verbose);
 
                 // Null out the reource retrievers in case settings are being reloaded.
-                instance.resourceRetrievers = null;
+                instance.parentResourceRetrievers = null;
 
                 try {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
@@ -322,14 +322,14 @@ namespace SharpFile.Infrastructure {
         /// <summary>
         /// Resource retriever infos.
         /// </summary>
-        [XmlArray("ResourceRetrievers")]
-        [XmlArrayItem("ResourceRetriever")]
-        public List<ResourceRetrieverInfo> ResourceRetrieverInfos {
+        [XmlArray("ParentResourceRetrievers")]
+        [XmlArrayItem("ParentResourceRetriever")]
+        public List<ParentResourceRetrieverInfo> ParentResourceRetrieverInfos {
             get {
-                return resourceRetrieverInfos;
+                return parentResourceRetrieverInfos;
             }
             set {
-                resourceRetrieverInfos = value;
+                parentResourceRetrieverInfos = value;
             }
         }
 
@@ -421,11 +421,11 @@ namespace SharpFile.Infrastructure {
         /// Derived resources.
         /// </summary>
         [XmlIgnore]
-        public List<IChildResource> Resources {
+        public List<IParentResource> ParentResources {
             get {
-                List<IChildResource> resources = new List<IChildResource>();
+                List<IParentResource> resources = new List<IParentResource>();
 
-                foreach (IResourceRetriever retriever in ResourceRetrievers) {
+                foreach (IParentResourceRetriever retriever in ParentResourceRetrievers) {
                     resources.AddRange(retriever.Get());
                 }
 
@@ -544,18 +544,18 @@ namespace SharpFile.Infrastructure {
         */
 
         [XmlIgnore]
-        public List<IResourceRetriever> ResourceRetrievers {
+        public List<IParentResourceRetriever> ParentResourceRetrievers {
             get {
-                if (resourceRetrievers == null || resourceRetrievers.Count == 0) {
-                    resourceRetrievers = new List<IResourceRetriever>(resourceRetrieverInfos.Count);
+                if (parentResourceRetrievers == null || parentResourceRetrievers.Count == 0) {
+                    parentResourceRetrievers = new List<IParentResourceRetriever>(parentResourceRetrieverInfos.Count);
 
-                    foreach (ResourceRetrieverInfo resourceRetrieverInfo in resourceRetrieverInfos) {
+                    foreach (ParentResourceRetrieverInfo parentResourceRetrieverInfo in parentResourceRetrieverInfos) {
                         try {
-                            IResourceRetriever resourceRetriever = Reflection.InstantiateObject<IResourceRetriever>(
-                                resourceRetrieverInfo.FullyQualifiedType.Assembly,
-                                resourceRetrieverInfo.FullyQualifiedType.Type);
+                            IParentResourceRetriever parentResourceRetriever = Reflection.InstantiateObject<IParentResourceRetriever>(
+                                parentResourceRetrieverInfo.FullyQualifiedType.Assembly,
+                                parentResourceRetrieverInfo.FullyQualifiedType.Type);
 
-                            foreach (string childResourceRetrieverName in resourceRetrieverInfo.ChildResourceRetrievers) {
+                            foreach (string childResourceRetrieverName in parentResourceRetrieverInfo.ChildResourceRetrievers) {
                                 ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
                                     return c.Name == childResourceRetrieverName;
                                 });
@@ -602,11 +602,11 @@ namespace SharpFile.Infrastructure {
                                                 childResourceRetrieverInfo.View);
                                         }
 
-                                        if (resourceRetriever.ChildResourceRetrievers == null) {
-                                            resourceRetriever.ChildResourceRetrievers = new ChildResourceRetrievers();
+                                        if (parentResourceRetriever.ChildResourceRetrievers == null) {
+                                            parentResourceRetriever.ChildResourceRetrievers = new ChildResourceRetrievers();
                                         }
 
-                                        resourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
+                                        parentResourceRetriever.ChildResourceRetrievers.Add(childResourceRetriever);
                                     } catch (MissingMethodException ex) {
                                         Logger.Log(LogLevelType.ErrorsOnly, ex,
                                             "ChildResourceRetriever, {0}, could not be instantiated.",
@@ -623,22 +623,22 @@ namespace SharpFile.Infrastructure {
                                 }
                             }
 
-                            resourceRetrievers.Add(resourceRetriever);
+                            parentResourceRetrievers.Add(parentResourceRetriever);
                         } catch (MissingMethodException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "ResourceRetriever, {0}, could not be instantiated (is it an abstract class?).",
-                                resourceRetrieverInfo.Name);
+                                parentResourceRetrieverInfo.Name);
                         } catch (TypeLoadException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "ResourceRetriever, {0}, could not be instantiated.",
-                                resourceRetrieverInfo.Name);
+                                parentResourceRetrieverInfo.Name);
                         }
                     }
 
                     Save();
                 }
 
-                return resourceRetrievers;
+                return parentResourceRetrievers;
             }
         }
 

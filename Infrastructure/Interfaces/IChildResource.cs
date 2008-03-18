@@ -1,15 +1,13 @@
 ﻿using System;
 
 namespace SharpFile.Infrastructure {
-    public interface IChildResource {
-        string FullName { get; }
-        string Name { get; }
+    public interface IChildResource : IResource {      
         DateTime LastWriteTime { get; }
         DateTime LastAccessTime { get; }
         DateTime CreationTime { get; }
-        long Size { get; }
+        IParentResource Root { get; }
 
-        //void Execute();
-        void Copy(string destination);
+        void Copy(string destination, bool overwrite);
+        void Move(string destination);
     }
 }
