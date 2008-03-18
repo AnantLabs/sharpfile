@@ -71,7 +71,7 @@ namespace SharpFile.IO.ChildResources {
             // Determine the appropriate resource for the particular 
             // file system object and retrieve its child resource retrievers.
             foreach (IParentResourceRetriever resourceRetriever in Settings.Instance.ParentResourceRetrievers) {
-                if (resourceRetriever.Resources.Find(delegate(IParentResource r) {
+                if (resourceRetriever.ParentResources.Find(delegate(IParentResource r) {
                     return r.Name.ToLower().Equals(this.Root.Name.ToLower());
                 }) != null) {
                     childResourceRetrievers = resourceRetriever.ChildResourceRetrievers;

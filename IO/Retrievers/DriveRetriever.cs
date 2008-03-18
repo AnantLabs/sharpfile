@@ -24,7 +24,7 @@ namespace SharpFile.IO.Retrievers {
         /// <summary>
         /// Returns a list of drive infos.
         /// </summary>
-        public List<IParentResource> Resources {
+        public List<IParentResource> ParentResources {
             get {
                 if (driveInfos == null) {
                     Get();
