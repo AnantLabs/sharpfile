@@ -1,0 +1,221 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{16C1DC72-6CE7-4E15-A15B-42C7D4EFA01F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharpFile</RootNamespace>
+    <AssemblyName>SharpFile</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <PublishUrl>http://localhost/SharpFile/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common, Version=0.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Common.dll</HintPath>
+    </Reference>
+    <Reference Include="DynamicUtilities, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\DynamicUtilities.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseParent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Child.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DualParent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Infrastructure\ChildResourceRetrievers.cs" />
+    <Compile Include="Infrastructure\FileSystemEnumerator.cs" />
+    <Compile Include="Infrastructure\FileSystemWatcher.cs" />
+    <Compile Include="Infrastructure\FullyQualifiedMethod.cs" />
+    <Compile Include="Infrastructure\FullyQualifiedType.cs" />
+    <Compile Include="Infrastructure\Interfaces\IChildResource.cs" />
+    <Compile Include="Infrastructure\Interfaces\IChildResourceRetriever.cs" />
+    <Compile Include="Infrastructure\Interfaces\IResourceRetriever.cs" />
+    <Compile Include="Infrastructure\Interfaces\IView.cs" />
+    <Compile Include="Infrastructure\Interfaces\IViewComparer.cs" />
+    <Compile Include="Infrastructure\Nodes.cs" />
+    <Compile Include="Infrastructure\ParentType.cs" />
+    <Compile Include="Infrastructure\Resource.Designer.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ChildResourceRetrieverInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ColumnInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\LoggerInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ResourceRetrieverInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ViewInfo.cs" />
+    <Compile Include="Infrastructure\Settings.cs" />
+    <Compile Include="Infrastructure\Settings\DualParentSettings.cs" />
+    <Compile Include="Infrastructure\Settings\IconSettings.cs" />
+    <Compile Include="Infrastructure\Settings\MdiParentSettings.cs" />
+    <Compile Include="Infrastructure\Settings\PanelSettings.cs" />
+    <Compile Include="Infrastructure\Win32.cs" />
+    <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
+    <Compile Include="IO\ChildResources\FileInfo.cs" />
+    <Compile Include="IO\ChildResources\FileSystemInfo.cs" />
+    <Compile Include="IO\ChildResources\ParentDirectoryInfo.cs" />
+    <Compile Include="IO\ChildResources\RootDirectoryInfo.cs" />
+    <Compile Include="IO\ExtensionMethods\DirectoryInfoExtensionMethods.cs" />
+    <Compile Include="IO\ExtensionMethods\DriveInfoExtensionMethods.cs" />
+    <Compile Include="IO\ExtensionMethods\FileSystemInfoExtensionMethods.cs" />
+    <Compile Include="IO\FileSystemInfoFactory.cs" />
+    <Compile Include="IO\IOException.cs" />
+    <Compile Include="IO\Retrievers\DriveRetriever.cs" />
+    <Compile Include="IO\Retrievers\FileRetriever.cs" />
+    <Compile Include="ListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MdiChild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MdiParent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="ProgressDisk.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="BaseParent.resx">
+      <DependentUpon>BaseParent.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Infrastructure\Resource.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="TabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ToolStripSpringTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\DriveDetector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\IconManager.cs" />
+    <Compile Include="UI\IconReader.cs" />
+    <Compile Include="UI\ListViewItemComparer.cs" />
+    <Compile Include="UI\ShellContextMenu.cs" />
+    <Compile Include="UnitDisplayType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ChangeLog.txt" />
+    <Content Include="gpl.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Readme.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Thanks.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Infrastructure\Resources\ilmerge_settings.config" />
+    <None Include="Infrastructure\Resources\settings.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets. -->
+  <Target Name="BeforeBuild" />
+  <!--http://blogs.msdn.com/jomo_fisher/archive/2006/03/05/544144.aspx-->
+  <!--http://www.hanselman.com/blog/MixingLanguagesInASingleAssemblyInVisualStudioSeamlesslyWithILMergeAndMSBuild.aspx-->
+  <!--
+  <Target Name="ILMerge">
+    <CreateItem Include="@(ReferencePath)" Condition="'%(CopyLocal)'=='true'">
+      <Output TaskParameter="Include" ItemName="IlmergeAssemblies" />
+    </CreateItem>
+    <Message Text="MERGING: @(IlmergeAssemblies->'%(Filename)')" Importance="High" />
+    <Exec Command="&quot;$(ProjectDir)Tools\Ilmerge.exe&quot; /out:@(MainAssembly) &quot;@(IntermediateAssembly)&quot; @(IlmergeAssemblies->'&quot;%(FullPath)&quot;', ' ')" />
+  </Target>
+  <Target Name="_CopyFilesMarkedCopyLocal" />
+  -->
+  <PropertyGroup>
+    <!--
+    <BuildDependsOn>
+    	ILMerge;
+    </BuildDependsOn>
+    -->
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>rem $(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
+  </PropertyGroup>
+</Project>
