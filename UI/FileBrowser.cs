@@ -271,10 +271,7 @@ namespace SharpFile {
         /// </summary>
         private void driveDetector_DeviceArrived(object sender, DriveDetectorEventArgs e) {
             Settings.ClearResources();
-
-            this.BeginInvoke((MethodInvoker)delegate {
-                UpdateParentListing();
-            });
+            UpdateParentListing();
         }
 
         /// <summary>
