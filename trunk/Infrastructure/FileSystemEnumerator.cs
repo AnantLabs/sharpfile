@@ -17,15 +17,15 @@ using System.Text.RegularExpressions;
 using SharpFile.Infrastructure.Win32;
 using SharpFile.Infrastructure;
 
-namespace ListViewTest {
+namespace SharpFile.Infrastructure {
     /// <summary>
     /// File system enumerator.  This class provides an easy to use, efficient mechanism for searching a list of
     /// directories for files matching a list of file specifications.  The search is done incrementally as matches
     /// are consumed, so the overhead before processing the first match is always kept to a minimum.
     /// </summary>
     public sealed class FileSystemEnumerator : IDisposable {
-        public delegate bool StringTextSearcher(string term);
-        public delegate bool RegexTextSearcher(Regex term);
+        //public delegate bool StringTextSearcher(string term);
+        //public delegate bool RegexTextSearcher(Regex term);
 
         /// <summary>
         /// Information that's kept in our stack for simulated recursion
@@ -140,7 +140,7 @@ namespace ListViewTest {
         public IEnumerable<IChildResource> Matches() {
             Stack<string> pathsToSearch = new Stack<string>(m_paths);
             WIN32_FIND_DATA findData = new WIN32_FIND_DATA();
-            string path, fileName;
+            string path, fileName, fullName;
 
             while (0 != pathsToSearch.Count) {
                 path = pathsToSearch.Pop().Trim();
@@ -153,16 +153,18 @@ namespace ListViewTest {
                             if (string.Equals(fileName, ".", StringComparison.Ordinal)) continue;
                             if (string.Equals(fileName, "..", StringComparison.Ordinal)) continue;
 
+                            fullName = Path.Combine(path, fileName);
+
                             if (FileAttributes.Directory == findData.Attributes) {
                                 if (m_includeSubDirs) {
                                     pathsToSearch.Push(Path.Combine(path, fileName));
                                 }
 
-                                yield return new ListViewTest.DirectoryInfo(findData);
+                                yield return new SharpFile.IO.ChildResources.DirectoryInfo(fullName, findData);
                             } else {
                                 foreach (Regex fileSpec in m_fileSpecs) {
                                     if (fileSpec.IsMatch(fileName)) {
-                                        yield return new ListViewTest.FileInfo(findData);
+                                        yield return new SharpFile.IO.ChildResources.FileInfo(fullName, findData);
                                         break;
                                     }
                                 }

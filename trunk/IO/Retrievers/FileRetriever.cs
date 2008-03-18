@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using Common.Logger;
 using SharpFile.Infrastructure;
-using System.IO;
 using SharpFile.IO.ChildResources;
-using SharpFile.ExtensionMethods;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -28,7 +28,7 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        public bool OnCustomMethod(IChildResource resource) {
+        public bool OnCustomMethod(IResource resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
             }
@@ -36,7 +36,7 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
-        public bool OnCustomMethodWithArguments(IChildResource resource, List<string> arguments) {
+        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
             if (CustomMethodWithArguments != null) {
                 return CustomMethodWithArguments(resource, arguments);
             }
@@ -44,9 +44,8 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
-        public void Execute(IView view, IChildResource resource) {
-            Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                "Starting to Execute.");
+        public void Execute(IView view, IResource resource) {
+            Stopwatch sw = new Stopwatch();
 
             if (resource is FileInfo) {
                 System.Diagnostics.ProcessStartInfo processStartInfo = new System.Diagnostics.ProcessStartInfo();
@@ -56,17 +55,7 @@ namespace SharpFile.IO.Retrievers {
                 System.Diagnostics.Process.Start(processStartInfo);
 
                 return;
-            } else if (resource is IChildResource) {
-                DirectoryInfo directoryInfo = null;
-
-                if (resource is DirectoryInfo) {
-                    directoryInfo = (DirectoryInfo)resource;
-                } else if (resource is ParentDirectoryInfo) {
-                    directoryInfo = ((ParentDirectoryInfo)resource).DirectoryInfo;
-                } else if (resource is RootDirectoryInfo) {
-                    directoryInfo = ((RootDirectoryInfo)resource).DirectoryInfo;
-                }
-
+            } else if (resource is DirectoryInfo || resource is DriveInfo) {
                 using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
                     backgroundWorker.WorkerSupportsCancellation = true;
                     backgroundWorker.WorkerReportsProgress = true;
@@ -83,13 +72,15 @@ namespace SharpFile.IO.Retrievers {
                             if (backgroundWorker.CancellationPending) {
                                 e.Cancel = true;
                             } else {
-                                Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                                    "Start to get resources.");
+                                sw.Start();
 
-                                e.Result = getResources(directoryInfo, view.Filter);
+                                // TODO: Update the view here, it would take less memory than storing all of that data.
+                                e.Result = getResources(resource, view.Filter);
 
-                                Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                                    "Finish getting resources.");
+                                Settings.Instance.Logger.Log(LogLevelType.Verbose, "Finish getting resources for {0} took {1} ms.",
+                                    resource.FullName,
+                                    sw.ElapsedMilliseconds.ToString());
+                                sw.Reset();
                             }
                         } catch (UnauthorizedAccessException ex) {
                             e.Cancel = true;
@@ -115,11 +106,8 @@ namespace SharpFile.IO.Retrievers {
                         if (e.Error == null &&
                             !e.Cancelled &&
                             e.Result != null &&
-                            e.Result is IEnumerable<IChildResource>) {
-                            Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                                "Get resources complete.");
-
-                            IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;
+                            e.Result is IEnumerable<IResource>) {
+                            IEnumerable<IResource> resources = (IEnumerable<IResource>)e.Result;
 
                             view.BeginUpdate();
                             view.ColumnInfos = ColumnInfos;
@@ -200,12 +188,18 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        private IEnumerable<IChildResource> getResources(SharpFile.IO.ChildResources.DirectoryInfo directoryInfo, string filter) {
-            List<IChildResource> resources = new List<IChildResource>();
-            resources.AddRange(directoryInfo.ExtGetDirectories());
-            resources.AddRange(directoryInfo.ExtGetFiles(filter));
+        private IEnumerable<IResource> getResources(IResource resource, string filter) {
+            if (resource is IResourceGetter) {
+                IResourceGetter resourceGetter = (IResourceGetter)resource;
 
-            return resources;
+                foreach (IChildResource childResource in resourceGetter.GetDirectories()) {
+                    yield return childResource;
+                }
+
+                foreach (IChildResource childResource in resourceGetter.GetFiles(filter)) {
+                    yield return childResource;
+                }
+            }
         }
     }
 }

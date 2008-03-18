@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using Common;
+using SharpFile.IO.ChildResources;
 
 namespace SharpFile.Infrastructure {
     public class ChildResourceRetrievers : List<IChildResourceRetriever> {
@@ -33,7 +33,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         /// <param name="fsi">File system object.</param>
         /// <returns>List of appropriate child resource retrievers.</returns>
-        public IEnumerable<IChildResourceRetriever> Filter(IChildResource fsi) {
+        public IEnumerable<IChildResourceRetriever> Filter(IResource fsi) {
             foreach (IChildResourceRetriever childResourceRetriever in this) {
                 if (childResourceRetriever.OnCustomMethod(fsi)) {
                     yield return childResourceRetriever;
@@ -63,7 +63,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         /// <param name="fsi">File system object. Not currently used for anything.</param>
         /// <returns>Whether or not the child restriever resource should be used for this file system object. Always returns true.</returns>
-        public static bool DefaultCustomMethod(IChildResource fsi) {
+        public static bool DefaultCustomMethod(IResource fsi) {
             return true;
         }
 
@@ -73,7 +73,7 @@ namespace SharpFile.Infrastructure {
         /// <param name="fsi">File system object.</param>
         /// <param name="extensions">List of extensions.</param>
         /// <returns>Whether or not the file system object has an extension that is contained in the list of extensions.</returns>
-        public static bool IsFileWithExtension(IChildResource fsi, List<string> extensions) {
+        public static bool IsFileWithExtension(IResource fsi, List<string> extensions) {
             if (extensions != null) {
                 string extension = General.GetExtension(fsi.FullName).ToLower();
 
@@ -90,7 +90,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         /// <param name="fsi">File systm object.</param>
         /// <returns>Whether or not the file system object is compressed.</returns>
-        public static bool IsCompressedFile(IChildResource fsi) {
+        public static bool IsCompressedFile(IResource fsi) {
             // TODO: Should use the IsFileWithExtension instead.
             if (fsi is FileInfo) {
                 if (Common.General.GetExtension(fsi.FullName).ToLower().Equals(".zip")) {
@@ -106,7 +106,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         /// <param name="fsi">File system object.</param>
         /// <returns>Whether or not the file system object is compressed.</returns>
-        public static bool IsCompressedFileThorough(IChildResource fsi) {
+        public static bool IsCompressedFileThorough(IResource fsi) {
             if (fsi is FileInfo) {
                 try {
                     ZipFile zipFile = new ZipFile(fsi.FullName);
@@ -124,7 +124,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         /// <param name="fsi">File system object.</param>
         /// <returns>Whether or not the file system object is a media file.</returns>
-        public static bool IsMediaFile(IChildResource fsi) {
+        public static bool IsMediaFile(IResource fsi) {
             if (fsi is FileInfo) {
                 if (General.GetExtension(fsi.FullName).ToLower().Equals(".bmp")) {
                     return true;

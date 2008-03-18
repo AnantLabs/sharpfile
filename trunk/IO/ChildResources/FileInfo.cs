@@ -4,7 +4,7 @@ using SharpFile.Infrastructure.Win32;
 using SharpFile.Infrastructure;
 
 namespace SharpFile.IO.ChildResources {
-    public class FileInfo : FileSystemInfo, IChildResource {
+    public class FileInfo : FileSystemInfo {
         protected string extension = string.Empty;
         protected DirectoryInfo directory;
         protected string directoryName;
@@ -13,8 +13,8 @@ namespace SharpFile.IO.ChildResources {
             : base(path) {
         }
 
-        public FileInfo(WIN32_FIND_DATA findData)
-            : base(findData) {
+        public FileInfo(string path, WIN32_FIND_DATA findData)
+            : base(path, findData) {
 
             if (name.IndexOf('.') > 0) {
                 this.extension = name.Remove(0, name.LastIndexOf('.'));
@@ -22,30 +22,26 @@ namespace SharpFile.IO.ChildResources {
         }
 
         /// <summary>
-        /// Copies the directory to the destination.
+        /// Copies the file system object to the destination.
         /// </summary>
-        /// <param name="directoryInfo">DirectoryInfo to copy.</param>
-        /// <param name="destination">Destination to copy to.</param>
+        /// <param name="fsi">File system object to copy.</param>
+        /// <param name="destination">Destination to copy the file system object to.</param>
+        public override void Copy(string destination, bool overwrite) {
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(fullName);
+            fileInfo.CopyTo(destination, false);
+        }
+
         public void Copy(string destination) {
-            // Make sure the destination is correct.
-            if (!destination.EndsWith(@"\")) {
-                destination += @"\";
-            }
+            Copy(destination, false);
+        }
 
-            // Create the destination if necessary.
-            if (!Directory.Exists(destination)) {
-                Directory.CreateDirectory(destination);
-            }
-
-            // Copy the files to the destination.
-            foreach (FileInfo fileInfo in directoryInfo.GetFiles()) {
-                fileInfo.CopyTo(destination + fileInfo.Name, false);
-            }
-
-            // Get the directories and recursively copy them over as well.
-            foreach (DirectoryInfo di in directoryInfo.GetDirectories()) {
-                di.ExtCopy(destination + @"\" + di.Name);
-            }
+        /// <summary>
+        /// Moves the file system object to the destination.
+        /// </summary>
+        /// <param name="destination">Destination to move the file system object to.</param>
+        public override void Move(string destination) {
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(fullName);
+            fileInfo.MoveTo(destination);
         }
 
         protected override void getSize() {
@@ -65,12 +61,7 @@ namespace SharpFile.IO.ChildResources {
         }
 
         private void getDirectory() {
-            WIN32_FIND_DATA directoryFindData = new WIN32_FIND_DATA();
-
-            using (SafeFindHandle handle = NativeMethods.FindFirstFile(
-                DirectoryName, directoryFindData)) {
-                directory = new DirectoryInfo(directoryFindData);
-            }
+            directory = new DirectoryInfo(DirectoryName);
         }
 
         public DirectoryInfo Directory {

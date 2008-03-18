@@ -4,9 +4,8 @@ using System.IO;
 
 namespace SharpFile.Infrastructure {
 	public interface IView {
-        void AddItemRange(IEnumerable<IChildResource> childResources);
-        //void AddItemRange(IEnumerable<FileSystemInfo> childResources);
-        void InsertItem(IChildResource childResource);
+        void AddItemRange(IEnumerable<IResource> resources);
+        void InsertItem(IResource resource);
 		void RemoveItem(string path);
 		void Clear();
 		void BeginUpdate();
@@ -23,7 +22,7 @@ namespace SharpFile.Infrastructure {
 
         void OnUpdatePath(string path);
         void OnUpdateProgress(int progress);
-        int OnGetImageIndex(IChildResource resource);
+        int OnGetImageIndex(IResource resource);
         void OnUpdateStatus(string status);
 
 		event View.GetImageIndexDelegate GetImageIndex;
@@ -33,7 +32,7 @@ namespace SharpFile.Infrastructure {
 	}
 
 	public static class View {
-        public delegate int GetImageIndexDelegate(IChildResource fsi);
+        public delegate int GetImageIndexDelegate(IResource fsi);
 		public delegate void UpdateProgressDelegate(int value);
 		public delegate void UpdatePathDelegate(string path);
 		public delegate void UpdateStatusDelegate(string status);

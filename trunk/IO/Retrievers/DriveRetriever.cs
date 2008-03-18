@@ -1,36 +1,36 @@
 using System.Collections.Generic;
-using System.IO;
 using SharpFile.Infrastructure;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile.IO.Retrievers {
-	public class DriveRetriever : IResourceRetriever {
+	public class DriveRetriever : IParentResourceRetriever {
         private ChildResourceRetrievers childResourceRetrievers;
-        private List<IChildResource> directoryInfos;
+        private List<IParentResource> driveInfos;
 
         /// <summary>
         /// Get a list of drives.
         /// </summary>
         /// <returns>List of drives.</returns>
-        public IEnumerable<IChildResource> Get() {
-            directoryInfos = new List<IChildResource>();
+        public IEnumerable<IParentResource> Get() {
+            driveInfos = new List<IParentResource>();
 
-            foreach (DriveInfo driveInfo in DriveInfo.GetDrives()) {
-                directoryInfos.Add(driveInfo.RootDirectory);
+            foreach (System.IO.DriveInfo driveInfo in System.IO.DriveInfo.GetDrives()) {
+                driveInfos.Add(new DriveInfo(driveInfo.Name));
 
-                yield return driveInfo.RootDirectory;
+                yield return new DriveInfo(driveInfo.Name);
             }            
 		}
 
         /// <summary>
         /// Returns a list of drive infos.
         /// </summary>
-        public List<IChildResource> DirectoryInfos {
+        public List<IParentResource> Resources {
             get {
-                if (directoryInfos == null) {
+                if (driveInfos == null) {
                     Get();
                 }
 
-                return directoryInfos;
+                return driveInfos;
             }
         }
 
