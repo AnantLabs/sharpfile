@@ -1,0 +1,39 @@
+IconReader - Paul Ingles
+http://www.codeproject.com/cs/files/fileicon.asp
+
+Resizing dropdown boxes on the fly - Eric Porter/Wes
+http://weblogs.asp.net/eporter/archive/2004/09/27/234773.aspx
+
+ProgressDisk - Amr Elsehemy
+http://www.codeproject.com/cs/miscctrl/ProgressDisk.asp
+
+ShellContextMenu (C++) - Roman Engels
+http://www.codeproject.com/shell/shellcontextmenu.asp
+
+ShellContextMenu (VB.NET) - Andrew Vos
+http://www.andrewvos.com/?p=190
+
+Drag-and-drop operations - Paul Tallett
+http://www.codeproject.com/csharp/Explorer_Drag_Drop.asp
+
+Plethora of tab control-related information - Mick Doherty
+http://www.dotnetrix.pwp.blueyonder.co.uk/tabcontrols.html
+
+Full-featured, plug-in-able Explorer-clone (which I didn't realize was already done when I started) - Stephen Roberts
+http://www.codeproject.com/cs/miscctrl/FileBrowser.asp
+
+DriveDetector which fires when removable drives are added/removed - Jan Dolinay
+http://www.codeproject.com/KB/system/DriveDetector.aspx
+
+http://www.pinvoke.net/default.aspx/shlwapi/StrCmpLogicalW.html
+
+Information on sorting listviews
+http://www.akadia.com/services/dotnet_listview_sort_dataset.html
+
+Detailed information on constraining generic methods to delegates - Rich McColllister
+With a comment by Wesner Moise (http://wesnerm.blogs.com/)
+http://geekswithblogs.net/kraki/archive/2006/03/29/73743.aspx
+
+Plus, many others made silent contributions along the way including the Commander clones 
+(Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
+other articles, tips and tricks.
