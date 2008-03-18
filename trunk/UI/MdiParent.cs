@@ -58,7 +58,7 @@ namespace SharpFile {
                 updateProgress(value);
             };
 
-            childForm.Child.GetImageIndex += delegate(IChildResource fsi) {
+            childForm.Child.GetImageIndex += delegate(IResource fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
 
