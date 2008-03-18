@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile.UI {
 	public static class IconManager {
@@ -14,7 +15,7 @@ namespace SharpFile.UI {
         /// <param name="fsi">File system object.</param>
         /// <param name="imageList">ImageList.</param>
         /// <returns>Image index.</returns>
-        public static int GetImageIndex(IChildResource fsi, ImageList imageList) {
+        public static int GetImageIndex(IResource fsi, ImageList imageList) {
             int imageIndex = imageList.Images.Count;
             string fullPath = fsi.FullName;
 
@@ -41,11 +42,11 @@ namespace SharpFile.UI {
                     imageIndex = imageList.Images.IndexOfKey(extension);
                 }
             } else if (fsi is DirectoryInfo || fsi is ParentDirectoryInfo || fsi is RootDirectoryInfo) {
-                IChildResource directoryInfo = Settings.Instance.Resources.Find(delegate(IChildResource di) {
-                    return (di.FullName.ToLower().Equals(fsi.FullName.ToLower()));
+                IResource resource = Settings.Instance.ParentResources.Find(delegate(IParentResource r) {
+                    return (r.Name.ToLower().Equals(fsi.FullName.ToLower()));
                 });
 
-                if (fsi is DirectoryInfo && directoryInfo != null) {
+                if (fsi is DirectoryInfo && resource != null) {
                     // Resource is really a drive, so grab its icon.
                     if (!imageList.Images.ContainsKey(fullPath)) {
                         Icon icon = getDriveIcon(fullPath);
@@ -62,6 +63,14 @@ namespace SharpFile.UI {
 
                     imageIndex = imageList.Images.IndexOfKey(folderKey);
                 }
+            } else if (fsi is DriveInfo) {
+                // Resource is really a drive, so grab its icon.
+                if (!imageList.Images.ContainsKey(fullPath)) {
+                    Icon icon = getDriveIcon(fullPath);
+                    imageList.Images.Add(fullPath, icon);
+                }
+
+                imageIndex = imageList.Images.IndexOfKey(fullPath);
             } else {
                 throw new ArgumentException("The object, " + fsi.GetType() + ", is not supported.");
             }
