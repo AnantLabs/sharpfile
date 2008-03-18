@@ -74,16 +74,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseParent.cs">
+    <Compile Include="Infrastructure\Interfaces\IResourceGetter.cs" />
+    <Compile Include="UI\BaseParent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Child.cs">
+    <Compile Include="UI\Child.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DualParent.cs">
+    <Compile Include="UI\DualParent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FileBrowser.cs">
+    <Compile Include="UI\FileBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Infrastructure\ChildResourceRetrievers.cs" />
@@ -93,7 +94,9 @@
     <Compile Include="Infrastructure\FullyQualifiedType.cs" />
     <Compile Include="Infrastructure\Interfaces\IChildResource.cs" />
     <Compile Include="Infrastructure\Interfaces\IChildResourceRetriever.cs" />
-    <Compile Include="Infrastructure\Interfaces\IResourceRetriever.cs" />
+    <Compile Include="Infrastructure\Interfaces\IParentResource.cs" />
+    <Compile Include="Infrastructure\Interfaces\IResource.cs" />
+    <Compile Include="Infrastructure\Interfaces\IParentResourceRetriever.cs" />
     <Compile Include="Infrastructure\Interfaces\IView.cs" />
     <Compile Include="Infrastructure\Interfaces\IViewComparer.cs" />
     <Compile Include="Infrastructure\Nodes.cs" />
@@ -102,7 +105,7 @@
     <Compile Include="Infrastructure\SettingInfos\ChildResourceRetrieverInfo.cs" />
     <Compile Include="Infrastructure\SettingInfos\ColumnInfo.cs" />
     <Compile Include="Infrastructure\SettingInfos\LoggerInfo.cs" />
-    <Compile Include="Infrastructure\SettingInfos\ResourceRetrieverInfo.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ParentResourceRetrieverInfo.cs" />
     <Compile Include="Infrastructure\SettingInfos\ViewInfo.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="Infrastructure\Settings\DualParentSettings.cs" />
@@ -115,38 +118,36 @@
     <Compile Include="IO\ChildResources\FileSystemInfo.cs" />
     <Compile Include="IO\ChildResources\ParentDirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\RootDirectoryInfo.cs" />
-    <Compile Include="IO\ExtensionMethods\DirectoryInfoExtensionMethods.cs" />
-    <Compile Include="IO\ExtensionMethods\DriveInfoExtensionMethods.cs" />
-    <Compile Include="IO\ExtensionMethods\FileSystemInfoExtensionMethods.cs" />
     <Compile Include="IO\FileSystemInfoFactory.cs" />
     <Compile Include="IO\IOException.cs" />
+    <Compile Include="IO\ParentResources\DriveInfo.cs" />
     <Compile Include="IO\Retrievers\DriveRetriever.cs" />
     <Compile Include="IO\Retrievers\FileRetriever.cs" />
-    <Compile Include="ListView.cs">
+    <Compile Include="UI\ListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="MdiChild.cs">
+    <Compile Include="UI\MdiChild.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MdiParent.cs">
+    <Compile Include="UI\MdiParent.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="ProgressDisk.cs">
+    <Compile Include="UI\ProgressDisk.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="BaseParent.resx">
+    <EmbeddedResource Include="UI\BaseParent.resx">
       <DependentUpon>BaseParent.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Infrastructure\Resource.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="TabControl.cs">
+    <Compile Include="UI\TabControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ToolStripSpringTextBox.cs">
+    <Compile Include="UI\ToolStripSpringTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\DriveDetector.cs">
@@ -156,7 +157,7 @@
     <Compile Include="UI\IconReader.cs" />
     <Compile Include="UI\ListViewItemComparer.cs" />
     <Compile Include="UI\ShellContextMenu.cs" />
-    <Compile Include="UnitDisplayType.cs" />
+    <Compile Include="UI\UnitDisplayType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ChangeLog.txt" />
