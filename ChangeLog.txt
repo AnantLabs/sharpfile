@@ -1,0 +1,93 @@
+0.60
+	Sorting of listview by columns.
+	Xml configuration
+		- column headers, sorting, custom methods.
+		- child resource retrievers and relationship to resource retrievers.
+		- tabs' path information
+		- extensions to retrieve icons for
+		- whether or not to show icon overlays
+	Log debug information to a file.
+	Disable dropdown, path, filter, listview when switching drives.
+	Prevent the application from crashing if the retrievers or column methods are incorrectly configured.
+	Rudimentary, readonly compressed file view (only supports zip files).
+	Add view as configurable per child resource retriever.
+	FIX: Sorting by date/time now works correctly.
+	FIX: Newly created directories sorted correctly.
+	FIX: Show the "Open With" Windows dialog if no program has been associated with an extension.
+	FIX: Don't show file size for folders until it is calculated.
+	FIX: Don't show information about root/parent directories.
+	FIX: Only append a forward slash to directories in the path.
+
+0.50
+	Dual view.
+	Drag and drop re-written; directories now supported.
+	Beginnings of some settings support (height and width saved).
+	Faster updates of items on file operations.
+	Save current paths on exit.
+	Ability for plug-in retrievers to update the listview.
+	Parent control updated with currently selected path.
+	Menu support for dual view.
+	Switch contents of panel1 with contents of panel2 in dual view.
+	Hide panel1/panel2.
+	Context menu for some set percentages of splitter position.
+	Tooltip for splitter percentage position.
+	Ability to cancel the file retrieval for directories.
+	Show message if a directory is inaccessible.
+	Auto-resize columns when directory sizes are calculated.
+	Execute currently selected item with the Enter key.
+	Get the drives once and store the information, so that it doesn't need to be queried everytime.
+	Newly connected drives now refresh the drive dropdown.
+	Preliminary support for plug-in views and file retrievers.
+	FIX: Prevent renaming root/parent directories.
+	FIX: Better operation of the progress disk so that the disk doesn't continue to spin when the operation is canceled.
+	FIX: Updates on right-click operations now works correctly.
+	FIX: Drag and drop inconsistencies.
+
+0.40
+	Completely flicker-less listview refreshes.
+	Rename directories.
+	Better icon support.
+	Drive icons.
+	Selection of current drive displayed in dropdown menu.
+	Selection now correctly moves to the next object.
+	FIX: Drive button wouldn't correctly update the current drive.
+	FIX: Remove files/directories from selected list now correctly updates total.
+
+0.35
+	Right-click context menu.
+	Preliminary support for drag-and-drop operations.
+	F2 to Rename files.
+	On-the-fly file filtering.
+	Tabbed child windows.
+	Show overlays on files/folders.
+	FIX: Less flickering listview (again).
+
+0.30
+	Show progress on long-running operations.
+	Re-organization of code. Split out non-UI assemblies from the UI.
+	Automatic refresh of current directory.
+	Less flicker when updating the listview.
+	Re-implemented drive retrieval code.
+	FIX: Prevent extra filesystem retrieval when populating the drives.
+
+0.25
+	Icon retrieval for files and directories.
+	Show root directory shortcut.
+	Correct implementation of root/parent directory behavior.
+	Asynchronous retrieval of drive information.
+	Resize drive information box correctly.
+	Updating the filesytem objects in the listbox should be slightly faster because of enhancements.
+	Calculate the folder size on selection.
+	FIX: Sometimes selecting a filesytem object would throw an exception.
+	FIX: Cross-thread issues when updating the listview.
+
+0.2
+	Textbox for specific path retrieval.
+	Wildcard pattern filtering on files.
+	Asynchronous retrieval of files/folders.
+
+0.1
+	Proof of concept MDI application.
+	Retrieves drives.
+	Retrieves files and folders.
+	Root/parent custom files.
