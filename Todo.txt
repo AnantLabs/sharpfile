@@ -1,0 +1,86 @@
+Slow retrieval:
+On the old Dell: 5s to retrieve from z:\; 4s to display the content; explorer: 1s
+LCG should speed up displaying content. Not sure how to speed up retrieving the content.
+
+http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
+
+BUGS
+- Filesystem events don't correctly update status bar
+- Filter textbox too small to fit
+- Flickering textboxes when resizing
+- network drives don't get filesystemwatcher events
+- splitcontainer context menu shows up after an action is selected in a listview context menu
+- long-running threads to get directories/files invoked from the drive drop down aren't canceled
+	when starting a new operation
+- flicker in drive dropdown when new drive is inserted
+	- instead of clearing the drive dropdown and adding newly added drives, just insert/remove the drive being changed
+
+TODO
+- Read/Write compressed file support
+- Media file that supports custom view
+- Path textbox should be a dropdown that stores the most recent history
+- Store sort position for each column in settings
+- When columns are rearranged, save that to the settings file
+- Drag and drop from another window "into" a directory
+- Move some code in listview into a base view class
+- Settings xsd and xslt to transform old xml to new xml
+- Investigate combining Infrastructure with IO
+- Base class for child resource retrievers (namespace conflict)
+- Change delegate/events to standard .NET way
+- Ability to reload settings made manually and the settings take affect immediately
+- Ability to save settings from a menu option
+- Investigate legality of disctributing 7-z, sgen, ilmerge
+- configuration for what happens when the drive drop down is clicked
+- configuration for toolbar
+- for systems that don't support filesystem events (i.e. z:\, network drive), 
+	set up a timer refresh every 500 ms or so (configurable)
+- Add the timer to the progress disk class with the ability to start/stop it
+- Specify keycodes for actions
+	- name/value as attributes instead of elements
+	- IAction?
+- ability to use keyboard to tab between elements more intelligently
+	- panels, tabs, select a drive, etc.
+- special folders in drive drop down
+	- my documents, control panel, desktop
+- Refresh button (or key)
+- Drag-and-drop support for links
+- thumbnail files when possible (images?)
+- show an icon of the file being dragged around
+- Prevent drag-and-drop operation if it is completed in less than some arbitrary time limit (200 ms?)
+- Validate rename before-hand and throw up tooltip or something (beforeedit event)
+- Information/Property slideable "pane" list like vista's file manager
+- implement more tab functionality
+	- middle-click to close tabs
+	- mouse wheel
+	- ctrl-tab
+- copy/move should show progress (write bytes, as opposed to File.Copy()?) 
+	- should it use built-in copy/move functionality?
+	- ability to queue items to copy/move
+- Type to find (like servant salamander)
+- preview panel for some filetypes (QuickLook ?)
+- settings
+	- view type (details, list, etc.)
+	- icon size
+- command line - orthodox specifications
+- FTP drive functionality
+- SCP drive functionality
+- NFS drive functionality
+
+NICE TO HAVES
+- Set properties on ChildResourceRetrievers on-the-fly when constructing them
+- Localization (resource file method)
+- Find files (find in files)
+
+KEYCODES TODO:
+- Del
+- Shift-del
+- Ctrl-C
+- Ctrl-V
+
+VISTA BUGS
+	- No icon overlays
+	- Ugly child-tab buttons (I want them flat)
+	- ProgressDisk in wrong position -- needs to be attached to status bar somehow
+	
+BUILD-RELATED
+- ILMerge in MSBuild/csproj file
