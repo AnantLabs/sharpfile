@@ -8,6 +8,7 @@
 
 // ---------------------------------------------------------------------------
 // FileSystemEnumerator implementation
+// http://www.codeproject.com/KB/files/FileSystemEnumerator.aspx
 // ---------------------------------------------------------------------------
 
 using System;
@@ -15,7 +16,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using SharpFile.Infrastructure.Win32;
-using SharpFile.Infrastructure;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -155,7 +155,8 @@ namespace SharpFile.Infrastructure {
 
                             fullName = Path.Combine(path, fileName);
 
-                            if (FileAttributes.Directory == findData.Attributes) {
+                            // TODO: Show Hidden/System files here?
+                            if ((FileAttributes.Directory & findData.Attributes) == FileAttributes.Directory) {
                                 if (m_includeSubDirs) {
                                     pathsToSearch.Push(Path.Combine(path, fileName));
                                 }
