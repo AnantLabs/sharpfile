@@ -1,7 +1,7 @@
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Timers;
-using System;
 using Common.Logger;
 
 namespace SharpFile.Infrastructure {
