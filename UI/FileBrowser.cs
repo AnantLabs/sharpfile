@@ -16,7 +16,7 @@ namespace SharpFile {
         private const int filterWidth = 50;
         private static readonly object lockObject = new object();
 
-        private SharpFile.Infrastructure.FileSystemWatcher fileSystemWatcher;
+        private FileSystemWatcher fileSystemWatcher;
         private ImageList imageList;
         private DriveDetector driveDetector;
         private ChildResourceRetrievers childResourceRetrievers;
@@ -52,16 +52,22 @@ namespace SharpFile {
 			                                                  	this.tlsPath,
 			                                                  	this.tlsFilter
 			                                                  });
-            this.toolStrip.Location = new Point(0, 0);
             this.toolStrip.RenderMode = ToolStripRenderMode.System;
             this.toolStrip.ShowItemToolTips = false;
-            this.toolStrip.Size = new Size(454, 25);
             this.toolStrip.TabIndex = 1;
 
             this.tlsDrives.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.tlsDrives.ImageTransparentColor = Color.Magenta;
+            this.tlsDrives.Overflow = ToolStripItemOverflow.Never;
 
+            this.tlsPath.AutoSize = true;
+            this.tlsPath.Overflow = ToolStripItemOverflow.Never;
+            this.tlsPath.AutoCompleteMode = AutoCompleteMode.Suggest;
+            this.tlsPath.AutoCompleteSource = AutoCompleteSource.FileSystem;
+
+            this.tlsFilter.AutoSize = false;
             this.tlsFilter.Size = new Size(filterWidth, 25);
+            this.tlsFilter.Overflow = ToolStripItemOverflow.Never;
 
             this.Controls.Add(this.view.Control);
             this.Controls.Add(this.toolStrip);
@@ -70,9 +76,6 @@ namespace SharpFile {
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
-
-            DriveDetector.DeviceArrived += driveDetector_DeviceArrived;
-            DriveDetector.DeviceRemoved += driveDetector_DeviceRemoved;
 
             initializeComponent();
             UpdateParentListing();
@@ -136,8 +139,12 @@ namespace SharpFile {
             this.view.UpdateStatus += OnUpdateStatus;
 
             // Wire up the file system watcher.
-            fileSystemWatcher = new SharpFile.Infrastructure.FileSystemWatcher(this, 100);
+            fileSystemWatcher = new FileSystemWatcher(this, 100);
             fileSystemWatcher.Changed += fileSystemWatcher_Changed;
+
+            // Wire up the drive detector.
+            DriveDetector.DeviceArrived += driveDetector_DeviceArrived;
+            DriveDetector.DeviceRemoved += driveDetector_DeviceRemoved;
         }
 
         /// <summary>
@@ -238,26 +245,32 @@ namespace SharpFile {
             string path = e.FullPath;
             IResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
 
-            if (view.Control.IsHandleCreated && resource is IChildResource) {
+            if (view.Control.IsHandleCreated) {
                 // Required to ensure the view update occurs on the calling thread.
                 view.Control.BeginInvoke((MethodInvoker)delegate {
                     view.BeginUpdate();
 
                     switch (e.ChangeType) {
                         case System.IO.WatcherChangeTypes.Changed:
-                            view.RemoveItem(path);
-                            view.InsertItem((IChildResource)resource);
+                            if (resource is IChildResource) {
+                                view.RemoveItem(path);
+                                view.InsertItem((IChildResource)resource);
+                            }
                             break;
                         case System.IO.WatcherChangeTypes.Created:
-                            view.InsertItem((IChildResource)resource);
+                            if (resource is IChildResource) {
+                                view.InsertItem((IChildResource)resource);
+                            }
                             break;
                         case System.IO.WatcherChangeTypes.Deleted:
                             view.RemoveItem(path);
                             break;
                         case System.IO.WatcherChangeTypes.Renamed:
-                            string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
-                            view.RemoveItem(oldFullPath);
-                            view.InsertItem((IChildResource)resource);
+                            if (resource is IChildResource) {
+                                string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
+                                view.RemoveItem(oldFullPath);
+                                view.InsertItem((IChildResource)resource);
+                            }
                             break;
                     }
 
@@ -505,9 +518,11 @@ namespace SharpFile {
                 bool isVisible = value;
 
                 if (!isVisible) {
-                    tlsFilter.Visible = false;
+                    // Need to set the width to 0 so that the path resizes correctly.
                     tlsFilter.Width = 0;
+                    tlsFilter.Visible = false;          
                 } else {
+                    // Need to set the width so that the path resizes correctly.
                     tlsFilter.Width = filterWidth;
                     tlsFilter.Visible = true;
                 }
@@ -517,7 +532,7 @@ namespace SharpFile {
         /// <summary>
         /// The current FileSystemWatcher.
         /// </summary>
-        public SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher {
+        public FileSystemWatcher FileSystemWatcher {
             get {
                 return fileSystemWatcher;
             }
