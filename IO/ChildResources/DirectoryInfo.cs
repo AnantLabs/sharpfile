@@ -124,7 +124,28 @@ namespace SharpFile.IO.ChildResources {
         }
 
         protected override void getSize() {
-            size = 0;
+            size = getDirectorySize(this);
+        }
+
+        /// <summary>
+        /// Recursive calculation of the total size of the directory.
+        /// </summary>
+        /// <param name="directoryInfo">Directory to calculate the total size.</param>
+        /// <returns>Total size of the directory.</returns>
+        private long getDirectorySize(DirectoryInfo directoryInfo) {
+            long totalSize = 0;
+
+            foreach (FileInfo fileInfo in directoryInfo.GetFiles()) {
+                totalSize += fileInfo.Size;
+            }
+
+            foreach (DirectoryInfo childDirectoryInfo in directoryInfo.GetDirectories()) {
+                if (!(childDirectoryInfo is ParentDirectoryInfo) && !(childDirectoryInfo is RootDirectoryInfo)) {
+                    totalSize += getDirectorySize(childDirectoryInfo);
+                }
+            }
+
+            return totalSize;
         }
 
         private void getParent() {

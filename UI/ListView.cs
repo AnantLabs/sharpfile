@@ -99,9 +99,20 @@ namespace SharpFile {
                         selectedFileSystemInfos.Add(fileSystemInfo);
 
                         int sizeIndex = 0;
-                        foreach (ColumnHeader columnHeader in item.ListView.Columns) {
-                            if (columnHeader.Text.Equals("Size")) {
-                                sizeIndex = columnHeader.Index;
+                        ColumnInfo columnInfo = null;
+                        foreach (ColumnInfo ci in ColumnInfos) {
+                            if (ci.Property.Equals("Size")) {
+                                foreach (ColumnHeader columnHeader in Columns) {
+                                    if (columnHeader.Text.Equals(ci.Text)) {
+                                        sizeIndex = columnHeader.Index;
+                                        columnInfo = ci;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (sizeIndex > 0) {
+                                break;
                             }
                         }
 
@@ -112,13 +123,16 @@ namespace SharpFile {
                                 fileSystemInfo is DirectoryInfo) {
                                 using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
                                     backgroundWorker.WorkerReportsProgress = true;
-
                                     backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
                                         backgroundWorker.ReportProgress(50);
-                                        item.SubItems[sizeIndex].Text = "...";
-                                        eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).Size;
-                                        this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
 
+                                        // Update the list view through BeginInvoke so that the correct thread is used.
+                                        this.BeginInvoke((MethodInvoker)delegate {
+                                            item.SubItems[sizeIndex].Text = "...";
+                                            this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+                                        });
+
+                                        eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).Size;
                                         backgroundWorker.ReportProgress(100);
                                     };
 
@@ -129,12 +143,21 @@ namespace SharpFile {
                                     backgroundWorker.RunWorkerCompleted +=
                                         delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
                                             if (eventArgs.Error == null &&
-                                                eventArgs.Result != null) {
+                                                eventArgs.Result != null &&
+                                                eventArgs.Result is long) {
                                                 size = (long)eventArgs.Result;
 
-                                                item.SubItems[sizeIndex].Text = General.GetHumanReadableSize(size.ToString());
-                                                updateSelectedTotalSize(size);
-                                                this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+                                                // Update the list view through BeginInvoke so that the correct thread is used.
+                                                this.BeginInvoke((MethodInvoker)delegate {
+                                                    if (columnInfo.MethodDelegate != null) {
+                                                        item.SubItems[sizeIndex].Text = columnInfo.MethodDelegate.Invoke(size.ToString());
+                                                    } else {
+                                                        item.SubItems[sizeIndex].Text = size.ToString();
+                                                    }
+                                                    
+                                                    updateSelectedTotalSize(size);
+                                                    this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+                                                });
                                             }
                                         };
 
