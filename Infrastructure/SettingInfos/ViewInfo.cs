@@ -1,7 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Xml.Serialization;
 using Common;
-using System;
 using Common.Logger;
 
 namespace SharpFile.Infrastructure {

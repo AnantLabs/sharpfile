@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Xml.Serialization;
 using Common.Logger;
+using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
@@ -8,7 +9,7 @@ namespace SharpFile.Infrastructure {
         private string text;
         private string property;
         private bool primaryColumn = false;
-        private bool showForDirectories = true;
+        private List<FullyQualifiedType> excludeForTypes;
         private CustomMethod customMethod;
         private FullyQualifiedMethod methodDelegateType;
 
@@ -47,13 +48,14 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        [XmlAttribute("ShowForDirectories")]
-        public bool ShowForDirectories {
+        [XmlArray("ExcludeForTypes")]
+        [XmlArrayItem("FullyQualifiedType")]
+        public List<FullyQualifiedType> ExcludeForTypes {
             get {
-                return showForDirectories;
+                return excludeForTypes;
             }
             set {
-                showForDirectories = value;
+                excludeForTypes = value;
             }
         }
 
