@@ -1,5 +1,5 @@
+#summary Details the performance implications of using the .NET Framework's !FileSystemInfo base class.
 #labels Featured
-#Details the performance implications of using the .NET Framework's !FileSystemInfo base class.
 
 = Introduction =
 In the course of working on !SharpFile, I noticed some peculiar behavior in regards to retrieving a large number of files or folders using the standard !GetFiles() or !GetDirectories() from a !DirectoryInfo or !DriveInfo instance.
