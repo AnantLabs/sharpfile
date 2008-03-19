@@ -1,4 +1,4 @@
-#summary Details the performance implications of using the .NET Framework's !FileSystemInfo base class.
+#summary Details the performance implications of using the .NET Framework's FileSystemInfo base class.
 #labels Featured
 
 = Introduction =
