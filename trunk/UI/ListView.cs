@@ -1,22 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
-//using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Common;
 using Common.Logger;
-//using SharpFile.ExtensionMethods;
+using Phydeaux.Utilities;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.UI;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
-using Phydeaux.Utilities;
-using System.Diagnostics;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
@@ -672,137 +670,61 @@ namespace SharpFile {
                 folderCount++;
             }
 
-            //Dictionary<string, string> propertyNameValueHash = new Dictionary<string, string>();
-            //TypeUtility<FileInfo>.MemberGetDelegate<object> fileInfoGetter = null;
-            //TypeUtility<DirectoryInfo>.MemberGetDelegate<object> directoryInfoGetter = null;
-
-            //string propertyName = "Name";
-            //object getResult = null;
-
-            //if (resource is FileInfo) {
-            //    getResult = Getter<FileInfo>((FileInfo)resource, propertyName);
-
-            //    if (TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
-            //        fileInfoGetter = TypeUtility<FileInfo>.GetCachedMemberGetDelegate<object>(propertyName);
-            //        getResult = fileInfoGetter((FileInfo)resource);
-            //    }
-            //} else if (resource is DirectoryInfo) {
-            //    getResult = Getter<DirectoryInfo>((DirectoryInfo)resource, propertyName);
-
-            //    if (TypeUtility<DirectoryInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
-            //        directoryInfoGetter = TypeUtility<DirectoryInfo>.GetCachedMemberGetDelegate<object>(propertyName);
-            //        getResult = directoryInfoGetter((DirectoryInfo)resource);
-            //    }
-            //}
-
-            //string name = string.Empty;
-            //if (getResult != null) {
-            //    name = getResult.ToString();
-            //}
-
-            //if (resource is FileInfo) {
-            //    item.Text = ((FileInfo)resource).LastWriteTime.ToString();
-            //    item.SubItems[0].Tag = ((FileInfo)resource).LastWriteTime.ToString();
-            //} else {
-            //    item.Text = string.Empty;
-            //    item.SubItems[0].Tag = string.Empty;
-            //}
-
-            //return item;
-
-            Dictionary<string, string> propertyNameValueHash = new Dictionary<string, string>();
-            TypeUtility<FileInfo>.MemberGetDelegate<object> fileInfoGetter = null;
-            TypeUtility<DirectoryInfo>.MemberGetDelegate<object> directoryInfoGetter = null;
-
-            // TODO: Use LCG to retrieve properties here instead of GetProperty. It should be much faster.
             foreach (ColumnInfo columnInfo in ColumnInfos) {
-                // Exclude for type in ColumnInfo.
+                try {
+                    PropertyInfo propertyInfo = null;
+                    string propertyName = columnInfo.Property;
+                    string text = string.Empty;
+                    string tag = string.Empty;
 
-                //try {
-                PropertyInfo propertyInfo = null;
-                string propertyName = columnInfo.Property;
-                string text = string.Empty;
-                string tag = string.Empty;
+                    // Make sure that the type or it's base type is not supposed to be excluded for this particular column.
+                    if (columnInfo.ExcludeForTypes.Find(delegate(FullyQualifiedType f) {
+                        Type resourceType = resource.GetType();
+                        bool isExcludedType = (f.Type.Equals(resourceType.FullName) ||
+                            f.Type.Equals(resourceType.BaseType.FullName));
 
-                /*
-                // Cache the property infos.
-                // In case there was no property info generated from a previous resource, try to retrieve the property info.
-                // This occurs when viewing compressed files with a parent directory as the first resource.
-                if (propertyInfos.ContainsKey(propertyName) && propertyInfo != null) {
-                    propertyInfo = propertyInfos[propertyName];
-                } else {
-                    propertyInfo = resource.GetType().GetProperty(propertyName);
-                    propertyInfos.Add(propertyName, propertyInfo);
-                }
+                        return isExcludedType;
+                    }) == null) {
+                        // TODO: Use LCG to retrieve properties here instead of GetProperty.
+                        // LCG example: TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName);
+                        propertyInfo = resource.GetType().GetProperty(propertyName);
+                        text = propertyInfo.GetValue(resource, null).ToString();
+                    }
 
-                propertyInfo = resource.GetType().GetProperty(propertyName);
+                    // The original value will be set on the tag for sortability.
+                    tag = text;
 
-                // HACK: This is to prevent parent/root directories from showing any information except for their display name.
-                // TODO: Determine a better way to prevent parent/root directories from showing information.
-                if (!propertyName.Equals("Name") &&
-                    (resource is ParentDirectoryInfo || resource is RootDirectoryInfo)) {
-                    // Don't show anything for this resource type.
-                } else if (propertyName.Equals("Size") && resource is DirectoryInfo) {
-                    // Don't show anything for this resource type.
-                } else {
-                    if (propertyInfo != null) {
-                        //PropertyCaller<FileSystemInfo, object>.GenGetter getter =
-                        //    PropertyCaller<FileSystemInfo, object>.CreateGetMethod(propertyInfo);
-                 */
-
-                if (propertyNameValueHash.ContainsKey(propertyName)) {
-                    text = propertyNameValueHash[propertyName];
-                } else {
-                    object getResult = null;
-
-                    if (resource is FileInfo) {
-                        //getResult = Getter<FileInfo>((FileInfo)resource, propertyName);
-
-                        if (TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
-                            fileInfoGetter = TypeUtility<FileInfo>.GetCachedMemberGetDelegate<object>(propertyName);
-                            getResult = fileInfoGetter((FileInfo)resource);
-                        }
-                    } else if (resource is DirectoryInfo) {
-                        //getResult = Getter<DirectoryInfo>((DirectoryInfo)resource, propertyName);
-
-                        if (TypeUtility<DirectoryInfo>.GetMemberGetPropertyExists<object>(propertyName)) {
-                            directoryInfoGetter = TypeUtility<DirectoryInfo>.GetCachedMemberGetDelegate<object>(propertyName);
-                            getResult = directoryInfoGetter((DirectoryInfo)resource);
+                    // Invoke the the method delegate if there is one available.
+                    if (columnInfo.MethodDelegate != null) {
+                        try {
+                            text = columnInfo.MethodDelegate.Invoke(text);
+                        } catch (Exception ex) {
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Failed to call the provided method delegate {0} for {1}",
+                                    columnInfo.MethodDelegate.Method.Name,
+                                    resource.Name);
                         }
                     }
 
-                    if (getResult != null) {
-                        text = getResult.ToString();
-                        //text = propertyInfo.GetValue(resource, null).ToString();
+                    if (columnInfo.PrimaryColumn) {
+                        item.Text = text;
+                        item.SubItems[0].Tag = tag;
+                    } else {
+                        ListViewItem.ListViewSubItem listViewSubItem =
+                            new ListViewItem.ListViewSubItem();
+                        listViewSubItem.Text = text;
+                        listViewSubItem.Tag = tag;
 
-                        propertyNameValueHash.Add(propertyName, text);
+                        item.SubItems.Add(listViewSubItem);
                     }
+                } catch (Exception ex) {
+                    string blob = ex.Message;
+                    // TODO: Record when a column fucks up.
                 }
-
-                // The original value will be set on the tag for sortability.
-                tag = text;
-
-                if (columnInfo.MethodDelegate != null) {
-                    text = columnInfo.MethodDelegate.Invoke(text);
-                }
-
-                if (columnInfo.PrimaryColumn) {
-                    item.Text = text;
-                    item.SubItems[0].Tag = tag;
-                } else {
-                    ListViewItem.ListViewSubItem listViewSubItem =
-                        new ListViewItem.ListViewSubItem();
-                    listViewSubItem.Text = text;
-                    listViewSubItem.Tag = tag;
-
-                    item.SubItems.Add(listViewSubItem);
-                }
-                //} catch (Exception ex) {
-                //    string blob = ex.Message;
-                //    // TODO: Record when a column fucks up.
-                //}
             }
 
+            // TODO: Setting to retrieve image indexes. Maybe that code would go into 
+            // OnGetImageIndex, though. Or higher up the stack?
             if (true) {
                 int imageIndex = OnGetImageIndex(resource);
                 item.ImageIndex = imageIndex;
