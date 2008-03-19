@@ -34,6 +34,15 @@ Detailed information on constraining generic methods to delegates - Rich McColll
 With a comment by Wesner Moise (http://wesnerm.blogs.com/)
 http://geekswithblogs.net/kraki/archive/2006/03/29/73743.aspx
 
+FileSystemEnumerator - Carl Daniel
+http://www.codeproject.com/KB/files/FileSystemEnumerator.aspx
+
+FindFirstFile WIN32 API - Kåre Smith with minor edits by Mike Liddell
+http://www.pinvoke.net/default.aspx/kernel32/FindFirstFile.html
+
+Calculating correct DateTime from WIN32_FIND_DATA - zombu
+http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94138
+
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
 other articles, tips and tricks.
