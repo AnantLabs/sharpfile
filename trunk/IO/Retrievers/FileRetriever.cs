@@ -9,42 +9,8 @@ using SharpFile.IO.ParentResources;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
-    public class FileRetriever : IChildResourceRetriever {
-        private List<ColumnInfo> columnInfos;
-        private string name;
-        private IView view;
-        private List<string> customMethodArguments;
-
-        public event ChildResourceRetriever.GetCompleteDelegate GetComplete;
-        public event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
-        public event ChildResourceRetriever.CustomMethodWithArgumentsDelegate CustomMethodWithArguments;
-
-        public FileRetriever() {
-        }
-
-        public void OnGetComplete() {
-            if (GetComplete != null) {
-                GetComplete();
-            }
-        }
-
-        public bool OnCustomMethod(IResource resource) {
-            if (CustomMethod != null) {
-                return CustomMethod(resource);
-            }
-
-            return false;
-        }
-
-        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
-            if (CustomMethodWithArguments != null) {
-                return CustomMethodWithArguments(resource, arguments);
-            }
-
-            return false;
-        }
-
-        public void Execute(IView view, IResource resource) {
+    public class FileRetriever : ChildResourceRetriever {
+        public override void Execute(IView view, IResource resource) {
             Stopwatch sw = new Stopwatch();
 
             if (resource is FileInfo) {
@@ -137,11 +103,11 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
-        public IChildResourceRetriever Clone() {
+        public override IChildResourceRetriever Clone() {
             IChildResourceRetriever childResourceRetriever = new FileRetriever();
             List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
             childResourceRetriever.ColumnInfos = clonedColumnInfos;
-            childResourceRetriever.Name = name;
+            childResourceRetriever.Name = Name;
             childResourceRetriever.View = View;
             childResourceRetriever.CustomMethodArguments = CustomMethodArguments;
 
@@ -150,42 +116,6 @@ namespace SharpFile.IO.Retrievers {
             childResourceRetriever.GetComplete += OnGetComplete;
 
             return childResourceRetriever;
-        }
-
-        public List<ColumnInfo> ColumnInfos {
-            get {
-                return columnInfos;
-            }
-            set {
-                columnInfos = value;
-            }
-        }
-
-        public string Name {
-            get {
-                return name;
-            }
-            set {
-                name = value;
-            }
-        }
-
-        public IView View {
-            get {
-                return view;
-            }
-            set {
-                view = value;
-            }
-        }
-
-        public List<string> CustomMethodArguments {
-            get {
-                return customMethodArguments;
-            }
-            set {
-                customMethodArguments = value;
-            }
         }
 
         private IEnumerable<IResource> getResources(IResource resource, string filter) {
