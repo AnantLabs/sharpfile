@@ -1,14 +1,13 @@
 ﻿using System;
-using System.IO;
-using SharpFile.Infrastructure.Win32;
-using SharpFile.Infrastructure;
 using System.Collections.Generic;
+using System.IO;
 using Common;
+using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Win32;
 
 namespace SharpFile.IO.ChildResources {
     public abstract class FileSystemInfo : IChildResource {
         private IParentResource root;
-        protected WIN32_FIND_DATA findData;
         protected FileAttributes attributes;
         protected DateTime creationTime;
         protected DateTime lastAccessTime;
@@ -18,6 +17,7 @@ namespace SharpFile.IO.ChildResources {
         protected string alternateName;
         protected string displayName;
 
+        protected readonly WIN32_FIND_DATA findData;
         protected readonly string fullName;        
 
         protected FileSystemInfo(string fullName) {
@@ -42,6 +42,22 @@ namespace SharpFile.IO.ChildResources {
             this.findData = findData;
 
             getDetails();
+        }
+
+        protected FileSystemInfo(string displayName, string fullName, string alternateName, 
+            FileAttributes attributes, long size, DateTime creationTime, DateTime lastAccessTime, 
+            DateTime lastWriteTime, IParentResource root) {
+            this.displayName = displayName;
+            this.fullName = fullName;
+            this.alternateName = alternateName;
+            this.attributes = attributes;
+            this.size = size;
+            this.creationTime = creationTime;
+            this.lastAccessTime = lastAccessTime;
+            this.lastWriteTime = lastWriteTime;
+            this.root = root;
+
+            this.name = fullName;
         }
 
         protected abstract void getSize();

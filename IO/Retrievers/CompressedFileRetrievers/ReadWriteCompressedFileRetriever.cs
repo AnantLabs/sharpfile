@@ -20,8 +20,8 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return childResourceRetriever;
         }
 
-        protected override IEnumerable<FileSystemInfo> getResources(FileSystemInfo resource, string filter) {
-            List<FileSystemInfo> resources = new List<FileSystemInfo>();
+        protected override IEnumerable<IResource> getResources(IResource resource, string filter) {
+            List<IResource> resources = new List<IResource>();
 
             // TODO: Finish this.
             ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();
@@ -31,7 +31,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                 resource.Name);
 
             FastZip fastZip = new FastZip();
-            fastZip.ExtractZip(resource.FullPath, unzippedPath, string.Empty);
+            fastZip.ExtractZip(resource.FullName, unzippedPath, string.Empty);
 
             return resources;
         }

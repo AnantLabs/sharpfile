@@ -15,6 +15,13 @@ namespace SharpFile.IO.ChildResources {
             : base(path, findData) {
         }
 
+        public DirectoryInfo(string displayName, string fullName, string alternateName,
+            System.IO.FileAttributes attributes, long size, DateTime creationTime, DateTime lastAccessTime,
+            DateTime lastWriteTime, IParentResource root)
+            : base(displayName, fullName, alternateName, attributes, size, creationTime, lastAccessTime, 
+            lastWriteTime, root) {
+        }
+
         /// <summary>
         /// Copies the directory to the destination.
         /// </summary>

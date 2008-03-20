@@ -1,12 +1,13 @@
 ﻿using System;
-using SharpFile.Infrastructure;
+using System.IO;
 
 namespace SharpFile.IO.ChildResources {
     public class CompressedFileInfo : FileInfo {
         long compressedSize = 0;
 
-        public CompressedFileInfo(string name, long size, long compressedSize, DateTime lastWriteTime, string fullPath, string extension, ChildResourceRetrievers childResourceRetrievers) :
-            base(name, size, lastWriteTime, fullPath, extension, childResourceRetrievers) {
+        public CompressedFileInfo(string fullName, string name, long size, long compressedSize, DateTime lastWriteTime) 
+            : base(name, fullName, name, FileAttributes.Normal, size, DateTime.MinValue, DateTime.MinValue, lastWriteTime, 
+            null) {
             this.compressedSize = compressedSize;
         }
 

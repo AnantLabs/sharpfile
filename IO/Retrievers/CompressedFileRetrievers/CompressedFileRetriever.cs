@@ -23,7 +23,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             }
         }
 
-        public bool OnCustomMethod(FileSystemInfo resource) {
+        public bool OnCustomMethod(IResource resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
             }
@@ -31,7 +31,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return false;
         }
 
-        public bool OnCustomMethodWithArguments(FileSystemInfo resource, List<string> arguments) {
+        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
             if (CustomMethodWithArguments != null) {
                 return CustomMethodWithArguments(resource, arguments);
             }
@@ -39,7 +39,7 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
             return false;
         }
 
-        public void Execute(IView view, FileSystemInfo resource) {
+        public void Execute(IView view, IResource resource) {
             Settings.Instance.Logger.Log(LogLevelType.Verbose,
                 "Starting to Execute.");
 
@@ -66,14 +66,14 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
 
                         Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                            "Access is unauthorized for {0}.", resource.FullPath);
+                            "Access is unauthorized for {0}.", resource.FullName);
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
                     } catch (Exception ex) {
                         e.Cancel = true;
 
                         Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                            "Error when getting compressed file contents for {0}.", resource.FullPath);
+                            "Error when getting compressed file contents for {0}.", resource.FullName);
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
                     } finally {
                         backgroundWorker.ReportProgress(100);
@@ -85,8 +85,8 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                     if (e.Error == null &&
                         !e.Cancelled &&
                         e.Result != null &&
-                        e.Result is IEnumerable<FileSystemInfo>) {
-                        IEnumerable<FileSystemInfo> resources = (IEnumerable<FileSystemInfo>)e.Result;
+                        e.Result is IEnumerable<IResource>) {
+                        IEnumerable<IResource> resources = (IEnumerable<IResource>)e.Result;
 
                         view.BeginUpdate();
                         view.ColumnInfos = ColumnInfos;
@@ -95,10 +95,10 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                         view.EndUpdate();
 
                         // Update some information about the current directory.
-                        view.OnUpdatePath(resource.FullPath);
+                        view.OnUpdatePath(resource.FullName);
 
                         // Set up the watcher.
-                        view.FileSystemWatcher.Path = resource.FullPath;
+                        view.FileSystemWatcher.Path = resource.FullName;
                         view.FileSystemWatcher.Filter = view.Filter;
                         view.FileSystemWatcher.EnableRaisingEvents = true;
                     }
@@ -153,6 +153,6 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
 
         public abstract IChildResourceRetriever Clone();
 
-        protected abstract IEnumerable<FileSystemInfo> getResources(FileSystemInfo resource, string filter);
+        protected abstract IEnumerable<IResource> getResources(IResource resource, string filter);
     }
 }

@@ -711,7 +711,11 @@ namespace SharpFile {
                         // TODO: Use LCG to retrieve properties here instead of GetProperty.
                         // LCG example: TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName);
                         propertyInfo = resource.GetType().GetProperty(propertyName);
-                        text = propertyInfo.GetValue(resource, null).ToString();
+
+                        // Make sure that the property exists on the resource.
+                        if (propertyInfo != null) {
+                            text = propertyInfo.GetValue(resource, null).ToString();
+                        }
                     }
 
                     // The original value will be set on the tag for sortability.

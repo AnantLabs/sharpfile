@@ -75,6 +75,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\Interfaces\IResourceGetter.cs" />
+    <Compile Include="IO\ChildResources\CompressedDirectoryInfo.cs" />
+    <Compile Include="IO\ChildResources\CompressedFileInfo.cs" />
+    <Compile Include="IO\Retrievers\ChildResourceRetriever.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IO\Retrievers\CompressedFileRetrievers\ReadOnlyCompressedFileRetriever.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="UI\BaseParent.cs">
       <SubType>Form</SubType>
     </Compile>

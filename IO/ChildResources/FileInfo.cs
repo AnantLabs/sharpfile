@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using SharpFile.Infrastructure.Win32;
+using System.IO;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Win32;
 
 namespace SharpFile.IO.ChildResources {
     public class FileInfo : FileSystemInfo {
-        protected string extension = string.Empty;
+        protected string extension;
         protected DirectoryInfo directory;
         protected string directoryName;
 
@@ -15,10 +15,13 @@ namespace SharpFile.IO.ChildResources {
 
         public FileInfo(string path, WIN32_FIND_DATA findData)
             : base(path, findData) {
+        }
 
-            if (name.IndexOf('.') > 0) {
-                this.extension = name.Remove(0, name.LastIndexOf('.'));
-            }
+        public FileInfo(string displayName, string fullName, string alternateName,
+            FileAttributes attributes, long size, DateTime creationTime, DateTime lastAccessTime,
+            DateTime lastWriteTime, IParentResource root)
+            : base(displayName, fullName, alternateName, attributes, size, creationTime, lastAccessTime, 
+            lastWriteTime, root) {
         }
 
         /// <summary>
@@ -86,6 +89,12 @@ namespace SharpFile.IO.ChildResources {
 
         public string Extension {
             get {
+                if (string.IsNullOrEmpty(extension)) {
+                    if (name.IndexOf('.') > 0) {
+                        extension = name.Remove(0, name.LastIndexOf('.'));
+                    }
+                }
+
                 return extension;
             }
         }
