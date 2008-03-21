@@ -485,6 +485,13 @@ namespace SharpFile {
                     }
                 }
 
+                if (this.tlsPath.Text.Contains(":") &&
+                    !this.tlsPath.Text.Contains(@"\")) {
+                    this.tlsPath.Text += @"\";
+                } else if (!this.tlsPath.Text.Contains(@":\")) {
+                    this.tlsPath.Text += @":\";
+                }
+
                 return this.tlsPath.Text;
             }
             set {

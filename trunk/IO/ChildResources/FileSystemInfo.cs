@@ -258,6 +258,9 @@ namespace SharpFile.IO.ChildResources {
                     path = this.FullName.Replace(this.Name, string.Empty);
                 }
 
+                // Get rid of any extra slashes.
+                path = path.Replace(@"\\", @"\");
+
                 return path;
             }
         }

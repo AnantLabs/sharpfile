@@ -168,30 +168,7 @@ namespace SharpFile.IO.ChildResources {
         }
 
         private void getParent() {
-            try {
-                // Make sure that the full name has an ending slash.
-                string correctFullName = this.fullName;
-
-                if (!correctFullName.EndsWith("\\")) {
-                    correctFullName += "\\";
-                }
-
-                string[] paths = correctFullName.Split('\\');
-
-                // Resize the array to chop off the last 2 directories 
-                // where the last is an empty string because of the test above.
-                Array.Resize<string>(ref paths, paths.Length - 2);
-
-                string parentPath = string.Join("\\", paths);
-
-                if (!parentPath.EndsWith("\\")) {
-                    parentPath += "\\";
-                }
-
-                parent = new DirectoryInfo(parentPath);
-            } catch (Exception ex) {
-                // TODO: Parent is invalid.
-            }
+            parent = new DirectoryInfo(this.Path);
         }
 
         public IResource Parent {
