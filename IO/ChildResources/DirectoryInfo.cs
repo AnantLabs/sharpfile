@@ -147,7 +147,9 @@ namespace SharpFile.IO.ChildResources {
             }
 
             foreach (DirectoryInfo childDirectoryInfo in directoryInfo.GetDirectories()) {
-                if (!(childDirectoryInfo is ParentDirectoryInfo) && !(childDirectoryInfo is RootDirectoryInfo)) {
+                if (!(childDirectoryInfo is ParentDirectoryInfo) 
+                    && !(childDirectoryInfo is RootDirectoryInfo) 
+                    && (System.IO.FileAttributes.ReparsePoint & childDirectoryInfo.Attributes) != System.IO.FileAttributes.ReparsePoint) {
                     totalSize += getDirectorySize(childDirectoryInfo);
                 }
             }
