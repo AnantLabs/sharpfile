@@ -16,6 +16,7 @@ namespace SharpFile.IO.ChildResources {
         protected string name;
         protected string alternateName;
         protected string displayName;
+        protected string path;
 
         protected readonly WIN32_FIND_DATA findData;
         protected readonly string fullName;        
@@ -59,12 +60,6 @@ namespace SharpFile.IO.ChildResources {
 
             this.name = fullName;
         }
-
-        protected abstract void getSize();
-
-        public abstract void Copy(string destination, bool overwrite);
-
-        public abstract void Move(string destination);
 
         /// <summary>
         /// Retrieves all child resource retrievers associated with the file system object.
@@ -139,6 +134,9 @@ namespace SharpFile.IO.ChildResources {
             }
         }
 
+        /// <summary>
+        /// Gets details from the populated WIN32_FIND_DATA.
+        /// </summary>
         protected void getDetails() {
             if (findData != null) {
                 this.name = findData.Name;
@@ -175,6 +173,9 @@ namespace SharpFile.IO.ChildResources {
             }
         }
 
+        /// <summary>
+        /// Refreshed the WIN32-FIND_DATA.
+        /// </summary>
         public void Refresh() {
             using (SafeFindHandle handle = NativeMethods.FindFirstFile(
                 fullName, findData)) {
@@ -182,10 +183,11 @@ namespace SharpFile.IO.ChildResources {
             }
         }
 
-        private void getRoot() {
-            string rootPath = this.fullName.Substring(0, this.fullName.IndexOf('\\') + 1);
-            root = new SharpFile.IO.ParentResources.DriveInfo(rootPath);
-        }
+        public abstract void Copy(string destination, bool overwrite);
+
+        public abstract void Move(string destination);
+
+        protected abstract void getSize();
 
         public string FullName {
             get {
@@ -236,7 +238,8 @@ namespace SharpFile.IO.ChildResources {
         public IParentResource Root {
             get {
                 if (root == null) {
-                    getRoot();
+                    string rootPath = this.fullName.Substring(0, this.fullName.IndexOf('\\') + 1);
+                    root = new SharpFile.IO.ParentResources.DriveInfo(rootPath);
                 }
 
                 return root;
@@ -246,6 +249,16 @@ namespace SharpFile.IO.ChildResources {
         public string DisplayName {
             get {
                 return displayName;
+            }
+        }
+
+        public string Path {
+            get {
+                if (string.IsNullOrEmpty(path)) {
+                    path = this.FullName.Replace(this.Name, string.Empty);
+                }
+
+                return path;
             }
         }
     }

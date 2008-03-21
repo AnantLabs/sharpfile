@@ -7,6 +7,7 @@ using SharpFile.IO.ChildResources;
 namespace SharpFile.IO.ParentResources {
     public class DriveInfo : IParentResource, IResourceGetter {
         private System.IO.DriveInfo driveInfo;
+        private string name;
 
         public DriveInfo(string name) {
             driveInfo = new System.IO.DriveInfo(name);
@@ -18,11 +19,19 @@ namespace SharpFile.IO.ParentResources {
         }
 
         public string Name {
-            get { return driveInfo.Name; }
+            get {
+                if (string.IsNullOrEmpty(name)) {
+                    name = driveInfo.Name;
+                }
+
+                return name;
+            }
         }
 
         public long Size {
-            get { return driveInfo.TotalSize; }
+            get {
+                return driveInfo.TotalSize;
+            }
         }
 
         public bool IsReady {
@@ -40,6 +49,18 @@ namespace SharpFile.IO.ParentResources {
         public System.IO.DriveType DriveType {
             get {
                 return driveInfo.DriveType;
+            }
+        }
+
+        public IParentResource Root {
+            get {
+                return this;
+            }
+        }
+
+        public string Path {
+            get {
+                return this.Name;
             }
         }
 
