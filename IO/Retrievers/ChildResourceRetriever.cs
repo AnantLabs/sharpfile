@@ -11,18 +11,37 @@ namespace SharpFile.IO.Retrievers {
         private List<ColumnInfo> columnInfos;
         private string name;
         private IView view;
-        private List<string> customMethodArguments;
+        private List<string> customMethodArguments = new List<string>();
 
+        /// <summary>
+        /// Fired when the resources are received.
+        /// </summary>
         public event SharpFile.Infrastructure.ChildResourceRetriever.GetCompleteDelegate GetComplete;
+
+        /// <summary>
+        /// The Custom method that determines if this retriever should be used for a particular resource.
+        /// </summary>
         public event SharpFile.Infrastructure.ChildResourceRetriever.CustomMethodDelegate CustomMethod;
+
+        /// <summary>
+        /// The Custom method with arguments that determines if this retriever should be used for a particular resource.
+        /// </summary>
         public event SharpFile.Infrastructure.ChildResourceRetriever.CustomMethodWithArgumentsDelegate CustomMethodWithArguments;
 
+        /// <summary>
+        /// Fires the GetComplete event.
+        /// </summary>
         public void OnGetComplete() {
             if (GetComplete != null) {
                 GetComplete();
             }
         }
 
+        /// <summary>
+        /// Fires the Custom method that determines if this retriever should be used for a particular resource.
+        /// </summary>
+        /// <param name="resource">Resource passed to the custom method.</param>
+        /// <returns>Whether or not this retriever should be executed for a particular resource.</returns>
         public bool OnCustomMethod(IResource resource) {
             if (CustomMethod != null) {
                 return CustomMethod(resource);
@@ -31,6 +50,12 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
+        /// <summary>
+        /// Fires the Custom method with arguments that determines if this retriever should be used for a particular resource.
+        /// </summary>
+        /// <param name="resource">Resource passed to the custom method.</param>
+        /// <param name="arguments">Arguments passed to the custom method.</param>
+        /// <returns>Whether or not this retriever should be executed for a particular resource.</returns>
         public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
             if (CustomMethodWithArguments != null) {
                 return CustomMethodWithArguments(resource, arguments);
@@ -39,6 +64,11 @@ namespace SharpFile.IO.Retrievers {
             return false;
         }
 
+        /// <summary>
+        /// Gets output for a particular resource and outputs the results to a view.
+        /// </summary>
+        /// <param name="view">View to show output.</param>
+        /// <param name="resource">Resource to get output for.</param>
         public void Execute(IView view, IResource resource) {
             Stopwatch sw = new Stopwatch();
 
@@ -121,9 +151,16 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        /// <summary>
+        /// Clones the ChildResourceRetriever.
+        /// </summary>
+        /// <returns></returns>
         public IChildResourceRetriever Clone() {
+            // Instantiate an object for whatever type this currently is (so that derived classes can call this method).
             IChildResourceRetriever childResourceRetriever = Reflection.InstantiateObject<IChildResourceRetriever>(
                 GetType().Assembly.FullName, GetType().FullName);
+
+            // Deep copy the column infos.
             List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
             childResourceRetriever.ColumnInfos = clonedColumnInfos;
             childResourceRetriever.Name = Name;
@@ -139,6 +176,9 @@ namespace SharpFile.IO.Retrievers {
 
         protected abstract IEnumerable<IResource> getResources(IResource resource, string filter);        
 
+        /// <summary>
+        /// Column information.
+        /// </summary>
         public List<ColumnInfo> ColumnInfos {
             get {
                 return columnInfos;
@@ -148,6 +188,9 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        /// <summary>
+        /// Name.
+        /// </summary>
         public string Name {
             get {
                 return name;
@@ -157,6 +200,9 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        /// <summary>
+        /// View.
+        /// </summary>
         public IView View {
             get {
                 return view;
@@ -166,6 +212,9 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        /// <summary>
+        /// Arguments to be used with the custom method with arguments.
+        /// </summary>
         public List<string> CustomMethodArguments {
             get {
                 return customMethodArguments;

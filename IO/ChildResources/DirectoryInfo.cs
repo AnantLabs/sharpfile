@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.Win32;
+using System.Diagnostics;
+using Common.Logger;
 
 namespace SharpFile.IO.ChildResources {
     public class DirectoryInfo : FileSystemInfo, IResourceGetter {
@@ -131,7 +133,15 @@ namespace SharpFile.IO.ChildResources {
         }
 
         protected override void getSize() {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             size = getDirectorySize(this);
+
+            Settings.Instance.Logger.Log(LogLevelType.Verbose, "Finished retrieving size for {0} took {1} ms.",
+                                    this.FullName,
+                                    sw.ElapsedMilliseconds.ToString());
+            sw.Reset();
         }
 
         /// <summary>

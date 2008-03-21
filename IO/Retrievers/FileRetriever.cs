@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
@@ -29,6 +27,12 @@ namespace SharpFile.IO.Retrievers {
             }
         }
 
+        /// <summary>
+        /// Get directory/file resources.
+        /// </summary>
+        /// <param name="resource">Resource to grab directories/files from.</param>
+        /// <param name="filter">The filter.</param>
+        /// <returns>List of directories/files.</returns>
         protected override IEnumerable<IResource> getResources(IResource resource, string filter) {
             if (resource is IResourceGetter) {
                 IResourceGetter resourceGetter = (IResourceGetter)resource;
