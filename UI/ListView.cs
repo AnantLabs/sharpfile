@@ -500,8 +500,12 @@ namespace SharpFile {
         /// Clears the listview.
         /// </summary>
         public new void Clear() {
-            this.Items.Clear();
-            this.itemDictionary.Clear();
+            lock (lockObject) {
+                this.Items.Clear();
+                this.itemDictionary.Clear();
+                fileCount = 0;
+                folderCount = 0;
+            }
         }
 
         /// <summary>
@@ -509,9 +513,8 @@ namespace SharpFile {
         /// </summary>
         /// <param name="path"></param>
         public void RemoveItem(string path) {
-            this.Items.RemoveByKey(path);
-
             lock (lockObject) {
+                this.Items.RemoveByKey(path);
                 this.itemDictionary.Remove(path);
             }
         }
@@ -522,113 +525,44 @@ namespace SharpFile {
         public void AddItemRange(IEnumerable<IResource> resources) {
             StringBuilder sb = new StringBuilder();
             Stopwatch sw = new Stopwatch();
+            List<ListViewItem> listViewItems = new List<ListViewItem>();
 
             if (this.SmallImageList == null) {
                 this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
             }
 
-            // Set file/folder count to 0 when adding in new resources.
-            fileCount = 0;
-            folderCount = 0;
+            sw.Start();        
 
-            bool isBackgroundThread = true;
-
-            if (isBackgroundThread) {
-                using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-                    List<ListViewItem> listViewItems = new List<ListViewItem>();
-                    backgroundWorker.WorkerReportsProgress = true;
-
-                    backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
-                        backgroundWorker.ReportProgress(50);
-
-                        sw.Start();
-
-                        // Create a new listview item with the display name.
-                        foreach (IChildResource resource in resources) {
-                            try {
-                                ListViewItem item = addItem(resource);
-                                listViewItems.Add(item);
-                            } catch (Exception ex) {
-                                sb.AppendFormat("{0}: {1}",
-                                     resource.FullName,
-                                     ex.Message);
-                            }
-                        }
-
-                        Settings.Instance.Logger.Log(LogLevelType.Verbose, "Add resources for {0} took {1} ms.",
-                            Path,
-                            sw.ElapsedMilliseconds.ToString());
-                        sw.Reset();
-
-                        eventArgs.Result = listViewItems;
-
-                        backgroundWorker.ReportProgress(100);
-                    };
-
-                    backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-                        OnUpdateProgress(eventArgs.ProgressPercentage);
-                    };
-
-                    backgroundWorker.RunWorkerCompleted +=
-                        delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-                            if (eventArgs.Error == null && 
-                                eventArgs.Result != null &&
-                                eventArgs.Result is List<ListViewItem>) {
-                                List<ListViewItem> items = (List<ListViewItem>)eventArgs.Result;
-                                this.Items.AddRange(items.ToArray());
-
-                                if (sb.Length > 0) {
-                                    Settings.Instance.Logger.ProcessContent += ShowMessageBox;
-                                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
-                                    Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
-                                }
-
-                                comparer.ColumnIndex = 0;
-                                comparer.Order = Order.Ascending;
-                                this.Sort();
-
-                                // Resize the columns based on the column content.
-                                this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-                            }
-                        };
-
-                    backgroundWorker.RunWorkerAsync();
+            // Create a new listview item with the display name.
+            foreach (IChildResource resource in resources) {
+                try {
+                    ListViewItem item = addItem(resource);
+                    listViewItems.Add(item);
+                } catch (Exception ex) {
+                    sb.AppendFormat("{0}: {1}",
+                         resource.FullName,
+                         ex.Message);
                 }
-            } else {           
-                sw.Start();
-                List<ListViewItem> listViewItems = new List<ListViewItem>();
-
-                // Create a new listview item with the display name.
-                foreach (IChildResource resource in resources) {
-                    try {
-                        ListViewItem item = addItem(resource);
-                        listViewItems.Add(item);
-                    } catch (Exception ex) {
-                        sb.AppendFormat("{0}: {1}",
-                             resource.FullName,
-                             ex.Message);
-                    }
-                }
-
-                this.Items.AddRange(listViewItems.ToArray());
-
-                Settings.Instance.Logger.Log(LogLevelType.Verbose, "Add resources took {0} ms.",
-                    sw.ElapsedMilliseconds.ToString());
-                sw.Reset();
-
-                if (sb.Length > 0) {
-                    Settings.Instance.Logger.ProcessContent += ShowMessageBox;
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
-                    Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
-                }
-
-                comparer.ColumnIndex = 0;
-                comparer.Order = Order.Ascending;
-                this.Sort();
-
-                // Resize the columns based on the column content.
-                this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
+
+            this.Items.AddRange(listViewItems.ToArray());
+
+            Settings.Instance.Logger.Log(LogLevelType.Verbose, "Add resources took {0} ms.",
+                sw.ElapsedMilliseconds.ToString());
+            sw.Reset();
+
+            if (sb.Length > 0) {
+                Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
+                Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
+            }
+
+            comparer.ColumnIndex = 0;
+            comparer.Order = Order.Ascending;
+            this.Sort();
+
+            // Resize the columns based on the column content.
+            this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             OnUpdateStatus(Status);
         }
@@ -636,7 +570,7 @@ namespace SharpFile {
         /// <summary>
         /// Parses the file/directory information and inserts the file info into the listview.
         /// </summary>
-        public void InsertItem(IResource resource) {
+        public void AddItem(IResource resource) {
             if (resource != null) {
                 try {
                     // Create a new listview item with the display name.
@@ -682,6 +616,8 @@ namespace SharpFile {
         /// <returns>Listview item that references the filesystem object.</returns>
         protected ListViewItem createListViewItem(IResource resource) {
             ListViewItem item = new ListViewItem();
+            List<ListViewItem.ListViewSubItem> listViewSubItems = 
+                new List<ListViewItem.ListViewSubItem>(Columns.Count);
             item.Tag = resource;
             item.Name = resource.FullName;
 
@@ -710,6 +646,7 @@ namespace SharpFile {
                     }) == null) {
                         // TODO: Use LCG to retrieve properties here instead of GetProperty.
                         // LCG example: TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName);
+                        // Would shave ~100 ms off the query to retrieve c:\windows\system32\.
                         propertyInfo = resource.GetType().GetProperty(propertyName);
 
                         // Make sure that the property exists on the resource.
@@ -742,7 +679,7 @@ namespace SharpFile {
                         listViewSubItem.Text = text;
                         listViewSubItem.Tag = tag;
 
-                        item.SubItems.Add(listViewSubItem);
+                        listViewSubItems.Add(listViewSubItem);
                     }
                 } catch (Exception ex) {
                     string blob = ex.Message;
@@ -750,20 +687,21 @@ namespace SharpFile {
                 }
             }
 
+            // Add all of the subitems at once.
+            item.SubItems.AddRange(listViewSubItems.ToArray());
+
             // TODO: Setting to retrieve image indexes. Maybe that code would go into 
             // OnGetImageIndex, though. Or higher up the stack?
             if (true) {
-                int imageIndex = OnGetImageIndex(resource);
-                item.ImageIndex = imageIndex;
+                try {
+                    int imageIndex = OnGetImageIndex(resource);
+                    item.ImageIndex = imageIndex;
+                } catch (Exception ex) {
+                    // Prevent errors when retrieving file icons from showing up.
+                }
             }
 
             return item;
-        }
-
-        private static object Getter<T>(T resource, string propertyName) where T : IChildResource {
-            Phydeaux.Utilities.Func<T, object> getter = Dynamic<T>.Instance.Property<object>.Explicit.Getter.CreateDelegate(propertyName);
-
-            return getter(resource);
         }
 
         /// <summary>
