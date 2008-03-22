@@ -1,7 +1,8 @@
 ﻿using System;
 
 namespace SharpFile.Infrastructure {
-    public interface IChildResource : IResource {      
+    public interface IChildResource : IResource {
+        IResource Parent { get; }
         DateTime LastWriteTime { get; }
         DateTime LastAccessTime { get; }
         DateTime CreationTime { get; }

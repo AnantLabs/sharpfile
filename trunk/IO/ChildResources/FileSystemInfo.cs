@@ -17,6 +17,7 @@ namespace SharpFile.IO.ChildResources {
         protected string alternateName;
         protected string displayName;
         protected string path;
+        private IResource parent;
 
         protected readonly WIN32_FIND_DATA findData;
         protected readonly string fullName;        
@@ -57,8 +58,6 @@ namespace SharpFile.IO.ChildResources {
             this.lastAccessTime = lastAccessTime;
             this.lastWriteTime = lastWriteTime;
             this.root = root;
-
-            this.name = fullName;
         }
 
         /// <summary>
@@ -151,6 +150,10 @@ namespace SharpFile.IO.ChildResources {
                     long fileTime = (highDateTime << 32) + lowDateTime;
 
                     lastWriteTime = DateTime.FromFileTime(fileTime);
+
+                    if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(lastWriteTime) == false) {
+                        lastWriteTime = lastWriteTime.AddHours(1);
+                    }
                 } catch { }
 
                 // Get LastAccessTime.
@@ -160,6 +163,10 @@ namespace SharpFile.IO.ChildResources {
                     long fileTime = (highDateTime << 32) + lowDateTime;
 
                     lastAccessTime = DateTime.FromFileTime(fileTime);
+
+                    if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(lastAccessTime) == false) {
+                        lastAccessTime = lastAccessTime.AddHours(1);
+                    }
                 } catch { }
 
                 // Get CreationTime.
@@ -169,12 +176,16 @@ namespace SharpFile.IO.ChildResources {
                     long fileTime = (highDateTime << 32) + lowDateTime;
 
                     creationTime = DateTime.FromFileTime(fileTime);
+
+                    if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(creationTime) == false) {
+                        creationTime = creationTime.AddHours(1);
+                    }
                 } catch { }
             }
         }
 
         /// <summary>
-        /// Refreshed the WIN32-FIND_DATA.
+        /// Refreshes the WIN32_FIND_DATA.
         /// </summary>
         public void Refresh() {
             using (SafeFindHandle handle = NativeMethods.FindFirstFile(
@@ -203,6 +214,15 @@ namespace SharpFile.IO.ChildResources {
 
         public string Name {
             get {
+                // TODO: This should actually determine the name instead of just using the fullName.
+                if (string.IsNullOrEmpty(name)) {
+                    if (fullName.LastIndexOf('\\', 0) > 0) {
+                        name = fullName.Remove(0, fullName.LastIndexOf('\\', 0));
+                    } else {
+                        name = fullName;
+                    }
+                }
+
                 return name;
             }
         }
@@ -249,6 +269,16 @@ namespace SharpFile.IO.ChildResources {
         public string DisplayName {
             get {
                 return displayName;
+            }
+        }
+
+        public IResource Parent {
+            get {
+                if (parent == null) {
+                    parent = new DirectoryInfo(this.Path);
+                }
+
+                return parent;
             }
         }
 

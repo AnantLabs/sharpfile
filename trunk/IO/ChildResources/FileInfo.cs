@@ -90,8 +90,8 @@ namespace SharpFile.IO.ChildResources {
         public string Extension {
             get {
                 if (string.IsNullOrEmpty(extension)) {
-                    if (name.IndexOf('.') > 0) {
-                        extension = name.Remove(0, name.LastIndexOf('.'));
+                    if (Name.IndexOf('.') > 0) {
+                        extension = Name.Remove(0, Name.LastIndexOf('.'));
                     }
                 }
 
