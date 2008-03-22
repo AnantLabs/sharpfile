@@ -254,12 +254,12 @@ namespace SharpFile {
                         case System.IO.WatcherChangeTypes.Changed:
                             if (resource is IChildResource) {
                                 view.RemoveItem(path);
-                                view.InsertItem((IChildResource)resource);
+                                view.AddItem((IChildResource)resource);
                             }
                             break;
                         case System.IO.WatcherChangeTypes.Created:
                             if (resource is IChildResource) {
-                                view.InsertItem((IChildResource)resource);
+                                view.AddItem((IChildResource)resource);
                             }
                             break;
                         case System.IO.WatcherChangeTypes.Deleted:
@@ -269,7 +269,7 @@ namespace SharpFile {
                             if (resource is IChildResource) {
                                 string oldFullPath = ((System.IO.RenamedEventArgs)e).OldFullPath;
                                 view.RemoveItem(oldFullPath);
-                                view.InsertItem((IChildResource)resource);
+                                view.AddItem((IChildResource)resource);
                             }
                             break;
                     }
@@ -490,6 +490,8 @@ namespace SharpFile {
                     this.tlsPath.Text += @"\";
                 } else if (!this.tlsPath.Text.Contains(@":\")) {
                     this.tlsPath.Text += @":\";
+                } else if (this.tlsPath.Text.EndsWith("/")) {
+                    this.tlsPath.Text = this.tlsPath.Text.Replace("/", @"\");
                 }
 
                 return this.tlsPath.Text;
