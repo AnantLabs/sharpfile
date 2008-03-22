@@ -5,15 +5,21 @@ using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace SharpFile.Infrastructure.Win32 {
+    [StructLayout(LayoutKind.Sequential), ComVisible(false)]
+    public struct FILETIME {
+        public UInt32 dwLowDateTime;
+        public UInt32 dwHighDateTime;
+    }
+
     /// <summary>
     /// Structure that maps to WIN32_FIND_DATA.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public sealed class WIN32_FIND_DATA {
         public FileAttributes Attributes;
-        public System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
-        public System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
-        public System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
+        public FILETIME CreationTime;
+        public FILETIME LastAccessTime;
+        public FILETIME LastWriteTime;
         public int SizeHigh;
         public int SizeLow;
         public int Reserved0;

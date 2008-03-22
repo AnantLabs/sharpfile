@@ -40,8 +40,11 @@ http://www.codeproject.com/KB/files/FileSystemEnumerator.aspx
 FindFirstFile WIN32 API - Kåre Smith with minor edits by Mike Liddell
 http://www.pinvoke.net/default.aspx/kernel32/FindFirstFile.html
 
-Calculating correct DateTime from WIN32_FIND_DATA - zombu
+Complaining about incorrect DateTime from WIN32_FIND_DATA - zombu
 http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=94138
+
+Calculating correct DateTime from WIN32_FIND_DATA - Scott McMaster
+http://softwaredevscott.spaces.live.com/blog/cns!1A9E939F7373F3B7!146.entry
 
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
