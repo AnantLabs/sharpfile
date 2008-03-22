@@ -7,8 +7,6 @@ using Common.Logger;
 
 namespace SharpFile.IO.ChildResources {
     public class DirectoryInfo : FileSystemInfo, IResourceGetter {
-        private IResource parent;
-
         public DirectoryInfo(string path)
             : base(path) {
         }
@@ -165,20 +163,6 @@ namespace SharpFile.IO.ChildResources {
             }
 
             return totalSize;
-        }
-
-        private void getParent() {
-            parent = new DirectoryInfo(this.Path);
-        }
-
-        public IResource Parent {
-            get {
-                if (parent == null) {
-                    getParent();
-                }
-
-                return parent;
-            }
         }
     }
 }

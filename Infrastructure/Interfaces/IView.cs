@@ -5,7 +5,7 @@ using System.IO;
 namespace SharpFile.Infrastructure {
 	public interface IView {
         void AddItemRange(IEnumerable<IResource> resources);
-        void InsertItem(IResource resource);
+        void AddItem(IResource resource);
 		void RemoveItem(string path);
 		void Clear();
 		void BeginUpdate();
