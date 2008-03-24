@@ -210,25 +210,8 @@ namespace SharpFile {
         /// Refreshes the view when a different drive is selected.
         /// </summary>
         private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-            DriveInfo resource = (DriveInfo)e.ClickedItem.Tag;
-            resource.Execute(view);
-
-            tlsDrives.Enabled = false;
-            tlsPath.Enabled = false;
-            tlsFilter.Enabled = false;
-            view.Enabled = false;
-
-            //DirectoryInfo directoryInfo = new DirectoryInfo(resource.RootDirectory.FullName);
-
-            foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers()) {
-                childResourceRetriever.GetComplete += delegate {
-                    highlightParentResource(resource, e.ClickedItem.Image);
-                    tlsDrives.Enabled = true;
-                    tlsPath.Enabled = true;
-                    tlsFilter.Enabled = true;
-                    view.Enabled = true;
-                };
-            }
+            DriveInfo driveInfo = (DriveInfo)e.ClickedItem.Tag;
+            execute(driveInfo, e.ClickedItem.Image);
         }
 
         /// <summary>
@@ -284,7 +267,7 @@ namespace SharpFile {
         /// Fires when a drive is added.
         /// </summary>
         private void driveDetector_DeviceArrived(object sender, DriveDetectorEventArgs e) {
-            Settings.ClearResources();
+            //Settings.ClearResources();
             UpdateParentListing();
         }
 
@@ -292,7 +275,7 @@ namespace SharpFile {
         /// Fires when a drive is removed.
         /// </summary>
         private void driveDetector_DeviceRemoved(object sender, DriveDetectorEventArgs e) {
-            Settings.ClearResources();
+            //Settings.ClearResources();
 
             this.BeginInvoke((MethodInvoker)delegate {
                 int index = 0;
@@ -304,6 +287,15 @@ namespace SharpFile {
 
                         if (pathRoot.Equals(drive)) {
                             // Update the path to the local drive.
+                            foreach (ToolStripItem i in tlsDrives.DropDownItems) {
+                                DriveInfo driveInfo = (DriveInfo)i.Tag;
+
+                                if (driveInfo.IsReady &&
+                                    driveInfo.DriveType == System.IO.DriveType.Fixed) {
+                                    execute(driveInfo, i.Image);
+                                    break;
+                                }
+                            }
                         }
 
                         tlsDrives.DropDownItems.RemoveAt(index);
@@ -322,7 +314,7 @@ namespace SharpFile {
         /// </summary>
         public void UpdateParentListing() {
             // Queue all of the resource retrievers onto the threadpool and set up the callback method.
-            ThreadPool.QueueUserWorkItem(updateParentListing_Callback, Settings.Instance.ParentResources);
+            ThreadPool.QueueUserWorkItem(updateParentListing_Callback);
         }
 
         /// <summary>
@@ -331,95 +323,113 @@ namespace SharpFile {
         /// <param name="stateInfo">The resource retriever.</param>
         private void updateParentListing_Callback(object stateInfo) {
             lock (lockObject) {
-                if (stateInfo is List<IParentResource>) {
-                    List<IParentResource> resources = (List<IParentResource>)stateInfo;
+                // Make sure that the handle is created before invoking the updater.
+                while (!handleCreated) {
+                    System.Threading.Thread.Sleep(100);
+                }
 
-                    // Make sure that the handle is created before invoking the updater.
-                    while (!handleCreated) {
-                        System.Threading.Thread.Sleep(100);
-                    }
+                this.BeginInvoke((MethodInvoker)delegate {
+                    bool isLocalDiskFound = false;
 
-                    this.BeginInvoke((MethodInvoker)delegate {
-                        bool isLocalDiskFound = false;
+                    // Create a new menu item in the dropdown for each drive.
+                    foreach (IParentResource resource in Settings.Instance.ParentResources) {
+                        if (!tlsDrives.DropDownItems.ContainsKey(resource.Name)) {
+                            ToolStripMenuItem item = new ToolStripMenuItem();
+                            item.Text = resource.Name;
+                            item.Name = resource.Name;
+                            item.Tag = resource;
 
-                        // Create a new menu item in the dropdown for each drive.
-                        foreach (IParentResource resource in resources) {
-                            if (!tlsDrives.DropDownItems.ContainsKey(resource.Name)) {
-                                ToolStripMenuItem item = new ToolStripMenuItem();
-                                item.Text = resource.Name;
-                                item.Name = resource.Name;
-                                item.Tag = resource;
+                            int imageIndex = GetImageIndex(resource);
+                            if (imageIndex > -1) {
+                                item.Image = ImageList.Images[imageIndex];
+                            }
 
-                                int imageIndex = GetImageIndex(resource);
-                                if (imageIndex > -1) {
-                                    item.Image = ImageList.Images[imageIndex];
+                            tlsDrives.DropDownItems.Add(item);
+
+                            // Gets information about the path already specified or the drive currently being added.
+                            if (!isLocalDiskFound) {
+                                // If the path has been defined and it is valid, then grab information about it.
+                                if (!string.IsNullOrEmpty(Path)) {
+                                    childResourceRetrievers = resource.GetChildResourceRetrievers().Clone();
+
+                                    foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers) {
+                                        IResource pathResource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+
+                                        if (pathResource is IChildResource) {
+                                            IChildResource childResource = (IChildResource)pathResource;
+
+                                            if (childResource.Root.Name.ToLower().Equals(resource.Name.ToLower())) {
+                                                isLocalDiskFound = true;
+
+                                                pathResource.Execute(view);
+                                                highlightParentResource(childResource.Root, item.Image);
+                                            }
+                                        } else if (pathResource is IParentResource) {
+                                            IParentResource parentResource = (IParentResource)resource;
+
+                                            if (parentResource != null &&
+                                                parentResource.Name.ToLower().Equals(resource.Name.ToLower())) {
+                                                isLocalDiskFound = true;
+
+                                                pathResource.Execute(view);
+                                                highlightParentResource(parentResource, item.Image);
+                                            }
+                                        }
+
+                                        break;
+                                    }
                                 }
 
-                                tlsDrives.DropDownItems.Add(item);
+                                // If there is no defined path to retrieve, then attempt to get 
+                                // information about the the first drive found tha tis local and ready.
+                                if (!isLocalDiskFound && resource is IParentResource) {
+                                    IParentResource parentResource = (IParentResource)resource;
 
-                                // Gets information about the path already specified or the drive currently being added.
-                                if (!isLocalDiskFound) {
-                                    // If the path has been defined and it is valid, then grab information about it.
-                                    if (!string.IsNullOrEmpty(Path)) {
-                                        childResourceRetrievers = resource.GetChildResourceRetrievers().Clone();
+                                    if (parentResource.DriveType == System.IO.DriveType.Fixed &&
+                                        parentResource.IsReady) {
+                                        isLocalDiskFound = true;
 
-                                        foreach (IChildResourceRetriever childResourceRetriever in childResourceRetrievers) {
-                                            IResource pathResource = FileSystemInfoFactory.GetFileSystemInfo(Path);
-
-                                            if (pathResource is IChildResource) {
-                                                IChildResource childResource = (IChildResource)pathResource;
-
-                                                if (childResource.Root.Name.ToLower().Equals(resource.Name.ToLower())) {
-                                                    isLocalDiskFound = true;
-
-                                                    pathResource.Execute(view);
-                                                    highlightParentResource(childResource.Root, item.Image);
-                                                }
-                                            } else if (pathResource is IParentResource) {
-                                                IParentResource parentResource = (IParentResource)resource;
-
-                                                if (parentResource != null &&
-                                                    parentResource.Name.ToLower().Equals(resource.Name.ToLower())) {
-                                                    isLocalDiskFound = true;
-
-                                                    pathResource.Execute(view);
-                                                    highlightParentResource(parentResource, item.Image);
-                                                }
-                                            }
-
-                                            break;
-                                        }
-                                    }
-
-                                    // If there is no defined path to retrieve, then attempt to get 
-                                    // information about the the first drive found tha tis local and ready.
-                                    if (!isLocalDiskFound && resource is IParentResource) {
-                                        IParentResource parentResource = (IParentResource)resource;
-
-                                        if (parentResource.DriveType == System.IO.DriveType.Fixed &&
-                                            parentResource.IsReady) {
-                                            isLocalDiskFound = true;
-
-                                            resource.Execute(view);
-                                            highlightParentResource(parentResource, item.Image);
-                                        }
+                                        resource.Execute(view);
+                                        highlightParentResource(parentResource, item.Image);
                                     }
                                 }
                             }
+                        } else {
+                            // The drive dropdown already contained the drive trying to be added, so assume that a local drive has already been found.
+                            isLocalDiskFound = true;
                         }
+                    }
 
-                        if (childResourceRetrievers == null &&
-                            resources != null &&
-                            resources.Count > 0) {
-                            childResourceRetrievers = resources[0].GetChildResourceRetrievers().Clone();
-                        }
-                    });
-                }
+                    if (childResourceRetrievers == null &&
+                        Settings.Instance.ParentResources != null &&
+                        Settings.Instance.ParentResources.Count > 0) {
+                        childResourceRetrievers = Settings.Instance.ParentResources[0].GetChildResourceRetrievers().Clone();
+                    }
+                });
             }
         }
         #endregion
 
         #region Private methods.
+        private void execute(IParentResource parentResource, Image image) {
+            parentResource.Execute(view);
+
+            tlsDrives.Enabled = false;
+            tlsPath.Enabled = false;
+            tlsFilter.Enabled = false;
+            //view.Enabled = false;
+
+            foreach (IChildResourceRetriever childResourceRetriever in parentResource.GetChildResourceRetrievers()) {
+                childResourceRetriever.GetComplete += delegate {
+                    highlightParentResource(parentResource, image);
+                    tlsDrives.Enabled = true;
+                    tlsPath.Enabled = true;
+                    tlsFilter.Enabled = true;
+                    //view.Enabled = true;
+                };
+            }
+        }
+
         /// <summary>
         /// Highlights the passed-in drive.
         /// </summary>
