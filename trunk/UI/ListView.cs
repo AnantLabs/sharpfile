@@ -8,7 +8,6 @@ using System.Text;
 using System.Windows.Forms;
 using Common;
 using Common.Logger;
-using Phydeaux.Utilities;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
@@ -531,7 +530,7 @@ namespace SharpFile {
                 this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
             }
 
-            sw.Start();        
+            sw.Start();
 
             // Create a new listview item with the display name.
             foreach (IChildResource resource in resources) {
@@ -682,8 +681,9 @@ namespace SharpFile {
                         listViewSubItems.Add(listViewSubItem);
                     }
                 } catch (Exception ex) {
-                    string blob = ex.Message;
-                    // TODO: Record when a column fucks up.
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        "Column, {0}, with property, {1}, could not be added for {2}.", 
+                        columnInfo.Text, columnInfo.Property, resource.FullName);
                 }
             }
 
@@ -697,7 +697,9 @@ namespace SharpFile {
                     int imageIndex = OnGetImageIndex(resource);
                     item.ImageIndex = imageIndex;
                 } catch (Exception ex) {
-                    // Prevent errors when retrieving file icons from showing up.
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        "Icon image could not be retreived for {0}.",
+                        resource.FullName);
                 }
             }
 
@@ -770,18 +772,9 @@ namespace SharpFile {
         /// <summary>
         /// Current FileSystemWatcher.
         /// </summary>
-        public SharpFile.Infrastructure.FileSystemWatcher FileSystemWatcher {
+        public FileSystemWatcher FileSystemWatcher {
             get {
-                return Forms.GetPropertyInParent<SharpFile.Infrastructure.FileSystemWatcher>(this.Parent, "FileSystemWatcher");
-            }
-        }
-
-        /// <summary>
-        /// Current drive.
-        /// </summary>
-        public System.IO.DriveInfo DriveInfo {
-            get {
-                return Forms.GetPropertyInParent<System.IO.DriveInfo>(this.Parent, "ParentResource");
+                return Forms.GetPropertyInParent<FileSystemWatcher>(this.Parent, "FileSystemWatcher");
             }
         }
 
@@ -815,12 +808,6 @@ namespace SharpFile {
                     columnHeader.Tag = columnInfo;
                     this.Columns.Add(columnHeader);
                 }
-            }
-        }
-
-        public ChildResourceRetrievers ChildResourceRetrievers {
-            get {
-                return Forms.GetPropertyInParent<ChildResourceRetrievers>(this.Parent, "ChildResourceRetrievers");
             }
         }
         #endregion

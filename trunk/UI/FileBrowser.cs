@@ -10,6 +10,7 @@ using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -209,7 +210,7 @@ namespace SharpFile {
         /// Refreshes the view when a different drive is selected.
         /// </summary>
         private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-            SharpFile.IO.ParentResources.DriveInfo resource = (SharpFile.IO.ParentResources.DriveInfo)e.ClickedItem.Tag;
+            DriveInfo resource = (DriveInfo)e.ClickedItem.Tag;
             resource.Execute(view);
 
             tlsDrives.Enabled = false;

@@ -9,7 +9,6 @@ using System.Xml;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
-using System.Collections;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -648,9 +647,7 @@ namespace SharpFile.Infrastructure {
         [XmlIgnore]
         public ImageList ImageList {
             get {
-                lock (lockObject) {
-                    return imageList;
-                }
+                return imageList;
             }
         }
         #endregion
