@@ -13,7 +13,7 @@ namespace SharpFile.IO.Retrievers {
         /// </summary>
         /// <param name="view">View to output the results to.</param>
         /// <param name="resource">Resource to grab output from.</param>
-        public new void Execute(IView view, IResource resource) {
+        public override void Execute(IView view, IResource resource) {
             if (resource is FileInfo) {
                 ProcessStartInfo processStartInfo = new ProcessStartInfo();
                 processStartInfo.ErrorDialog = true;
