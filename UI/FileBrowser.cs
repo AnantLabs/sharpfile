@@ -361,18 +361,17 @@ namespace SharpFile {
                                             if (childResource.Root.Name.ToLower().Equals(resource.Name.ToLower())) {
                                                 isLocalDiskFound = true;
 
-                                                pathResource.Execute(view);
-                                                highlightParentResource(childResource.Root, item.Image);
+												execute(childResource);
                                             }
                                         } else if (pathResource is IParentResource) {
                                             IParentResource parentResource = (IParentResource)resource;
 
                                             if (parentResource != null &&
-                                                parentResource.Name.ToLower().Equals(resource.Name.ToLower())) {
+												parentResource.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase) &&
+												parentResource.DriveType == System.IO.DriveType.Fixed &&
+												parentResource.IsReady) {
                                                 isLocalDiskFound = true;
-
-                                                pathResource.Execute(view);
-                                                highlightParentResource(parentResource, item.Image);
+												execute(parentResource);
                                             }
                                         }
 
@@ -381,16 +380,14 @@ namespace SharpFile {
                                 }
 
                                 // If there is no defined path to retrieve, then attempt to get 
-                                // information about the the first drive found tha tis local and ready.
+                                // information about the the first drive found that is local and ready.
                                 if (!isLocalDiskFound && resource is IParentResource) {
                                     IParentResource parentResource = (IParentResource)resource;
 
                                     if (parentResource.DriveType == System.IO.DriveType.Fixed &&
                                         parentResource.IsReady) {
                                         isLocalDiskFound = true;
-
-                                        resource.Execute(view);
-                                        highlightParentResource(parentResource, item.Image);
+										execute(resource);
                                     }
                                 }
                             }
@@ -415,22 +412,6 @@ namespace SharpFile {
             Image image = null;
             IParentResource parentResource = null;
 
-            resource.Execute(view);
-
-            // Disable some while the resources are retrieved.
-            tlsDrives.Enabled = false;
-            tlsPath.Enabled = false;
-            tlsFilter.Enabled = false;
-            //view.Enabled = false;           
-
-            // Determine the correct image to be highlighted.
-            foreach (ToolStripItem item in this.tlsDrives.DropDownItems) {
-                if (resource.FullName.ToLower().Contains(((IParentResource)item.Tag).FullName.ToLower())) {
-                    image = item.Image;
-                    break;
-                }
-            }
-
             // Determine the correct parent resource to be highlighted.
             if (resource is IParentResource) {
                 parentResource = (IParentResource)resource;
@@ -438,16 +419,48 @@ namespace SharpFile {
                 parentResource = ((IChildResource)resource).Root;
             }
 
-            // Once the resources have been retrieved enable some controls and highlight the correct parent resource.
-            foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers()) {
-                childResourceRetriever.GetComplete += delegate {
-                    highlightParentResource(parentResource, image);
-                    tlsDrives.Enabled = true;
-                    tlsPath.Enabled = true;
-                    tlsFilter.Enabled = true;
-                    //view.Enabled = true;
-                };
-            }
+						if (parentResource.IsReady)
+						{
+							// Disable some while the resources are retrieved.
+							tlsDrives.Enabled = false;
+							tlsPath.Enabled = false;
+							tlsFilter.Enabled = false;
+							//view.Enabled = false;
+
+							resource.Execute(view);
+
+							// Determine the correct image to be highlighted.
+							foreach (ToolStripItem item in this.tlsDrives.DropDownItems)
+							{
+								if (resource.FullName.ToLower().Contains(((IParentResource)item.Tag).FullName.ToLower()))
+								{
+									image = item.Image;
+									break;
+								}
+							}
+
+							// Once the resources have been retrieved enable some controls and highlight the correct parent resource.
+							foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers())
+							{
+								childResourceRetriever.GetComplete += delegate
+								{
+									highlightParentResource(parentResource, image);
+									tlsDrives.Enabled = true;
+									tlsPath.Enabled = true;
+									tlsFilter.Enabled = true;
+									//view.Enabled = true;
+								};
+							}
+						}
+						else
+						{
+							tlsDrives.HideDropDown();
+
+							string text = string.Format("It appears the drive, {0}, is not ready.",
+								parentResource.FullName);
+
+							MessageBox.Show(this, text);
+						}
         }
 
         /// <summary>

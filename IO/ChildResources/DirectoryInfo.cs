@@ -92,17 +92,17 @@ namespace SharpFile.IO.ChildResources {
             // TODO: Encapsulate the decision to show the root/parent director in a static method somewhere.
             // Show root directory if specified.
             if (Settings.Instance.ShowRootDirectory) {
-                if (!this.Root.FullName.ToLower().Equals(this.FullName.ToLower())) {
+				if (!this.Root.FullName.Equals(this.FullName, StringComparison.OrdinalIgnoreCase)) {
                     yield return new RootDirectoryInfo(this.Root.FullName);
                 }
             }
 
             // Show parent directory if specified.
             if (Settings.Instance.ShowParentDirectory) {
-                if (!this.Parent.FullName.ToLower().Equals(this.FullName.ToLower())) {
+				if (!this.Parent.FullName.Equals(this.FullName, StringComparison.OrdinalIgnoreCase)) {
                     if (!Settings.Instance.ShowRootDirectory ||
                         (Settings.Instance.ShowRootDirectory &&
-                        !this.Parent.FullName.ToLower().Equals(this.Root.FullName.ToLower()))) {
+						!this.Parent.FullName.Equals(this.Root.FullName, StringComparison.OrdinalIgnoreCase))) {
                         yield return new ParentDirectoryInfo(this.Parent.FullName);
                     }
                 }

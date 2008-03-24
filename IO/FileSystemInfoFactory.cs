@@ -1,3 +1,4 @@
+using System;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
@@ -13,7 +14,7 @@ namespace SharpFile.IO {
             IResource fsi = null;
 
             if (Settings.Instance.ParentResources.Find(delegate(IParentResource r) {
-                return r.Name.ToLower().Equals(path.ToLower());
+				return r.Name.Equals(path, StringComparison.OrdinalIgnoreCase);
             }) != null) {
                 fsi = new DriveInfo(path);
             } else if (System.IO.Directory.Exists(path)) {
