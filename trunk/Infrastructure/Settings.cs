@@ -149,7 +149,7 @@ namespace SharpFile.Infrastructure {
                             types.AddRange(assembly.GetTypes());
 
                             if (types.Find(delegate(Type t) {
-                                return t.Namespace.Equals("SharpFile.Infrastructure");
+                                return t.Namespace.Equals("Common");
                             }) != null) {
                                 settingsXml = Resource.ilmerge_settings;
                             }
