@@ -1,6 +1,7 @@
 - stress test the logging functionality
 - test icon retrieval over the network and determine why it is so slow
 	- retrieve the file's icon when it is originally retrieved?
+- clean up all of the unused code in Shell32.
 
 Slow retrieval:
 On the old Dell: 5s to retrieve from z:\; 4s to display the content; explorer: 1s

@@ -149,13 +149,22 @@ namespace SharpFile.Infrastructure {
                     if (!handle.IsInvalid) {
                         do {
                             fileName = findData.Name;
-                            if (string.IsNullOrEmpty(fileName)) continue;
-                            if (string.Equals(fileName, ".", StringComparison.Ordinal)) continue;
-                            if (string.Equals(fileName, "..", StringComparison.Ordinal)) continue;
+                            if (string.IsNullOrEmpty(fileName)) {
+                                continue;
+                            }
+
+                            // TODO: Root/parent directories could be set here.
+                            if (string.Equals(fileName, ".", StringComparison.Ordinal)) {
+                                continue;
+                            }
+
+                            if (string.Equals(fileName, "..", StringComparison.Ordinal)) {
+                                continue;
+                            }
 
                             fullName = Path.Combine(path, fileName);
 
-                            // TODO: Show Hidden/System files here?
+                            // TODO: Setting to show Hidden/System files.
                             if ((FileAttributes.Directory & findData.Attributes) == FileAttributes.Directory) {
                                 if (m_includeSubDirs) {
                                     pathsToSearch.Push(Path.Combine(path, fileName));
