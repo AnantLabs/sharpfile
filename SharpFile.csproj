@@ -152,6 +152,7 @@
     <EmbeddedResource Include="Infrastructure\Resource.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Compile Include="Infrastructure\Shell32.cs" />
     <Compile Include="UI\TabControl.cs">
       <SubType>Component</SubType>
     </Compile>
