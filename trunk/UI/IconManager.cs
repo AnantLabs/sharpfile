@@ -20,12 +20,26 @@ namespace SharpFile.UI {
             // Prevent more than one thread from updating the ImageList at a time.
             lock (lockObject) {
                 IconReader.IconSize iconSize = IconReader.IconSize.Small;
-                bool showOverlay = Settings.Instance.Icons.ShowOverlay;
                 int imageIndex = iconHash.Count;
-                string fullPath = resource.FullName;
+                string fullPath = resource.FullName.ToLower();
+                bool showOverlay = false;
+
+                // Specifies whether overlays are turned on for all files, or if they have 
+                // been turned on specifically for some paths.
+                if (Settings.Instance.Icons.ShowOverlay ||
+                    Settings.Instance.Icons.OverlayPaths.Find(delegate(string s) {
+                        return (fullPath.Contains(s));
+                    }) != null) {
+                    showOverlay = true;
+                }
 
                 if (resource is FileInfo) {
                     string extension = ((FileInfo)resource).Extension;
+
+                    // Lower-case the extension if it is available.
+                    if (!string.IsNullOrEmpty(extension)) {
+                        extension = extension.ToLower();
+                    }
 
                     if (showOverlay ||
                         (Settings.Instance.Icons.Extensions.Contains(extension) ||

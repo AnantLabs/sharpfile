@@ -690,9 +690,7 @@ namespace SharpFile {
             // Add all of the subitems at once.
             item.SubItems.AddRange(listViewSubItems.ToArray());
 
-            // TODO: Setting to retrieve image indexes. Maybe that code would go into 
-            // OnGetImageIndex, though. Or higher up the stack?
-            if (true) {
+            if (Settings.Instance.Icons.ShowIcons) {
                 try {
                     int imageIndex = OnGetImageIndex(resource);
                     item.ImageIndex = imageIndex;
