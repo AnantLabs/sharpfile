@@ -59,9 +59,6 @@ namespace SharpFile.UI {
             // Show overlay for files.
             if (showOverlay) {
                 flags += (uint)Shell32.SHGFI.ADDOVERLAYS;
-            } else {
-                // I don't think this helps anything, and it prevents "custom" icons from appearing for some folders.
-                //flags += (uint)Shell32.SHGFI.USEFILEATTRIBUTES;
             }
 
             if (resource is FileInfo) {

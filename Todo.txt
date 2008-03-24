@@ -1,5 +1,6 @@
 - stress test the logging functionality
-- ability to include/exclude paths for overlays
+- test icon retrieval over the network and determine why it is so slow
+	- retrieve the file's icon when it is originally retrieved?
 
 Slow retrieval:
 On the old Dell: 5s to retrieve from z:\; 4s to display the content; explorer: 1s
