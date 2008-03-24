@@ -174,7 +174,7 @@ namespace SharpFile {
                 IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
 
                 if (resource != null) {
-                    resource.Execute(view);
+                    execute(resource);
                 } else {
                     Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, 
@@ -211,7 +211,7 @@ namespace SharpFile {
         /// </summary>
         private void tlsDrives_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
             DriveInfo driveInfo = (DriveInfo)e.ClickedItem.Tag;
-            execute(driveInfo, e.ClickedItem.Image);
+            execute(driveInfo);
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace SharpFile {
 
                                 if (driveInfo.IsReady &&
                                     driveInfo.DriveType == System.IO.DriveType.Fixed) {
-                                    execute(driveInfo, i.Image);
+                                    execute(driveInfo);
                                     break;
                                 }
                             }
@@ -411,15 +411,35 @@ namespace SharpFile {
         #endregion
 
         #region Private methods.
-        private void execute(IParentResource parentResource, Image image) {
-            parentResource.Execute(view);
+        private void execute(IResource resource) {
+            Image image = null;
+            IParentResource parentResource = null;
 
+            resource.Execute(view);
+
+            // Disable some while the resources are retrieved.
             tlsDrives.Enabled = false;
             tlsPath.Enabled = false;
             tlsFilter.Enabled = false;
-            //view.Enabled = false;
+            //view.Enabled = false;           
 
-            foreach (IChildResourceRetriever childResourceRetriever in parentResource.GetChildResourceRetrievers()) {
+            // Determine the correct image to be highlighted.
+            foreach (ToolStripItem item in this.tlsDrives.DropDownItems) {
+                if (resource.FullName.ToLower().Contains(((IParentResource)item.Tag).FullName.ToLower())) {
+                    image = item.Image;
+                    break;
+                }
+            }
+
+            // Determine the correct parent resource to be highlighted.
+            if (resource is IParentResource) {
+                parentResource = (IParentResource)resource;
+            } else if (resource is IChildResource) {
+                parentResource = ((IChildResource)resource).Root;
+            }
+
+            // Once the resources have been retrieved enable some controls and highlight the correct parent resource.
+            foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers()) {
                 childResourceRetriever.GetComplete += delegate {
                     highlightParentResource(parentResource, image);
                     tlsDrives.Enabled = true;
@@ -437,7 +457,7 @@ namespace SharpFile {
             foreach (ToolStripItem item in tlsDrives.DropDownItems) {
                 IParentResource parentResource = (IParentResource)item.Tag;
 
-                if (parentResource.Name == resource.Name) {
+                if (parentResource.FullName.ToLower().Equals(resource.FullName.ToLower())) {
                     item.BackColor = SystemColors.HighlightText;
 
                     tlsDrives.Image = image;
