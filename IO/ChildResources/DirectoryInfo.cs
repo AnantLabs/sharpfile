@@ -89,26 +89,27 @@ namespace SharpFile.IO.ChildResources {
         }
 
         public IEnumerable<IChildResource> GetDirectories() {
+            // TODO: Encapsulate the decision to show the root/parent director in a static method somewhere.
             // Show root directory if specified.
             if (Settings.Instance.ShowRootDirectory) {
-                if (!this.Root.Name.Equals(this.FullName)) {
-                    yield return new RootDirectoryInfo(this.Root.Name);
+                if (!this.Root.FullName.ToLower().Equals(this.FullName.ToLower())) {
+                    yield return new RootDirectoryInfo(this.Root.FullName);
                 }
             }
 
             // Show parent directory if specified.
             if (Settings.Instance.ShowParentDirectory) {
-                if (this.Parent != null) {
+                if (!this.Parent.FullName.ToLower().Equals(this.FullName.ToLower())) {
                     if (!Settings.Instance.ShowRootDirectory ||
                         (Settings.Instance.ShowRootDirectory &&
-                        !this.Parent.Name.Equals(this.Root.Name))) {
+                        !this.Parent.FullName.ToLower().Equals(this.Root.FullName.ToLower()))) {
                         yield return new ParentDirectoryInfo(this.Parent.FullName);
                     }
                 }
             }
 
             // Grab only the directories from the enumerator.
-            FileSystemEnumerator enumerator = new FileSystemEnumerator(fullName);
+            FileSystemEnumerator enumerator = new FileSystemEnumerator(this.FullName);
             foreach (IChildResource resource in enumerator.Matches()) {
                 if (resource is DirectoryInfo) {
                     yield return resource;

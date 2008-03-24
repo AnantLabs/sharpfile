@@ -69,7 +69,7 @@ namespace SharpFile.IO.Retrievers {
         /// </summary>
         /// <param name="view">View to show output.</param>
         /// <param name="resource">Resource to get output for.</param>
-        public void Execute(IView view, IResource resource) {
+        public virtual void Execute(IView view, IResource resource) {
             Stopwatch sw = new Stopwatch();
 
             using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
