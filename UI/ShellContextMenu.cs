@@ -207,7 +207,7 @@ namespace SharpFile.UI {
 			}
 		}
 
-		private class Win32 {
+		public class Win32 {
 			[DllImport("shell32.dll")]
 			public static extern int SHBindToParent(IntPtr pidl,
 				[MarshalAs(UnmanagedType.LPStruct)] Guid riid,
