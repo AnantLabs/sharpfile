@@ -401,14 +401,14 @@ namespace SharpFile {
 
                 if (files.Length > 0) {
                     FileInfo fileInfo = new FileInfo(files[0]);
-                    string originalPath = fileInfo.FullName.Substring(0, fileInfo.FullName.IndexOf(':')).ToLower();
-                    string currentPath = Path.Substring(0, Path.IndexOf(':')).ToLower();
+                    string originalPath = fileInfo.FullName.Substring(0, fileInfo.FullName.IndexOf(':'));
+                    string currentPath = Path.Substring(0, Path.IndexOf(':'));
 
-                    if (!originalPath.Equals(currentPath)) {
+                    if (!originalPath.Equals(currentPath, StringComparison.OrdinalIgnoreCase)) {
                         if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy) {
                             e.Effect = DragDropEffects.Copy;
                         }
-                    } else if (fileInfo.DirectoryName.ToLower().Equals(Path.ToLower())) {
+                    } else if (fileInfo.DirectoryName.Equals(Path, StringComparison.OrdinalIgnoreCase)) {
                         e.Effect = DragDropEffects.None;
                     }
                 }
