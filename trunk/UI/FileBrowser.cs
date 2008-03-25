@@ -430,14 +430,12 @@ namespace SharpFile {
 							resource.Execute(view);
 
 							// Determine the correct image to be highlighted.
-							foreach (ToolStripItem item in this.tlsDrives.DropDownItems)
-							{
-                                if (resource.FullName.Contains(((IParentResource)item.Tag).FullName, StringComparison.OrdinalIgnoreCase))
-								{
-									image = item.Image;
-									break;
-								}
-							}
+                            foreach (ToolStripItem item in this.tlsDrives.DropDownItems) {
+                                if (resource.FullName.ToLower().Contains(((IParentResource)item.Tag).FullName.ToLower())) {
+                                    image = item.Image;
+                                    break;
+                                }
+                            }
 
 							// Once the resources have been retrieved enable some controls and highlight the correct parent resource.
 							foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers())
