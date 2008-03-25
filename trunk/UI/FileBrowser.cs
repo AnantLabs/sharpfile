@@ -281,11 +281,11 @@ namespace SharpFile {
                 int index = 0;
 
                 foreach (ToolStripItem item in tlsDrives.DropDownItems) {
-                    if (item.Name.ToLower().Equals(e.Drive.ToLower())) {
-                        string pathRoot = Path.Substring(0, Path.IndexOf(':')).ToLower();
-                        string drive = e.Drive.Substring(0, e.Drive.IndexOf(':')).ToLower();
+                    if (item.Name.Equals(e.Drive, StringComparison.OrdinalIgnoreCase)) {
+                        string pathRoot = Path.Substring(0, Path.IndexOf(':'));
+                        string drive = e.Drive.Substring(0, e.Drive.IndexOf(':'));
 
-                        if (pathRoot.Equals(drive)) {
+                        if (pathRoot.Equals(drive, StringComparison.OrdinalIgnoreCase)) {
                             // Update the path to the local drive.
                             foreach (ToolStripItem i in tlsDrives.DropDownItems) {
                                 DriveInfo driveInfo = (DriveInfo)i.Tag;
@@ -358,7 +358,7 @@ namespace SharpFile {
                                         if (pathResource is IChildResource) {
                                             IChildResource childResource = (IChildResource)pathResource;
 
-                                            if (childResource.Root.Name.ToLower().Equals(resource.Name.ToLower())) {
+                                            if (childResource.Root.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase)) {
                                                 isLocalDiskFound = true;
 
 												execute(childResource);
@@ -432,7 +432,7 @@ namespace SharpFile {
 							// Determine the correct image to be highlighted.
 							foreach (ToolStripItem item in this.tlsDrives.DropDownItems)
 							{
-								if (resource.FullName.ToLower().Contains(((IParentResource)item.Tag).FullName.ToLower()))
+                                if (resource.FullName.Contains(((IParentResource)item.Tag).FullName, StringComparison.OrdinalIgnoreCase))
 								{
 									image = item.Image;
 									break;
@@ -470,7 +470,7 @@ namespace SharpFile {
             foreach (ToolStripItem item in tlsDrives.DropDownItems) {
                 IParentResource parentResource = (IParentResource)item.Tag;
 
-                if (parentResource.FullName.ToLower().Equals(resource.FullName.ToLower())) {
+                if (parentResource.FullName.Equals(resource.FullName, StringComparison.OrdinalIgnoreCase)) {
                     item.BackColor = SystemColors.HighlightText;
 
                     tlsDrives.Image = image;

@@ -42,8 +42,8 @@ namespace SharpFile.UI {
                     }
 
                     if (showOverlay ||
-                        (Settings.Instance.Icons.Extensions.Contains(extension) ||
-                        string.IsNullOrEmpty(extension))) {
+                        (string.IsNullOrEmpty(extension) ||
+                        Settings.Instance.Icons.Extensions.Contains(extension))) {
                         // Add the full name of the file if it is an executable into the ImageList.
                         if (!iconHash.ContainsKey(fullPath)) {
                             Icon icon = IconReader.GetIcon(resource, iconSize, showOverlay);
