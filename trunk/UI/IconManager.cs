@@ -44,10 +44,16 @@ namespace SharpFile.UI {
                             showOverlay = true;
                         }
 
-                        // HACK: Derive a fully qualified type from the full name of the assembly, plus the enum name.
-                        string driveTypeFullyQualifiedType = string.Format("{0}.{1}",
-                            resource.Root.DriveType.GetType().FullName,
-                            resource.Root.DriveType.ToString());
+						string driveTypeFullyQualifiedType = string.Empty;
+
+						try {
+							// HACK: Derive a fully qualified type from the full name of the assembly, plus the enum name.
+							driveTypeFullyQualifiedType = string.Format("{0}.{1}",
+								resource.Root.DriveType.GetType().FullName,
+								resource.Root.DriveType.ToString());
+						} catch (ArgumentException ex) {
+							// Catch the ArgumentException because CompressedFileInfo/CompressedDirectoryInfo do not have the correct Root.
+						}
 
                         if (Settings.Instance.Icons.IntensiveSearchDriveTypes.Find(delegate(FullyQualifiedType f) {
                             return f.Type.Equals(driveTypeFullyQualifiedType);
