@@ -7,7 +7,7 @@ using SharpFile.IO.ParentResources;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
-    public class FileRetriever : ChildResourceRetriever {
+    public class DefaultRetriever : ChildResourceRetriever {
         /// <summary>
         /// Override the default Execute for ChildResourceRetrievers for files. Use the default for everything else.
         /// </summary>

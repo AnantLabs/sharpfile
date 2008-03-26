@@ -3,8 +3,8 @@ using ICSharpCode.SharpZipLib.Zip;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
-namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
-    public class ReadOnlyCompressedFileRetriever : ChildResourceRetriever {
+namespace SharpFile.IO.Retrievers.CompressedRetrievers {
+    public class ReadOnlyCompressedRetriever : ChildResourceRetriever {
 		protected override IEnumerable<IChildResource> getResources(IResource resource, string filter) {
             if (Settings.Instance.ShowRootDirectory) {
 				yield return new RootDirectoryInfo(resource.Root.Name);
