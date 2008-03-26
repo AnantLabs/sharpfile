@@ -110,9 +110,7 @@ namespace SharpFile.Infrastructure {
                     customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
                                 "SharpFile",
                                 "SharpFile.Infrastructure.ChildResourceRetrievers",
-                                "DefaultCustomMethod");
-
-                    //customMethod = ChildResourceRetrievers.DefaultCustomMethod;
+								"FalseCustomMethod");
                 }
 
                 return customMethod;

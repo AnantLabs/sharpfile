@@ -122,7 +122,7 @@ namespace SharpFile.UI {
                     imageIndex = -1;
 
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Icon image could not be retreived for {0}.",
+                        "Icon image could not be retrieved for {0}.",
                         resource.FullName);
                 }
             }
