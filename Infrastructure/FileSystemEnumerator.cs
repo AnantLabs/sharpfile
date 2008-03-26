@@ -153,7 +153,6 @@ namespace SharpFile.Infrastructure {
                                 continue;
                             }
 
-                            // TODO: Root/parent directories could be set here.
 							if (string.Equals(fileName, ".", StringComparison.Ordinal)) {
 								continue;
 							}

@@ -59,13 +59,22 @@ namespace SharpFile.Infrastructure {
         }
 
         /// <summary>
-        /// Default custom method used to determine which child resource retriever is appropriate for the file system object.
+        /// Custom method which always returns true.
         /// </summary>
         /// <param name="fsi">File system object. Not currently used for anything.</param>
         /// <returns>Whether or not the child restriever resource should be used for this file system object. Always returns true.</returns>
-        public static bool DefaultCustomMethod(IResource fsi) {
+        public static bool TrueCustomMethod(IResource fsi) {
             return true;
         }
+
+		/// <summary>
+		/// Custom method that always returns false.
+		/// </summary>
+		/// <param name="fsi">File system object. Not currently used for anything.</param>
+		/// <returns>Whether or not the child restriever resource should be used for this file system object. Always returns false.</returns>
+		public static bool FalseCustomMethod(IResource fsi) {
+			return false;
+		}
 
         /// <summary>
         /// Is used to determine if a file system object has an extension in a list of extensions.
