@@ -20,7 +20,7 @@ namespace SharpFile.IO.ChildResources {
         public FileInfo(string displayName, string fullName, string alternateName,
             FileAttributes attributes, long size, DateTime creationTime, DateTime lastAccessTime,
             DateTime lastWriteTime, IParentResource root)
-            : base(displayName, fullName, alternateName, attributes, size, creationTime, lastAccessTime, 
+            : base(displayName, fullName, alternateName, attributes, size, creationTime, lastAccessTime,
             lastWriteTime, root) {
         }
 
@@ -90,9 +90,7 @@ namespace SharpFile.IO.ChildResources {
         public string Extension {
             get {
                 if (string.IsNullOrEmpty(extension)) {
-                    if (Name.IndexOf('.') > 0) {
-                        extension = Name.Remove(0, Name.LastIndexOf('.'));
-                    }
+                    extension = Common.General.GetExtension(FullName);
                 }
 
                 return extension;
