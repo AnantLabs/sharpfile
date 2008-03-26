@@ -1,32 +1,32 @@
+@ECHO OFF
+SET sgen_path=C:\Program Files\Microsoft SDKs\Windows\v6.0A\Bin\sgen.exe
+SET ilmerge_path=c:\programming\ILMerge\ILMerge.exe
+
 if exist "%2tmp" goto tmp_exists
 ECHO Create the temporary directory
 mkdir "%2tmp"
 
 :tmp_exists
-if not exist "%1Tools\ILMerge.exe" goto no_ilmerge_exists
+if not exist "%ilmerge_path%" goto no_ilmerge_exists
 ECHO Merging assemblies...
-"%1Tools\ILMerge.exe" /out:"%2tmp\SharpFile.exe" "%2SharpFile.exe" "%2Common.dll" "%2SharpFile.Infrastructure.dll" "%2SharpFile.IO.dll" "%2SharpFile.UI.dll"
+"%ilmerge_path%" /out:"%2tmp\SharpFile.exe" "%2SharpFile.exe" "%2Common.dll"
 ECHO Delete assemblies that were merged
 del "%2Common.dll"
-del "%2SharpFile.Infrastructure.dll" 
-del "%2SharpFile.IO.dll"
-del "%2SharpFile.UI.dll"
 ECHO Move merged assembly from the temporary directory to the regular output directory
 move /Y "%2tmp\SharpFile.exe" "%2SharpFile.exe"
 ECHO Make sure our version of settings.config is valid so overwrite any version that was previously here
-copy /Y "%1SharpFile.Infrastructure\Resources\ilmerge_settings.config" "%2settings.config"
+copy /Y "%1Infrastructure\Resources\ilmerge_settings.config" "%2settings.config"
 ECHO Remove the temporary directory
 rmdir /S /Q "%2tmp"
-
-if not exist "%1Tools\sgen.exe" goto display_sgen_message
-ECHO Generating serializers...
-"%1Tools\sgen.exe" /a:%2SharpFile.exe /t:SharpFile.Infrastructure.Settings /force
-goto compress_files
+goto ilmerge_exists
 
 :no_ilmerge_exists
-if not exist "%1Tools\sgen.exe" goto display_sgen_message
+echo ILMerge could not be found.
+
+:ilmerge_exists
+if not exist "%sgen_path%" goto display_sgen_message
 ECHO Generating serializers...
-"%1Tools\sgen.exe" /a:%2SharpFile.Infrastructure.dll /t:SharpFile.Infrastructure.Settings /force
+"%sgen_path%" /a:%2SharpFile.exe /t:SharpFile.Infrastructure.Settings /force
 goto compress_files
 
 :display_sgen_message
