@@ -85,7 +85,7 @@ namespace SharpFile.UI {
 
                                 imageIndex = iconHash[extension];
                             }
-                        } else if (resource is DriveInfo) {
+                        } else if (resource is DriveInfo || resource is ParentDirectoryInfo || resource is RootDirectoryInfo) {
                             if (!iconHash.ContainsKey(fullPath)) {
                                     Icon icon = IconReader.GetIcon(iconSize, fullPath, false, showOverlay, 
                                         isLink);

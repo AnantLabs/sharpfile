@@ -6,7 +6,7 @@ using System.Diagnostics;
 using Common.Logger;
 
 namespace SharpFile.IO.ChildResources {
-    public class DirectoryInfo : FileSystemInfo, IResourceGetter {
+    public class DirectoryInfo : FileSystemInfo {
         public DirectoryInfo(string path)
             : base(path) {
         }
@@ -54,18 +54,6 @@ namespace SharpFile.IO.ChildResources {
             foreach (IChildResource resource in enumerator.Matches()) {
                 resource.Copy(destination + resource.Name, false);
             }
-
-            /*
-            // Copy the files to the destination.
-            foreach (FileInfo fileInfo in GetFiles()) {
-                fileInfo.Copy(destination + fileInfo.Name, false);
-            }
-
-            // Get the directories and recursively copy them over as well.
-            foreach (DirectoryInfo di in GetDirectories()) {
-                di.Copy(destination + @"\" + di.Name);
-            }
-            */
         }
 
         /// <summary>
@@ -76,59 +64,6 @@ namespace SharpFile.IO.ChildResources {
         public override void Move(string destination) {
             System.IO.DirectoryInfo directoryInfo = new System.IO.DirectoryInfo(fullName);
             directoryInfo.MoveTo(destination);
-        }
-
-        public IEnumerable<IChildResource> GetChildResources() {
-            foreach (IChildResource resource in GetDirectories()) {
-                yield return resource;
-            }
-
-            foreach (IChildResource resource in GetFiles()) {
-                yield return resource;
-            }
-        }
-
-        public IEnumerable<IChildResource> GetDirectories() {
-            // TODO: Encapsulate the decision to show the root/parent director in a static method somewhere.
-            // Show root directory if specified.
-            if (Settings.Instance.ShowRootDirectory) {
-				if (!this.Root.FullName.Equals(this.FullName, StringComparison.OrdinalIgnoreCase)) {
-                    yield return new RootDirectoryInfo(this.Root.FullName);
-                }
-            }
-
-            // Show parent directory if specified.
-            if (Settings.Instance.ShowParentDirectory) {
-				if (!this.Parent.FullName.Equals(this.FullName, StringComparison.OrdinalIgnoreCase)) {
-                    if (!Settings.Instance.ShowRootDirectory ||
-                        (Settings.Instance.ShowRootDirectory &&
-						!this.Parent.FullName.Equals(this.Root.FullName, StringComparison.OrdinalIgnoreCase))) {
-                        yield return new ParentDirectoryInfo(this.Parent.FullName);
-                    }
-                }
-            }
-
-            // Grab only the directories from the enumerator.
-            FileSystemEnumerator enumerator = new FileSystemEnumerator(this.FullName);
-            foreach (IChildResource resource in enumerator.Matches()) {
-                if (resource is DirectoryInfo) {
-                    yield return resource;
-                }
-            }
-        }
-
-        public IEnumerable<IChildResource> GetFiles() {
-            return GetFiles("*");
-        }
-
-        public IEnumerable<IChildResource> GetFiles(string filter) {
-            // Grab only the directories from the enumerator.
-            FileSystemEnumerator enumerator = new FileSystemEnumerator(fullName, filter);
-            foreach (IChildResource resource in enumerator.Matches()) {
-                if (resource is FileInfo) {
-                    yield return resource;
-                }
-            }
         }
 
         protected override void getSize() {
@@ -151,17 +86,21 @@ namespace SharpFile.IO.ChildResources {
         private long getDirectorySize(DirectoryInfo directoryInfo) {
             long totalSize = 0;
 
-            foreach (FileInfo fileInfo in directoryInfo.GetFiles()) {
-                totalSize += fileInfo.Size;
-            }
+			FileSystemEnumerator filesystemEnumerator = new FileSystemEnumerator(directoryInfo.FullName);
 
-            foreach (DirectoryInfo childDirectoryInfo in directoryInfo.GetDirectories()) {
-                if (!(childDirectoryInfo is ParentDirectoryInfo) 
-                    && !(childDirectoryInfo is RootDirectoryInfo) 
-                    && (System.IO.FileAttributes.ReparsePoint & childDirectoryInfo.Attributes) != System.IO.FileAttributes.ReparsePoint) {
-                    totalSize += getDirectorySize(childDirectoryInfo);
-                }
-            }
+			foreach (IChildResource childResource in filesystemEnumerator.Matches()) {
+				if (childResource is FileInfo) {
+					totalSize += ((FileInfo)childResource).Size;
+				} else if (childResource is DirectoryInfo) {
+					DirectoryInfo childDirectoryInfo = (DirectoryInfo)childResource;
+
+					if (!(childDirectoryInfo is ParentDirectoryInfo)
+					&& !(childDirectoryInfo is RootDirectoryInfo)
+					&& (System.IO.FileAttributes.ReparsePoint & childDirectoryInfo.Attributes) != System.IO.FileAttributes.ReparsePoint) {
+						totalSize += getDirectorySize(childDirectoryInfo);
+					}
+				}
+			}
 
             return totalSize;
         }

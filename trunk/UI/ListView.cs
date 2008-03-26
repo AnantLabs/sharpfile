@@ -42,14 +42,14 @@ namespace SharpFile {
             : this("Instantiated") {
         }
 
-        public ListView(string name) {
-            // This prevents flicker in the listview. 
-            // It is a protected property, so it is only available if we derive from ListView.
-            this.DoubleBuffered = true;
-            this.Name = name;
+		public ListView(string name) {
+			// This prevents flicker in the listview. 
+			// It is a protected property, so it is only available if we derive from ListView.
+			this.DoubleBuffered = true;
+			this.Name = name;
 
-            initializeComponent();
-        }
+			initializeComponent();
+		}
 
         #region Private methods.
         private void initializeComponent() {
@@ -521,7 +521,7 @@ namespace SharpFile {
         /// <summary>
         /// Parses the file/directory information and updates the listview.
         /// </summary>
-        public void AddItemRange(IEnumerable<IResource> resources) {
+		public void AddItemRange(IEnumerable<IChildResource> resources) {
             StringBuilder sb = new StringBuilder();
             Stopwatch sw = new Stopwatch();
             List<ListViewItem> listViewItems = new List<ListViewItem>();

@@ -5,18 +5,16 @@ using SharpFile.IO.ChildResources;
 
 namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
     public class ReadOnlyCompressedFileRetriever : ChildResourceRetriever {
-        protected override IList<IResource> getResources(IResource resource, string filter) {
-            List<IResource> resources = new List<IResource>();
-
+		protected override IEnumerable<IChildResource> getResources(IResource resource, string filter) {
             if (Settings.Instance.ShowRootDirectory) {
-                resources.Add(new RootDirectoryInfo(resource.Root.Name));
+				yield return new RootDirectoryInfo(resource.Root.Name);
             }
 
             if (Settings.Instance.ShowParentDirectory) {
                 if (!Settings.Instance.ShowRootDirectory ||
                     (Settings.Instance.ShowRootDirectory &&
                     !resource.Path.Equals(resource.Root.Name))) {
-                    resources.Add(new ParentDirectoryInfo(resource.Path));
+					yield return new ParentDirectoryInfo(resource.Path);
                 }
             }
             
@@ -25,16 +23,14 @@ namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
                     if (zipEntry.IsFile) {
                         string fileName = zipEntry.Name;
 
-                        resources.Add(new CompressedFileInfo(fileName, fileName, zipEntry.Size,
-                            zipEntry.CompressedSize, zipEntry.DateTime));
+						yield return new CompressedFileInfo(fileName, fileName, zipEntry.Size,
+							zipEntry.CompressedSize, zipEntry.DateTime);
                     } else if (zipEntry.IsDirectory) {
-                        resources.Add(new CompressedDirectoryInfo(zipEntry.Name, zipEntry.Name,
-                            zipEntry.DateTime));
+						yield return new CompressedDirectoryInfo(zipEntry.Name, zipEntry.Name,
+							zipEntry.DateTime);
                     }
                 }
             }
-
-            return resources;
         }
     }
 }

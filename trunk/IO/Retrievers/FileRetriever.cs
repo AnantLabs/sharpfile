@@ -33,22 +33,30 @@ namespace SharpFile.IO.Retrievers {
         /// <param name="resource">Resource to grab directories/files from.</param>
         /// <param name="filter">The filter.</param>
         /// <returns>List of directories/files.</returns>
-        protected override IList<IResource> getResources(IResource resource, string filter) {
-            List<IResource> resources = new List<IResource>();
+        protected override IEnumerable<IChildResource> getResources(IResource resource, string filter) {
+			// TODO: Encapsulate the decision to show the root/parent director in a static method somewhere.
+			// Show root directory if specified.
+			if (Settings.Instance.ShowRootDirectory) {
+				if (!resource.Root.FullName.Equals(resource.FullName, StringComparison.OrdinalIgnoreCase)) {
+					yield return new RootDirectoryInfo(resource.Root.FullName);
+				}
+			}
 
-            if (resource is IResourceGetter) {
-                IResourceGetter resourceGetter = (IResourceGetter)resource;
+			// Show parent directory if specified.
+			if (Settings.Instance.ShowParentDirectory) {
+				if (!resource.Path.Equals(resource.FullName, StringComparison.OrdinalIgnoreCase)) {
+					if (!Settings.Instance.ShowRootDirectory ||
+						(Settings.Instance.ShowRootDirectory &&
+						!resource.Path.Equals(resource.Root.FullName, StringComparison.OrdinalIgnoreCase))) {
+						yield return new ParentDirectoryInfo(resource.Path);
+					}
+				}
+			}
 
-                foreach (IChildResource childResource in resourceGetter.GetDirectories()) {
-                    resources.Add(childResource);
-                }
-
-                foreach (IChildResource childResource in resourceGetter.GetFiles(filter)) {
-                    resources.Add(childResource);
-                }
-            }
-
-            return resources;
+			FileSystemEnumerator filesystemEnumerator = new FileSystemEnumerator(resource.FullName);
+			foreach (IChildResource childResource in filesystemEnumerator.Matches()) {
+				yield return childResource;
+			}
         }
     }
 }
