@@ -7,7 +7,7 @@ using SharpFile.Infrastructure.Win32;
 
 namespace SharpFile.IO.ChildResources {
     public abstract class FileSystemInfo : IChildResource {
-        private IParentResource root;
+        protected IParentResource root;
         protected FileAttributes attributes;
         protected DateTime creationTime;
         protected DateTime lastAccessTime;
@@ -17,7 +17,7 @@ namespace SharpFile.IO.ChildResources {
         protected string alternateName;
         protected string displayName;
         protected string path;
-        private IResource parent;
+		protected IResource parent;
 
         protected readonly WIN32_FIND_DATA findData;
         protected readonly string fullName;        
