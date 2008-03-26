@@ -33,18 +33,22 @@ namespace SharpFile.IO.Retrievers {
         /// <param name="resource">Resource to grab directories/files from.</param>
         /// <param name="filter">The filter.</param>
         /// <returns>List of directories/files.</returns>
-        protected override IEnumerable<IResource> getResources(IResource resource, string filter) {
+        protected override IList<IResource> getResources(IResource resource, string filter) {
+            List<IResource> resources = new List<IResource>();
+
             if (resource is IResourceGetter) {
                 IResourceGetter resourceGetter = (IResourceGetter)resource;
 
                 foreach (IChildResource childResource in resourceGetter.GetDirectories()) {
-                    yield return childResource;
+                    resources.Add(childResource);
                 }
 
                 foreach (IChildResource childResource in resourceGetter.GetFiles(filter)) {
-                    yield return childResource;
+                    resources.Add(childResource);
                 }
             }
+
+            return resources;
         }
     }
 }
