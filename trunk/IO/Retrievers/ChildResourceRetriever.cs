@@ -89,7 +89,7 @@ namespace SharpFile.IO.Retrievers {
                         if (backgroundWorker.CancellationPending) {
                             e.Cancel = true;
                         } else {
-                            e.Result = getResources(resource, view.Filter);                            
+                            e.Result = getResources(resource, view.Filter);
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
@@ -98,6 +98,8 @@ namespace SharpFile.IO.Retrievers {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                             "Access is unauthorized for {0}.", resource.FullName);
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
+
+                        backgroundWorker.ReportProgress(100);
                     } catch (Exception ex) {
                         e.Cancel = true;
 
@@ -105,9 +107,9 @@ namespace SharpFile.IO.Retrievers {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                             "Error when getting resources for {0}.", resource.FullName);
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
-                    } finally {
-                        backgroundWorker.ReportProgress(100);
 
+                        backgroundWorker.ReportProgress(100);
+                    } finally {
                         Settings.Instance.Logger.Log(LogLevelType.Verbose, "Finish getting resources for {0} took {1} ms.",
                                     resource.FullName,
                                     sw.ElapsedMilliseconds.ToString());
@@ -136,6 +138,8 @@ namespace SharpFile.IO.Retrievers {
                         view.FileSystemWatcher.Path = resource.FullName;
                         view.FileSystemWatcher.Filter = view.Filter;
                         view.FileSystemWatcher.EnableRaisingEvents = true;
+
+                        view.OnUpdateProgress(100);
                     }
 
                     OnGetComplete();
