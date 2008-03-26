@@ -82,105 +82,107 @@ namespace SharpFile {
         /// Calculates the size of the currently selected item.
         /// </summary>
         private void calculateSize() {
-            if (this.SelectedItems != null &&
-                this.SelectedItems.Count > 0) {
-                int maxIndex = 0;
+			lock (lockObject) {
+				if (this.SelectedItems != null &&
+					this.SelectedItems.Count > 0) {
+					int maxIndex = 0;
 
-                foreach (ListViewItem item in this.SelectedItems) {
-                    IChildResource fileSystemInfo = (IChildResource)item.Tag;
+					foreach (ListViewItem item in this.SelectedItems) {
+						IChildResource fileSystemInfo = (IChildResource)item.Tag;
 
-                    if (item.Index > maxIndex) {
-                        maxIndex = item.Index;
-                    }
+						if (item.Index > maxIndex) {
+							maxIndex = item.Index;
+						}
 
-                    if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
-                        item.ForeColor = Color.Red;
-                        selectedFileSystemInfos.Add(fileSystemInfo);
+						if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
+							item.ForeColor = Color.Red;
+							selectedFileSystemInfos.Add(fileSystemInfo);
 
-                        int sizeIndex = 0;
-                        ColumnInfo columnInfo = null;
-                        foreach (ColumnInfo ci in ColumnInfos) {
-                            if (ci.Property.Equals("Size")) {
-                                foreach (ColumnHeader columnHeader in Columns) {
-                                    if (columnHeader.Text.Equals(ci.Text)) {
-                                        sizeIndex = columnHeader.Index;
-                                        columnInfo = ci;
-                                        break;
-                                    }
-                                }
-                            }
+							int sizeIndex = 0;
+							ColumnInfo columnInfo = null;
+							foreach (ColumnInfo ci in ColumnInfos) {
+								if (ci.Property.Equals("Size")) {
+									foreach (ColumnHeader columnHeader in Columns) {
+										if (columnHeader.Text.Equals(ci.Text)) {
+											sizeIndex = columnHeader.Index;
+											columnInfo = ci;
+											break;
+										}
+									}
+								}
 
-                            if (sizeIndex > 0) {
-                                break;
-                            }
-                        }
+								if (sizeIndex > 0) {
+									break;
+								}
+							}
 
-                        if (sizeIndex > 0) {
-                            long size = 0;
+							if (sizeIndex > 0) {
+								long size = 0;
 
-                            if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
-                                fileSystemInfo is DirectoryInfo) {
-                                using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-                                    backgroundWorker.WorkerReportsProgress = true;
-                                    backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
-                                        backgroundWorker.ReportProgress(50);
+								if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
+									fileSystemInfo is DirectoryInfo) {
+									using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+										backgroundWorker.WorkerReportsProgress = true;
+										backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
+											backgroundWorker.ReportProgress(50);
 
-                                        // Update the list view through BeginInvoke so that the correct thread is used.
-                                        this.BeginInvoke((MethodInvoker)delegate {
-                                            item.SubItems[sizeIndex].Text = "...";
-                                            this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
-                                        });
+											// Update the list view through BeginInvoke so that the correct thread is used.
+											this.BeginInvoke((MethodInvoker)delegate {
+												item.SubItems[sizeIndex].Text = "...";
+												this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+											});
 
-                                        eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).Size;
-                                        backgroundWorker.ReportProgress(100);
-                                    };
+											eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).Size;
+											backgroundWorker.ReportProgress(100);
+										};
 
-                                    backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-                                        OnUpdateProgress(eventArgs.ProgressPercentage);
-                                    };
+										backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
+											OnUpdateProgress(eventArgs.ProgressPercentage);
+										};
 
-                                    backgroundWorker.RunWorkerCompleted +=
-                                        delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-                                            if (eventArgs.Error == null &&
-                                                eventArgs.Result != null &&
-                                                eventArgs.Result is long) {
-                                                size = (long)eventArgs.Result;
+										backgroundWorker.RunWorkerCompleted +=
+											delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+												if (eventArgs.Error == null &&
+													eventArgs.Result != null &&
+													eventArgs.Result is long) {
+													size = (long)eventArgs.Result;
 
-                                                // Update the list view through BeginInvoke so that the correct thread is used.
-                                                this.BeginInvoke((MethodInvoker)delegate {
-                                                    if (columnInfo.MethodDelegate != null) {
-                                                        item.SubItems[sizeIndex].Text = columnInfo.MethodDelegate.Invoke(size.ToString());
-                                                    } else {
-                                                        item.SubItems[sizeIndex].Text = size.ToString();
-                                                    }
-                                                    
-                                                    updateSelectedTotalSize(size);
-                                                    this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
-                                                });
-                                            }
-                                        };
+													// Update the list view through BeginInvoke so that the correct thread is used.
+													this.BeginInvoke((MethodInvoker)delegate {
+														if (columnInfo.MethodDelegate != null) {
+															item.SubItems[sizeIndex].Text = columnInfo.MethodDelegate.Invoke(size.ToString());
+														} else {
+															item.SubItems[sizeIndex].Text = size.ToString();
+														}
 
-                                    backgroundWorker.RunWorkerAsync(fileSystemInfo);
-                                }
-                            } else {
-                                updateSelectedTotalSize(fileSystemInfo.Size);
-                            }
-                        }
-                    } else {
-                        item.ForeColor = Color.Black;
-                        selectedFileSystemInfos.Remove(fileSystemInfo);
-                        updateSelectedTotalSize(-fileSystemInfo.Size);
-                    }
+														updateSelectedTotalSize(size);
+														this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+													});
+												}
+											};
 
-                    item.Focused = false;
-                    item.Selected = false;
-                }
+										backgroundWorker.RunWorkerAsync(fileSystemInfo);
+									}
+								} else {
+									updateSelectedTotalSize(fileSystemInfo.Size);
+								}
+							}
+						} else {
+							item.ForeColor = Color.Black;
+							selectedFileSystemInfos.Remove(fileSystemInfo);
+							updateSelectedTotalSize(-fileSystemInfo.Size);
+						}
 
-                int nextIndex = maxIndex + 1;
-                if (this.Items.Count > nextIndex) {
-                    this.Items[nextIndex].Focused = true;
-                    this.Items[nextIndex].Selected = true;
-                }
+						item.Focused = false;
+						item.Selected = false;
+					}
+
+					int nextIndex = maxIndex + 1;
+					if (this.Items.Count > nextIndex) {
+						this.Items[nextIndex].Focused = true;
+						this.Items[nextIndex].Selected = true;
+					}
+				}
             }
         }
 
