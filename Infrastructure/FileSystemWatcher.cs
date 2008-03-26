@@ -63,7 +63,7 @@ namespace SharpFile.Infrastructure {
                     fileSystemWatcher.EnableRaisingEvents = value;
                 } catch (ArgumentException) {
                     // Ignore an argument exception. It just means that the path is not valid to be watched.
-                    // This can happen when using a custom ChildResourceRetriever, like the CompressedFileRetriever.
+                    // This can happen when using a custom ChildResourceRetriever, like the CompressedRetriever.
                 } catch (Exception ex) {
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "There was an error when enabling the file system watcher.");
