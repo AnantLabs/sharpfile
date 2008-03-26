@@ -9,7 +9,7 @@ namespace SharpFile.Infrastructure {
         private bool showAllOverlays = false;
         private List<string> showOverlayPaths = new List<string>();
         private List<string> extensions = new List<string>();
-        private List<FullyQualifiedType> intensiveSearchDriveTypes = new List<FullyQualifiedType>();
+        private List<FullyQualifiedEnum> intensiveSearchDriveTypeEnums = new List<FullyQualifiedEnum>();
 
         /// <summary>
         /// Whether or not to show overlays.
@@ -73,14 +73,14 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        [XmlArray("IntensiveSearchDriveTypes")]
-        [XmlArrayItem("FullyQualifiedType")]
-        public List<FullyQualifiedType> IntensiveSearchDriveTypes {
+        [XmlArray("IntensiveSearchDriveTypeEnums")]
+        [XmlArrayItem("FullyQualifiedEnum")]
+        public List<FullyQualifiedEnum> IntensiveSearchDriveTypeEnums {
             get {
-                return intensiveSearchDriveTypes;
+                return intensiveSearchDriveTypeEnums;
             }
             set {
-                intensiveSearchDriveTypes = value;
+                intensiveSearchDriveTypeEnums = value;
             }
         }
     }

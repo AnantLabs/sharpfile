@@ -70,6 +70,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
     <Compile Include="IO\ChildResources\CompressedDirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\CompressedFileInfo.cs" />
     <Compile Include="IO\Retrievers\ChildResourceRetriever.cs">
