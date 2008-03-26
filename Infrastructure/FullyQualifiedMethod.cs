@@ -9,14 +9,6 @@ namespace SharpFile.Infrastructure {
         private string method;
         private List<string> arguments;
 
-        public FullyQualifiedMethod() {
-        }
-
-        public FullyQualifiedMethod(FullyQualifiedType fullyQualifiedType, string method) {
-            this.fullyQualifiedType = fullyQualifiedType;
-            this.method = method;
-        }
-
         public FullyQualifiedType FullyQualifiedType {
             get {
                 return fullyQualifiedType;
