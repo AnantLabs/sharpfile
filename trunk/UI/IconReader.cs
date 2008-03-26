@@ -1,8 +1,6 @@
-using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using SharpFile.Infrastructure;
-using SharpFile.IO.ChildResources;
 
 namespace SharpFile.UI {
 	/// <summary>
@@ -40,6 +38,10 @@ namespace SharpFile.UI {
             Closed = 1
         }
 
+        public static Icon GetIcon(IconSize size, string fullName, bool isFile, bool showOverlay, bool isLink) {
+            return GetIcon(size, fullName, isFile, true, showOverlay, isLink);
+        }
+
         /// <summary>
         /// Returns an icon for a given file - indicated by the name parameter.
         /// </summary>
@@ -47,12 +49,11 @@ namespace SharpFile.UI {
         /// <param name="size">Large or small</param>
         /// <param name="showOverlay">Whether to include the link icon</param>
         /// <returns>System.Drawing.Icon</returns>
-        public static Icon GetIcon(IResource resource, IconSize size, bool showOverlay) {
+        public static Icon GetIcon(IconSize size, string fullName, bool isFile, bool isIntensiveSearch, bool showOverlay, bool isLink) {
             uint dwAttrs = 0;
             uint flags = 0;
-            bool linkOverlay = false;
 
-            if (linkOverlay) {
+            if (isLink) {
                 flags += (uint)Shell32.SHGFI.LINKOVERLAY;
             }
 
@@ -61,14 +62,18 @@ namespace SharpFile.UI {
                 flags += (uint)Shell32.SHGFI.ADDOVERLAYS;
             }
 
-            if (resource is FileInfo) {
+            if (!showOverlay && !isIntensiveSearch) {
+                flags += (uint)Shell32.SHGFI.USEFILEATTRIBUTES;
+            }
+
+            if (isFile) {
                 dwAttrs += (uint)Shell32.FILE_ATTRIBUTE.NORMAL;                
             } else {
                 dwAttrs += (uint)Shell32.FILE_ATTRIBUTE.DIRECTORY;
             }
 
             // Get the folder icon.
-            return getIcon(resource.FullName, size, dwAttrs, flags);
+            return getIcon(fullName, size, dwAttrs, flags);
         }
 
         /// <summary>
@@ -101,7 +106,8 @@ namespace SharpFile.UI {
 
                 // Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly.
                 icon = (Icon)Icon.FromHandle(shfi.hIcon).Clone();
-            } finally {
+            }
+            finally {
                 // Cleanup.
                 Shell32.DestroyIcon(shfi.hIcon);
             }

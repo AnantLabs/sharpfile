@@ -615,7 +615,7 @@ namespace SharpFile {
         /// <returns>Listview item that references the filesystem object.</returns>
         protected ListViewItem createListViewItem(IResource resource) {
             ListViewItem item = new ListViewItem();
-            List<ListViewItem.ListViewSubItem> listViewSubItems = 
+            List<ListViewItem.ListViewSubItem> listViewSubItems =
                 new List<ListViewItem.ListViewSubItem>(Columns.Count);
             item.Tag = resource;
             item.Name = resource.FullName;
@@ -682,7 +682,7 @@ namespace SharpFile {
                     }
                 } catch (Exception ex) {
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Column, {0}, with property, {1}, could not be added for {2}.", 
+                        "Column, {0}, with property, {1}, could not be added for {2}.",
                         columnInfo.Text, columnInfo.Property, resource.FullName);
                 }
             }
@@ -690,15 +690,10 @@ namespace SharpFile {
             // Add all of the subitems at once.
             item.SubItems.AddRange(listViewSubItems.ToArray());
 
-            if (Settings.Instance.Icons.ShowIcons) {
-                try {
-                    int imageIndex = OnGetImageIndex(resource);
-                    item.ImageIndex = imageIndex;
-                } catch (Exception ex) {
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Icon image could not be retreived for {0}.",
-                        resource.FullName);
-                }
+            int imageIndex = OnGetImageIndex(resource);
+
+            if (imageIndex > -1) {
+                item.ImageIndex = imageIndex;
             }
 
             return item;

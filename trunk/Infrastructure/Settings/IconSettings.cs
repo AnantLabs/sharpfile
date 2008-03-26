@@ -6,19 +6,20 @@ namespace SharpFile.Infrastructure {
     [Serializable]
     public sealed class IconSettings {
         private bool showIcons = true;
-        private bool showOverlay = false;
-        private List<string> overlayPaths = new List<string>();
+        private bool showAllOverlays = false;
+        private List<string> showOverlayPaths = new List<string>();
         private List<string> extensions = new List<string>();
+        private List<FullyQualifiedType> intensiveSearchDriveTypes = new List<FullyQualifiedType>();
 
         /// <summary>
         /// Whether or not to show overlays.
         /// </summary>
-        public bool ShowOverlay {
+        public bool ShowAllOverlays {
             get {
-                return showOverlay;
+                return showAllOverlays;
             }
             set {
-                showOverlay = value;
+                showAllOverlays = value;
             }
         }
 
@@ -37,17 +38,17 @@ namespace SharpFile.Infrastructure {
         /// <summary>
         /// Paths to show overlays for.
         /// </summary>
-        [XmlArray("OverlayPaths")]
+        [XmlArray("ShowOverlayPaths")]
         [XmlArrayItem("Path")]
-        public List<string> OverlayPaths {
+        public List<string> ShowOverlayPaths {
             get {
-                return overlayPaths;
+                return showOverlayPaths;
             }
             set {
-                overlayPaths = value;
+                showOverlayPaths = value;
 
                 // Make sure the overlay paths are always lower-cased.
-                overlayPaths.ForEach(delegate(string s) {
+                showOverlayPaths.ForEach(delegate(string s) {
                     s = s.ToLower();
                 });
             }
@@ -69,6 +70,17 @@ namespace SharpFile.Infrastructure {
                 extensions.ForEach(delegate(string s) {
                     s = s.ToLower();
                 });
+            }
+        }
+
+        [XmlArray("IntensiveSearchDriveTypes")]
+        [XmlArrayItem("FullyQualifiedType")]
+        public List<FullyQualifiedType> IntensiveSearchDriveTypes {
+            get {
+                return intensiveSearchDriveTypes;
+            }
+            set {
+                intensiveSearchDriveTypes = value;
             }
         }
     }
