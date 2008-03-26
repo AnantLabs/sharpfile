@@ -83,19 +83,13 @@ namespace SharpFile.IO.Retrievers {
 
                     // Grab the files and report the progress to the parent.
                     backgroundWorker.ReportProgress(50);
+                    sw.Start();
 
                     try {
                         if (backgroundWorker.CancellationPending) {
                             e.Cancel = true;
                         } else {
-                            sw.Start();
-
-                            e.Result = getResources(resource, view.Filter);
-
-                            Settings.Instance.Logger.Log(LogLevelType.Verbose, "Finish getting resources for {0} took {1} ms.",
-                                    resource.FullName,
-                                    sw.ElapsedMilliseconds.ToString());
-                            sw.Reset();
+                            e.Result = getResources(resource, view.Filter);                            
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
@@ -113,6 +107,11 @@ namespace SharpFile.IO.Retrievers {
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
                     } finally {
                         backgroundWorker.ReportProgress(100);
+
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose, "Finish getting resources for {0} took {1} ms.",
+                                    resource.FullName,
+                                    sw.ElapsedMilliseconds.ToString());
+                        sw.Reset();
                     }
                 };
 
@@ -122,7 +121,7 @@ namespace SharpFile.IO.Retrievers {
                         !e.Cancelled &&
                         e.Result != null &&
                         e.Result is IEnumerable<IResource>) {
-                        IEnumerable<IResource> resources = (IEnumerable<IResource>)e.Result;
+                        IEnumerable<IResource> resources = (IEnumerable<IResource>)e.Result;                   
 
                         view.BeginUpdate();
                         view.ColumnInfos = ColumnInfos;
@@ -174,7 +173,7 @@ namespace SharpFile.IO.Retrievers {
             return childResourceRetriever;
         }
 
-        protected abstract IEnumerable<IResource> getResources(IResource resource, string filter);        
+        protected abstract IList<IResource> getResources(IResource resource, string filter);        
 
         /// <summary>
         /// Column information.
