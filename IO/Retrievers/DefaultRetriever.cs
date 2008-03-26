@@ -4,6 +4,7 @@ using System.Diagnostics;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
+using Common.Logger;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -19,7 +20,13 @@ namespace SharpFile.IO.Retrievers {
                 processStartInfo.ErrorDialog = true;
                 processStartInfo.UseShellExecute = true;
                 processStartInfo.FileName = resource.FullName;
-                Process.Start(processStartInfo);
+
+				try {
+					Process.Start(processStartInfo);
+				} catch (System.ComponentModel.Win32Exception ex) {
+					Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "File, {0}, cannot be opened.",
+						resource.FullName);
+				}
 
                 return;
             } else if (resource is DirectoryInfo || resource is DriveInfo) {
