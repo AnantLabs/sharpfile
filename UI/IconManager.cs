@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile.UI {
 	public static class IconManager {
@@ -17,63 +20,114 @@ namespace SharpFile.UI {
         /// <param name="imageList">ImageList.</param>
         /// <returns>Image index.</returns>
         public static int GetImageIndex(IResource resource, ImageList imageList) {
-            // Prevent more than one thread from updating the ImageList at a time.
-            lock (lockObject) {
-                IconReader.IconSize iconSize = IconReader.IconSize.Small;
-                int imageIndex = iconHash.Count;
-                string fullPath = resource.FullName.ToLower();
-                bool showOverlay = false;
+            int imageIndex = -1;
 
-                // Specifies whether overlays are turned on for all files, or if they have 
-                // been turned on specifically for some paths.
-                if (Settings.Instance.Icons.ShowOverlay ||
-                    Settings.Instance.Icons.OverlayPaths.Find(delegate(string s) {
-                        return (fullPath.Contains(s));
-                    }) != null) {
-                    showOverlay = true;
-                }
+            if (Settings.Instance.Icons.ShowIcons) {
+                try {
+                    // Prevent more than one thread from updating the ImageList at a time.
+                    lock (lockObject) {
+                        const IconReader.IconSize iconSize = IconReader.IconSize.Small;
+                        string fullPath = resource.FullName.ToLower();
+                        bool showOverlay = false;
+                        bool isLink = false;
+                        bool isIntensiveSearch = false;
 
-                if (resource is FileInfo) {
-                    string extension = ((FileInfo)resource).Extension;
+                        // Set the image index correctly.
+                        imageIndex = iconHash.Count;
 
-                    // Lower-case the extension if it is available.
-                    if (!string.IsNullOrEmpty(extension)) {
-                        extension = extension.ToLower();
-                    }
-
-                    if (showOverlay ||
-                        (string.IsNullOrEmpty(extension) ||
-                        Settings.Instance.Icons.Extensions.Contains(extension))) {
-                        // Add the full name of the file if it is an executable into the ImageList.
-                        if (!iconHash.ContainsKey(fullPath)) {
-                            Icon icon = IconReader.GetIcon(resource, iconSize, showOverlay);
-                            imageList.Images.Add(fullPath, icon);
-                            iconHash.Add(fullPath, imageIndex);
+                        // Specifies whether overlays are turned on for all files, or if they have 
+                        // been turned on specifically for some paths.
+                        if (Settings.Instance.Icons.ShowAllOverlays ||
+                            Settings.Instance.Icons.ShowOverlayPaths.Find(delegate(string s) {
+                            return (fullPath.Contains(s));
+                        }) != null) {
+                            showOverlay = true;
                         }
 
-                        imageIndex = iconHash[fullPath];
-                    } else {
-                        // Add the extension into the ImageList.
-                        if (!iconHash.ContainsKey(extension)) {
-                            Icon icon = IconReader.GetIcon(resource, iconSize, showOverlay);
-                            imageList.Images.Add(extension, icon);
-                            iconHash.Add(extension, imageIndex);
+                        // HACK: Derive a fully qualified type from the full name of the assembly, plus the enum name.
+                        string driveTypeFullyQualifiedType = string.Format("{0}.{1}",
+                            resource.Root.DriveType.GetType().FullName,
+                            resource.Root.DriveType.ToString());
+
+                        if (Settings.Instance.Icons.IntensiveSearchDriveTypes.Find(delegate(FullyQualifiedType f) {
+                            return f.Type.Equals(driveTypeFullyQualifiedType);
+                        }) != null) {
+                            isIntensiveSearch = true;
                         }
 
-                        imageIndex = iconHash[extension];
-                    }
-                } else {
-                    if (!iconHash.ContainsKey(fullPath)) {
-                        Icon icon = IconReader.GetIcon(resource, iconSize, showOverlay);
-                        imageList.Images.Add(fullPath, icon);
-                        iconHash.Add(fullPath, imageIndex);
-                    }
+                        if (resource is FileInfo) {
+                            string extension = ((FileInfo)resource).Extension;
 
-                    imageIndex = iconHash[fullPath];
+                            // Lower-case the extension if it is available.
+                            if (!string.IsNullOrEmpty(extension)) {
+                                extension = extension.ToLower();
+                            }
+
+                            if (showOverlay ||
+                                (string.IsNullOrEmpty(extension) ||
+                                Settings.Instance.Icons.Extensions.Contains(extension))) {
+                                // Add the full name of the file if it is an executable into the ImageList.
+                                if (!iconHash.ContainsKey(fullPath)) {
+                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, true, isIntensiveSearch, 
+                                        showOverlay, isLink);
+                                    imageList.Images.Add(fullPath, icon);
+                                    iconHash.Add(fullPath, imageIndex);
+                                }
+
+                                imageIndex = iconHash[fullPath];
+                            } else {
+                                // Add the extension into the ImageList.
+                                if (!iconHash.ContainsKey(extension)) {
+                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, true, isIntensiveSearch, false, false);
+                                    imageList.Images.Add(extension, icon);
+                                    iconHash.Add(extension, imageIndex);
+                                }
+
+                                imageIndex = iconHash[extension];
+                            }
+                        } else if (resource is DriveInfo) {
+                            if (!iconHash.ContainsKey(fullPath)) {
+                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, false, showOverlay, 
+                                        isLink);
+                                    imageList.Images.Add(fullPath, icon);
+                                    iconHash.Add(fullPath, imageIndex);
+                                }
+
+                                imageIndex = iconHash[fullPath];
+                        } else if (resource is DirectoryInfo) {
+                            if (isIntensiveSearch) {
+                                if (!iconHash.ContainsKey(fullPath)) {
+                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, false, showOverlay, isLink);
+                                    imageList.Images.Add(fullPath, icon);
+                                    iconHash.Add(fullPath, imageIndex);
+                                }
+
+                                imageIndex = iconHash[fullPath];
+                            } else {
+                                // 
+                                if (!iconHash.ContainsKey(folderKey)) {
+                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, false, isIntensiveSearch,
+                                        showOverlay, isLink);
+                                    imageList.Images.Add(folderKey, icon);
+                                    iconHash.Add(folderKey, imageIndex);
+                                }
+
+                                imageIndex = iconHash[folderKey];
+                            }
+                        } else {
+                            throw new Exception("Unable to retrieve an icon for a " + resource.GetType());
+                        }
+                    }
+                } catch (Exception ex) {
+                    imageIndex = -1;
+
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        "Icon image could not be retreived for {0}.",
+                        resource.FullName);
                 }
-
-                return imageIndex;
             }
+
+            return imageIndex;
         }
 
 		/*

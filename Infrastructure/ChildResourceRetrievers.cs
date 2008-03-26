@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using ICSharpCode.SharpZipLib.Zip;
 using Common;
+using ICSharpCode.SharpZipLib.Zip;
 using SharpFile.IO.ChildResources;
 
 namespace SharpFile.Infrastructure {
