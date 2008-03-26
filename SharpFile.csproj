@@ -70,7 +70,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\Interfaces\IResourceGetter.cs" />
     <Compile Include="IO\ChildResources\CompressedDirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\CompressedFileInfo.cs" />
     <Compile Include="IO\Retrievers\ChildResourceRetriever.cs">

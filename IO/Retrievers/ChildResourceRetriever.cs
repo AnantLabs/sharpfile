@@ -122,8 +122,8 @@ namespace SharpFile.IO.Retrievers {
                     if (e.Error == null &&
                         !e.Cancelled &&
                         e.Result != null &&
-                        e.Result is IEnumerable<IResource>) {
-                        IEnumerable<IResource> resources = (IEnumerable<IResource>)e.Result;                   
+						e.Result is IEnumerable<IChildResource>) {
+						IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;                   
 
                         view.BeginUpdate();
                         view.ColumnInfos = ColumnInfos;
@@ -177,7 +177,7 @@ namespace SharpFile.IO.Retrievers {
             return childResourceRetriever;
         }
 
-        protected abstract IList<IResource> getResources(IResource resource, string filter);        
+		protected abstract IEnumerable<IChildResource> getResources(IResource resource, string filter);        
 
         /// <summary>
         /// Column information.

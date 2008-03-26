@@ -5,7 +5,7 @@ using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
 namespace SharpFile.IO.ParentResources {
-    public class DriveInfo : IParentResource, IResourceGetter {
+    public class DriveInfo : IParentResource {
         private System.IO.DriveInfo driveInfo;
         private string name;
 
@@ -94,30 +94,6 @@ namespace SharpFile.IO.ParentResources {
 
                 // Actually execute the child resource retriever.
                 childResourceRetriever.Execute(view, this);
-            }
-        }
-
-        public IEnumerable<IChildResource> GetDirectories() {
-            // Grab only the directories from the enumerator.
-            FileSystemEnumerator enumerator = new FileSystemEnumerator(Name);
-            foreach (IChildResource resource in enumerator.Matches()) {
-                if (resource is DirectoryInfo) {
-                    yield return resource;
-                }
-            }
-        }
-
-        public IEnumerable<IChildResource> GetFiles() {
-            return GetFiles("*");
-        }
-
-        public IEnumerable<IChildResource> GetFiles(string filter) {
-            // Grab only the directories from the enumerator.
-            FileSystemEnumerator enumerator = new FileSystemEnumerator(Name, filter);
-            foreach (IChildResource resource in enumerator.Matches()) {
-                if (resource is FileInfo) {
-                    yield return resource;
-                }
             }
         }
 
