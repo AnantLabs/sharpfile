@@ -86,22 +86,6 @@ namespace SharpFile.Infrastructure {
         }
 
         /// <summary>
-        /// Used to determine if a file system object is a compressed file.
-        /// </summary>
-        /// <param name="fsi">File systm object.</param>
-        /// <returns>Whether or not the file system object is compressed.</returns>
-        public static bool IsCompressedFile(IResource fsi) {
-            // TODO: Should use the IsFileWithExtension instead.
-            if (fsi is FileInfo) {
-                if (Common.General.GetExtension(fsi.FullName).ToLower().Equals(".zip")) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Thoroughly checks whether the file is compressed or not.
         /// </summary>
         /// <param name="fsi">File system object.</param>
@@ -113,21 +97,6 @@ namespace SharpFile.Infrastructure {
                     return true;
                 } catch {
                      //The resource is not a compressed file.
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Used to determine if a file system object is a media file.
-        /// </summary>
-        /// <param name="fsi">File system object.</param>
-        /// <returns>Whether or not the file system object is a media file.</returns>
-        public static bool IsMediaFile(IResource fsi) {
-            if (fsi is FileInfo) {
-                if (General.GetExtension(fsi.FullName).ToLower().Equals(".bmp")) {
-                    return true;
                 }
             }
 

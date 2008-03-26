@@ -419,46 +419,41 @@ namespace SharpFile {
                 parentResource = ((IChildResource)resource).Root;
             }
 
-						if (parentResource.IsReady)
-						{
-							// Disable some while the resources are retrieved.
-							tlsDrives.Enabled = false;
-							tlsPath.Enabled = false;
-							tlsFilter.Enabled = false;
-							//view.Enabled = false;
+            if (parentResource.IsReady) {
+                // Disable some while the resources are retrieved.
+                tlsDrives.Enabled = false;
+                tlsPath.Enabled = false;
+                tlsFilter.Enabled = false;
+                //view.Enabled = false;
 
-							resource.Execute(view);
+                resource.Execute(view);
 
-							// Determine the correct image to be highlighted.
-                            foreach (ToolStripItem item in this.tlsDrives.DropDownItems) {
-                                if (resource.FullName.ToLower().Contains(((IParentResource)item.Tag).FullName.ToLower())) {
-                                    image = item.Image;
-                                    break;
-                                }
-                            }
+                // Determine the correct image to be highlighted.
+                foreach (ToolStripItem item in this.tlsDrives.DropDownItems) {
+                    if (resource.FullName.ToLower().Contains(((IParentResource)item.Tag).FullName.ToLower())) {
+                        image = item.Image;
+                        break;
+                    }
+                }
 
-							// Once the resources have been retrieved enable some controls and highlight the correct parent resource.
-							foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers())
-							{
-								childResourceRetriever.GetComplete += delegate
-								{
-									highlightParentResource(parentResource, image);
-									tlsDrives.Enabled = true;
-									tlsPath.Enabled = true;
-									tlsFilter.Enabled = true;
-									//view.Enabled = true;
-								};
-							}
-						}
-						else
-						{
-							tlsDrives.HideDropDown();
+                // Once the resources have been retrieved enable some controls and highlight the correct parent resource.
+                foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers()) {
+                    childResourceRetriever.GetComplete += delegate {
+                        highlightParentResource(parentResource, image);
+                        tlsDrives.Enabled = true;
+                        tlsPath.Enabled = true;
+                        tlsFilter.Enabled = true;
+                        //view.Enabled = true;
+                    };
+                }
+            } else {
+                tlsDrives.HideDropDown();
 
-							string text = string.Format("It appears the drive, {0}, is not ready.",
-								parentResource.FullName);
-
-							MessageBox.Show(this, text);
-						}
+                Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, 
+                    "It appears the drive, {0}, is not ready.", parentResource.FullName);
+                Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
+            }
         }
 
         /// <summary>
