@@ -19,17 +19,29 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
             }
             
             using (ZipFile zipFile = new ZipFile(resource.FullName)) {
-                foreach (ZipEntry zipEntry in zipFile) {
-                    if (zipEntry.IsFile) {
-                        string fileName = zipEntry.Name;
+				foreach (ZipEntry zipEntry in zipFile) {
+					string zipEntryName = zipEntry.Name.Replace("/", @"\");
 
-						yield return new CompressedFileInfo(fileName, fileName, zipEntry.Size,
-							zipEntry.CompressedSize, zipEntry.DateTime);
-                    } else if (zipEntry.IsDirectory) {
-						yield return new CompressedDirectoryInfo(zipEntry.Name, zipEntry.Name,
-							zipEntry.DateTime);
-                    }
-                }
+					if (zipEntry.IsFile) {
+						if (zipEntryName.LastIndexOf(@"\") < 1) {
+							string name = zipEntry.Name.Remove(0, zipEntry.Name.LastIndexOf("/") + 1);
+							string fullName = string.Format(@"{0}\{1}",
+								resource.FullName,
+								zipEntryName);
+
+							//if (string.IsNullOrEmpty(resource.FullName)) {
+							yield return new CompressedFileInfo(fullName, name, zipEntry.Size,
+								zipEntry.CompressedSize, zipEntry.DateTime);
+						}
+					} else if (zipEntry.IsDirectory) {
+						string directoryName = zipEntryName.Remove(0, zipEntryName.LastIndexOf(@"\"));
+ 
+						//if (zipEntryName.LastIndexOf(@"\") < 1) {
+							yield return new CompressedDirectoryInfo(zipEntryName, zipEntryName,
+								zipEntry.DateTime);
+						//}
+					}
+				}
             }
         }
     }

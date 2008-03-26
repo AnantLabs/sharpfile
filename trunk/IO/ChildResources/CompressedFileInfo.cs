@@ -9,6 +9,9 @@ namespace SharpFile.IO.ChildResources {
             : base(name, fullName, name, FileAttributes.Normal, size, DateTime.MinValue, DateTime.MinValue, lastWriteTime, 
             null) {
             this.compressedSize = compressedSize;
+			this.root = new SharpFile.IO.ParentResources.DriveInfo(@"c:\");
+			this.name = name;
+			this.extension = Common.General.GetExtension(name);
         }
 
         public long CompressedSize {
