@@ -25,5 +25,15 @@ namespace SharpFile.Infrastructure {
                 enumeration = value;
             }
         }
+
+        public override string ToString() {
+            return string.Format("{0}.{1}",
+                                FullyQualifiedType.Type,
+                                Enum);
+        }
+
+        public override bool Equals(object obj) {
+            return this.ToString().Equals(obj.ToString());
+        }
     }
 }
