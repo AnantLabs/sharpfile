@@ -38,5 +38,16 @@ namespace SharpFile.Infrastructure {
                 arguments = value;
             }
         }
+
+        public override string ToString() {
+            string s = string.Format("{0}.{1}({2})",
+                FullyQualifiedType,
+                Method,
+                string.Join(",", Arguments.ToArray()));
+        }
+
+        public override bool Equals(object obj) {
+            return this.ToString().Equals(obj.ToString());
+        }
     }
 }

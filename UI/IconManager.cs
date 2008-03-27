@@ -56,10 +56,7 @@ namespace SharpFile.UI {
 						}
 
                         if (Settings.Instance.Icons.IntensiveSearchDriveTypeEnums.Find(delegate(FullyQualifiedEnum f) {
-                            string fullyQualifiedEnum = string.Format("{0}.{1}",
-                                f.FullyQualifiedType.Type,
-                                f.Enum);
-                            return fullyQualifiedEnum.Equals(driveTypeFullyQualifiedEnum);
+                            return f.ToString().Equals(driveTypeFullyQualifiedEnum);
                         }) != null) {
                             isIntensiveSearch = true;
                         }
