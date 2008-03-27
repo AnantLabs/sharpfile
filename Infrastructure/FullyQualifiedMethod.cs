@@ -40,7 +40,7 @@ namespace SharpFile.Infrastructure {
         }
 
         public override string ToString() {
-            string s = string.Format("{0}.{1}({2})",
+            return string.Format("{0}.{1}({2})",
                 FullyQualifiedType,
                 Method,
                 string.Join(",", Arguments.ToArray()));
