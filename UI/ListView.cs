@@ -680,7 +680,7 @@ namespace SharpFile {
                         listViewSubItem.Text = text;
                         listViewSubItem.Tag = tag;
 
-                        listViewSubItems.Add(listViewSubItem);
+                        item.SubItems.Add(listViewSubItem);
                     }
                 } catch (Exception ex) {
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
@@ -688,9 +688,6 @@ namespace SharpFile {
                         columnInfo.Text, columnInfo.Property, resource.FullName);
                 }
             }
-
-            // Add all of the subitems at once.
-            item.SubItems.AddRange(listViewSubItems.ToArray());
 
             int imageIndex = OnGetImageIndex(resource);
 
