@@ -149,11 +149,17 @@ namespace SharpFile.Infrastructure {
                             types.AddRange(assembly.GetTypes());
 
                             if (types.Find(delegate(Type t) {
-                                return t.Namespace.Equals("Common");
+                                if (t != null && t.Namespace != null) {
+                                    return t.Namespace.Equals("Common");
+                                }
+
+                                return false;
                             }) != null) {
                                 settingsXml = Resource.ilmerge_settings;
                             }
-                        } catch { }
+                        } catch (Exception ex) {
+                            loggerService.Log(LogLevelType.ErrorsOnly, ex, "Generating the correct setting.config file failed.");
+                        }
 
                         using (XmlWriter xmlWriter = XmlWriter.Create(FilePath, xmlWriterSettings)) {
                             XmlDocument xml = new XmlDocument();
