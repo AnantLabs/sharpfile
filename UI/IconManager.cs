@@ -124,7 +124,7 @@ namespace SharpFile.UI {
                             throw new Exception("Unable to retrieve an icon for a " + resource.GetType());
                         }
                     }
-                } catch (Exception ex) {
+                } catch (ArgumentException ex) {
                     imageIndex = -1;
 
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
