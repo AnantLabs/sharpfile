@@ -59,6 +59,11 @@ namespace SharpFile.IO.ChildResources {
             }
         }
 
+        override protected void getDetails() {
+            base.getDetails();
+            getSize();
+        }
+
         private void getDirectoryName() {
             directoryName = this.fullName.Substring(0, this.fullName.LastIndexOf('\\') + 1);
         }

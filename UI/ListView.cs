@@ -523,7 +523,7 @@ namespace SharpFile {
         /// <summary>
         /// Parses the file/directory information and updates the listview.
         /// </summary>
-		public void AddItemRange(IEnumerable<IChildResource> resources) {
+		public void AddItemRange(IList<IChildResource> resources) {
             StringBuilder sb = new StringBuilder();
             Stopwatch sw = new Stopwatch();
             List<ListViewItem> listViewItems = new List<ListViewItem>();

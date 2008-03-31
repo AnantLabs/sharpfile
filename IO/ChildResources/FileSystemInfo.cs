@@ -136,7 +136,7 @@ namespace SharpFile.IO.ChildResources {
         /// <summary>
         /// Gets details from the populated WIN32_FIND_DATA.
         /// </summary>
-        protected void getDetails() {
+        protected virtual void getDetails() {
             if (findData != null) {
                 this.name = findData.Name;
                 this.displayName = this.name;

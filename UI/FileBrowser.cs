@@ -22,6 +22,7 @@ namespace SharpFile {
         private DriveDetector driveDetector;
         private ChildResourceRetrievers childResourceRetrievers;
         private bool handleCreated = false;
+        private bool executing = false;
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -420,12 +421,6 @@ namespace SharpFile {
             }
 
             if (parentResource.IsReady) {
-                // Disable some while the resources are retrieved.
-                tlsDrives.Enabled = false;
-                tlsPath.Enabled = false;
-                tlsFilter.Enabled = false;
-                //view.Enabled = false;
-
                 resource.Execute(view);
 
                 // Determine the correct image to be highlighted.
@@ -440,10 +435,6 @@ namespace SharpFile {
                 foreach (IChildResourceRetriever childResourceRetriever in resource.GetChildResourceRetrievers()) {
                     childResourceRetriever.GetComplete += delegate {
                         highlightParentResource(parentResource, image);
-                        tlsDrives.Enabled = true;
-                        tlsPath.Enabled = true;
-                        tlsFilter.Enabled = true;
-                        //view.Enabled = true;
                     };
                 }
             } else {
@@ -621,6 +612,25 @@ namespace SharpFile {
         public ChildResourceRetrievers ChildResourceRetrievers {
             get {
                 return childResourceRetrievers;
+            }
+        }
+
+        public bool Executing {
+            get {
+                return executing;
+            }
+            set {
+                executing = value;
+
+                if (executing) {
+                    tlsDrives.Enabled = false;
+                    tlsPath.Enabled = false;
+                    tlsFilter.Enabled = false;
+                } else {
+                    tlsDrives.Enabled = true;
+                    tlsPath.Enabled = true;
+                    tlsFilter.Enabled = true;
+                }
             }
         }
         #endregion

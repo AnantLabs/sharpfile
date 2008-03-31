@@ -89,7 +89,14 @@ namespace SharpFile.IO.Retrievers {
                         if (backgroundWorker.CancellationPending) {
                             e.Cancel = true;
                         } else {
-                            e.Result = getResources(resource, view.Filter);
+                            Common.Forms.SetPropertyInParent<bool>(view.Control, "Executing", true);
+                            IList<IChildResource> childResources = getResources(resource, view.Filter);
+
+                            view.BeginUpdate();
+                            view.Clear();
+                            view.ColumnInfos = ColumnInfos;
+                            view.AddItemRange(childResources);
+                            view.EndUpdate();
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
@@ -98,8 +105,6 @@ namespace SharpFile.IO.Retrievers {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                             "Access is unauthorized for {0}.", resource.FullName);
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
-
-                        backgroundWorker.ReportProgress(100);
                     } catch (Exception ex) {
                         e.Cancel = true;
 
@@ -107,9 +112,10 @@ namespace SharpFile.IO.Retrievers {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                             "Error when getting resources for {0}.", resource.FullName);
                         Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
-
-                        backgroundWorker.ReportProgress(100);
                     } finally {
+                        backgroundWorker.ReportProgress(100);
+                        Common.Forms.SetPropertyInParent<bool>(view.Control, "Executing", false);
+
                         Settings.Instance.Logger.Log(LogLevelType.Verbose, "Finish getting resources for {0} took {1} ms.",
                                     resource.FullName,
                                     sw.ElapsedMilliseconds.ToString());
@@ -120,17 +126,7 @@ namespace SharpFile.IO.Retrievers {
                 // Method that runs when the DoWork method is finished.
                 backgroundWorker.RunWorkerCompleted += delegate(object sender, RunWorkerCompletedEventArgs e) {
                     if (e.Error == null &&
-                        !e.Cancelled &&
-                        e.Result != null &&
-						e.Result is IEnumerable<IChildResource>) {
-						IEnumerable<IChildResource> resources = (IEnumerable<IChildResource>)e.Result;                   
-
-                        view.BeginUpdate();
-                        view.ColumnInfos = ColumnInfos;
-                        view.Clear();
-                        view.AddItemRange(resources);
-                        view.EndUpdate();
-
+                        !e.Cancelled) {
                         // Update some information about the current directory.
                         view.OnUpdatePath(resource.FullName);
 
@@ -138,11 +134,9 @@ namespace SharpFile.IO.Retrievers {
                         view.FileSystemWatcher.Path = resource.FullName;
                         view.FileSystemWatcher.Filter = view.Filter;
                         view.FileSystemWatcher.EnableRaisingEvents = true;
-
-                        view.OnUpdateProgress(100);
                     }
 
-                    OnGetComplete();
+                    OnGetComplete();                    
                 };
 
                 // Anonymous method that updates the status to the parent form.
@@ -177,7 +171,7 @@ namespace SharpFile.IO.Retrievers {
             return childResourceRetriever;
         }
 
-		protected abstract IEnumerable<IChildResource> getResources(IResource resource, string filter);        
+		protected abstract IList<IChildResource> getResources(IResource resource, string filter);        
 
         /// <summary>
         /// Column information.
