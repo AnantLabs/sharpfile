@@ -137,7 +137,8 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        public IEnumerable<IChildResource> Matches() {
+        public List<IChildResource> Matches() {
+            List<IChildResource> childResources = new List<IChildResource>();
             Stack<string> pathsToSearch = new Stack<string>(m_paths);
             WIN32_FIND_DATA findData = new WIN32_FIND_DATA();
             string path, fileName, fullName;
@@ -169,21 +170,22 @@ namespace SharpFile.Infrastructure {
                                     pathsToSearch.Push(Path.Combine(path, fileName));
                                 }
 
-                                yield return new SharpFile.IO.ChildResources.DirectoryInfo(fullName, findData);
+                                childResources.Add(new SharpFile.IO.ChildResources.DirectoryInfo(fullName, findData));
                             } else {
                                 foreach (Regex fileSpec in m_fileSpecs) {
                                     if (fileSpec.IsMatch(fileName)) {
-                                        yield return new SharpFile.IO.ChildResources.FileInfo(fullName, findData);
+                                        childResources.Add(new SharpFile.IO.ChildResources.FileInfo(fullName, findData));
                                         break;
                                     }
                                 }
                             }
 
-                        }
-                        while (NativeMethods.FindNextFile(handle, findData));
+                        } while (NativeMethods.FindNextFile(handle, findData));
                     }
                 }
             }
+
+            return childResources;
         }
     }
 }

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
-using Common.Logger;
 
 namespace SharpFile.IO.Retrievers {
     [Serializable]
@@ -40,12 +40,14 @@ namespace SharpFile.IO.Retrievers {
         /// <param name="resource">Resource to grab directories/files from.</param>
         /// <param name="filter">The filter.</param>
         /// <returns>List of directories/files.</returns>
-        protected override IEnumerable<IChildResource> getResources(IResource resource, string filter) {
+        protected override IList<IChildResource> getResources(IResource resource, string filter) {
+            List<IChildResource> childResources = new List<IChildResource>();
+
 			// TODO: Encapsulate the decision to show the root/parent director in a static method somewhere.
 			// Show root directory if specified.
 			if (Settings.Instance.ShowRootDirectory) {
 				if (!resource.Root.FullName.Equals(resource.FullName, StringComparison.OrdinalIgnoreCase)) {
-					yield return new RootDirectoryInfo(resource.Root.FullName);
+					childResources.Add(new RootDirectoryInfo(resource.Root.FullName));
 				}
 			}
 
@@ -55,15 +57,15 @@ namespace SharpFile.IO.Retrievers {
 					if (!Settings.Instance.ShowRootDirectory ||
 						(Settings.Instance.ShowRootDirectory &&
 						!resource.Path.Equals(resource.Root.FullName, StringComparison.OrdinalIgnoreCase))) {
-						yield return new ParentDirectoryInfo(resource.Path);
+						childResources.Add(new ParentDirectoryInfo(resource.Path));
 					}
 				}
 			}
 
 			FileSystemEnumerator filesystemEnumerator = new FileSystemEnumerator(resource.FullName);
-			foreach (IChildResource childResource in filesystemEnumerator.Matches()) {
-				yield return childResource;
-			}
+            childResources.AddRange(filesystemEnumerator.Matches());
+
+            return childResources;
         }
     }
 }
