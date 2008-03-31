@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
+using System;
 
 namespace SharpFile.Infrastructure {
 	public interface IView {
@@ -10,6 +11,7 @@ namespace SharpFile.Infrastructure {
 		void Clear();
 		void BeginUpdate();
 		void EndUpdate();
+        void Invoke(Delegate method);
 		string Path { get; }
 		string Filter { get; }
         FileSystemWatcher FileSystemWatcher { get; }

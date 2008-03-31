@@ -489,6 +489,14 @@ namespace SharpFile {
         #endregion
 
         #region Public methods.
+        public new void Invoke(Delegate method) {
+            if (this.InvokeRequired) {
+                base.Invoke(method);
+            } else {
+                method.DynamicInvoke(null);
+            }
+        }
+
         /// <summary>
         /// Shows a message box.
         /// </summary>
