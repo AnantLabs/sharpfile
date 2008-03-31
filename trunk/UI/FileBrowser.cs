@@ -268,7 +268,6 @@ namespace SharpFile {
         /// Fires when a drive is added.
         /// </summary>
         private void driveDetector_DeviceArrived(object sender, DriveDetectorEventArgs e) {
-            //Settings.ClearResources();
             UpdateParentListing();
         }
 
@@ -276,8 +275,6 @@ namespace SharpFile {
         /// Fires when a drive is removed.
         /// </summary>
         private void driveDetector_DeviceRemoved(object sender, DriveDetectorEventArgs e) {
-            //Settings.ClearResources();
-
             this.BeginInvoke((MethodInvoker)delegate {
                 int index = 0;
 
