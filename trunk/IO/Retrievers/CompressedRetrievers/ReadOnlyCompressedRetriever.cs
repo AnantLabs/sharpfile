@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Zip;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
+using System;
 
 namespace SharpFile.IO.Retrievers.CompressedRetrievers {
     public class ReadOnlyCompressedRetriever : ChildResourceRetriever {
@@ -24,23 +25,38 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
                 foreach (ZipEntry zipEntry in zipFile) {
                     string zipEntryName = zipEntry.Name.Replace("/", @"\");
 
-                    if (zipEntry.IsFile) {
-                        //if (zipEntryName.LastIndexOf(@"\") < 1) {
-                        string name = zipEntry.Name.Remove(0, zipEntry.Name.LastIndexOf(@"\") + 1);
+                    if (zipEntryName.EndsWith(@"\")) {
+                        zipEntryName = zipEntryName.Remove(zipEntryName.Length - 1, 1);
+                    }
+
+                    string[] directoryLevels = zipEntryName.Split('\\');
+
+                    // Only show the current directories filesystem objects.
+                    if (directoryLevels.Length == 1) {
                         string fullName = string.Format(@"{0}\{1}",
-                            resource.FullName,
-                            zipEntryName);
+                                resource.FullName,
+                                zipEntryName);
 
-                        //if (string.IsNullOrEmpty(resource.FullName)) {
-                        childResources.Add(new CompressedFileInfo(zipEntryName, zipEntryName, zipEntry.Size,
-                            zipEntry.CompressedSize, zipEntry.DateTime));
-                        //}
-                    } else if (zipEntry.IsDirectory) {
-                        string directoryName = zipEntryName.Remove(0, zipEntryName.LastIndexOf(@"\"));
+                        if (zipEntry.IsFile) {
+                            childResources.Add(new CompressedFileInfo(fullName, zipEntryName, zipEntry.Size,
+                                zipEntry.CompressedSize, zipEntry.DateTime));
+                        } else if (zipEntry.IsDirectory) {
+                            childResources.Add(new CompressedDirectoryInfo(fullName, zipEntryName,
+                                    zipEntry.DateTime));
+                        }
+                    } else if (directoryLevels.Length > 1) {
+                        // Derive the folder if a file is nested deep.
+                        string directoryName = directoryLevels[0];
+                        string fullName = string.Format(@"{0}\{1}",
+                               resource.FullName,
+                               directoryName);                        
 
-                        //if (zipEntryName.LastIndexOf(@"\") < 1) {
-                        childResources.Add(new CompressedDirectoryInfo(zipEntryName, zipEntryName,
-                            zipEntry.DateTime));
+                        if (childResources.Find(delegate(IChildResource c) {
+                            return c.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase);
+                        }) == null) {
+                            childResources.Add(new CompressedDirectoryInfo(fullName, directoryName,
+                                    DateTime.MinValue));
+                        }
                     }
                 }
             }
