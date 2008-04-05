@@ -189,7 +189,7 @@ namespace SharpFile {
         /// <summary>
         /// Executes the currently selected item.
         /// </summary>
-        private void execute() {
+        protected virtual void execute() {
             if (this.SelectedItems.Count > 0) {
                 IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
 
@@ -490,11 +490,13 @@ namespace SharpFile {
 
         #region Public methods.
         public new void Invoke(Delegate method) {
-            if (this.InvokeRequired) {
-                base.Invoke(method);
-            } else {
-                method.DynamicInvoke(null);
-            }
+            base.BeginInvoke(method);
+
+            //if (this.InvokeRequired) {
+            //    base.Invoke(method);
+            //} else {
+            //    method.DynamicInvoke(null);
+            //}
         }
 
         /// <summary>
@@ -510,11 +512,26 @@ namespace SharpFile {
         /// </summary>
         public new void Clear() {
             lock (lockObject) {
-                this.Items.Clear();
-                this.itemDictionary.Clear();
+                this.Invoke((MethodInvoker)delegate {
+                    this.Items.Clear();
+                    this.itemDictionary.Clear();
+                });
+
                 fileCount = 0;
                 folderCount = 0;
             }
+        }
+
+        public new void BeginUpdate() {
+            this.Invoke((MethodInvoker)delegate {
+                base.BeginUpdate();
+            });
+        }
+
+        public new void EndUpdate() {
+            this.Invoke((MethodInvoker)delegate {
+                base.EndUpdate();
+            });
         }
 
         /// <summary>
@@ -531,14 +548,16 @@ namespace SharpFile {
         /// <summary>
         /// Parses the file/directory information and updates the listview.
         /// </summary>
-		public void AddItemRange(IList<IChildResource> resources) {
+        public void AddItemRange(IList<IChildResource> resources) {
             StringBuilder sb = new StringBuilder();
             Stopwatch sw = new Stopwatch();
             List<ListViewItem> listViewItems = new List<ListViewItem>();
 
-            if (this.SmallImageList == null) {
-                this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
-            }
+            this.Invoke((MethodInvoker)delegate {
+                if (this.SmallImageList == null) {
+                    this.SmallImageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
+                }
+            });
 
             sw.Start();
 
@@ -554,7 +573,9 @@ namespace SharpFile {
                 }
             }
 
-            this.Items.AddRange(listViewItems.ToArray());
+            this.Invoke((MethodInvoker)delegate {
+                this.Items.AddRange(listViewItems.ToArray());
+            });
 
             Settings.Instance.Logger.Log(LogLevelType.Verbose, "Add resources took {0} ms.",
                 sw.ElapsedMilliseconds.ToString());
@@ -568,10 +589,13 @@ namespace SharpFile {
 
             comparer.ColumnIndex = 0;
             comparer.Order = Order.Ascending;
-            this.Sort();
 
-            // Resize the columns based on the column content.
-            this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            this.Invoke((MethodInvoker)delegate {                
+                this.Sort();
+
+                // Resize the columns based on the column content.
+                this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+            });
 
             OnUpdateStatus(Status);
         }
@@ -800,14 +824,16 @@ namespace SharpFile {
             set {
                 columnInfos = value;
 
-                this.Columns.Clear();
+                this.Invoke((MethodInvoker)delegate {
+                    this.Columns.Clear();
 
-                foreach (ColumnInfo columnInfo in columnInfos) {
-                    ColumnHeader columnHeader = new ColumnHeader();
-                    columnHeader.Text = columnInfo.Text;
-                    columnHeader.Tag = columnInfo;
-                    this.Columns.Add(columnHeader);
-                }
+                    foreach (ColumnInfo columnInfo in columnInfos) {
+                        ColumnHeader columnHeader = new ColumnHeader();
+                        columnHeader.Text = columnInfo.Text;
+                        columnHeader.Tag = columnInfo;
+                        this.Columns.Add(columnHeader);
+                    }
+                });
             }
         }
         #endregion

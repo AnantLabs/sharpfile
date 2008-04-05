@@ -491,12 +491,12 @@ namespace SharpFile.Infrastructure {
                                                 childResourceRetriever.View = view;
                                             } catch (TypeLoadException ex) {
                                                 Logger.Log(LogLevelType.ErrorsOnly,
-                                                    "View, {0}, is not derived from IView.",
+                                                    "{0} is not derived from IView.",
                                                     viewInfo.Name);
                                             }
                                         } else {
                                             Logger.Log(LogLevelType.ErrorsOnly,
-                                                "View, {0}, could not be found.",
+                                                "{0} could not be found.",
                                                 childResourceRetrieverInfo.View);
                                         }
 
