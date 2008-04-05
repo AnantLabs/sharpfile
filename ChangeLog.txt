@@ -1,3 +1,6 @@
+0.70
+	FIX: Progress shows correctly for long-running operations.
+
 0.65 - Speedy Gonzales  - 3/30/2008
 	Rewritten core of the file retrieval routine which created a dramatic speedup in retrieving files/directories.
 		- On my "slow" testbed (700 Mhz, 256 MB RAM, 5400 RPM notebook drive)

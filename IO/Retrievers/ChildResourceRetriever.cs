@@ -92,13 +92,11 @@ namespace SharpFile.IO.Retrievers {
                             Common.Forms.SetPropertyInParent<bool>(view.Control, "Executing", true);
                             IList<IChildResource> childResources = getResources(resource, view.Filter);
 
-                            view.Invoke((System.Windows.Forms.MethodInvoker)delegate {
-                                view.BeginUpdate();
-                                view.Clear();
-                                view.ColumnInfos = ColumnInfos;
-                                view.AddItemRange(childResources);
-                                view.EndUpdate();
-                            });
+                            view.BeginUpdate();
+                            view.Clear();
+                            view.ColumnInfos = ColumnInfos;
+                            view.AddItemRange(childResources);
+                            view.EndUpdate();
                         }
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
