@@ -1,39 +1,110 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using Common.Logger;
 using ICSharpCode.SharpZipLib.Zip;
 using SharpFile.Infrastructure;
-using System.IO;
+using SharpFile.IO.ChildResources;
 
-namespace SharpFile.IO.Retrievers.CompressedFileRetrievers {
-    public class ReadWriteCompressedFileRetriever : CompressedFileRetriever {
-        public override IChildResourceRetriever Clone() {
-            IChildResourceRetriever childResourceRetriever = new ReadOnlyCompressedFileRetriever();
-            List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
-            childResourceRetriever.ColumnInfos = clonedColumnInfos;
-            childResourceRetriever.Name = Name;
-            childResourceRetriever.View = View;
-            childResourceRetriever.CustomMethodArguments = CustomMethodArguments;
+namespace SharpFile.IO.Retrievers.CompressedRetrievers {
+    public class ReadWriteCompressedRetriever : ChildResourceRetriever {
+        /// <summary>
+        /// Override the default Execute for ChildResourceRetrievers for files. Use the default for everything else.
+        /// </summary>
+        /// <param name="view">View to output the results to.</param>
+        /// <param name="resource">Resource to grab output from.</param>
+        public override void Execute(IView view, IResource resource) {
+            if (resource is CompressedFileInfo) {
+                string zipFilePath = resource.FullName.Substring(0, resource.FullName.IndexOf(".zip") + 4);
+                IResource zipFileResource = FileSystemInfoFactory.GetFileSystemInfo(zipFilePath);
 
-            childResourceRetriever.CustomMethod += OnCustomMethod;
-            childResourceRetriever.CustomMethodWithArguments += OnCustomMethodWithArguments;
-            childResourceRetriever.GetComplete += OnGetComplete;
+                string tmpDirectory = string.Format(@"{0}\tmp\{1}\",
+                    System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                    zipFileResource.Name);
 
-            return childResourceRetriever;
+                FastZip fastZip = new FastZip();
+                fastZip.ExtractZip(zipFilePath, tmpDirectory, resource.Name);
+
+                ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                processStartInfo.ErrorDialog = true;
+                processStartInfo.UseShellExecute = true;
+                processStartInfo.FileName = tmpDirectory + resource.Name;
+
+                try {
+                    Process.Start(processStartInfo);
+                } catch (System.ComponentModel.Win32Exception ex) {
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "File, {0}, cannot be opened.",
+                        resource.FullName);
+                }
+
+                return;
+            } else {
+                base.Execute(view, resource);
+            }
         }
 
-        protected override IEnumerable<IResource> getResources(IResource resource, string filter) {
-            List<IResource> resources = new List<IResource>();
+        protected override IList<IChildResource> getResources(IResource resource, string filter) {
+            List<IChildResource> childResources = new List<IChildResource>();
 
-            // TODO: Finish this.
-            ChildResourceRetrievers childResourceRetrievers = new ChildResourceRetrievers();
-            childResourceRetrievers.Add(this);
+            if (Settings.Instance.ShowRootDirectory) {
+                childResources.Add(new RootDirectoryInfo(resource.Root.Name));
+            }
 
-            string unzippedPath = string.Format(@"tmp\{0}",
-                resource.Name);
+            if (Settings.Instance.ShowParentDirectory) {
+                if (!Settings.Instance.ShowRootDirectory ||
+                    (Settings.Instance.ShowRootDirectory &&
+                    !resource.Path.Equals(resource.Root.Name))) {
+                    childResources.Add(new ParentDirectoryInfo(resource.Path));
+                }
+            }
 
-            FastZip fastZip = new FastZip();
-            fastZip.ExtractZip(resource.FullName, unzippedPath, string.Empty);
+            using (ZipFile zipFile = new ZipFile(resource.FullName)) {
+                foreach (ZipEntry zipEntry in zipFile) {
+                    string zipEntryName = zipEntry.Name.Replace("/", @"\");
 
-            return resources;
+                    if (zipEntryName.EndsWith(@"\")) {
+                        zipEntryName = zipEntryName.Remove(zipEntryName.Length - 1, 1);
+                    }
+
+                    string[] directoryLevels = zipEntryName.Split('\\');
+
+                    if (string.IsNullOrEmpty(filter) || filter.Equals("*.*") || zipEntryName.Contains(filter)) {
+                        // Only show the current directories filesystem objects.
+                        if (directoryLevels.Length == 1) {
+                            string fullName = string.Format(@"{0}\{1}",
+                                    resource.FullName,
+                                    zipEntryName);
+
+                            if (zipEntry.IsFile) {
+                                childResources.Add(new CompressedFileInfo(fullName, zipEntryName, zipEntry.Size,
+                                    zipEntry.CompressedSize, zipEntry.DateTime));
+                            } else if (zipEntry.IsDirectory) {
+                                childResources.Add(new CompressedDirectoryInfo(fullName, zipEntryName,
+                                        zipEntry.DateTime));
+                            }
+                        } else if (directoryLevels.Length > 1) {
+                            // Derive the folder if a file is nested deep.
+                            string directoryName = directoryLevels[0];
+
+                            if (string.IsNullOrEmpty(filter) || directoryName.Contains(filter)) {
+                                string fullName = string.Format(@"{0}\{1}",
+                                       resource.FullName,
+                                       directoryName);
+
+                                if (childResources.Find(delegate(IChildResource c) {
+                                    return c.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase);
+                                }) == null) {
+                                    childResources.Add(new CompressedDirectoryInfo(fullName, directoryName,
+                                            DateTime.MinValue));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return childResources;
         }
     }
 }

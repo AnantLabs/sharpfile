@@ -75,7 +75,7 @@ namespace SharpFile.IO.ChildResources {
         /// <param name="fsi">File system object.</param>
         /// <param name="filterByFsi">Whether or not to filter the child resource retrievers by the file system object.</param>
         /// <returns>Appropriate child resource retrievers.</returns>
-        public ChildResourceRetrievers GetChildResourceRetrievers(bool filterByFsi) {
+        public virtual ChildResourceRetrievers GetChildResourceRetrievers(bool filterByFsi) {
             ChildResourceRetrievers childResourceRetrievers = null;
 
             // Determine the appropriate resource for the particular 
@@ -105,7 +105,7 @@ namespace SharpFile.IO.ChildResources {
         /// system object and populate the correct view accordingly.
         /// </summary>
         /// <param name="view">View to populate.</param>
-        public void Execute(IView view) {
+        public virtual void Execute(IView view) {
             // Retrieve the correct child resource retrievers for this object.
             List<IChildResourceRetriever> childResourceRetrievers = new List<IChildResourceRetriever>(
                 GetChildResourceRetrievers(true));
@@ -259,6 +259,7 @@ namespace SharpFile.IO.ChildResources {
             get {
                 if (root == null) {
                     string rootPath = this.fullName.Substring(0, this.fullName.IndexOf('\\') + 1);
+                    //System.IO.Path.GetPathRoot?
                     root = new SharpFile.IO.ParentResources.DriveInfo(rootPath);
                 }
 
