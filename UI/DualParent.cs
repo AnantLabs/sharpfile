@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
-using System.IO;
 
 namespace SharpFile {
     public class DualParent : BaseParent {
@@ -28,16 +27,9 @@ namespace SharpFile {
             child1.TabControl.Appearance = TabAppearance.FlatButtons;
             child1.TabControl.IsVisible = true;
             child1.Dock = DockStyle.Fill;
+
             child1.GetImageIndex += delegate(IResource fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
-            };
-
-            child1.UpdateStatus += delegate(string status) {
-                toolStripStatus.Text = status;
-            };
-
-            child1.UpdateProgress += delegate(int value) {
-                updateProgress(value);
             };
 
             child1.UpdatePath += delegate(string path) {
@@ -50,22 +42,28 @@ namespace SharpFile {
             child2.Dock = DockStyle.Fill;
             child2.TabControl.IsVisible = true;
             child2.TabControl.Appearance = TabAppearance.FlatButtons;
+
             child2.GetImageIndex += delegate(IResource fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
-            };
-
-            child2.UpdateStatus += delegate(string status) {
-                toolStripStatus.Text = status;
-            };
-
-            child2.UpdateProgress += delegate(int value) {
-                updateProgress(value);
             };
 
             child2.UpdatePath += delegate(string path) {
                 this.Text = string.Format("{0} - {1}",
                                           formName,
                                           path);
+            };
+
+            this.Shown += delegate {
+                // Attach the handler to any children that have the specified event.
+                Forms.AddEventHandlerInChildren(this, "UpdateStatus",
+                (SharpFile.Infrastructure.View.UpdateStatusDelegate)delegate(string status) {
+                    toolStripStatus.Text = status;
+                });
+
+                Forms.AddEventHandlerInChildren(this, "UpdateProgress",
+                (SharpFile.Infrastructure.View.UpdateProgressDelegate)delegate(int value) {
+                    updateProgress(value);
+                });
             };
 
             splitContainer.SplitterWidth = 1;
@@ -267,7 +265,7 @@ namespace SharpFile {
             this.splitContainer.Size = new Size(641, 364);
             this.splitContainer.SplitterDistance = 318;
 
-            this.Controls.Add(this.splitContainer);
+            ((SplitContainer)this.Controls["baseSplitContainer"]).Panel1.Controls.Add(this.splitContainer);
             base.addControls();
         }
 

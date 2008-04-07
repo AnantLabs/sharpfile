@@ -50,17 +50,27 @@ namespace SharpFile {
             childForm.MdiParent = this;
             childForm.Show();
 
-            childForm.Child.UpdateStatus += delegate(string status) {
-                toolStripStatus.Text = status;
+            childForm.Shown += delegate {
+                // Attach the handler to any children that have the specified event.
+                Forms.AddEventHandlerInChildren(childForm, "UpdateStatus",
+                (SharpFile.Infrastructure.View.UpdateStatusDelegate)delegate(string status) {
+                    toolStripStatus.Text = status;
+                });
+
+                Forms.AddEventHandlerInChildren(this, "UpdateProgress",
+                (SharpFile.Infrastructure.View.UpdateProgressDelegate)delegate(int value) {
+                    updateProgress(value);
+                });
+
+                Forms.AddEventHandlerInChildren(this, "GetImageIndex",
+                (SharpFile.Infrastructure.View.GetImageIndexDelegate)delegate(IResource resource) {
+                    return IconManager.GetImageIndex(resource, ImageList);
+                }); 
             };
 
-            childForm.Child.UpdateProgress += delegate(int value) {
-                updateProgress(value);
-            };
-
-            childForm.Child.GetImageIndex += delegate(IResource fsi) {
-                return IconManager.GetImageIndex(fsi, ImageList);
-            };
+            //childForm.Child.GetImageIndex += delegate(IResource fsi) {
+            //    return IconManager.GetImageIndex(fsi, ImageList);
+            //};
 
             childForm.Child.UpdatePath += delegate(string updatedPath) {
                 this.Text = string.Format("{0} - {1}",

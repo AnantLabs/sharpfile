@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.IO;
-using System;
 
 namespace SharpFile.Infrastructure {
 	public interface IView {
@@ -26,11 +25,15 @@ namespace SharpFile.Infrastructure {
         void OnUpdateProgress(int progress);
         int OnGetImageIndex(IResource resource);
         void OnUpdateStatus(string status);
+        void OnUpdatePreviewPanelText(string text);
+        void OnUpdatePreviewPanelImage(int index);
 
 		event View.GetImageIndexDelegate GetImageIndex;
 		event View.UpdateProgressDelegate UpdateProgress;
 		event View.UpdateStatusDelegate UpdateStatus;
 		event View.UpdatePathDelegate UpdatePath;
+        event View.UpdatePreviewPanelTextDelegate UpdatePreviewPanelText;
+        event View.UpdatePreviewPanelImageDelegate UpdatePreviewPanelImage;
 	}
 
 	public static class View {
@@ -38,5 +41,7 @@ namespace SharpFile.Infrastructure {
 		public delegate void UpdateProgressDelegate(int value);
 		public delegate void UpdatePathDelegate(string path);
 		public delegate void UpdateStatusDelegate(string status);
+        public delegate void UpdatePreviewPanelTextDelegate(string text);
+        public delegate void UpdatePreviewPanelImageDelegate(int index);
 	}
 }
