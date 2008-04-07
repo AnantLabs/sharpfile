@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Common;
 using Common.Logger;
 using ProgressDisk;
 using SharpFile.Infrastructure;
@@ -13,6 +14,7 @@ namespace SharpFile {
 
 		private static readonly object lockObject = new object();
         private DriveDetector driveDetector;
+        private int splitterPercentage;
 
 		private int progressCount = 0;
 		protected ToolTip toolTip = new ToolTip();
@@ -21,6 +23,8 @@ namespace SharpFile {
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 		protected MenuStrip menuStrip = new MenuStrip();
+        protected SplitContainer baseSplitContainer = new SplitContainer();
+        protected PreviewPanel previewPanel = new PreviewPanel();
 
 		protected ToolStripMenuItem fileMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem exitToolStripMenuItem = new ToolStripMenuItem();
@@ -46,6 +50,9 @@ namespace SharpFile {
 		protected ToolStripMenuItem helpMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem aboutToolStripMenuItem = new ToolStripMenuItem();
 
+        //public event View.UpdatePreviewPanelTextDelegate UpdatePreviewPanelText;
+        //private Delegate UpdatePreviewPanelText;
+
 		public BaseParent() {
 			initializeComponents();
 			this.DoubleBuffered = true;
@@ -55,10 +62,29 @@ namespace SharpFile {
 			SetStyle(ControlStyles.AllPaintingInWmPaint |
 					 ControlStyles.OptimizedDoubleBuffer, true);
 
-			this.FormClosing += BaseParent_FormClosing;
-			this.Load += BaseParent_Load;
+            this.FormClosing += BaseParent_FormClosing;
+            this.Load += BaseParent_Load;
 
-			this.Resize += delegate {
+            // Attach the handler to any children that have the specified event.
+            this.Shown += delegate {
+                Forms.AddEventHandlerInChildren(this, "UpdatePreviewPanelText",
+                (SharpFile.Infrastructure.View.UpdatePreviewPanelTextDelegate)delegate(string text) {
+                    this.previewPanel.UpdateText(text);
+                });
+
+                Forms.AddEventHandlerInChildren(this, "UpdatePreviewPanelImage",
+                (SharpFile.Infrastructure.View.UpdatePreviewPanelImageDelegate)delegate(int index) {
+                    if (index > -1) {
+                        Image image = ImageList.Images[index];
+
+                        this.previewPanel.UpdateImage(image);
+                    } else {
+                        this.previewPanel.ClearImage();
+                    }
+                });
+            };
+
+            this.Resize += delegate {
 				this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
 													   base.ClientSize.Height - 18);
 			};
@@ -102,7 +128,7 @@ namespace SharpFile {
                 onFormLoad();
             } catch (Exception ex) {
                 Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                    "Error while trying to save settings when the form was opening.");
+                    "Error while trying to generate settings when the form was opening.");
             }
         }
 
@@ -258,11 +284,41 @@ namespace SharpFile {
 			this.toolStripStatus.Size = new Size(0, 10);
 			this.toolStripStatus.Dock = DockStyle.Bottom;
 
-			addControls();
+            this.baseSplitContainer.Dock = DockStyle.Fill;
+            this.baseSplitContainer.Name = "baseSplitContainer";
+            baseSplitContainer.SplitterWidth = 1;
+            baseSplitContainer.Orientation = Orientation.Horizontal;
+            baseSplitContainer.Panel2.Controls.Add(previewPanel);
 
-			this.Controls.Add(this.menuStrip);
-			this.Controls.Add(this.progressDisk);
-			this.Controls.Add(this.statusStrip);
+            baseSplitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
+                decimal percent = 0;
+                int mouseCursorX = 0;
+                int mouseCursorY = 0;
+
+                if (this.baseSplitContainer.Orientation == Orientation.Vertical) {
+                    percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
+                    mouseCursorX = e.MouseCursorX - 10;
+                    mouseCursorY = e.MouseCursorY;
+                } else {
+                    percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
+                    mouseCursorX = e.MouseCursorX;
+                    mouseCursorY = e.MouseCursorY - 10;
+                }
+
+                splitterPercentage = Convert.ToInt32(percent * 100);
+
+                string tip = string.Format("{0}%",
+                    splitterPercentage);
+
+                toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
+            };
+
+            baseSplitContainer.SplitterMoved += delegate {
+                toolTip.RemoveAll();
+            };
+
+            this.Controls.Add(this.baseSplitContainer);
+			addControls();
 
 			this.MainMenuStrip = this.menuStrip;
 
@@ -301,13 +357,34 @@ namespace SharpFile {
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
 
+        private void setSplitterDistance() {
+            decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
+            int splitterDistance = 0;
+
+            switch (this.baseSplitContainer.Orientation) {
+                case Orientation.Horizontal:
+                    splitterDistance = Convert.ToInt32(percent * (this.Height - 75));
+                    break;
+                case Orientation.Vertical:
+                    splitterDistance = Convert.ToInt32(percent * this.Width);
+                    break;
+            }
+
+            baseSplitContainer.SplitterDistance = splitterDistance;
+        }
+
 		protected virtual void addControls() {
+            this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.progressDisk);
+            this.Controls.Add(this.statusStrip);
 		}
 
 		protected virtual void onFormClosing() {
 		}
 
 		protected virtual void onFormLoad() {
+            splitterPercentage = 90;
+            setSplitterDistance();
 		}
 
 		protected virtual void addMenuStripItems() {

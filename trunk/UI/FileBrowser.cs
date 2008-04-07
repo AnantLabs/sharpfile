@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -8,9 +7,9 @@ using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
 using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
-using SharpFile.IO.ParentResources;
 
 namespace SharpFile {
     public class FileBrowser : TabPage {
@@ -32,8 +31,6 @@ namespace SharpFile {
 
         public event View.GetImageIndexDelegate GetImageIndex;
         public event View.UpdatePathDelegate UpdatePath;
-        public event View.UpdateProgressDelegate UpdateProgress;
-        public event View.UpdateStatusDelegate UpdateStatus;
 
         /// <summary>
         /// Filebrowser ctor.
@@ -104,18 +101,6 @@ namespace SharpFile {
             this.Text = path;
             Path = path;
         }
-
-        protected void OnUpdateProgress(int value) {
-            if (UpdateProgress != null) {
-                UpdateProgress(value);
-            }
-        }
-
-        protected void OnUpdateStatus(string status) {
-            if (UpdateStatus != null) {
-                UpdateStatus(status);
-            }
-        }
         #endregion
 
         #region Private methods
@@ -137,8 +122,6 @@ namespace SharpFile {
             // Wire up the view delegates.
             this.view.UpdatePath += OnUpdatePath;
             this.view.GetImageIndex += OnGetImageIndex;
-            this.view.UpdateProgress += OnUpdateProgress;
-            this.view.UpdateStatus += OnUpdateStatus;
 
             // Wire up the file system watcher.
             fileSystemWatcher = new FileSystemWatcher(this, 100);
@@ -337,7 +320,7 @@ namespace SharpFile {
                             item.Name = resource.Name;
                             item.Tag = resource;
 
-                            int imageIndex = GetImageIndex(resource);
+                            int imageIndex = OnGetImageIndex(resource);
                             if (imageIndex > -1) {
                                 item.Image = ImageList.Images[imageIndex];
                             }

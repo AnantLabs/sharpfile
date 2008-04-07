@@ -5,12 +5,9 @@ using Common;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using View = SharpFile.Infrastructure.View;
-using System.IO;
 
 namespace SharpFile {
     public class Child : UserControl {
-        public event View.UpdateStatusDelegate UpdateStatus;
-        public event View.UpdateProgressDelegate UpdateProgress;
         public event View.GetImageIndexDelegate GetImageIndex;
         public event View.UpdatePathDelegate UpdatePath;
 
@@ -31,19 +28,6 @@ namespace SharpFile {
         }
 
         #region Events.
-
-        private void OnUpdateStatus(string status) {
-            if (UpdateStatus != null) {
-                UpdateStatus(status);
-            }
-        }
-
-        private void OnUpdateProgress(int value) {
-            if (UpdateProgress != null) {
-                UpdateProgress(value);
-            }
-        }
-
         private int OnGetImageIndex(IResource fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
@@ -75,8 +59,7 @@ namespace SharpFile {
             FileBrowser fileBrowser = new FileBrowser(this.Name);
             fileBrowser.GetImageIndex += OnGetImageIndex;
             fileBrowser.UpdatePath += OnUpdatePath;
-            fileBrowser.UpdateProgress += OnUpdateProgress;
-            fileBrowser.UpdateStatus += OnUpdateStatus;            
+
             fileBrowser.Path = path;
 
             this.TabControl.Controls.Add(fileBrowser);
