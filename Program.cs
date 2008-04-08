@@ -20,12 +20,13 @@ namespace SharpFile {
 				Settings.Save();
 			};
 
-			if (Settings.Instance.ParentType == ParentType.Mdi) {
-                Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                    "Start the Mdi program");
+            //if (Settings.Instance.ParentType == ParentType.Mdi) {
+            //    Settings.Instance.Logger.Log(LogLevelType.Verbose,
+            //        "Start the Mdi program");
 
-				Application.Run(new MdiParent());
-			} else if (Settings.Instance.ParentType == ParentType.Dual) {
+            //    Application.Run(new MdiParent());
+            //} else 
+            if (Settings.Instance.ParentType == ParentType.Dual) {
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
                     "Start the Dual program");
 

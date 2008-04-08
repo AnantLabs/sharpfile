@@ -113,7 +113,6 @@
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="Infrastructure\Settings\DualParentSettings.cs" />
     <Compile Include="Infrastructure\Settings\IconSettings.cs" />
-    <Compile Include="Infrastructure\Settings\MdiParentSettings.cs" />
     <Compile Include="Infrastructure\Settings\PanelSettings.cs" />
     <Compile Include="Infrastructure\Win32.cs" />
     <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
@@ -129,9 +128,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\MdiChild.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MdiParent.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
