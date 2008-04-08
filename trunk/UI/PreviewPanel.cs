@@ -50,20 +50,23 @@ namespace SharpFile.UI {
 
                     try {
                         image = Image.FromFile(resource.FullName);
-                        int width = image.Width;
-                        int height = image.Height;
+                        int width = 0;
+                        int height = 0;
 
-                        if (image.Height > image.Width) {
-                            float ratio = (float)image.Width / (float)image.Height;
-                            width = this.pictureBox.Width;
-                            height = (int)((float)image.Height * (float)ratio);
-                        } else if (image.Width > image.Height) {
-                            float ratio = (float)image.Height / (float)image.Width;
-                            height = this.pictureBox.Height;
-                            width = (int)((float)image.Width * (float)ratio);
-                        } else if (image.Width == image.Height) {
-                            height = this.pictureBox.Height;
+                        if (image.Width == image.Height) {
+                            height = this.Height - 5;
                             width = height;
+                        } else {
+                            float ratio = 1;
+
+                            if (image.Height > image.Width) {
+                                ratio = (float)image.Width / (float)image.Height;
+                            } else {
+                                ratio = (float)image.Height / (float)image.Width;
+                            }
+
+                            height = this.Height - 5;
+                            width = (int)((float)image.Width * (float)ratio);
                         }
 
                         image = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
@@ -72,6 +75,8 @@ namespace SharpFile.UI {
 
                         if (index > -1) {
                             image = Settings.Instance.ImageList.Images[index];
+                        } else {
+                            ClearImage();
                         }
                     }
                 };
@@ -97,12 +102,16 @@ namespace SharpFile.UI {
         }
 
         public void UpdateImage(Image image) {
-            this.pictureBox.Visible = true;
-            this.pictureBox.Image = image;
+            if (image != null) {
+                this.pictureBox.Visible = true;
+                this.pictureBox.Image = image;
 
-            this.pictureBox.Size = image.Size;
-            this.label.Location = new Point(this.pictureBox.Location.X + this.pictureBox.Width + 1, 
-                this.pictureBox.Location.Y + 2);
+                this.pictureBox.Size = image.Size;
+                this.label.Location = new Point(this.pictureBox.Location.X + this.pictureBox.Width + 1,
+                    this.pictureBox.Location.Y + 2);
+            } else {
+                ClearImage();
+            }
         }
 
         public void ClearImage() {
