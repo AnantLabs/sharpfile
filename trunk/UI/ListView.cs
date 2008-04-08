@@ -37,8 +37,7 @@ namespace SharpFile {
         public event View.UpdateProgressDelegate UpdateProgress;
         public event View.GetImageIndexDelegate GetImageIndex;
         public event View.UpdatePathDelegate UpdatePath;
-        public event View.UpdatePreviewPanelTextDelegate UpdatePreviewPanelText;
-        public event View.UpdatePreviewPanelImageDelegate UpdatePreviewPanelImage;
+        public event View.UpdatePreviewPanelDelegate UpdatePreviewPanel;
 
         // TODO: This empty ListView ctor shouldn't be necessary, but the view can't be instantiated without it.
         public ListView()
@@ -248,79 +247,18 @@ namespace SharpFile {
             return -1;
         }
 
-        public void OnUpdatePreviewPanelText(string text) {
-            if (UpdatePreviewPanelText != null) {
-                UpdatePreviewPanelText(text);
-            }
-        }
-
-        public void OnUpdatePreviewPanelImage(int index) {
-            if (UpdatePreviewPanelImage != null) {
-                UpdatePreviewPanelImage(index);
+        public void OnUpdatePreviewPanel(IResource resource) {
+            if (UpdatePreviewPanel != null) {
+                UpdatePreviewPanel(resource);
             }
         }
         #endregion
 
         #region Events.
         void listView_SelectedIndexChanged(object sender, EventArgs e) {
-            string text = string.Empty;
-            int index = -1;
-
-            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-                backgroundWorker.WorkerSupportsCancellation = true;
-
-                backgroundWorker.DoWork += delegate {
-                    StringBuilder sb = new StringBuilder();
-
-                    this.Invoke((MethodInvoker)delegate {
-                        if (SelectedItems.Count > 1) {
-                            foreach (ListViewItem item in SelectedItems) {
-                                IChildResource resource = ((IChildResource)item.Tag);
-                                sb.AppendFormat("{0}\n", resource.Name);
-
-                                index = item.ImageIndex;
-                            }
-                        } else if (SelectedItems.Count == 1) {
-                            IChildResource resource = ((IChildResource)SelectedItems[0].Tag);
-                            sb.AppendFormat("{0}\n", resource.Name);
-
-                            System.IO.StreamReader sr = null;
-
-                            try {
-                                sr = System.IO.File.OpenText(resource.FullName);
-                                string line = sr.ReadLine();
-
-                                if (line.Length > 50) {
-                                    sb.AppendFormat("{0}...",
-                                        line.Substring(0, 50));
-                                } else {
-                                    sb.Append(line);
-                                }
-                            } catch {
-                                // Ignore any exceptions.
-                            } finally {
-                                if (sr != null) {
-                                    sr.Dispose();
-                                }
-                            }
-
-                            index = SelectedItems[0].ImageIndex;
-                        } else {
-                            backgroundWorker.CancelAsync();
-                        }
-                    });
-
-                    text = sb.ToString();
-                };
-
-                backgroundWorker.RunWorkerCompleted += delegate {
-                    if (!backgroundWorker.CancellationPending) {
-                        OnUpdatePreviewPanelText(text);
-                        OnUpdatePreviewPanelImage(index);
-                    }
-                };
-
-                backgroundWorker.RunWorkerAsync();
+            foreach (ListViewItem item in SelectedItems) {
+                IChildResource resource = ((IChildResource)item.Tag);
+                OnUpdatePreviewPanel(resource);
             }
         }
 
@@ -349,9 +287,6 @@ namespace SharpFile {
         private void listView_GotFocus(object sender, EventArgs e) {
             OnUpdatePath(Path);
             OnUpdateStatus(Status);
-
-            OnUpdatePreviewPanelText(Path);
-            //OnUpdatePreviewPanelImage(0);
         }
 
         /// <summary>
