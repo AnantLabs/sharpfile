@@ -46,7 +46,7 @@ namespace SharpFile.Infrastructure {
 
         // Sub-settings.
         private DualParentSettings dualParentSettings;
-        private MdiParentSettings mdiParentSettings;
+        //private MdiParentSettings mdiParentSettings;
         private IconSettings iconSettings;
 
         #region Ctors.
@@ -63,7 +63,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         private Settings() {
             dualParentSettings = new DualParentSettings();
-            mdiParentSettings = new MdiParentSettings();
+            //mdiParentSettings = new MdiParentSettings();
             iconSettings = new IconSettings();
 
             lockObject = new object();
@@ -383,15 +383,15 @@ namespace SharpFile.Infrastructure {
         /// <summary>
         /// Mdi parent settings.
         /// </summary>
-        [XmlElement("MdiParent")]
-        public MdiParentSettings MdiParent {
-            get {
-                return mdiParentSettings;
-            }
-            set {
-                mdiParentSettings = value;
-            }
-        }
+        //[XmlElement("MdiParent")]
+        //public MdiParentSettings MdiParent {
+        //    get {
+        //        return mdiParentSettings;
+        //    }
+        //    set {
+        //        mdiParentSettings = value;
+        //    }
+        //}
 
         /// <summary>
         /// Icon settings.

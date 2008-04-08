@@ -6,7 +6,7 @@
         /// <summary>
         /// Every view is its own child window.
         /// </summary>
-        Mdi,
+        //Mdi,
         /// <summary>
         /// Two views that fill up the parent window. The default.
         /// </summary>
