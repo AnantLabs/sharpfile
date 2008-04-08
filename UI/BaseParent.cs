@@ -67,20 +67,9 @@ namespace SharpFile {
 
             // Attach the handler to any children that have the specified event.
             this.Shown += delegate {
-                Forms.AddEventHandlerInChildren(this, "UpdatePreviewPanelText",
-                (SharpFile.Infrastructure.View.UpdatePreviewPanelTextDelegate)delegate(string text) {
-                    this.previewPanel.UpdateText(text);
-                });
-
-                Forms.AddEventHandlerInChildren(this, "UpdatePreviewPanelImage",
-                (SharpFile.Infrastructure.View.UpdatePreviewPanelImageDelegate)delegate(int index) {
-                    if (index > -1) {
-                        Image image = ImageList.Images[index];
-
-                        this.previewPanel.UpdateImage(image);
-                    } else {
-                        this.previewPanel.ClearImage();
-                    }
+                Forms.AddEventHandlerInChildren(this, "UpdatePreviewPanel",
+                (SharpFile.Infrastructure.View.UpdatePreviewPanelDelegate)delegate(IResource resource) {
+                    this.previewPanel.Update(resource);
                 });
             };
 
