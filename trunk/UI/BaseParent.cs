@@ -50,9 +50,6 @@ namespace SharpFile {
 		protected ToolStripMenuItem helpMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem aboutToolStripMenuItem = new ToolStripMenuItem();
 
-        //public event View.UpdatePreviewPanelTextDelegate UpdatePreviewPanelText;
-        //private Delegate UpdatePreviewPanelText;
-
 		public BaseParent() {
 			initializeComponents();
 			this.DoubleBuffered = true;
