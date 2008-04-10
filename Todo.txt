@@ -1,3 +1,6 @@
+- Different resizing code:
+http://www.hanselman.com/blog/ScalingResizingResamplingAnImageInASPNET.aspx
+
 - string.format for display text in previewpanel
 - settings to show preview panel
 - show images on preview in some sor of plugin system (overkill?)
