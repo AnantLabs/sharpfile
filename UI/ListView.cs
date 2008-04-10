@@ -203,6 +203,30 @@ namespace SharpFile {
         }
         #endregion
 
+        #region Overrides.
+        protected override void OnBeforeLabelEdit(LabelEditEventArgs e) {
+            base.OnBeforeLabelEdit(e);
+            int index = e.Item;
+
+            // BeginInvoke will ensure that this message will get executed after the Framework's messages to select all of the text.
+            this.BeginInvoke((MethodInvoker)delegate {
+                // TODO: Validate the text changes with a BalloonHelp like Explorer does.            
+                IntPtr editWnd = IntPtr.Zero;
+                editWnd = Shell32.SendMessage(Handle,
+                                      Shell32.LVM_GETEDITCONTROL, 0, IntPtr.Zero);
+
+                // Only select the name in the textbox, not the extension.
+                int selectedLength = Items[index].Text.Length;
+
+                if (Items[index].Text.LastIndexOf('.') > -1) {
+                    selectedLength = Items[index].Text.LastIndexOf('.');
+                }
+
+                Shell32.SendMessage(editWnd, Shell32.EM_SETSEL, 0, selectedLength);
+            });
+        }
+        #endregion
+
         #region Delegate methods
         /// <summary>
         /// Passes the status to any listening events.
@@ -457,7 +481,7 @@ namespace SharpFile {
                     ListViewItem item = (ListViewItem)this.SelectedItems[0];
 
                     if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
-                        item.BeginEdit(this.Handle);
+                        item.BeginEdit();
                     }
                 }
             }
