@@ -454,10 +454,10 @@ namespace SharpFile {
             // TODO: Should be specified by config.
             if (e.KeyCode == Keys.F2) {
                 if (this.SelectedItems.Count > 0) {
-                    ListViewItem item = this.SelectedItems[0];
+                    ListViewItem item = (ListViewItem)this.SelectedItems[0];
 
                     if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
-                        item.BeginEdit();
+                        item.BeginEdit(this.Handle);
                     }
                 }
             }
@@ -467,13 +467,25 @@ namespace SharpFile {
         /// Make sure that the item being edited is valid.
         /// </summary>
         private void listView_BeforeLabelEdit(object sender, LabelEditEventArgs e) {
-            ListViewItem item = this.Items[e.Item];
+            ListViewItem item = (ListViewItem)this.Items[e.Item];
             IChildResource resource = (IChildResource)item.Tag;
 
             if (item.Tag is ParentDirectoryInfo ||
                 item.Tag is RootDirectoryInfo) {
                 e.CancelEdit = true;
             }
+
+            const int EM_LIMITTEXT = 0xC5;
+            // ListView messages
+
+            const int LVM_FIRST = 0x1000;
+            const int LVM_GETEDITCONTROL = (LVM_FIRST + 24);
+            const int EM_SETSEL = 0x00B1;
+
+            IntPtr editWnd = IntPtr.Zero;
+            editWnd = Shell32.SendMessage(this.Handle,
+                                  LVM_GETEDITCONTROL, 0, IntPtr.Zero);
+            Shell32.SendMessage(editWnd, EM_SETSEL, 0, 2);
         }
 
         /// <summary>
@@ -481,7 +493,7 @@ namespace SharpFile {
         /// </summary>
         private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
             if (!string.IsNullOrEmpty(e.Label)) {
-                ListViewItem item = this.Items[e.Item];
+                ListViewItem item = (ListViewItem)this.Items[e.Item];
                 IChildResource resource = (IChildResource)item.Tag;
 
                 if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {

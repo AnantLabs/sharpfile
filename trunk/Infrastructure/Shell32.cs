@@ -21,6 +21,12 @@ namespace SharpFile.Infrastructure {
         public const int DRAGDROP_S_CANCEL = 0x00040101;
         public const int DRAGDROP_S_USEDEFAULTCURSORS = 0x00040102;
 
+        public const int LVM_FIRST = 0x1000;
+        public const int LVM_GETEDITCONTROL = (LVM_FIRST + 24);
+
+        public const int EM_LIMITTEXT = 0xC5;
+        public const int EM_SETSEL = 0x00B1;
+
         public static int cbFileInfo = Marshal.SizeOf(typeof(SHFILEINFO));
         public static int cbMenuItemInfo = Marshal.SizeOf(typeof(MENUITEMINFO));
         public static int cbTpmParams = Marshal.SizeOf(typeof(TPMPARAMS));
@@ -176,6 +182,14 @@ namespace SharpFile.Infrastructure {
             WM wMsg,
             int wParam,
             IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Ansi)]
+        public static extern IntPtr SendMessage(IntPtr hWnd,
+                int msg, int len, IntPtr order);
+
+        [DllImport("user32.dll", CharSet = CharSet.Ansi)]
+        public static extern IntPtr SendMessage(IntPtr hWnd,
+                int msg, int wParam, int lParam);
 
         // Destroys an icon and frees any memory the icon occupied
         [DllImport("user32.dll",
