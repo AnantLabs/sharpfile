@@ -21,7 +21,8 @@ namespace SharpFile {
         private DriveDetector driveDetector;
         private ChildResourceRetrievers childResourceRetrievers;
         private bool handleCreated = false;
-        private bool executing = false;
+        private bool isExecuting = false;
+        private bool isFiltering = false;
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -137,6 +138,7 @@ namespace SharpFile {
         /// </summary>
         private void clearFilter() {
             tlsFilter.Text = "*.*";
+            isFiltering = false;
         }
         #endregion
 
@@ -174,19 +176,30 @@ namespace SharpFile {
         /// Refreshes the view when Enter is pressed in the filter textbox.
         /// </summary>
         private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
-            IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
-            resource.Execute(view);
+            if (e.KeyCode != Keys.Left &&
+                e.KeyCode != Keys.Right &&
+                e.KeyCode != Keys.Shift) {
+                isFiltering = true;
+
+                if (e.KeyCode == Keys.Enter) {
+                    isFiltering = false;
+                }
+
+                IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+                execute(resource);
+            }
         }
 
         /// <summary>
         /// Clears the filter when the focus is lost.
         /// </summary>
         private void tlsFilter_LostFocus(object sender, EventArgs e) {
-            if (Filter.Equals(string.Empty) ||
-                Filter.Equals("*") ||
-                Filter.Equals("*.") ||
-                Filter.Equals(".*")) {
-                clearFilter();
+            if (!isFiltering) {
+                if (Filter.Equals(string.Empty) ||
+                    Filter.Equals("*") ||
+                    Filter.Equals("*.*")) {
+                    clearFilter();
+                }
             }
         }
 
@@ -597,12 +610,12 @@ namespace SharpFile {
 
         public bool Executing {
             get {
-                return executing;
+                return isExecuting;
             }
             set {
-                executing = value;
+                isExecuting = value;
 
-                if (executing) {
+                if (isExecuting) {
                     tlsDrives.Enabled = false;
                     tlsPath.Enabled = false;
                     tlsFilter.Enabled = false;
@@ -610,6 +623,12 @@ namespace SharpFile {
                     tlsDrives.Enabled = true;
                     tlsPath.Enabled = true;
                     tlsFilter.Enabled = true;
+                }
+
+                // If we were filtering the selection, focus the textbox correctly again. 
+                // Otherwise the disabling/enabling the textbox kills its focus.
+                if (isFiltering) {
+                    tlsFilter.Focus();
                 }
             }
         }
