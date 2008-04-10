@@ -62,7 +62,7 @@ namespace SharpFile.IO.Retrievers {
 				}
 			}
 
-			FileSystemEnumerator filesystemEnumerator = new FileSystemEnumerator(resource.FullName);
+			FileSystemEnumerator filesystemEnumerator = filesystemEnumerator = new FileSystemEnumerator(resource.FullName, filter);
             childResources.AddRange(filesystemEnumerator.Matches());
 
             return childResources;
