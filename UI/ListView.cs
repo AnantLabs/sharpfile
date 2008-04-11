@@ -454,7 +454,7 @@ namespace SharpFile {
             // TODO: Should be specified by config.
             if (e.KeyCode == Keys.F2) {
                 if (this.SelectedItems.Count > 0) {
-                    ListViewItem item = (ListViewItem)this.SelectedItems[0];
+                    ListViewItem item = this.SelectedItems[0];
 
                     if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
                         item.BeginEdit();
@@ -467,7 +467,7 @@ namespace SharpFile {
         /// Make sure that the item being edited is valid.
         /// </summary>
         private void listView_BeforeLabelEdit(object sender, LabelEditEventArgs e) {
-            ListViewItem item = (ListViewItem)this.Items[e.Item];
+            ListViewItem item = this.Items[e.Item];
             IChildResource resource = (IChildResource)item.Tag;
 
             if (item.Tag is ParentDirectoryInfo ||
@@ -499,8 +499,27 @@ namespace SharpFile {
         /// Renames the file/directory that was being edited.
         /// </summary>
         private void listView_AfterLabelEdit(object sender, LabelEditEventArgs e) {
-            if (!string.IsNullOrEmpty(e.Label)) {
-                ListViewItem item = (ListViewItem)this.Items[e.Item];
+            if (string.IsNullOrEmpty(e.Label)) {
+                e.CancelEdit = true;
+            } else {
+                foreach (char ch in System.IO.Path.GetInvalidFileNameChars()) {
+                    if (e.Label.IndexOf(ch) > -1) {
+                        Items[e.Item].BeginEdit();
+
+                        ToolTip toolTip = new ToolTip();
+                        Point position = Items[e.Item].Position;
+
+                        toolTip.Show(string.Format("Filenames cannot have the illegal character: {0}",
+                            ch), this, position.X, position.Y - 20, 5000);
+
+                        e.CancelEdit = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!e.CancelEdit) {
+                ListViewItem item = this.Items[e.Item];
                 IChildResource resource = (IChildResource)item.Tag;
 
                 if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
