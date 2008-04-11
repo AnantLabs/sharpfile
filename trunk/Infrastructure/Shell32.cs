@@ -24,6 +24,8 @@ namespace SharpFile.Infrastructure {
         public const int LVM_FIRST = 0x1000;
         public const int LVM_GETEDITCONTROL = (LVM_FIRST + 24);
 
+        public const int ECM_FIRST = 0x1500;
+        public const int EM_SHOWBALLOONTIP = ECM_FIRST + 3;
         public const int EM_LIMITTEXT = 0xC5;
         public const int EM_SETSEL = 0x00B1;
 
@@ -450,6 +452,13 @@ namespace SharpFile.Infrastructure {
         #endregion
 
         #region Structs
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+        public struct EDITBALLOONTIP {
+            public int cbStruct;
+            public string pszTitle;
+            public string pszText;
+            public int ttiIcon;
+        }
 
         // Contains strings returned from the IShellFolder interface methods
         [StructLayout(LayoutKind.Explicit)]
