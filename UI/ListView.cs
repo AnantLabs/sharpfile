@@ -506,6 +506,7 @@ namespace SharpFile {
                     if (e.Label.IndexOf(ch) > -1) {
                         Items[e.Item].BeginEdit();
 
+                        // TODO: Show a balloon tip, instead of a tooltip if it is available.
                         ToolTip toolTip = new ToolTip();
                         Point position = Items[e.Item].Position;
 
