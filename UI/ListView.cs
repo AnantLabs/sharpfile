@@ -203,30 +203,6 @@ namespace SharpFile {
         }
         #endregion
 
-        #region Overrides.
-        protected override void OnBeforeLabelEdit(LabelEditEventArgs e) {
-            base.OnBeforeLabelEdit(e);
-            int index = e.Item;
-
-            // BeginInvoke will ensure that this message will get executed after the Framework's messages to select all of the text.
-            this.BeginInvoke((MethodInvoker)delegate {
-                // TODO: Validate the text changes with a BalloonHelp like Explorer does.            
-                IntPtr editWnd = IntPtr.Zero;
-                editWnd = Shell32.SendMessage(Handle,
-                                      Shell32.LVM_GETEDITCONTROL, 0, IntPtr.Zero);
-
-                // Only select the name in the textbox, not the extension.
-                int selectedLength = Items[index].Text.Length;
-
-                if (Items[index].Text.LastIndexOf('.') > -1) {
-                    selectedLength = Items[index].Text.LastIndexOf('.');
-                }
-
-                Shell32.SendMessage(editWnd, Shell32.EM_SETSEL, 0, selectedLength);
-            });
-        }
-        #endregion
-
         #region Delegate methods
         /// <summary>
         /// Passes the status to any listening events.
@@ -499,17 +475,24 @@ namespace SharpFile {
                 e.CancelEdit = true;
             }
 
-            const int EM_LIMITTEXT = 0xC5;
-            // ListView messages
+            int index = e.Item;
 
-            const int LVM_FIRST = 0x1000;
-            const int LVM_GETEDITCONTROL = (LVM_FIRST + 24);
-            const int EM_SETSEL = 0x00B1;
+            // BeginInvoke will ensure that this message will get executed after the Framework's messages to select all of the text.
+            this.BeginInvoke((MethodInvoker)delegate {
+                // TODO: Validate the text changes with a BalloonHelp like Explorer does.            
+                IntPtr editWnd = IntPtr.Zero;
+                editWnd = Shell32.SendMessage(Handle,
+                                      Shell32.LVM_GETEDITCONTROL, 0, IntPtr.Zero);
 
-            IntPtr editWnd = IntPtr.Zero;
-            editWnd = Shell32.SendMessage(this.Handle,
-                                  LVM_GETEDITCONTROL, 0, IntPtr.Zero);
-            Shell32.SendMessage(editWnd, EM_SETSEL, 0, 2);
+                // Only select the name in the textbox, not the extension.
+                int selectedLength = Items[index].Text.Length;
+
+                if (Items[index].Text.LastIndexOf('.') > -1) {
+                    selectedLength = Items[index].Text.LastIndexOf('.');
+                }
+
+                Shell32.SendMessage(editWnd, Shell32.EM_SETSEL, 0, selectedLength);
+            });
         }
 
         /// <summary>
