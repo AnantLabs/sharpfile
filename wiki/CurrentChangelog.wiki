@@ -1,30 +1,30 @@
 #summary Current changelog
 #labels Featured
 
-0.65 - Speedy Gonzales - 3/30/2008
-	Rewritten core of the file retrieval routine which created a dramatic speedup in retrieving files/directories.
-		- On my "slow" testbed (700 Mhz, 256 MB RAM, 5400 RPM notebook drive)
-		- From 6 to 3 seconds to display c:\windows
-		- From 3 min+ to 12 seconds to display c:\windows\system32
-		- From 8 to 1 second to display a network drive over wifi with ~200 folders and a few files
-	Tweaked how files/directories added to the listview to be the fastest possible.
-	More options for retrieving icons.
-		- Show overlays off by default, but can be turned on by path.
-		- Intensive search off by default except for fixed drives.
-		- Ability to turn off all icons for even faster file retrieval.
-	Improve speed when dragging-and-dropping onto/from the listview.
-	Beginning of support to swap out views on the fly.
-	Update to panel settings.
-	 	- Change panel orientation.
-		Toggle panel being collapsed.
-		Toggle filter shown.
-	FIX: Most common broken paths that are entered can now be determined.
-	FIX: Auto-complete of paths.
-	FIX: Adding/disconnecting a drive would have inconsistent behavior.
-	FIX: Trying to retrieve a drive before it was ready.
-	FIX: Potential for stack overflow when retrieving a size for a directory with a reparse point.
-	FIX: Path/filter textboxes would sometimes disappear into overflow.
-	FIX: Update status bar when focus changes.	
+=== 0.65 - Speedy Gonzales - 3/30/2008 ===
+ * Rewritten core of the file retrieval routine which created a dramatic speedup in retrieving files/directories.
+   * On my "slow" testbed (700 Mhz, 256 MB RAM, 5400 RPM notebook drive)
+   * From 6 to 3 seconds to display c:\windows
+   * From 3 min+ to 12 seconds to display c:\windows\system32
+   * From 8 to 1 second to display a network drive over wifi with ~200 folders and a few files
+ * Tweaked how files/directories added to the listview to be the fastest possible.
+ * More options for retrieving icons.
+   * Show overlays off by default, but can be turned on by path.
+   * Intensive search off by default except for fixed drives.
+   * Ability to turn off all icons for even faster file retrieval.
+ * Improve speed when dragging-and-dropping onto/from the listview.
+ * Beginning of support to swap out views on the fly.
+ * Update to panel settings.
+   * Change panel orientation.
+   * Toggle panel being collapsed.
+   * Toggle filter shown.
+ * FIX: Most common broken paths that are entered can now be determined.
+ * FIX: Auto-complete of paths.
+ * FIX: Adding/disconnecting a drive would have inconsistent behavior.
+ * FIX: Trying to retrieve a drive before it was ready.
+ * FIX: Potential for stack overflow when retrieving a size for a directory with a reparse point.
+ * FIX: Path/filter textboxes would sometimes disappear into overflow.
+ * FIX: Update status bar when focus changes.	
 
 0.60 - 1/31/2008
 	Sorting of listview by columns.
