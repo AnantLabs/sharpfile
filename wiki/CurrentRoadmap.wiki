@@ -1,4 +1,4 @@
-#summary Roadmap for !SharpFile.
+#summary Roadmap for SharpFile.
 #labels Featured,Phase-Requirements
 
 === Introduction ===
