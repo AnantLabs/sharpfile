@@ -78,6 +78,7 @@
     <Compile Include="IO\Retrievers\CompressedRetrievers\ReadOnlyCompressedRetriever.cs" />
     <Compile Include="IO\Retrievers\CompressedRetrievers\ReadWriteCompressedRetriever.cs" />
     <Compile Include="IO\Retrievers\DefaultRetriever.cs" />
+    <Compile Include="UI\BalloonTip.cs" />
     <Compile Include="UI\BaseParent.cs">
       <SubType>Form</SubType>
     </Compile>
