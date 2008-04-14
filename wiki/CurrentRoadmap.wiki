@@ -1,8 +1,8 @@
-#summary Roadmap for SharpFile.
+#summary Roadmap for !SharpFile.
 #labels Featured,Phase-Requirements
 
 === Introduction ===
-This is the current, tentative, roadmap for the upcoming releases for SharpFile.
+This is the current, tentative, roadmap for the upcoming releases for !SharpFile.
 
 === 0.7 Proposed Features ===
  * Configurable tool menu
