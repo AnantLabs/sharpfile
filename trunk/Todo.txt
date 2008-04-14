@@ -1,15 +1,12 @@
 - All Windows messaging enums
 http://senapi.blogspot.com/2007/11/all-windows-messages-c-enum.html
 
-- Balloon tip:
-http://www.pocketnerd.net/BoC/200402/ASPX/TextBoxBalloon.aspx
-
 - Different resizing code:
 http://www.hanselman.com/blog/ScalingResizingResamplingAnImageInASPNET.aspx
 
 - string.format for display text in previewpanel
 - settings to show preview panel
-- show images on preview in some sor of plugin system (overkill?)
+- show images on preview in some sort of plugin system (overkill?)
 - stress test the logging functionality
 - clean up all of the unused code in Shell32
 

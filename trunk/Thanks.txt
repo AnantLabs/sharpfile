@@ -46,6 +46,9 @@ http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=
 Calculating correct DateTime from WIN32_FIND_DATA - Scott McMaster
 http://softwaredevscott.spaces.live.com/blog/cns!1A9E939F7373F3B7!146.entry
 
+Edit textboxes balloon tip - ramshri
+http://www.codeproject.com/KB/shell/balloontipsarticle.aspx
+
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
 other articles, tips and tricks.

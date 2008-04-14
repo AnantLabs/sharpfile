@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
 using Common;
@@ -79,6 +80,34 @@ namespace SharpFile {
             this.UseCompatibleStateImageBehavior = false;
             this.Sorting = SortOrder.Ascending;
             this.ListViewItemSorter = comparer;
+        }
+
+        /// <summary>
+        /// Validates the edit label and displays a blloon tip if it is not.
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="handle"></param>
+        /// <returns></returns>
+        private bool validateEditLabel(IntPtr handle) {
+            StringBuilder sb = new StringBuilder(256);
+            Shell32.GetWindowText(handle.ToInt32(), sb, 255);
+            string label = sb.ToString();
+
+            foreach (char ch in System.IO.Path.GetInvalidFileNameChars()) {
+                if (label.IndexOf(ch) > -1) {
+                    const string text = "Filenames cannot have the illegal characters: \", |, <, >, *, ?, :, /, \\";
+
+                    EditBalloon editBalloon = new EditBalloon(handle);
+                    editBalloon.Title = "Illegal Characters";
+                    editBalloon.TitleIcon = TooltipIcon.Warning;
+                    editBalloon.Text = text;
+                    editBalloon.Show();
+
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -188,7 +217,9 @@ namespace SharpFile {
 				}
             }
         }
+        #endregion
 
+        #region Protected methods.
         /// <summary>
         /// Executes the currently selected item.
         /// </summary>
@@ -201,6 +232,27 @@ namespace SharpFile {
                 }
             }
         }
+
+        #region Overrides.
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+        protected override void WndProc(ref Message m) {
+            if (m.Msg == (int)Shell32.WM.COMMAND) {
+                uint hWordWParam = ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16;
+
+                if (hWordWParam == (int)Shell32.ENM_CHANGE) {
+                    try {
+                        if (LabelEditHandle != null && LabelEditHandle != IntPtr.Zero) {
+                            validateEditLabel(LabelEditHandle);
+                        }
+                    } catch (Exception ex) {
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Error while validating label.");
+                    }
+                }
+            }
+
+            base.WndProc(ref m);
+        }
+        #endregion
         #endregion
 
         #region Delegate methods
@@ -479,11 +531,6 @@ namespace SharpFile {
 
             // BeginInvoke will ensure that this message will get executed after the Framework's messages to select all of the text.
             this.BeginInvoke((MethodInvoker)delegate {
-                // TODO: Validate the text changes with a BalloonHelp like Explorer does.            
-                IntPtr editWnd = IntPtr.Zero;
-                editWnd = Shell32.SendMessage(Handle,
-                                      Shell32.LVM_GETEDITCONTROL, 0, IntPtr.Zero);
-
                 // Only select the name in the textbox, not the extension.
                 int selectedLength = Items[index].Text.Length;
 
@@ -491,7 +538,7 @@ namespace SharpFile {
                     selectedLength = Items[index].Text.LastIndexOf('.');
                 }
 
-                Shell32.SendMessage(editWnd, Shell32.EM_SETSEL, 0, selectedLength);
+                Shell32.SendMessage(LabelEditHandle, Shell32.EM_SETSEL, 0, selectedLength);
             });
         }
 
@@ -502,20 +549,9 @@ namespace SharpFile {
             if (string.IsNullOrEmpty(e.Label)) {
                 e.CancelEdit = true;
             } else {
-                foreach (char ch in System.IO.Path.GetInvalidFileNameChars()) {
-                    if (e.Label.IndexOf(ch) > -1) {
-                        Items[e.Item].BeginEdit();
-
-                        // TODO: Show a balloon tip, instead of a tooltip if it is available.
-                        ToolTip toolTip = new ToolTip();
-                        Point position = Items[e.Item].Position;
-
-                        toolTip.Show(string.Format("Filenames cannot have the illegal character: {0}",
-                            ch), this, position.X, position.Y - 20, 5000);
-
-                        e.CancelEdit = true;
-                        break;
-                    }
+                if (!validateEditLabel(LabelEditHandle)) {
+                    Items[e.Item].BeginEdit();
+                    e.CancelEdit = true;
                 }
             }
 
@@ -887,6 +923,13 @@ namespace SharpFile {
                         this.Columns.Add(columnHeader);
                     }
                 });
+            }
+        }
+
+        public IntPtr LabelEditHandle {
+            get {
+                return Shell32.SendMessage(Handle,
+                    Shell32.LVM_GETEDITCONTROL, 0, IntPtr.Zero);
             }
         }
         #endregion
