@@ -1,0 +1,31 @@
+#summary Roadmap for SharpFile.
+#labels Featured,Phase-Requirements
+
+=== Introduction ===
+This is the current, tentative, roadmap for the upcoming releases for SharpFile.
+
+=== 0.7 Proposed Features ===
+ * Configurable tool menu
+ * Preview/information pane
+ * Command bar for current path
+
+=== 0.8 Proposed Features ===
+ * Copy/move progress dialog
+ * Store column settings
+
+=== 0.9 Proposed Features ===
+ * Configurable action hotkeys
+ * GUI for settings
+
+=== 1.0 Proposed Features ===
+ * Find files
+ * Documentation
+ * Optimization
+ * Last-minute bug fixes
+
+=== 1.0+ Proposed Features ===
+ * Localization
+ * FTP drives
+ * SSH drives
+ * Configurable toolbar
+ * Read/write compressed file support
