@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Common;
 using SharpFile.Infrastructure;
-using SharpFile.Infrastructure.Win32;
+using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.IO.ChildResources {
     public abstract class FileSystemInfo : IChildResource {
@@ -29,8 +29,7 @@ namespace SharpFile.IO.ChildResources {
             // Required because the handle is invalid if there is an "\" on the end of directories.
             string validFullName = fullName.EndsWith(@"\") ? fullName.Remove(fullName.Length - 1, 1) : fullName;
 
-            using (SafeFindHandle handle = NativeMethods.FindFirstFile(
-                validFullName, findData)) {
+            using (SafeFindHandle handle = Kernel32.FindFirstFile(validFullName, findData)) {
                 if (handle.IsInvalid) {
                     throw new Exception("Filesystem object cannot be found for " + fullName);
                 } else {
@@ -145,41 +144,17 @@ namespace SharpFile.IO.ChildResources {
 
                 // Get LastWriteTime.
                 try {
-                    long highDateTime = findData.LastWriteTime.dwHighDateTime;
-                    long lowDateTime = findData.LastWriteTime.dwLowDateTime;
-                    long fileTime = (highDateTime << 32) + lowDateTime;
-
-                    lastWriteTime = DateTime.FromFileTime(fileTime);
-
-                    if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(lastWriteTime) == false) {
-                        lastWriteTime = lastWriteTime.AddHours(1);
-                    }
+                    lastWriteTime = ConvertFileTimeToDateTime(findData.LastWriteTime);
                 } catch { }
 
                 // Get LastAccessTime.
                 try {
-                    long highDateTime = findData.LastAccessTime.dwHighDateTime;
-                    long lowDateTime = findData.LastAccessTime.dwLowDateTime;
-                    long fileTime = (highDateTime << 32) + lowDateTime;
-
-                    lastAccessTime = DateTime.FromFileTime(fileTime);
-
-                    if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(lastAccessTime) == false) {
-                        lastAccessTime = lastAccessTime.AddHours(1);
-                    }
+                    lastAccessTime = ConvertFileTimeToDateTime(findData.LastAccessTime);
                 } catch { }
 
                 // Get CreationTime.
                 try {
-                    long highDateTime = findData.CreationTime.dwHighDateTime;
-                    long lowDateTime = findData.CreationTime.dwLowDateTime;
-                    long fileTime = (highDateTime << 32) + lowDateTime;
-
-                    creationTime = DateTime.FromFileTime(fileTime);
-
-                    if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(creationTime) == false) {
-                        creationTime = creationTime.AddHours(1);
-                    }
+                    creationTime = ConvertFileTimeToDateTime(findData.CreationTime);
                 } catch { }
             }
         }
@@ -188,7 +163,7 @@ namespace SharpFile.IO.ChildResources {
         /// Refreshes the WIN32_FIND_DATA.
         /// </summary>
         public void Refresh() {
-            using (SafeFindHandle handle = NativeMethods.FindFirstFile(
+            using (SafeFindHandle handle = Kernel32.FindFirstFile(
                 fullName, findData)) {
                 getDetails();
             }
@@ -199,6 +174,22 @@ namespace SharpFile.IO.ChildResources {
         public abstract void Move(string destination);
 
         protected abstract void getSize();
+
+        /// <summary>
+        /// Converts the FILETIME structure to the correct DateTime.
+        /// </summary>
+        /// <param name="fileTime">FILETIME to convert.</param>
+        /// <returns>DateTime.</returns>
+        private static DateTime ConvertFileTimeToDateTime(FILETIME fileTime) {
+            long ticks = (((long)fileTime.dwHighDateTime) << 32) + (long)fileTime.dwLowDateTime;
+            DateTime dateTime = DateTime.FromFileTime(ticks);
+
+            if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(dateTime) == false) {
+                dateTime = dateTime.AddHours(1);
+            }
+
+            return dateTime;
+        }
 
         public string FullName {
             get {

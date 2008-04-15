@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using SharpFile.Infrastructure;
+using Common.WindowsApi;
 
 /*
  * 
@@ -63,8 +64,8 @@ namespace SharpFile.UI {
 
             System.Diagnostics.Debug.Assert(m_parentHandle != null, "Parent control is null", "Set parent before calling Show");
 
-            Shell32.SendMessage(m_parentHandle,
-                Shell32.EM_SHOWBALLOONTIP,
+            User32.SendMessage(m_parentHandle,
+                (int)EM.SHOWBALLOONTIP,
                 0, ptrStruct);
 
             Marshal.FreeHGlobal(ptrStruct);

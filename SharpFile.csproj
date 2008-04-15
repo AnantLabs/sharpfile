@@ -70,6 +70,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
+    <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
+    <Compile Include="Infrastructure\WindowsApi\FILETIME.cs" />
+    <Compile Include="Infrastructure\WindowsApi\Kernel32.cs" />
+    <Compile Include="Infrastructure\WindowsApi\SafeFindHandle.cs" />
+    <Compile Include="Infrastructure\WindowsApi\Shell32.cs" />
+    <Compile Include="Infrastructure\WindowsApi\SHFILEINFO.cs" />
+    <Compile Include="Infrastructure\WindowsApi\User32.cs" />
+    <Compile Include="Infrastructure\WindowsApi\WIN32_FILE_ATTRIBUTE_DATA.cs" />
+    <Compile Include="Infrastructure\WindowsApi\WIN32_FIND_DATA.cs" />
     <Compile Include="IO\ChildResources\CompressedDirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\CompressedFileInfo.cs" />
     <Compile Include="IO\Retrievers\ChildResourceRetriever.cs">
@@ -115,7 +124,6 @@
     <Compile Include="Infrastructure\Settings\DualParentSettings.cs" />
     <Compile Include="Infrastructure\Settings\IconSettings.cs" />
     <Compile Include="Infrastructure\Settings\PanelSettings.cs" />
-    <Compile Include="Infrastructure\Win32.cs" />
     <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\FileInfo.cs" />
     <Compile Include="IO\ChildResources\FileSystemInfo.cs" />
@@ -143,7 +151,6 @@
     <EmbeddedResource Include="Infrastructure\Resource.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Infrastructure\Shell32.cs" />
     <Compile Include="UI\TabControl.cs">
       <SubType>Component</SubType>
     </Compile>

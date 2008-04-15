@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using SharpFile.Infrastructure;
-using SharpFile.Infrastructure.Win32;
 using System.Diagnostics;
 using Common.Logger;
+using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.IO.ChildResources {
     public class DirectoryInfo : FileSystemInfo {
