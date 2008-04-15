@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using SharpFile.Infrastructure;
-using SharpFile.Infrastructure.Win32;
 
 namespace SharpFile.IO.ChildResources {
     public class CompressedDirectoryInfo : DirectoryInfo {

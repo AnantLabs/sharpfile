@@ -1,6 +1,8 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using SharpFile.Infrastructure;
+using Common.WindowsApi;
+using System;
 
 namespace SharpFile.UI {
 	/// <summary>
@@ -10,6 +12,48 @@ namespace SharpFile.UI {
 	/// <code>IconReader.GetFileIcon("c:\\general.xls");</code>
 	/// </example>
     public class IconReader {
+        // Flags that specify the file information to retrieve with SHGetFileInfo
+        [Flags]
+        private enum SHGFI : uint {
+            ADDOVERLAYS = 0x20,
+            ATTR_SPECIFIED = 0x20000,
+            ATTRIBUTES = 0x800,
+            DISPLAYNAME = 0x200,
+            EXETYPE = 0x2000,
+            ICON = 0x100,
+            ICONLOCATION = 0x1000,
+            LARGEICON = 0,
+            LINKOVERLAY = 0x8000,
+            OPENICON = 2,
+            OVERLAYINDEX = 0x40,
+            PIDL = 8,
+            SELECTED = 0x10000,
+            SHELLICONSIZE = 4,
+            SMALLICON = 1,
+            SYSICONINDEX = 0x4000,
+            TYPENAME = 0x400,
+            USEFILEATTRIBUTES = 0x10
+        }
+
+        // Flags that specify the file information to retrieve with SHGetFileInfo
+        [Flags]
+        private enum FILE_ATTRIBUTE {
+            READONLY = 0x00000001,
+            HIDDEN = 0x00000002,
+            SYSTEM = 0x00000004,
+            DIRECTORY = 0x00000010,
+            ARCHIVE = 0x00000020,
+            DEVICE = 0x00000040,
+            NORMAL = 0x00000080,
+            TEMPORARY = 0x00000100,
+            SPARSE_FILE = 0x00000200,
+            REPARSE_POINT = 0x00000400,
+            COMPRESSED = 0x00000800,
+            OFFLINE = 0x00001000,
+            NOT_CONTENT_INDEXED = 0x00002000,
+            ENCRYPTED = 0x00004000
+        }
+
         /// <summary>
         /// Options to specify the size of icons to return.
         /// </summary>
@@ -54,22 +98,22 @@ namespace SharpFile.UI {
             uint flags = 0;
 
             if (isLink) {
-                flags += (uint)Shell32.SHGFI.LINKOVERLAY;
+                flags += (uint)SHGFI.LINKOVERLAY;
             }
 
             // Show overlay for files.
             if (showOverlay) {
-                flags += (uint)Shell32.SHGFI.ADDOVERLAYS;
+                flags += (uint)SHGFI.ADDOVERLAYS;
             }
 
             if (!showOverlay && !isIntensiveSearch) {
-                flags += (uint)Shell32.SHGFI.USEFILEATTRIBUTES;
+                flags += (uint)SHGFI.USEFILEATTRIBUTES;
             }
 
             if (isFile) {
-                dwAttrs += (uint)Shell32.FILE_ATTRIBUTE.NORMAL;                
+                dwAttrs += (uint)FILE_ATTRIBUTE.NORMAL;                
             } else {
-                dwAttrs += (uint)Shell32.FILE_ATTRIBUTE.DIRECTORY;
+                dwAttrs += (uint)FILE_ATTRIBUTE.DIRECTORY;
             }
 
             // Get the folder icon.
@@ -85,20 +129,20 @@ namespace SharpFile.UI {
         /// <param name="flags">Flags used when retrieving the icon.</param>
         /// <returns>Icon.</returns>
         private static Icon getIcon(string path, IconSize iconSize, uint dwAttrs, uint flags) {
-            flags += (uint)Shell32.SHGFI.SYSICONINDEX | (uint)Shell32.SHGFI.ICON;
+            flags += (uint)SHGFI.SYSICONINDEX | (uint)SHGFI.ICON;
 
             /* Check the size specified for return. */
             if (IconSize.Small == iconSize) {
-                flags += (uint)Shell32.SHGFI.SMALLICON;
+                flags += (uint)SHGFI.SMALLICON;
             } else {
-                flags += (uint)Shell32.SHGFI.LARGEICON;
+                flags += (uint)SHGFI.LARGEICON;
             }
 
             Icon icon = null;
-            Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
+            SHFILEINFO shfi = new SHFILEINFO();
 
             try {
-                Shell32.SHGetFileInfo(path,
+                Common.WindowsApi.Shell32.SHGetFileInfo(path,
                     dwAttrs,
                     ref shfi,
                     (uint)Marshal.SizeOf(shfi),
@@ -109,7 +153,7 @@ namespace SharpFile.UI {
             }
             finally {
                 // Cleanup.
-                Shell32.DestroyIcon(shfi.hIcon);
+                Common.WindowsApi.User32.DestroyIcon(shfi.hIcon);
             }
 
             return icon;

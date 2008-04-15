@@ -9,6 +9,8 @@ using System.Text;
 using System.Windows.Forms;
 using Common;
 using Common.Logger;
+using Common.WindowsApi;
+using Common.WindowsApi.Messages;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
@@ -90,7 +92,7 @@ namespace SharpFile {
         /// <returns></returns>
         private bool validateEditLabel(IntPtr handle) {
             StringBuilder sb = new StringBuilder(256);
-            Shell32.GetWindowText(handle.ToInt32(), sb, 255);
+            User32.GetWindowText(handle.ToInt32(), sb, 255);
             string label = sb.ToString();
 
             foreach (char ch in System.IO.Path.GetInvalidFileNameChars()) {
@@ -236,10 +238,10 @@ namespace SharpFile {
         #region Overrides.
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m) {
-            if (m.Msg == (int)Shell32.WM.COMMAND) {
+            if (m.Msg == (int)WM.COMMAND) {
                 uint hWordWParam = ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16;
 
-                if (hWordWParam == (int)Shell32.ENM_CHANGE) {
+                if (hWordWParam == (int)WM.CUT) {
                     try {
                         if (LabelEditHandle != null && LabelEditHandle != IntPtr.Zero) {
                             validateEditLabel(LabelEditHandle);
@@ -538,7 +540,7 @@ namespace SharpFile {
                     selectedLength = Items[index].Text.LastIndexOf('.');
                 }
 
-                Shell32.SendMessage(LabelEditHandle, Shell32.EM_SETSEL, 0, selectedLength);
+                User32.SendMessage(LabelEditHandle, (int)EM.SETSEL, 0, selectedLength);
             });
         }
 
@@ -928,8 +930,8 @@ namespace SharpFile {
 
         public IntPtr LabelEditHandle {
             get {
-                return Shell32.SendMessage(Handle,
-                    Shell32.LVM_GETEDITCONTROL, 0, IntPtr.Zero);
+                return User32.SendMessage(Handle,
+                    (int)LVM.GETEDITCONTROL, 0, IntPtr.Zero);
             }
         }
         #endregion

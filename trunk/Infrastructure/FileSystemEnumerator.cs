@@ -15,7 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using SharpFile.Infrastructure.Win32;
+using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -146,7 +146,7 @@ namespace SharpFile.Infrastructure {
             while (0 != pathsToSearch.Count) {
                 path = pathsToSearch.Pop().Trim();
 
-                using (SafeFindHandle handle = NativeMethods.FindFirstFile(Path.Combine(path, "*"), findData)) {
+                using (SafeFindHandle handle = Kernel32.FindFirstFile(Path.Combine(path, "*"), findData)) {
                     if (!handle.IsInvalid) {
                         do {
                             fileName = findData.Name;
@@ -180,7 +180,7 @@ namespace SharpFile.Infrastructure {
                                 }
                             }
 
-                        } while (NativeMethods.FindNextFile(handle, findData));
+                        } while (Kernel32.FindNextFile(handle, findData));
                     }
                 }
             }

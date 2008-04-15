@@ -1,8 +1,8 @@
 using System;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace SharpFile.UI {
 	/// <summary>
@@ -66,6 +66,7 @@ namespace SharpFile.UI {
 				foreach (string path in paths) {
 					p.Add(Win32.ILCreateFromPath(path));
 				}
+
 				ContextMenuResult result = PopUpContextMenu(p.ToArray(), parent);
 				this.ReleaseHandle();
 				return result;

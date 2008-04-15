@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using SharpFile.Infrastructure;
-using SharpFile.Infrastructure.Win32;
+using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.IO.ChildResources {
     public class FileInfo : FileSystemInfo {
