@@ -22,7 +22,7 @@ namespace SharpFile.UI {
         public static int GetImageIndex(IResource resource, ImageList imageList) {
             int imageIndex = -1;
 
-            if (Settings.Instance.Icons.ShowIcons) {
+            if (Settings.Instance.Icons.ShowIcons && resource != null && imageList != null) {
                 try {
                     // Prevent more than one thread from updating the ImageList at a time.
                     lock (lockObject) {

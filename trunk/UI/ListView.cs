@@ -310,8 +310,13 @@ namespace SharpFile {
 
         #region Events.
         void listView_SelectedIndexChanged(object sender, EventArgs e) {
-            foreach (ListViewItem item in SelectedItems) {
-                IChildResource resource = ((IChildResource)item.Tag);
+            if (SelectedItems.Count > 0) {
+                foreach (ListViewItem item in SelectedItems) {
+                    IChildResource resource = ((IChildResource)item.Tag);
+                    OnUpdatePreviewPanel(resource);
+                }
+            } else {
+                IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
                 OnUpdatePreviewPanel(resource);
             }
         }
@@ -341,6 +346,9 @@ namespace SharpFile {
         private void listView_GotFocus(object sender, EventArgs e) {
             OnUpdatePath(Path);
             OnUpdateStatus(Status);
+
+            IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+            OnUpdatePreviewPanel(resource);
         }
 
         /// <summary>
