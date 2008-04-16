@@ -276,7 +276,8 @@ namespace SharpFile.IO.ChildResources {
 
         public string Path {
             get {
-                if (string.IsNullOrEmpty(path)) {
+                if (string.IsNullOrEmpty(path) && 
+                    !this.FullName.Equals(this.Name, StringComparison.InvariantCultureIgnoreCase)) {
                     path = this.FullName.Replace(this.Name, string.Empty);
                 }
 
