@@ -46,8 +46,8 @@ namespace SharpFile.Infrastructure {
 
         // Sub-settings.
         private DualParentSettings dualParentSettings;
-        //private MdiParentSettings mdiParentSettings;
         private IconSettings iconSettings;
+        private PreviewPaneSettings previewPaneSettings;
 
         #region Ctors.
         /// <summary>
@@ -63,8 +63,8 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         private Settings() {
             dualParentSettings = new DualParentSettings();
-            //mdiParentSettings = new MdiParentSettings();
             iconSettings = new IconSettings();
+            previewPaneSettings = new PreviewPaneSettings();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -381,19 +381,6 @@ namespace SharpFile.Infrastructure {
         }
 
         /// <summary>
-        /// Mdi parent settings.
-        /// </summary>
-        //[XmlElement("MdiParent")]
-        //public MdiParentSettings MdiParent {
-        //    get {
-        //        return mdiParentSettings;
-        //    }
-        //    set {
-        //        mdiParentSettings = value;
-        //    }
-        //}
-
-        /// <summary>
         /// Icon settings.
         /// </summary>
         [XmlElement("Icons")]
@@ -403,6 +390,19 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 iconSettings = value;
+            }
+        }
+
+        /// <summary>
+        /// Icon settings.
+        /// </summary>
+        [XmlElement("PreviewPane")]
+        public PreviewPaneSettings PreviewPane {
+            get {
+                return previewPaneSettings;
+            }
+            set {
+                previewPaneSettings = value;
             }
         }
         #endregion
