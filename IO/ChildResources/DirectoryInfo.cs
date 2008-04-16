@@ -6,12 +6,12 @@ using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.IO.ChildResources {
     public class DirectoryInfo : FileSystemInfo {
-        public DirectoryInfo(string path)
-            : base(path) {
+        public DirectoryInfo(string fullName)
+            : base(fullName) {
         }
 
-        public DirectoryInfo(string path, WIN32_FIND_DATA findData)
-            : base(path, findData) {
+        public DirectoryInfo(string fullName, WIN32_FIND_DATA findData)
+            : base(fullName, findData) {
         }
 
         public DirectoryInfo(string displayName, string fullName, string alternateName,
