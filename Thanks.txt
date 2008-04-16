@@ -49,6 +49,9 @@ http://softwaredevscott.spaces.live.com/blog/cns!1A9E939F7373F3B7!146.entry
 Edit textboxes balloon tip - ramshri
 http://www.codeproject.com/KB/shell/balloontipsarticle.aspx
 
+Windows messages enum - Anthony Baraff
+http://www.codeproject.com/KB/cs/cswindowsmessages.aspx
+
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
 other articles, tips and tricks.
