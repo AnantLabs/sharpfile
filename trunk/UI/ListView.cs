@@ -69,7 +69,7 @@ namespace SharpFile {
             this.AfterLabelEdit += listView_AfterLabelEdit;
             this.GotFocus += listView_GotFocus;
             this.ColumnClick += listView_ColumnClick;
-            this.SelectedIndexChanged += listView_SelectedIndexChanged;
+            this.ItemSelectionChanged += listView_ItemSelectionChanged;
 
             // Set some options on the listview.
             // TODO: This should be able to be set via dropdown/settings.
@@ -309,16 +309,16 @@ namespace SharpFile {
         #endregion
 
         #region Events.
-        void listView_SelectedIndexChanged(object sender, EventArgs e) {
-            if (SelectedItems.Count > 0) {
-                foreach (ListViewItem item in SelectedItems) {
-                    IChildResource resource = ((IChildResource)item.Tag);
+        void listView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e) {
+            BeginInvoke((MethodInvoker)delegate {
+                if (SelectedItems.Count > 0) {
+                    IChildResource resource = ((IChildResource)e.Item.Tag);
+                    OnUpdatePreviewPanel(resource);
+                } else {
+                    IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
                     OnUpdatePreviewPanel(resource);
                 }
-            } else {
-                IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
-                OnUpdatePreviewPanel(resource);
-            }
+            });
         }
 
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
