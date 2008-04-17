@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -11,6 +12,9 @@ namespace SharpFile.UI {
         private PictureBox pictureBox;
         private TextBox textBox;
 
+        /// <summary>
+        /// Ctor.
+        /// </summary>
         public PreviewPanel() {
             InitializeComponent();
 
@@ -20,24 +24,51 @@ namespace SharpFile.UI {
             };
         }
 
+        /// <summary>
+        /// Updates the preview panel from the resource.
+        /// </summary>
+        /// <param name="resource">Resource.</param>
         public void Update(IResource resource) {
             this.resource = resource;
 
             StringBuilder sb = new StringBuilder();
             Image image = null;
 
-            formatName(sb);
-            getDetailTextFromResource(sb);
-            image = getImageFromResource();
+            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                backgroundWorker.WorkerReportsProgress = true;
+                backgroundWorker.WorkerSupportsCancellation = true;
 
-            updateText(sb.ToString());
-            updateImage(image);
+                backgroundWorker.DoWork += delegate {
+                    backgroundWorker.ReportProgress(50);
+
+                    formatName(sb);
+                    getDetailTextFromResource(sb);
+                    image = getImageFromResource();
+
+                    backgroundWorker.ReportProgress(100);
+                };
+
+                backgroundWorker.RunWorkerCompleted += delegate {
+                    updateText(sb);
+                    updateImage(image);
+                };
+
+                backgroundWorker.RunWorkerAsync();
+            }
         }
 
-        private void updateText(string text) {
-            textBox.Text = text;
+        /// <summary>
+        /// Updates the text.
+        /// </summary>
+        /// <param name="text">Text to update.</param>
+        private void updateText(StringBuilder text) {
+            textBox.Text = text.ToString();
         }
 
+        /// <summary>
+        /// Updates the image.
+        /// </summary>
+        /// <param name="image">Image to update.</param>
         private void updateImage(Image image) {
             if (image != null) {
                 this.pictureBox.Visible = true;
@@ -49,21 +80,29 @@ namespace SharpFile.UI {
             }
         }
 
+        /// <summary>
+        /// Formats the name to use.
+        /// </summary>
+        /// <param name="sb"></param>
         private void formatName(StringBuilder sb) {
             Common.Templater templater = new Common.Templater(resource);
-            string result = templater.Generate(Settings.Instance.PreviewPane.NameFormat);
+            string result = templater.Generate(Settings.Instance.PreviewPanel.NameFormat);
 
             sb.AppendFormat("{0}{1}",
                     result,
                     Environment.NewLine);
         }
 
+        /// <summary>
+        /// Gets the detail text for the resource.
+        /// </summary>
+        /// <param name="sb">StringBuilder to append the details to.</param>
         private void getDetailTextFromResource(StringBuilder sb) {
             if (resource != null && resource is FileInfo) {
                 FileInfo fileInfo = (FileInfo)resource;
 
-                bool generateDetailText = (Settings.Instance.PreviewPane.AlwaysShowDetailText ||
-                    Settings.Instance.PreviewPane.DetailTextExtensions.Contains(fileInfo.Extension.ToLower()));
+                bool generateDetailText = (Settings.Instance.PreviewPanel.AlwaysShowDetailText ||
+                    Settings.Instance.PreviewPanel.DetailTextExtensions.Contains(fileInfo.Extension.ToLower()));
 
                 if (generateDetailText) {
                     System.IO.StreamReader sr = null;
@@ -71,7 +110,7 @@ namespace SharpFile.UI {
                     try {
                         sr = System.IO.File.OpenText(resource.FullName);
 
-                        for (int i = 0; i < Settings.Instance.PreviewPane.MaximumLinesOfDetailText; i++) {
+                        for (int i = 0; i < Settings.Instance.PreviewPanel.MaximumLinesOfDetailText; i++) {
                             if (sr.EndOfStream) {
                                 break;
                             } else {
@@ -79,7 +118,7 @@ namespace SharpFile.UI {
                                 sb.Append(line);
                                 sb.Append(Environment.NewLine);
 
-                                if (i == Settings.Instance.PreviewPane.MaximumLinesOfDetailText - 1) {
+                                if (i == Settings.Instance.PreviewPanel.MaximumLinesOfDetailText - 1) {
                                     sb.Append("...");
                                 }
                             }
@@ -95,20 +134,26 @@ namespace SharpFile.UI {
             }
         }
 
+        /// <summary>
+        /// Get image from resource.
+        /// </summary>
+        /// <returns></returns>
         private Image getImageFromResource() {
             Image image = null;
 
             if (resource != null) {
-                if (Settings.Instance.PreviewPane.ThumbnailImages) {
+                if (Settings.Instance.PreviewPanel.ThumbnailImages) {
                     try {
                         image = Image.FromFile(resource.FullName);
                         int width = 0;
                         int height = 0;
 
                         if (image.Width == image.Height) {
+                            // If the image is square, just make the height and width equal.
                             height = this.Height;
                             width = height;
                         } else {
+                            // Otherwise, calculate a ratio for the width and height.
                             float ratio = 1;
 
                             if (image.Height > image.Width) {
@@ -121,6 +166,7 @@ namespace SharpFile.UI {
                             width = (int)((float)image.Width * (float)ratio);
                         }
 
+                        // Only thumbnail the image if the size of the panel is smaller than the size of the image.
                         if (image.Width > width || image.Height > height) {
                             image = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
                         }
@@ -129,6 +175,7 @@ namespace SharpFile.UI {
                     }
                 }
 
+                // Try to grab the resource's icon if ther eis no thumbnail for the resource.
                 if (image == null) {
                     int index = IconManager.GetImageIndex(resource, Settings.Instance.ImageList);
 

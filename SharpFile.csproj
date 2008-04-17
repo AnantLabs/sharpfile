@@ -70,7 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
-    <Compile Include="Infrastructure\Settings\PreviewPaneSettings.cs" />
+    <Compile Include="Infrastructure\Settings\PreviewPanelSettings.cs" />
     <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
     <Compile Include="Infrastructure\WindowsApi\FILETIME.cs" />
     <Compile Include="Infrastructure\WindowsApi\Kernel32.cs" />

@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
-    public sealed class PreviewPaneSettings {
+    public sealed class PreviewPanelSettings {
         private bool collapsed = false;
         private List<string> detailTextExtensions = new List<string>();
         private string nameFormat = "{Name}";
