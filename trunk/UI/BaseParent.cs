@@ -43,7 +43,7 @@ namespace SharpFile {
 
 		protected ToolStripMenuItem viewMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem statusBarToolStripMenuItem = new ToolStripMenuItem();
-        protected ToolStripMenuItem previewPaneToolStripMenuItem = new ToolStripMenuItem();
+        protected ToolStripMenuItem previewPanelToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem toolsMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem optionsToolStripMenuItem = new ToolStripMenuItem();
@@ -217,7 +217,7 @@ namespace SharpFile {
 			this.viewMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
 			                                     		this.statusBarToolStripMenuItem,
-                                                        this.previewPaneToolStripMenuItem
+                                                        this.previewPanelToolStripMenuItem
 			                                     	});
 			this.viewMenu.Size = new Size(41, 20);
 			this.viewMenu.Text = "&View";
@@ -229,12 +229,9 @@ namespace SharpFile {
 			this.statusBarToolStripMenuItem.Text = "&Status Bar";
 			this.statusBarToolStripMenuItem.Click += statusBarToolStripMenuItem_Click;
 
-            //this.previewPaneToolStripMenuItem.Checked = true;
-            //this.previewPaneToolStripMenuItem.CheckOnClick = true;
-            //this.previewPaneToolStripMenuItem.CheckState = CheckState.Checked;
-            this.previewPaneToolStripMenuItem.Size = new Size(135, 22);
-            this.previewPaneToolStripMenuItem.Text = "&Preview Pane";
-            this.previewPaneToolStripMenuItem.Click += previewPaneToolStripMenuItem_Click;
+            this.previewPanelToolStripMenuItem.Size = new Size(135, 22);
+            this.previewPanelToolStripMenuItem.Text = "&Preview Panel";
+            this.previewPanelToolStripMenuItem.Click += previewPanelToolStripMenuItem_Click;
 
 			this.toolsMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                      	{
@@ -352,9 +349,9 @@ namespace SharpFile {
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
 
-        private void previewPaneToolStripMenuItem_Click(object sender, EventArgs e) {
-            baseSplitContainer.Panel2Collapsed = previewPaneToolStripMenuItem.Checked;
-            previewPaneToolStripMenuItem.Checked = !previewPaneToolStripMenuItem.Checked;
+        private void previewPanelToolStripMenuItem_Click(object sender, EventArgs e) {
+            baseSplitContainer.Panel2Collapsed = previewPanelToolStripMenuItem.Checked;
+            previewPanelToolStripMenuItem.Checked = !previewPanelToolStripMenuItem.Checked;
         }
 
         private void setSplitterDistance() {
@@ -380,16 +377,16 @@ namespace SharpFile {
 		}
 
 		protected virtual void onFormClosing() {
-            Settings.Instance.PreviewPane.Collapsed = this.baseSplitContainer.Panel2Collapsed;
-            Settings.Instance.PreviewPane.SplitterPercentage = 100 - splitterPercentage;
+            Settings.Instance.PreviewPanel.Collapsed = this.baseSplitContainer.Panel2Collapsed;
+            Settings.Instance.PreviewPanel.SplitterPercentage = 100 - splitterPercentage;
 		}
 
 		protected virtual void onFormLoad() {
-            splitterPercentage = (100 - Settings.Instance.PreviewPane.SplitterPercentage);
+            splitterPercentage = (100 - Settings.Instance.PreviewPanel.SplitterPercentage);
             setSplitterDistance();
 
-            this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPane.Collapsed;
-            previewPaneToolStripMenuItem.Checked = !Settings.Instance.PreviewPane.Collapsed;
+            this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
+            previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 		}
 
 		protected virtual void addMenuStripItems() {

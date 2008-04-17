@@ -47,7 +47,7 @@ namespace SharpFile.Infrastructure {
         // Sub-settings.
         private DualParentSettings dualParentSettings;
         private IconSettings iconSettings;
-        private PreviewPaneSettings previewPaneSettings;
+        private PreviewPanelSettings previewPanelSettings;
 
         #region Ctors.
         /// <summary>
@@ -64,7 +64,7 @@ namespace SharpFile.Infrastructure {
         private Settings() {
             dualParentSettings = new DualParentSettings();
             iconSettings = new IconSettings();
-            previewPaneSettings = new PreviewPaneSettings();
+            previewPanelSettings = new PreviewPanelSettings();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -396,13 +396,13 @@ namespace SharpFile.Infrastructure {
         /// <summary>
         /// Icon settings.
         /// </summary>
-        [XmlElement("PreviewPane")]
-        public PreviewPaneSettings PreviewPane {
+        [XmlElement("PreviewPanel")]
+        public PreviewPanelSettings PreviewPanel {
             get {
-                return previewPaneSettings;
+                return previewPanelSettings;
             }
             set {
-                previewPaneSettings = value;
+                previewPanelSettings = value;
             }
         }
         #endregion
