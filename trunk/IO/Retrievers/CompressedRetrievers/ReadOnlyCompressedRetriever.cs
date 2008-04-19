@@ -35,16 +35,17 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
 
             using (ZipFile zipFile = new ZipFile(resource.FullName)) {
                 foreach (ZipEntry zipEntry in zipFile) {
-                    string zipEntryName = zipEntry.Name.Replace("/", @"\");
+                    string zipEntryName = zipEntry.Name.Replace("/", FileSystemInfo.DirectorySeparator);
 
-                    if (zipEntryName.EndsWith(@"\")) {
+                    if (zipEntryName.EndsWith(FileSystemInfo.DirectorySeparator)) {
                         zipEntryName = zipEntryName.Remove(zipEntryName.Length - 1, 1);
                     }
 
                     if (string.IsNullOrEmpty(filter) || filter.Equals("*.*") || zipEntryName.Contains(filter)) {
                         // Only show the current directories filesystem objects.
-                        string fullName = string.Format(@"{0}\{1}",
+                        string fullName = string.Format(@"{0}{1}{2}",
                                 resource.FullName,
+                                FileSystemInfo.DirectorySeparator,
                                 zipEntryName);
 
                         if (zipEntry.IsFile) {

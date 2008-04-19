@@ -507,12 +507,12 @@ namespace SharpFile {
                 }
 
                 if (this.tlsPath.Text.Contains(":") &&
-                    !this.tlsPath.Text.Contains(@"\")) {
-                    this.tlsPath.Text += @"\";
+                    !this.tlsPath.Text.Contains(FileSystemInfo.DirectorySeparator)) {
+                    this.tlsPath.Text += FileSystemInfo.DirectorySeparator;
                 } else if (!this.tlsPath.Text.Contains(@":\")) {
                     this.tlsPath.Text += @":\";
                 } else if (this.tlsPath.Text.EndsWith("/")) {
-                    this.tlsPath.Text = this.tlsPath.Text.Replace("/", @"\");
+                    this.tlsPath.Text = this.tlsPath.Text.Replace("/", FileSystemInfo.DirectorySeparator);
                 }
 
                 return this.tlsPath.Text;
@@ -523,10 +523,11 @@ namespace SharpFile {
 
                     IResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
 
-                    if (resource is DirectoryInfo && 
-                        !path.EndsWith(@"\")) {
-                        path = string.Format(@"{0}\",
-                            path);
+                    if (resource is DirectoryInfo &&
+                        !path.EndsWith(FileSystemInfo.DirectorySeparator)) {
+                        path = string.Format(@"{0}{1}",
+                            path,
+                            FileSystemInfo.DirectorySeparator);
                     }
 
                     this.tlsPath.Text = path;

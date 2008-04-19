@@ -97,7 +97,7 @@ namespace SharpFile {
 
             foreach (char ch in System.IO.Path.GetInvalidFileNameChars()) {
                 if (label.IndexOf(ch) > -1) {
-                    const string text = "Filenames cannot have the illegal characters: \", |, <, >, *, ?, :, /, \\";
+                    const string text = "Filenames cannot have any illegal characters including: \", |, <, >, *, ?, :, /, \\";
 
                     EditBalloon editBalloon = new EditBalloon(handle);
                     editBalloon.Title = "Illegal Characters";

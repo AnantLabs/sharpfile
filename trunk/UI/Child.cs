@@ -52,6 +52,7 @@ namespace SharpFile {
         #endregion
 
         public void AddTab() {
+            // TODO: Make this more generic for cross-platform compatibility.
             AddTab(@"C:\", true);
         }
 
