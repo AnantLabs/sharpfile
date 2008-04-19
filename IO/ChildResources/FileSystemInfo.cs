@@ -7,6 +7,8 @@ using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.IO.ChildResources {
     public abstract class FileSystemInfo : IChildResource {
+        public static string DirectorySeparator = System.IO.Path.DirectorySeparatorChar.ToString();
+
         protected IParentResource root;
         protected FileAttributes attributes;
         protected DateTime creationTime;
@@ -27,7 +29,7 @@ namespace SharpFile.IO.ChildResources {
             this.fullName = fullName;
 
             // Required because the handle is invalid if there is an "\" on the end of directories.
-            string validFullName = fullName.EndsWith(@"\") ? fullName.Remove(fullName.Length - 1, 1) : fullName;
+            string validFullName = fullName.EndsWith(DirectorySeparator) ? fullName.Remove(fullName.Length - 1, 1) : fullName;
 
             using (SafeFindHandle handle = Kernel32.FindFirstFile(validFullName, findData)) {
                 if (handle.IsInvalid) {
@@ -207,8 +209,8 @@ namespace SharpFile.IO.ChildResources {
             get {
                 // TODO: This should actually determine the name instead of just using the fullName.
                 if (string.IsNullOrEmpty(name)) {
-                    if (fullName.LastIndexOf('\\', 0) > 0) {
-                        name = fullName.Remove(0, fullName.LastIndexOf('\\', 0));
+                    if (fullName.LastIndexOf(DirectorySeparator, 0) > 0) {
+                        name = fullName.Remove(0, fullName.LastIndexOf(DirectorySeparator, 0));
                     } else {
                         name = fullName;
                     }
@@ -249,7 +251,7 @@ namespace SharpFile.IO.ChildResources {
         public IParentResource Root {
             get {
                 if (root == null) {
-                    string rootPath = this.fullName.Substring(0, this.fullName.IndexOf('\\') + 1);
+                    string rootPath = this.fullName.Substring(0, this.fullName.IndexOf(DirectorySeparator) + 1);
                     //System.IO.Path.GetPathRoot?
                     root = new SharpFile.IO.ParentResources.DriveInfo(rootPath);
                 }
@@ -282,7 +284,7 @@ namespace SharpFile.IO.ChildResources {
                 }
 
                 // Get rid of any extra slashes.
-                path = path.Replace(@"\\", @"\");
+                path = path.Replace(DirectorySeparator + DirectorySeparator, DirectorySeparator);
 
                 return path;
             }

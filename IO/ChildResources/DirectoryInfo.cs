@@ -37,8 +37,10 @@ namespace SharpFile.IO.ChildResources {
         /// <param name="destination">Destination to copy to.</param>
         public override void Copy(string destination, bool overwrite) {
             // Make sure the destination is correct.
-            if (!destination.EndsWith(@"\")) {
-                destination += @"\";
+            if (!destination.EndsWith(FileSystemInfo.DirectorySeparator)) {
+                destination = string.Format("{0}{1}",
+                    destination,
+                    FileSystemInfo.DirectorySeparator);
             }
 
             // TODO: Do something with the overwrite bool here.
