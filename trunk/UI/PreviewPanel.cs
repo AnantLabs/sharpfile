@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -30,31 +29,14 @@ namespace SharpFile.UI {
         /// <param name="resource">Resource.</param>
         public void Update(IResource resource) {
             this.resource = resource;
-
             StringBuilder sb = new StringBuilder();
             Image image = null;
 
-            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-                backgroundWorker.WorkerReportsProgress = true;
-                backgroundWorker.WorkerSupportsCancellation = true;
-
-                backgroundWorker.DoWork += delegate {
-                    backgroundWorker.ReportProgress(50);
-
-                    formatName(sb);
-                    getDetailTextFromResource(sb);
-                    image = getImageFromResource();
-
-                    backgroundWorker.ReportProgress(100);
-                };
-
-                backgroundWorker.RunWorkerCompleted += delegate {
-                    updateText(sb);
-                    updateImage(image);
-                };
-
-                backgroundWorker.RunWorkerAsync();
-            }
+            formatName(sb);
+            getDetailTextFromResource(sb);
+            image = getImageFromResource();
+            updateText(sb);
+            updateImage(image);
         }
 
         /// <summary>
