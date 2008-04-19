@@ -310,15 +310,13 @@ namespace SharpFile {
 
         #region Events.
         void listView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e) {
-            BeginInvoke((MethodInvoker)delegate {
-                if (SelectedItems.Count > 0) {
-                    IChildResource resource = ((IChildResource)e.Item.Tag);
-                    OnUpdatePreviewPanel(resource);
-                } else {
-                    IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
-                    OnUpdatePreviewPanel(resource);
-                }
-            });
+            if (SelectedItems.Count > 0) {
+                IChildResource resource = ((IChildResource)e.Item.Tag);
+                OnUpdatePreviewPanel(resource);
+            } else {
+                IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+                OnUpdatePreviewPanel(resource);
+            }
         }
 
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
