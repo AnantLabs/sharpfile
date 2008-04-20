@@ -16,17 +16,17 @@ namespace SharpFile.IO.Retrievers {
         /// <summary>
         /// Fired when the resources are received.
         /// </summary>
-        public event SharpFile.Infrastructure.ChildResourceRetriever.GetCompleteDelegate GetComplete;
+        public event Infrastructure.ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
         /// <summary>
         /// The Custom method that determines if this retriever should be used for a particular resource.
         /// </summary>
-        public event SharpFile.Infrastructure.ChildResourceRetriever.FilterMethodDelegate FilterMethod;
+        public event Infrastructure.ChildResourceRetriever.FilterMethodDelegate FilterMethod;
 
         /// <summary>
         /// The Custom method with arguments that determines if this retriever should be used for a particular resource.
         /// </summary>
-        public event SharpFile.Infrastructure.ChildResourceRetriever.FilterMethodWithArgumentsDelegate FilterMethodWithArguments;
+        public event Infrastructure.ChildResourceRetriever.FilterMethodWithArgumentsDelegate FilterMethodWithArguments;
 
         /// <summary>
         /// Fires the GetComplete event.
