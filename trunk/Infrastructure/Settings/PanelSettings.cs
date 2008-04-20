@@ -8,7 +8,7 @@ namespace SharpFile.Infrastructure {
         private List<string> paths = new List<string>();
         private bool collapsed = false;
         private bool showFilter = true;
-        private string driveNameFormat = "{Name}";
+        private string driveNameFormat = "{Name} &lt;{Size}&gt;";
 
         [XmlArray("Paths")]
         [XmlArrayItem("Path")]
