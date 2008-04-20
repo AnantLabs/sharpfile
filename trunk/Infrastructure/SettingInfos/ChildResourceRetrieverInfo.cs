@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Common;
 using Common.Logger;
 
 namespace SharpFile.Infrastructure {
@@ -84,14 +85,14 @@ namespace SharpFile.Infrastructure {
                     try {
                         // Create the appropriate method delegate based on whether there were arguments passed in.
                         if (fullyQualifiedMethod.Arguments != null && fullyQualifiedMethod.Arguments.Count > 0) {
-                            filterMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodWithArgumentsDelegate>(
+                            filterMethod = Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodWithArgumentsDelegate>(
                                fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                fullyQualifiedMethod.FullyQualifiedType.Type,
                                fullyQualifiedMethod.Name);
 
                             filterMethodArguments = fullyQualifiedMethod.Arguments;
                         } else {
-                            filterMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
+                            filterMethod = Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
                                 fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                 fullyQualifiedMethod.FullyQualifiedType.Type,
                                 fullyQualifiedMethod.Name);
@@ -107,7 +108,7 @@ namespace SharpFile.Infrastructure {
                 // If the filterMethod is still null, then there was an error creating the delegate, 
                 // or the method delegate type was null. Either way, set a default.
                 if (filterMethod == null) {
-                    filterMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
+                    filterMethod = Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
                                 "SharpFile",
                                 "SharpFile.Infrastructure.ChildResourceRetrievers",
 								"FalseFilterMethod");

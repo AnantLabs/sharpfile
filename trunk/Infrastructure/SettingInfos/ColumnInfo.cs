@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Xml.Serialization;
-using Common.Logger;
 using System.Collections.Generic;
+using System.Xml.Serialization;
+using Common;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
@@ -10,10 +11,8 @@ namespace SharpFile.Infrastructure {
         private string property;
         private bool primaryColumn = false;
         private List<FullyQualifiedType> excludeForTypes;
-        private FilterMethod filterMethod;
+        private FullyQualifiedMethod.AlterMethod alterMethod;
         private FullyQualifiedMethod fullyQualifiedMethod;
-
-        public delegate string FilterMethod(string val);
 
         public ColumnInfo() {
         }
@@ -69,16 +68,16 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlIgnore]
-        public FilterMethod MethodDelegate {
+        public FullyQualifiedMethod.AlterMethod MethodDelegate {
             get {
-                if (filterMethod == null && fullyQualifiedMethod != null) {
+                if (alterMethod == null && fullyQualifiedMethod != null) {
                     try {
-                        filterMethod = Common.Reflection.CreateDelegate<FilterMethod>(
+                        alterMethod = Reflection.CreateDelegate<FullyQualifiedMethod.AlterMethod>(
                             fullyQualifiedMethod.FullyQualifiedType.Assembly,
                             fullyQualifiedMethod.FullyQualifiedType.Type,
                             fullyQualifiedMethod.Name);
                     } catch (Exception ex) {
-                        string message = "Creating the FilterMethod, {0}, for the {1} ColumnInfo failed.";
+                        string message = "Creating the AlterMethod, {0}, for the {1} ColumnInfo failed.";
 
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
                                 fullyQualifiedMethod.FullyQualifiedType.Type, text);
@@ -86,7 +85,7 @@ namespace SharpFile.Infrastructure {
                     }
                 }
 
-                return filterMethod;
+                return alterMethod;
             }
         }
     }

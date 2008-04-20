@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using Common;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
     [Serializable]
@@ -8,6 +10,8 @@ namespace SharpFile.Infrastructure {
         private FullyQualifiedType fullyQualifiedType;
         private string name;
         private List<string> arguments;
+
+        public delegate string AlterMethod(string value);
 
         public FullyQualifiedType FullyQualifiedType {
             get {
@@ -38,6 +42,8 @@ namespace SharpFile.Infrastructure {
                 arguments = value;
             }
         }
+
+        // TODO: Generate the delegate for the method.
 
         public override string ToString() {
             return string.Format("{0}.{1}({2})",
