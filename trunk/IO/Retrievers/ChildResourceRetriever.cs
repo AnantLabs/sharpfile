@@ -11,7 +11,7 @@ namespace SharpFile.IO.Retrievers {
         private List<ColumnInfo> columnInfos;
         private string name;
         private IView view;
-        private List<string> customMethodArguments = new List<string>();
+        private List<string> filterMethodArguments = new List<string>();
 
         /// <summary>
         /// Fired when the resources are received.
@@ -21,12 +21,12 @@ namespace SharpFile.IO.Retrievers {
         /// <summary>
         /// The Custom method that determines if this retriever should be used for a particular resource.
         /// </summary>
-        public event SharpFile.Infrastructure.ChildResourceRetriever.CustomMethodDelegate CustomMethod;
+        public event SharpFile.Infrastructure.ChildResourceRetriever.FilterMethodDelegate FilterMethod;
 
         /// <summary>
         /// The Custom method with arguments that determines if this retriever should be used for a particular resource.
         /// </summary>
-        public event SharpFile.Infrastructure.ChildResourceRetriever.CustomMethodWithArgumentsDelegate CustomMethodWithArguments;
+        public event SharpFile.Infrastructure.ChildResourceRetriever.FilterMethodWithArgumentsDelegate FilterMethodWithArguments;
 
         /// <summary>
         /// Fires the GetComplete event.
@@ -42,9 +42,9 @@ namespace SharpFile.IO.Retrievers {
         /// </summary>
         /// <param name="resource">Resource passed to the custom method.</param>
         /// <returns>Whether or not this retriever should be executed for a particular resource.</returns>
-        public bool OnCustomMethod(IResource resource) {
-            if (CustomMethod != null) {
-                return CustomMethod(resource);
+        public bool OnFilterMethod(IResource resource) {
+            if (FilterMethod != null) {
+                return FilterMethod(resource);
             }
 
             return false;
@@ -56,9 +56,9 @@ namespace SharpFile.IO.Retrievers {
         /// <param name="resource">Resource passed to the custom method.</param>
         /// <param name="arguments">Arguments passed to the custom method.</param>
         /// <returns>Whether or not this retriever should be executed for a particular resource.</returns>
-        public bool OnCustomMethodWithArguments(IResource resource, List<string> arguments) {
-            if (CustomMethodWithArguments != null) {
-                return CustomMethodWithArguments(resource, arguments);
+        public bool OnFilterMethodWithArguments(IResource resource, List<string> arguments) {
+            if (FilterMethodWithArguments != null) {
+                return FilterMethodWithArguments(resource, arguments);
             }
 
             return false;
@@ -162,10 +162,10 @@ namespace SharpFile.IO.Retrievers {
             childResourceRetriever.ColumnInfos = clonedColumnInfos;
             childResourceRetriever.Name = Name;
             childResourceRetriever.View = View;
-            childResourceRetriever.CustomMethodArguments = CustomMethodArguments;
+            childResourceRetriever.FilterMethodArguments = FilterMethodArguments;
 
-            childResourceRetriever.CustomMethod += OnCustomMethod;
-            childResourceRetriever.CustomMethodWithArguments += OnCustomMethodWithArguments;
+            childResourceRetriever.FilterMethod += OnFilterMethod;
+            childResourceRetriever.FilterMethodWithArguments += OnFilterMethodWithArguments;
             childResourceRetriever.GetComplete += OnGetComplete;
 
             return childResourceRetriever;
@@ -212,12 +212,12 @@ namespace SharpFile.IO.Retrievers {
         /// <summary>
         /// Arguments to be used with the custom method with arguments.
         /// </summary>
-        public List<string> CustomMethodArguments {
+        public List<string> FilterMethodArguments {
             get {
-                return customMethodArguments;
+                return filterMethodArguments;
             }
             set {
-                customMethodArguments = value;
+                filterMethodArguments = value;
             }
         }
     }

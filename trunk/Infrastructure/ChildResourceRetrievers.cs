@@ -35,9 +35,9 @@ namespace SharpFile.Infrastructure {
         /// <returns>List of appropriate child resource retrievers.</returns>
         public IEnumerable<IChildResourceRetriever> Filter(IResource fsi) {
             foreach (IChildResourceRetriever childResourceRetriever in this) {
-                if (childResourceRetriever.OnCustomMethod(fsi)) {
+                if (childResourceRetriever.OnFilterMethod(fsi)) {
                     yield return childResourceRetriever;
-                } else if (childResourceRetriever.OnCustomMethodWithArguments(fsi, childResourceRetriever.CustomMethodArguments)) {
+                } else if (childResourceRetriever.OnFilterMethodWithArguments(fsi, childResourceRetriever.FilterMethodArguments)) {
                     yield return childResourceRetriever;
                 }
             }
@@ -63,7 +63,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         /// <param name="fsi">File system object. Not currently used for anything.</param>
         /// <returns>Whether or not the child restriever resource should be used for this file system object. Always returns true.</returns>
-        public static bool TrueCustomMethod(IResource fsi) {
+        public static bool TrueFilterMethod(IResource fsi) {
             return true;
         }
 
@@ -72,7 +72,7 @@ namespace SharpFile.Infrastructure {
 		/// </summary>
 		/// <param name="fsi">File system object. Not currently used for anything.</param>
 		/// <returns>Whether or not the child restriever resource should be used for this file system object. Always returns false.</returns>
-		public static bool FalseCustomMethod(IResource fsi) {
+		public static bool FalseFilterMethod(IResource fsi) {
 			return false;
 		}
 
