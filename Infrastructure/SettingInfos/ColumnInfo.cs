@@ -11,7 +11,7 @@ namespace SharpFile.Infrastructure {
         private bool primaryColumn = false;
         private List<FullyQualifiedType> excludeForTypes;
         private CustomMethod customMethod;
-        private FullyQualifiedMethod methodDelegateType;
+        private FullyQualifiedMethod fullyQualifiedMethod;
 
         public delegate string CustomMethod(string val);
 
@@ -59,29 +59,29 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        public FullyQualifiedMethod MethodDelegateType {
+        public FullyQualifiedMethod FullyQualifiedMethod {
             get {
-                return methodDelegateType;
+                return fullyQualifiedMethod;
             }
             set {
-                methodDelegateType = value;
+                fullyQualifiedMethod = value;
             }
         }
 
         [XmlIgnore]
         public CustomMethod MethodDelegate {
             get {
-                if (customMethod == null && methodDelegateType != null) {
+                if (customMethod == null && fullyQualifiedMethod != null) {
                     try {
                         customMethod = Common.Reflection.CreateDelegate<CustomMethod>(
-                            methodDelegateType.FullyQualifiedType.Assembly,
-                            methodDelegateType.FullyQualifiedType.Type,
-                            methodDelegateType.Method);
+                            fullyQualifiedMethod.FullyQualifiedType.Assembly,
+                            fullyQualifiedMethod.FullyQualifiedType.Type,
+                            fullyQualifiedMethod.Method);
                     } catch (Exception ex) {
                         string message = "Creating the CustomMethod, {0}, for the {1} ColumnInfo failed.";
 
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
-                                methodDelegateType.FullyQualifiedType.Type, text);
+                                fullyQualifiedMethod.FullyQualifiedType.Type, text);
 
                     }
                 }
