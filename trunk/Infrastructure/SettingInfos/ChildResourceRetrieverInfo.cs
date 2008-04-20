@@ -87,14 +87,14 @@ namespace SharpFile.Infrastructure {
                             customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodWithArgumentsDelegate>(
                                fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                fullyQualifiedMethod.FullyQualifiedType.Type,
-                               fullyQualifiedMethod.Method);
+                               fullyQualifiedMethod.Name);
 
                             customMethodArguments = fullyQualifiedMethod.Arguments;
                         } else {
                             customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
                                 fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                 fullyQualifiedMethod.FullyQualifiedType.Type,
-                                fullyQualifiedMethod.Method);
+                                fullyQualifiedMethod.Name);
                         }
                     } catch (Exception ex) {
                         string message = "Creating the CustomMethod, {0}, for the {1} ChildResourceRetriever failed.";

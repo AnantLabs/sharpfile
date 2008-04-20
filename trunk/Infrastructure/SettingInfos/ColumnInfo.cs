@@ -76,7 +76,7 @@ namespace SharpFile.Infrastructure {
                         customMethod = Common.Reflection.CreateDelegate<CustomMethod>(
                             fullyQualifiedMethod.FullyQualifiedType.Assembly,
                             fullyQualifiedMethod.FullyQualifiedType.Type,
-                            fullyQualifiedMethod.Method);
+                            fullyQualifiedMethod.Name);
                     } catch (Exception ex) {
                         string message = "Creating the CustomMethod, {0}, for the {1} ColumnInfo failed.";
 
