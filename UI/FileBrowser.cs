@@ -23,7 +23,7 @@ namespace SharpFile {
         private bool handleCreated = false;
         private bool isExecuting = false;
         private bool isFiltering = false;
-        private string driveNameFormat;
+        private FormatTemplate driveFormatTemplate;
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -330,14 +330,18 @@ namespace SharpFile {
                     foreach (IParentResource resource in Settings.Instance.ParentResources) {
                         if (!tlsDrives.DropDownItems.ContainsKey(resource.Name)) {
                             ToolStripMenuItem item = new ToolStripMenuItem();
-                            item.Text = resource.Name;
+                            string text = resource.Name;
 
-                            if (resource.IsReady) {
+                            if (resource.IsReady && !string.IsNullOrEmpty(driveFormatTemplate.Template)) {
                                 Templater templater = new Templater(resource);
-                                item.Text = templater.Generate(driveNameFormat);
+                                text = templater.Generate(driveFormatTemplate.Template);
                             }
 
-                            item.Text = Common.General.GetHumanReadableSize(item.Text);
+                            if (driveFormatTemplate.MethodDelegate != null) {
+                                text = driveFormatTemplate.MethodDelegate(text);
+                            }
+
+                            item.Text = text;
 
                             item.Name = resource.Name;
                             item.Tag = resource;
@@ -640,12 +644,12 @@ namespace SharpFile {
             }
         }
 
-        public string DriveNameFormat {
+        public FormatTemplate DriveFormatTemplate {
             get {
-                return driveNameFormat;
+                return driveFormatTemplate;
             }
             set {
-                driveNameFormat = value;
+                driveFormatTemplate = value;
             }
         }
         #endregion

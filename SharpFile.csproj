@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
     <Compile Include="Infrastructure\Settings\PreviewPanelSettings.cs" />
     <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
