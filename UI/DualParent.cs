@@ -341,6 +341,12 @@ namespace SharpFile {
             Forms.SetPropertyInChild<bool>(this.splitContainer.Panel2, "ShowFilter",
                 panel2ShowFilter);
             this.filterPanel2ToolStripMenuItem.Checked = panel2ShowFilter;
+
+            // Set the drive name format.
+            Forms.SetPropertyInChild<string>(this.splitContainer.Panel1, "DriveNameFormat",
+                Settings.Instance.DualParent.Panel1.DriveNameFormat);
+            Forms.SetPropertyInChild<string>(this.splitContainer.Panel2, "DriveNameFormat",
+                Settings.Instance.DualParent.Panel2.DriveNameFormat);
         }
     }
 }

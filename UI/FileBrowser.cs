@@ -23,6 +23,7 @@ namespace SharpFile {
         private bool handleCreated = false;
         private bool isExecuting = false;
         private bool isFiltering = false;
+        private string driveNameFormat;
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -330,6 +331,14 @@ namespace SharpFile {
                         if (!tlsDrives.DropDownItems.ContainsKey(resource.Name)) {
                             ToolStripMenuItem item = new ToolStripMenuItem();
                             item.Text = resource.Name;
+
+                            if (resource.IsReady) {
+                                Templater templater = new Templater(resource);
+                                item.Text = templater.Generate(driveNameFormat);
+                            }
+
+                            item.Text = Common.General.GetHumanReadableSize(item.Text);
+
                             item.Name = resource.Name;
                             item.Tag = resource;
 
@@ -354,8 +363,6 @@ namespace SharpFile {
 
                                             if (childResource.Root.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase)) {
                                                 isLocalDiskFound = true;
-
-												execute(childResource);
                                             }
                                         } else if (pathResource is IParentResource) {
                                             IParentResource parentResource = (IParentResource)resource;
@@ -365,21 +372,19 @@ namespace SharpFile {
 												parentResource.DriveType == System.IO.DriveType.Fixed &&
 												parentResource.IsReady) {
                                                 isLocalDiskFound = true;
-												execute(parentResource);
                                             }
                                         }
 
+                                        execute(resource);
                                         break;
                                     }
                                 }
 
                                 // If there is no defined path to retrieve, then attempt to get 
                                 // information about the the first drive found that is local and ready.
-                                if (!isLocalDiskFound && resource is IParentResource) {
-                                    IParentResource parentResource = (IParentResource)resource;
-
-                                    if (parentResource.DriveType == System.IO.DriveType.Fixed &&
-                                        parentResource.IsReady) {
+                                if (!isLocalDiskFound) {
+                                    if (resource.DriveType == System.IO.DriveType.Fixed &&
+                                        resource.IsReady) {
                                         isLocalDiskFound = true;
 										execute(resource);
                                     }
@@ -391,6 +396,7 @@ namespace SharpFile {
                         }
                     }
 
+                    // If nothing has been found yet, but there are parent resources, then just execute the first known one.
                     if (childResourceRetrievers == null &&
                         Settings.Instance.ParentResources != null &&
                         Settings.Instance.ParentResources.Count > 0) {
@@ -631,6 +637,15 @@ namespace SharpFile {
                 if (isFiltering) {
                     tlsFilter.Focus();
                 }
+            }
+        }
+
+        public string DriveNameFormat {
+            get {
+                return driveNameFormat;
+            }
+            set {
+                driveNameFormat = value;
             }
         }
         #endregion

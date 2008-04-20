@@ -1,5 +1,4 @@
 - tools menu
-- rename methoddelegate to filtermethods?
 - attributes for plugins (for when there is a UI)
 - large icons for preview panel
 
