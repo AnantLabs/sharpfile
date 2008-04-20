@@ -8,6 +8,7 @@ namespace SharpFile.Infrastructure {
         private List<string> paths = new List<string>();
         private bool collapsed = false;
         private bool showFilter = true;
+        private string driveNameFormat = "{Name}";
 
         [XmlArray("Paths")]
         [XmlArrayItem("Path")]
@@ -35,6 +36,15 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 showFilter = value;
+            }
+        }
+
+        public string DriveNameFormat {
+            get {
+                return driveNameFormat;
+            }
+            set {
+                driveNameFormat = value;
             }
         }
     }
