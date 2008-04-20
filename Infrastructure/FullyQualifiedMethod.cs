@@ -6,7 +6,7 @@ namespace SharpFile.Infrastructure {
     [Serializable]
     public class FullyQualifiedMethod {
         private FullyQualifiedType fullyQualifiedType;
-        private string method;
+        private string name;
         private List<string> arguments;
 
         public FullyQualifiedType FullyQualifiedType {
@@ -18,13 +18,13 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        [XmlAttribute("Method")]
-        public string Method {
+        [XmlAttribute("Name")]
+        public string Name {
             get {
-                return method;
+                return name;
             }
             set {
-                method = value;
+                name = value;
             }
         }
 
@@ -42,7 +42,7 @@ namespace SharpFile.Infrastructure {
         public override string ToString() {
             return string.Format("{0}.{1}({2})",
                 FullyQualifiedType,
-                Method,
+                Name,
                 string.Join(",", Arguments.ToArray()));
         }
 
