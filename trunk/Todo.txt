@@ -1,15 +1,13 @@
+- tools menu
+- rename methoddelegate to filtermethods?
+- attributes for plugins (for when there is a UI)
 - large icons for preview panel
-
-- All Windows messaging enums
-http://senapi.blogspot.com/2007/11/all-windows-messages-c-enum.html
 
 - Different resizing code:
 http://www.hanselman.com/blog/ScalingResizingResamplingAnImageInASPNET.aspx
 
-- string.format for display text in previewpanel
-- settings to show preview panel
-- show images on preview in some sort of plugin system (overkill?)
 - stress test the logging functionality
-- clean up all of the unused code in Shell32
+- drive name string format
+- fix icons in compressed files
 
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
