@@ -8,10 +8,10 @@ namespace SharpFile.Infrastructure {
         private string name;
         private FullyQualifiedType fullyQualifiedType;
         private List<ColumnInfo> columnInfos;
-        private Delegate customMethod;
+        private Delegate filterMethod;
         private FullyQualifiedMethod fullyQualifiedMethod;
         private string view;
-        private List<string> customMethodArguments;
+        private List<string> filterMethodArguments;
 
         /// <summary>
         /// Empty ctor for xml serialization.
@@ -68,52 +68,52 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlIgnore]
-        public List<string> CustomMethodArguments {
+        public List<string> FilterMethodArguments {
             get {
-                return customMethodArguments;
+                return filterMethodArguments;
             }
             set {
-                customMethodArguments = value;
+                filterMethodArguments = value;
             }
         }
 
         [XmlIgnore]
-        public Delegate CustomMethod {
+        public Delegate FilterMethod {
             get {
-                if (customMethod == null && fullyQualifiedMethod != null) {
+                if (filterMethod == null && fullyQualifiedMethod != null) {
                     try {
                         // Create the appropriate method delegate based on whether there were arguments passed in.
                         if (fullyQualifiedMethod.Arguments != null && fullyQualifiedMethod.Arguments.Count > 0) {
-                            customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodWithArgumentsDelegate>(
+                            filterMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodWithArgumentsDelegate>(
                                fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                fullyQualifiedMethod.FullyQualifiedType.Type,
                                fullyQualifiedMethod.Name);
 
-                            customMethodArguments = fullyQualifiedMethod.Arguments;
+                            filterMethodArguments = fullyQualifiedMethod.Arguments;
                         } else {
-                            customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
+                            filterMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
                                 fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                 fullyQualifiedMethod.FullyQualifiedType.Type,
                                 fullyQualifiedMethod.Name);
                         }
                     } catch (Exception ex) {
-                        string message = "Creating the CustomMethod, {0}, for the {1} ChildResourceRetriever failed.";
+                        string message = "Creating the FilterMethod, {0}, for the {1} ChildResourceRetriever failed.";
 
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
                                 fullyQualifiedMethod.FullyQualifiedType.Type, name);
                     }
                 }
 
-                // If the customMethod is still null, then there was an error creating the delegate, 
+                // If the filterMethod is still null, then there was an error creating the delegate, 
                 // or the method delegate type was null. Either way, set a default.
-                if (customMethod == null) {
-                    customMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.CustomMethodDelegate>(
+                if (filterMethod == null) {
+                    filterMethod = Common.Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
                                 "SharpFile",
                                 "SharpFile.Infrastructure.ChildResourceRetrievers",
-								"FalseCustomMethod");
+								"FalseFilterMethod");
                 }
 
-                return customMethod;
+                return filterMethod;
             }
         }
     }

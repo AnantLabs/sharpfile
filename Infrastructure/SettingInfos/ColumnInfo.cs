@@ -10,10 +10,10 @@ namespace SharpFile.Infrastructure {
         private string property;
         private bool primaryColumn = false;
         private List<FullyQualifiedType> excludeForTypes;
-        private CustomMethod customMethod;
+        private FilterMethod filterMethod;
         private FullyQualifiedMethod fullyQualifiedMethod;
 
-        public delegate string CustomMethod(string val);
+        public delegate string FilterMethod(string val);
 
         public ColumnInfo() {
         }
@@ -69,16 +69,16 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlIgnore]
-        public CustomMethod MethodDelegate {
+        public FilterMethod MethodDelegate {
             get {
-                if (customMethod == null && fullyQualifiedMethod != null) {
+                if (filterMethod == null && fullyQualifiedMethod != null) {
                     try {
-                        customMethod = Common.Reflection.CreateDelegate<CustomMethod>(
+                        filterMethod = Common.Reflection.CreateDelegate<FilterMethod>(
                             fullyQualifiedMethod.FullyQualifiedType.Assembly,
                             fullyQualifiedMethod.FullyQualifiedType.Type,
                             fullyQualifiedMethod.Name);
                     } catch (Exception ex) {
-                        string message = "Creating the CustomMethod, {0}, for the {1} ColumnInfo failed.";
+                        string message = "Creating the FilterMethod, {0}, for the {1} ColumnInfo failed.";
 
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
                                 fullyQualifiedMethod.FullyQualifiedType.Type, text);
@@ -86,7 +86,7 @@ namespace SharpFile.Infrastructure {
                     }
                 }
 
-                return customMethod;
+                return filterMethod;
             }
         }
     }

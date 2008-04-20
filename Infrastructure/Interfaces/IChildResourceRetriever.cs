@@ -8,21 +8,21 @@ namespace SharpFile.Infrastructure {
         IChildResourceRetriever Clone();
         List<ColumnInfo> ColumnInfos { get; set; }
         IView View { get; set; }
-        List<string> CustomMethodArguments { get; set; }
+        List<string> FilterMethodArguments { get; set; }
 
         void OnGetComplete();
         event ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
-        bool OnCustomMethod(IResource resource);
-        event ChildResourceRetriever.CustomMethodDelegate CustomMethod;
+        bool OnFilterMethod(IResource resource);
+        event ChildResourceRetriever.FilterMethodDelegate FilterMethod;
 
-        bool OnCustomMethodWithArguments(IResource resource, List<string> arguments);
-        event ChildResourceRetriever.CustomMethodWithArgumentsDelegate CustomMethodWithArguments;
+        bool OnFilterMethodWithArguments(IResource resource, List<string> arguments);
+        event ChildResourceRetriever.FilterMethodWithArgumentsDelegate FilterMethodWithArguments;
 	}
 
     public static class ChildResourceRetriever {
         public delegate void GetCompleteDelegate();
-        public delegate bool CustomMethodDelegate(IResource resource);
-        public delegate bool CustomMethodWithArgumentsDelegate(IResource resource, List<string> arguments);
+        public delegate bool FilterMethodDelegate(IResource resource);
+        public delegate bool FilterMethodWithArgumentsDelegate(IResource resource, List<string> arguments);
     }
 }
