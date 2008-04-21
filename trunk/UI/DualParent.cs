@@ -8,6 +8,8 @@ using SharpFile.UI;
 
 namespace SharpFile {
     public class DualParent : BaseParent {
+        protected ToolStripMenuItem filterPanel1ToolStripMenuItem = new ToolStripMenuItem();
+        protected ToolStripMenuItem filterPanel2ToolStripMenuItem = new ToolStripMenuItem();
         private SplitContainer splitContainer = new SplitContainer();
         private ToolStripMenuItem swapPanelItem = new ToolStripMenuItem();
         private ToolStripMenuItem displayPanelItem = new ToolStripMenuItem();
@@ -17,10 +19,10 @@ namespace SharpFile {
         private ToolStripMenuItem verticalPanelOrientationItem = new ToolStripMenuItem();
         private ToolStripMenuItem horizontalPanelOrientationItem = new ToolStripMenuItem();
         private ToolStripMenuItem panel1Menu = new ToolStripMenuItem();
-        private ToolStripMenuItem panel2Menu = new ToolStripMenuItem();
-        protected ToolStripMenuItem filterPanel1ToolStripMenuItem = new ToolStripMenuItem();
-        protected ToolStripMenuItem filterPanel2ToolStripMenuItem = new ToolStripMenuItem();
+        private ToolStripMenuItem panel2Menu = new ToolStripMenuItem();        
         private int splitterPercentage;
+        private bool panel1HasFocus = false;
+        private bool panel2HasFocus = false;
 
         public DualParent() {
             Child child1 = new Child("view1");
@@ -95,6 +97,16 @@ namespace SharpFile {
 
             splitContainer.SplitterMoved += delegate {
                 toolTip.RemoveAll();
+            };
+
+            splitContainer.Panel1.Enter += delegate {
+                panel1HasFocus = true;
+                panel2HasFocus = false;
+            };
+
+            splitContainer.Panel2.Enter += delegate {
+                panel1HasFocus = false;
+                panel2HasFocus = true;
             };
 
             MenuItem twentyFivePercentMenuItem = new MenuItem("25%", splitterContextMenuOnClick);
@@ -347,6 +359,50 @@ namespace SharpFile {
                 Settings.Instance.DualParent.Panel1.DriveFormatTemplate);
             Forms.SetPropertyInChild<FormatTemplate>(this.splitContainer.Panel2, "DriveFormatTemplate",
                 Settings.Instance.DualParent.Panel2.DriveFormatTemplate);
+        }
+
+        public string SelectedPath1 {
+            get {
+                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedPath");
+            }
+        }
+
+        public string SelectedPath2 {
+            get {
+                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedPath");
+            }
+        }
+
+        public string SelectedPath {
+            get {
+                if (panel1HasFocus) {
+                    return SelectedPath1;
+                } else {
+                    return SelectedPath2;
+                }
+            }
+        }
+
+        public string SelectedFile1 {
+            get {
+                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedFile");
+            }
+        }
+
+        public string SelectedFile2 {
+            get {
+                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedFile");
+            }
+        }
+
+        public string SelectedFile {
+            get {
+                if (panel1HasFocus) {
+                    return SelectedFile1;
+                } else {
+                    return SelectedFile2;
+                }
+            }
         }
     }
 }

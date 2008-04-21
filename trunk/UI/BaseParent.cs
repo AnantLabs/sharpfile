@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using Common;
@@ -381,13 +382,42 @@ namespace SharpFile {
             Settings.Instance.PreviewPanel.SplitterPercentage = 100 - splitterPercentage;
 		}
 
-		protected virtual void onFormLoad() {
+        protected virtual void onFormLoad() {
             splitterPercentage = (100 - Settings.Instance.PreviewPanel.SplitterPercentage);
             setSplitterDistance();
 
             this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
-		}
+
+            foreach (ToolInfo toolInfo in Settings.Instance.ToolInfos) {
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(toolInfo.Name);
+                menuItem.Tag = toolInfo;
+
+                menuItem.Click += (EventHandler)delegate {
+                    ToolInfo t = (ToolInfo)menuItem.Tag;
+                    ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                    processStartInfo.ErrorDialog = true;
+                    processStartInfo.UseShellExecute = true;
+
+                    Templater templater = new Templater(this);
+                    processStartInfo.FileName = templater.Generate(t.Path);
+
+                    if (!string.IsNullOrEmpty(t.Arguments)) {
+                        processStartInfo.Arguments = templater.Generate(t.Arguments);
+                    }
+
+                    try {
+                        Process.Start(processStartInfo);
+                    } catch (Exception ex) {
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Process {0} can not be performed on {1}.",
+                            t.Name,
+                            t.Path);
+                    }
+                };
+
+                this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count -1, menuItem);
+            }
+        }
 
 		protected virtual void addMenuStripItems() {
 		}
