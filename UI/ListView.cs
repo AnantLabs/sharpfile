@@ -940,6 +940,16 @@ namespace SharpFile {
                     (int)LVM.GETEDITCONTROL, 0, IntPtr.Zero);
             }
         }
+
+        public string SelectedFile {
+            get {
+                if (SelectedItems.Count == 0) {
+                    return Path;
+                } else {
+                    return ((IChildResource)SelectedItems[0].Tag).FullName;
+                }
+            }
+        }
         #endregion
     }
 }

@@ -38,6 +38,7 @@ namespace SharpFile.Infrastructure {
         private List<ParentResourceRetrieverInfo> parentResourceRetrieverInfos;
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
         private List<ViewInfo> viewInfos;
+        private List<ToolInfo> toolInfos;
         private LoggerInfo loggerInfo;
 
         // Constructed from infos.
@@ -363,6 +364,20 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 viewInfos = value;
+            }
+        }
+
+        /// <summary>
+        /// Tool infos.
+        /// </summary>
+        [XmlArray("Tools")]
+        [XmlArrayItem("Tool")]
+        public List<ToolInfo> ToolInfos {
+            get {
+                return toolInfos;
+            }
+            set {
+                toolInfos = value;
             }
         }
 

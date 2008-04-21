@@ -37,10 +37,8 @@ namespace SharpFile {
         }
 
         private void tabControl_Selected(object sender, TabControlEventArgs e) {
-            string path = Forms.GetPropertyInChild<string>(this.TabControl.SelectedTab, "Path");
-
-            this.Text = path;
-            OnUpdatePath(path);
+            this.Text = SelectedPath;
+            OnUpdatePath(SelectedPath);
         }
 
         private void OnUpdatePath(string path) {
@@ -102,6 +100,12 @@ namespace SharpFile {
                         AddTab(path, false);
                     }
                 }
+            }
+        }
+
+        public string SelectedPath {
+            get {
+                return Forms.GetPropertyInChild<string>(this.TabControl.SelectedTab, "Path");
             }
         }
     }

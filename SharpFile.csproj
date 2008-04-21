@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
+    <Compile Include="Infrastructure\SettingInfos\ToolInfo.cs" />
     <Compile Include="Infrastructure\Settings\PreviewPanelSettings.cs" />
     <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
     <Compile Include="Infrastructure\WindowsApi\FILETIME.cs" />
