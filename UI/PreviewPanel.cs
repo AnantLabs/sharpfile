@@ -68,7 +68,11 @@ namespace SharpFile.UI {
         /// <param name="sb"></param>
         private void formatName(StringBuilder sb) {
             Common.Templater templater = new Common.Templater(resource);
-            string result = templater.Generate(Settings.Instance.PreviewPanel.NameFormat);
+            string result = templater.Generate(Settings.Instance.PreviewPanel.NameFormatTemplate.Template);
+
+            if (Settings.Instance.PreviewPanel.NameFormatTemplate.MethodDelegate != null) {
+                result = Settings.Instance.PreviewPanel.NameFormatTemplate.MethodDelegate(result);
+            }
 
             sb.AppendFormat("{0}{1}",
                     result,
