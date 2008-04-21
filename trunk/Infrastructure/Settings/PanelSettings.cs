@@ -8,11 +8,7 @@ namespace SharpFile.Infrastructure {
         private List<string> paths = new List<string>();
         private bool collapsed = false;
         private bool showFilter = true;
-        private FormatTemplate driveFormatTemplate;
-
-        public PanelSettings() {
-            this.driveFormatTemplate = new FormatTemplate("{Name}");
-        }
+        private FormatTemplate driveFormatTemplate = new FormatTemplate("{Name}");
 
         [XmlArray("Paths")]
         [XmlArrayItem("Path")]

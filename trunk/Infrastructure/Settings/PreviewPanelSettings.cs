@@ -7,7 +7,7 @@ namespace SharpFile.Infrastructure {
     public sealed class PreviewPanelSettings {
         private bool collapsed = false;
         private List<string> detailTextExtensions = new List<string>();
-        private string nameFormat = "{Name}";
+        private FormatTemplate nameFormatTemplate = new FormatTemplate("{Name}");
         private int splitterPercentage = 10;
         private bool thumbnailImages = true;
         private int maximumLinesOfDetailText = 10;
@@ -58,12 +58,12 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        public string NameFormat {
+        public FormatTemplate NameFormatTemplate {
             get {
-                return nameFormat;
+                return nameFormatTemplate;
             }
             set {
-                nameFormat = value;
+                nameFormatTemplate = value;
             }
         }
 
