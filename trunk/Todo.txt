@@ -1,7 +1,6 @@
 - paths aren't being opened from settings correctly
 - fix icons in compressed files
-- tools menu
-- attributes for plugins (for when there is a UI)
+- attributes for plugins (for when there is a settings UI)
 - large icons for preview panel
 
 - Different resizing code:

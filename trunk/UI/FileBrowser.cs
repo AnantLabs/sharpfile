@@ -443,10 +443,8 @@ namespace SharpFile {
             } else {
                 tlsDrives.HideDropDown();
 
-                Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
                 Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, 
                     "It appears the drive, {0}, is not ready.", parentResource.FullName);
-                Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
             }
         }
 
