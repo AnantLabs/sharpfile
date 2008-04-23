@@ -238,6 +238,8 @@ namespace SharpFile {
         #region Overrides.
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m) {
+			int wParam = m.WParam.ToInt32();
+
             if (m.Msg == (int)WM.COMMAND) {
                 uint hWordWParam = ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16;
 
@@ -249,8 +251,12 @@ namespace SharpFile {
                     } catch (Exception ex) {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Error while validating label.");
                     }
-                }
-            }
+				}
+			} else if (m.Msg == (int)WM.VSCROLL || m.Msg == (int)WM.MOUSEWHEEL ||
+				(m.Msg == (int)WM.KEYDOWN && 
+				(wParam == (int)Keys.PageDown || wParam == (int)Keys.PageUp || wParam == (int)Keys.Up || wParam == (int)Keys.Down))) {
+				updateImageIndexes();
+			}
 
             base.WndProc(ref m);
         }
@@ -695,6 +701,10 @@ namespace SharpFile {
             });
 
             OnUpdateStatus(Status);
+
+			this.Invoke((MethodInvoker)delegate {
+				updateImageIndexes();
+			});
         }
 
         /// <summary>
@@ -818,14 +828,31 @@ namespace SharpFile {
                 }
             }
 
-            int imageIndex = OnGetImageIndex(resource);
-
-            if (imageIndex > -1) {
-                item.ImageIndex = imageIndex;
-            }
-
             return item;
         }
+
+		/// <summary>
+		/// Updates the image indexes intelligently.
+		/// </summary>
+		private void updateImageIndexes() {
+			int beginningIndex = this.TopItem.Index;
+			int numberOfItems = (this.Height / this.FontHeight) + 100;
+			int endIndex = beginningIndex + numberOfItems;
+
+			// Make sure that our end index is not more than the number of items.
+			endIndex = Items.Count < endIndex ? Items.Count : endIndex;
+
+			for (int i = beginningIndex; i < endIndex; i++) {
+				if (Items[i].ImageIndex < 0) {
+					IChildResource resource = (IChildResource)Items[i].Tag;
+					int imageIndex = OnGetImageIndex(resource);
+
+					if (imageIndex > -1) {
+						Items[i].ImageIndex = imageIndex;
+					}
+				}
+			}
+		}
 
         /// <summary>
         /// Gets the selected paths.
