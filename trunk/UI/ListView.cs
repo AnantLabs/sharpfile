@@ -34,6 +34,10 @@ namespace SharpFile {
         private long fileCount = 0;
         private long folderCount = 0;
 
+		private System.Timers.Timer timer = new System.Timers.Timer();
+		private Stack<updateImageIndexDelegate> updateImageIndexStack = new Stack<updateImageIndexDelegate>();
+		private delegate void updateImageIndexDelegate();
+
         private static readonly object lockObject = new object();
 
         public event View.UpdateStatusDelegate UpdateStatus;
@@ -82,6 +86,19 @@ namespace SharpFile {
             this.UseCompatibleStateImageBehavior = false;
             this.Sorting = SortOrder.Ascending;
             this.ListViewItemSorter = comparer;
+
+			// Enables the OnDrawItem override.
+			this.OwnerDraw = true;
+
+			timer.Elapsed += delegate {
+				//lock (updateImageIndexStack) {
+				//    updateImageIndexStack.Pop().Invoke();
+				//    updateImageIndexStack.Clear();
+				//}
+			};
+
+			timer.Interval = 200;
+			//timer.Enabled = true;
         }
 
         /// <summary>
@@ -253,13 +270,30 @@ namespace SharpFile {
                     }
 				}
 			} else if (m.Msg == (int)WM.VSCROLL || m.Msg == (int)WM.MOUSEWHEEL ||
-				(m.Msg == (int)WM.KEYDOWN && 
-				(wParam == (int)Keys.PageDown || wParam == (int)Keys.PageUp || wParam == (int)Keys.Up || wParam == (int)Keys.Down))) {
-				updateImageIndexes();
+				(m.Msg == (int)WM.KEYDOWN)) {
+				updateImageIndexStack.Push(updateImageIndexes);
 			}
 
             base.WndProc(ref m);
         }
+
+		/// <summary>
+		/// Override the DrawItem event to get the item's image when it is drawn.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnDrawItem(DrawListViewItemEventArgs e) {
+			e.DrawDefault = true;
+			base.OnDrawItem(e);			
+
+			if (e.Item.ImageIndex < 0) {
+				IChildResource resource = (IChildResource)e.Item.Tag;
+				int imageIndex = OnGetImageIndex(resource);
+
+				if (imageIndex > -1) {
+					e.Item.ImageIndex = imageIndex;
+				}
+			}
+		}
         #endregion
         #endregion
 
@@ -702,9 +736,7 @@ namespace SharpFile {
 
             OnUpdateStatus(Status);
 
-			this.Invoke((MethodInvoker)delegate {
-				updateImageIndexes();
-			});
+			updateImageIndexStack.Push(updateImageIndexes);
         }
 
         /// <summary>
@@ -835,6 +867,8 @@ namespace SharpFile {
 		/// Updates the image indexes intelligently.
 		/// </summary>
 		private void updateImageIndexes() {
+			timer.Enabled = false;
+
 			int beginningIndex = this.TopItem.Index;
 			int numberOfItems = (this.Height / this.FontHeight) + 100;
 			int endIndex = beginningIndex + numberOfItems;
@@ -852,6 +886,8 @@ namespace SharpFile {
 					}
 				}
 			}
+
+			timer.Enabled = true;
 		}
 
         /// <summary>
