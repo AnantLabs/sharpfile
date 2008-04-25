@@ -367,6 +367,9 @@ namespace SharpFile {
 
                                             if (childResource.Root.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase)) {
                                                 isLocalDiskFound = true;
+
+                                                execute(pathResource);
+                                                break;
                                             }
                                         } else if (pathResource is IParentResource) {
                                             IParentResource parentResource = (IParentResource)resource;
@@ -376,11 +379,11 @@ namespace SharpFile {
 												parentResource.DriveType == System.IO.DriveType.Fixed &&
 												parentResource.IsReady) {
                                                 isLocalDiskFound = true;
+
+                                                execute(pathResource);
+                                                break;
                                             }
                                         }
-
-                                        execute(resource);
-                                        break;
                                     }
                                 }
 
