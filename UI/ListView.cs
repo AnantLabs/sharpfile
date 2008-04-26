@@ -33,6 +33,7 @@ namespace SharpFile {
         private Dictionary<string, PropertyInfo> propertyInfos = new Dictionary<string, PropertyInfo>();
         private long fileCount = 0;
         private long folderCount = 0;
+        private int lastSelectedItemIndex = 0;
 
         private static readonly object lockObject = new object();
 
@@ -213,13 +214,19 @@ namespace SharpFile {
         #region Events.
         void listView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e) {
             if (SelectedItems.Count > 0) {
+                lastSelectedItemIndex = e.ItemIndex;
                 IChildResource resource = ((IChildResource)e.Item.Tag);
                 OnUpdatePreviewPanel(resource);
+            } else {
+                if (lastSelectedItemIndex > 0 && lastSelectedItemIndex < Items.Count) {
+                    // Make sure that the item's icon doesn't disappear.
+                    this.BeginInvoke((MethodInvoker)delegate {
+                        ListViewItem item = Items[lastSelectedItemIndex];
+                        item.Selected = true;
+                        item.ImageIndex = OnGetImageIndex((IChildResource)item.Tag);
+                    });
+                }
             }
-            //else {
-            //    IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
-            //    OnUpdatePreviewPanel(resource);
-            //}
         }
 
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
@@ -517,6 +524,7 @@ namespace SharpFile {
                     this.itemDictionary.Clear();
                 });
 
+                lastSelectedItemIndex = 0;
                 fileCount = 0;
                 folderCount = 0;
             }
@@ -866,18 +874,25 @@ namespace SharpFile {
             }
         }
 
-		/// <summary>
-		/// Updates the image indexes intelligently.
-		/// </summary>
+        /// <summary>
+        /// Updates the image indexes for all ListView items.
+        /// </summary>
         private void updateImageIndexes() {
+            updateImageIndexes(0, Items.Count - 1);
+        }
+
+		/// <summary>
+		/// Updates the image indexes with the provided start/end indexes.
+		/// </summary>
+        private void updateImageIndexes(int startIndex, int endIndex) {
             if (!Settings.Instance.Icons.IncrementalDisplay) {
                 this.Invoke((MethodInvoker)delegate {
-                    foreach (ListViewItem item in Items) {
+                    for (int i = startIndex; i <= endIndex; i++) {
+                        ListViewItem item = Items[i];
                         IChildResource resource = (IChildResource)item.Tag;
                         int imageIndex = OnGetImageIndex(resource);
 
                         if (imageIndex > -1) {
-
                             item.ImageIndex = imageIndex;
                         }
                     }
