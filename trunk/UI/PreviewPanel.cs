@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
@@ -11,6 +12,9 @@ namespace SharpFile.UI {
         private PictureBox pictureBox;
         private TextBox textBox;
 
+        private Image image = null;
+        private StringBuilder sb = new StringBuilder();
+
         /// <summary>
         /// Ctor.
         /// </summary>
@@ -18,9 +22,15 @@ namespace SharpFile.UI {
             InitializeComponent();
 
             this.SizeChanged += delegate {
-                Image image = getImageFromResource();
-                updateImage(image);
+                getImageFromResource();
+                updateImage();
             };
+        }
+
+        protected override void Dispose(bool disposing) {
+            sb = null;
+            image.Dispose();
+            base.Dispose(disposing);
         }
 
         /// <summary>
@@ -29,29 +39,32 @@ namespace SharpFile.UI {
         /// <param name="resource">Resource.</param>
         public void Update(IResource resource) {
             this.resource = resource;
-            StringBuilder sb = new StringBuilder();
-            Image image = null;
+            sb = new StringBuilder();
+            image = null;
 
-            formatName(sb);
-            getDetailTextFromResource(sb);
-            image = getImageFromResource();
-            updateText(sb);
-            updateImage(image);
+            // Grab the appropriate text and update it.
+            formatName();
+            getDetailTextFromResource();
+            updateText();
+
+            // Grab the appropriate image and update it.
+            getImageFromResource();
+            updateImage();
         }
 
         /// <summary>
         /// Updates the text.
         /// </summary>
         /// <param name="text">Text to update.</param>
-        private void updateText(StringBuilder text) {
-            textBox.Text = text.ToString();
+        private void updateText() {
+            textBox.Text = sb.ToString();
         }
 
         /// <summary>
         /// Updates the image.
         /// </summary>
         /// <param name="image">Image to update.</param>
-        private void updateImage(Image image) {
+        private void updateImage() {
             if (image != null) {
                 this.pictureBox.Visible = true;
                 this.pictureBox.Image = image;
@@ -66,7 +79,7 @@ namespace SharpFile.UI {
         /// Formats the name to use.
         /// </summary>
         /// <param name="sb"></param>
-        private void formatName(StringBuilder sb) {
+        private void formatName() {
             Common.Templater templater = new Common.Templater(resource);
             string result = templater.Generate(Settings.Instance.PreviewPanel.NameFormatTemplate.Template);
 
@@ -83,7 +96,7 @@ namespace SharpFile.UI {
         /// Gets the detail text for the resource.
         /// </summary>
         /// <param name="sb">StringBuilder to append the details to.</param>
-        private void getDetailTextFromResource(StringBuilder sb) {
+        private void getDetailTextFromResource() {
             if (resource != null && resource is FileInfo) {
                 FileInfo fileInfo = (FileInfo)resource;
 
@@ -91,29 +104,37 @@ namespace SharpFile.UI {
                     Settings.Instance.PreviewPanel.DetailTextExtensions.Contains(fileInfo.Extension.ToLower()));
 
                 if (generateDetailText) {
-                    System.IO.StreamReader sr = null;
+                    if (Settings.Instance.PreviewPanel.ShowAllDetailText) {
+                        try {
+                            sb.Append(System.IO.File.ReadAllText(resource.FullName));
+                        } catch {
+                            // Ignore any exceptions.s
+                        }
+                    } else if (Settings.Instance.PreviewPanel.MaximumLinesOfDetailText > 0) {
+                        System.IO.StreamReader sr = null;
 
-                    try {
-                        sr = System.IO.File.OpenText(resource.FullName);
+                        try {
+                            sr = System.IO.File.OpenText(resource.FullName);
 
-                        for (int i = 0; i < Settings.Instance.PreviewPanel.MaximumLinesOfDetailText; i++) {
-                            if (sr.EndOfStream) {
-                                break;
-                            } else {
-                                string line = sr.ReadLine();
-                                sb.Append(line);
-                                sb.Append(Environment.NewLine);
+                            for (int i = 0; i < Settings.Instance.PreviewPanel.MaximumLinesOfDetailText; i++) {
+                                if (sr.EndOfStream) {
+                                    break;
+                                } else {
+                                    string line = sr.ReadLine();
+                                    sb.Append(line);
+                                    sb.Append(Environment.NewLine);
 
-                                if (i == Settings.Instance.PreviewPanel.MaximumLinesOfDetailText - 1) {
-                                    sb.Append("...");
+                                    if (i == Settings.Instance.PreviewPanel.MaximumLinesOfDetailText - 1) {
+                                        sb.Append("...");
+                                    }
                                 }
                             }
-                        }
-                    } catch {
-                        // Ignore any exceptions.
-                    } finally {
-                        if (sr != null) {
-                            sr.Dispose();
+                        } catch {
+                            // Ignore any exceptions.
+                        } finally {
+                            if (sr != null) {
+                                sr.Dispose();
+                            }
                         }
                     }
                 }
@@ -124,13 +145,12 @@ namespace SharpFile.UI {
         /// Get image from resource.
         /// </summary>
         /// <returns></returns>
-        private Image getImageFromResource() {
-            Image image = null;
-
+        private void getImageFromResource() {
             if (resource != null) {
                 if (Settings.Instance.PreviewPanel.ThumbnailImages) {
                     try {
                         image = Image.FromFile(resource.FullName);
+
                         int width = 0;
                         int height = 0;
 
@@ -156,12 +176,18 @@ namespace SharpFile.UI {
                         if (image.Width > width || image.Height > height) {
                             image = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
                         }
-                    } catch {
+                    } catch (System.IO.FileNotFoundException ex) {
                         // Catch any problems with retrieving the thumbnail.
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose, ex, "Thumbnailing image failed for {0}",
+                            resource.FullName);
+                    } catch (OutOfMemoryException ex) {
+                        // Catch any problems with retrieving the thumbnail.
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose, ex, "Thumbnailing image failed for {0}",
+                            resource.FullName);
                     }
                 }
 
-                // Try to grab the resource's icon if ther eis no thumbnail for the resource.
+                // Try to grab the resource's icon if there is no thumbnail for the resource.
                 if (image == null) {
                     int index = IconManager.GetImageIndex(resource, Settings.Instance.ImageList);
 
@@ -170,8 +196,6 @@ namespace SharpFile.UI {
                     }
                 }
             }
-
-            return image;
         }
 
         /// <summary> 
