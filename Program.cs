@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
-using SharpFile.Infrastructure;
 using Common.Logger;
+using SharpFile.Infrastructure;
 
 namespace SharpFile {
     static class Program {
@@ -20,12 +20,6 @@ namespace SharpFile {
 				Settings.Save();
 			};
 
-            //if (Settings.Instance.ParentType == ParentType.Mdi) {
-            //    Settings.Instance.Logger.Log(LogLevelType.Verbose,
-            //        "Start the Mdi program");
-
-            //    Application.Run(new MdiParent());
-            //} else 
             if (Settings.Instance.ParentType == ParentType.Dual) {
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
                     "Start the Dual program");

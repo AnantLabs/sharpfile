@@ -1,4 +1,4 @@
-- paths aren't being opened from settings correctly
+- fix disappearing icons even on slow boxes when thumbnails are generated in preview panel
 - fix icons in compressed files
 - attributes for plugins (for when there is a settings UI)
 - large icons for preview panel
