@@ -34,10 +34,6 @@ namespace SharpFile {
         private long fileCount = 0;
         private long folderCount = 0;
 
-		private System.Timers.Timer timer = new System.Timers.Timer();
-		private Stack<updateImageIndexDelegate> updateImageIndexStack = new Stack<updateImageIndexDelegate>();
-		private delegate void updateImageIndexDelegate();
-
         private static readonly object lockObject = new object();
 
         public event View.UpdateStatusDelegate UpdateStatus;
@@ -60,7 +56,6 @@ namespace SharpFile {
 			initializeComponent();
 		}
 
-        #region Private methods.
         private void initializeComponent() {
             this.DoubleClick += listView_DoubleClick;
             this.KeyDown += listView_KeyDown;
@@ -89,154 +84,7 @@ namespace SharpFile {
 
 			// Enables the OnDrawItem override.
 			this.OwnerDraw = true;
-
-			timer.Elapsed += delegate {
-				//lock (updateImageIndexStack) {
-				//    updateImageIndexStack.Pop().Invoke();
-				//    updateImageIndexStack.Clear();
-				//}
-			};
-
-			timer.Interval = 200;
-			//timer.Enabled = true;
         }
-
-        /// <summary>
-        /// Validates the edit label and displays a blloon tip if it is not.
-        /// </summary>
-        /// <param name="label"></param>
-        /// <param name="handle"></param>
-        /// <returns></returns>
-        private bool validateEditLabel(IntPtr handle) {
-            StringBuilder sb = new StringBuilder(256);
-            User32.GetWindowText(handle.ToInt32(), sb, 255);
-            string label = sb.ToString();
-
-            foreach (char ch in System.IO.Path.GetInvalidFileNameChars()) {
-                if (label.IndexOf(ch) > -1) {
-                    const string text = "Filenames cannot have any illegal characters including: \", |, <, >, *, ?, :, /, \\";
-
-                    EditBalloon editBalloon = new EditBalloon(handle);
-                    editBalloon.Title = "Illegal Characters";
-                    editBalloon.TitleIcon = TooltipIcon.Warning;
-                    editBalloon.Text = text;
-                    editBalloon.Show();
-
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Calculates the size of the currently selected item.
-        /// </summary>
-        private void calculateSize() {
-			lock (lockObject) {
-				if (this.SelectedItems != null &&
-					this.SelectedItems.Count > 0) {
-					int maxIndex = 0;
-
-					foreach (ListViewItem item in this.SelectedItems) {
-						IChildResource fileSystemInfo = (IChildResource)item.Tag;
-
-						if (item.Index > maxIndex) {
-							maxIndex = item.Index;
-						}
-
-						if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
-							item.ForeColor = Color.Red;
-							selectedFileSystemInfos.Add(fileSystemInfo);
-
-							int sizeIndex = 0;
-							ColumnInfo columnInfo = null;
-							foreach (ColumnInfo ci in ColumnInfos) {
-								if (ci.Property.Equals("Size")) {
-									foreach (ColumnHeader columnHeader in Columns) {
-										if (columnHeader.Text.Equals(ci.Text)) {
-											sizeIndex = columnHeader.Index;
-											columnInfo = ci;
-											break;
-										}
-									}
-								}
-
-								if (sizeIndex > 0) {
-									break;
-								}
-							}
-
-							if (sizeIndex > 0) {
-								long size = 0;
-
-								if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
-									fileSystemInfo is DirectoryInfo) {
-									using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-										backgroundWorker.WorkerReportsProgress = true;
-										backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
-											backgroundWorker.ReportProgress(50);
-
-											// Update the list view through BeginInvoke so that the correct thread is used.
-											this.BeginInvoke((MethodInvoker)delegate {
-												item.SubItems[sizeIndex].Text = "...";
-												this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
-											});
-
-											eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).Size;
-											backgroundWorker.ReportProgress(100);
-										};
-
-										backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
-											OnUpdateProgress(eventArgs.ProgressPercentage);
-										};
-
-										backgroundWorker.RunWorkerCompleted +=
-											delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
-												if (eventArgs.Error == null &&
-													eventArgs.Result != null &&
-													eventArgs.Result is long) {
-													size = (long)eventArgs.Result;
-
-													// Update the list view through BeginInvoke so that the correct thread is used.
-													this.BeginInvoke((MethodInvoker)delegate {
-														if (columnInfo.MethodDelegate != null) {
-															item.SubItems[sizeIndex].Text = columnInfo.MethodDelegate.Invoke(size.ToString());
-														} else {
-															item.SubItems[sizeIndex].Text = size.ToString();
-														}
-
-														updateSelectedTotalSize(size);
-														this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
-													});
-												}
-											};
-
-										backgroundWorker.RunWorkerAsync(fileSystemInfo);
-									}
-								} else {
-									updateSelectedTotalSize(fileSystemInfo.Size);
-								}
-							}
-						} else {
-							item.ForeColor = Color.Black;
-							selectedFileSystemInfos.Remove(fileSystemInfo);
-							updateSelectedTotalSize(-fileSystemInfo.Size);
-						}
-
-						item.Focused = false;
-						item.Selected = false;
-					}
-
-					int nextIndex = maxIndex + 1;
-					if (this.Items.Count > nextIndex) {
-						this.Items[nextIndex].Focused = true;
-						this.Items[nextIndex].Selected = true;
-					}
-				}
-            }
-        }
-        #endregion
 
         #region Protected methods.
         /// <summary>
@@ -269,30 +117,44 @@ namespace SharpFile {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Error while validating label.");
                     }
 				}
-			} else if (m.Msg == (int)WM.VSCROLL || m.Msg == (int)WM.MOUSEWHEEL ||
-				(m.Msg == (int)WM.KEYDOWN)) {
-				updateImageIndexStack.Push(updateImageIndexes);
-			}
+			} 
 
             base.WndProc(ref m);
         }
 
+        /// <summary>
+        /// Override the OnDrawSubItem method because OwnerDrawn is true.
+        /// </summary>
+        protected override void OnDrawSubItem(DrawListViewSubItemEventArgs e) {
+            e.DrawDefault = true;
+            base.OnDrawSubItem(e);
+        }
+
+        /// <summary>
+        /// Override the OnDrawColumnHeader method because OwnerDrawn is true.
+        /// </summary>
+        protected override void OnDrawColumnHeader(DrawListViewColumnHeaderEventArgs e) {
+            e.DrawDefault = true;
+            base.OnDrawColumnHeader(e);
+        }
+
 		/// <summary>
-		/// Override the DrawItem event to get the item's image when it is drawn.
+		/// Override the OnDrawItem method to get the item's image when it is drawn.
 		/// </summary>
-		/// <param name="e"></param>
 		protected override void OnDrawItem(DrawListViewItemEventArgs e) {
 			e.DrawDefault = true;
-			base.OnDrawItem(e);			
+			base.OnDrawItem(e);
 
-			if (e.Item.ImageIndex < 0) {
-				IChildResource resource = (IChildResource)e.Item.Tag;
-				int imageIndex = OnGetImageIndex(resource);
+            if (Settings.Instance.Icons.IncrementalDisplay) {
+                if (e.Item.ImageIndex < 0) {
+                    IChildResource resource = (IChildResource)e.Item.Tag;
+                    int imageIndex = OnGetImageIndex(resource);
 
-				if (imageIndex > -1) {
-					e.Item.ImageIndex = imageIndex;
-				}
-			}
+                    if (imageIndex > -1) {
+                        e.Item.ImageIndex = imageIndex;
+                    }
+                }
+            }
 		}
         #endregion
         #endregion
@@ -353,10 +215,11 @@ namespace SharpFile {
             if (SelectedItems.Count > 0) {
                 IChildResource resource = ((IChildResource)e.Item.Tag);
                 OnUpdatePreviewPanel(resource);
-            } else {
-                IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
-                OnUpdatePreviewPanel(resource);
             }
+            //else {
+            //    IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
+            //    OnUpdatePreviewPanel(resource);
+            //}
         }
 
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
@@ -736,7 +599,7 @@ namespace SharpFile {
 
             OnUpdateStatus(Status);
 
-			updateImageIndexStack.Push(updateImageIndexes);
+            updateImageIndexes();
         }
 
         /// <summary>
@@ -763,7 +626,9 @@ namespace SharpFile {
                 }
             }
         }
+#endregion
 
+        #region Protected methods.
         /// <summary>
         /// Adds the item to the view.
         /// </summary>
@@ -862,33 +727,163 @@ namespace SharpFile {
 
             return item;
         }
+#endregion
+
+        #region Private methods.
+        /// <summary>
+        /// Validates the edit label and displays a blloon tip if it is not.
+        /// </summary>
+        /// <param name="label"></param>
+        /// <param name="handle"></param>
+        /// <returns></returns>
+        private bool validateEditLabel(IntPtr handle) {
+            StringBuilder sb = new StringBuilder(256);
+            User32.GetWindowText(handle.ToInt32(), sb, 255);
+            string label = sb.ToString();
+
+            foreach (char ch in System.IO.Path.GetInvalidFileNameChars()) {
+                if (label.IndexOf(ch) > -1) {
+                    const string text = "Filenames cannot have any illegal characters including: \", |, <, >, *, ?, :, /, \\";
+
+                    EditBalloon editBalloon = new EditBalloon(handle);
+                    editBalloon.Title = "Illegal Characters";
+                    editBalloon.TitleIcon = TooltipIcon.Warning;
+                    editBalloon.Text = text;
+                    editBalloon.Show();
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Calculates the size of the currently selected item.
+        /// </summary>
+        private void calculateSize() {
+            lock (lockObject) {
+                if (this.SelectedItems != null &&
+                    this.SelectedItems.Count > 0) {
+                    int maxIndex = 0;
+
+                    foreach (ListViewItem item in this.SelectedItems) {
+                        IChildResource fileSystemInfo = (IChildResource)item.Tag;
+
+                        if (item.Index > maxIndex) {
+                            maxIndex = item.Index;
+                        }
+
+                        if (!selectedFileSystemInfos.Contains(fileSystemInfo)) {
+                            item.ForeColor = Color.Red;
+                            selectedFileSystemInfos.Add(fileSystemInfo);
+
+                            int sizeIndex = 0;
+                            ColumnInfo columnInfo = null;
+                            foreach (ColumnInfo ci in ColumnInfos) {
+                                if (ci.Property.Equals("Size")) {
+                                    foreach (ColumnHeader columnHeader in Columns) {
+                                        if (columnHeader.Text.Equals(ci.Text)) {
+                                            sizeIndex = columnHeader.Index;
+                                            columnInfo = ci;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (sizeIndex > 0) {
+                                    break;
+                                }
+                            }
+
+                            if (sizeIndex > 0) {
+                                long size = 0;
+
+                                if (string.IsNullOrEmpty(item.SubItems[sizeIndex].Text) ||
+                                    fileSystemInfo is DirectoryInfo) {
+                                    using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                                        backgroundWorker.WorkerReportsProgress = true;
+                                        backgroundWorker.DoWork += delegate(object anonymousSender, DoWorkEventArgs eventArgs) {
+                                            backgroundWorker.ReportProgress(50);
+
+                                            // Update the list view through BeginInvoke so that the correct thread is used.
+                                            this.BeginInvoke((MethodInvoker)delegate {
+                                                item.SubItems[sizeIndex].Text = "...";
+                                                this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+                                            });
+
+                                            eventArgs.Result = ((DirectoryInfo)eventArgs.Argument).Size;
+                                            backgroundWorker.ReportProgress(100);
+                                        };
+
+                                        backgroundWorker.ProgressChanged += delegate(object anonymousSender, ProgressChangedEventArgs eventArgs) {
+                                            OnUpdateProgress(eventArgs.ProgressPercentage);
+                                        };
+
+                                        backgroundWorker.RunWorkerCompleted +=
+                                            delegate(object anonymousSender, RunWorkerCompletedEventArgs eventArgs) {
+                                                if (eventArgs.Error == null &&
+                                                    eventArgs.Result != null &&
+                                                    eventArgs.Result is long) {
+                                                    size = (long)eventArgs.Result;
+
+                                                    // Update the list view through BeginInvoke so that the correct thread is used.
+                                                    this.BeginInvoke((MethodInvoker)delegate {
+                                                        if (columnInfo.MethodDelegate != null) {
+                                                            item.SubItems[sizeIndex].Text = columnInfo.MethodDelegate.Invoke(size.ToString());
+                                                        } else {
+                                                            item.SubItems[sizeIndex].Text = size.ToString();
+                                                        }
+
+                                                        updateSelectedTotalSize(size);
+                                                        this.AutoResizeColumn(sizeIndex, ColumnHeaderAutoResizeStyle.ColumnContent);
+                                                    });
+                                                }
+                                            };
+
+                                        backgroundWorker.RunWorkerAsync(fileSystemInfo);
+                                    }
+                                } else {
+                                    updateSelectedTotalSize(fileSystemInfo.Size);
+                                }
+                            }
+                        } else {
+                            item.ForeColor = Color.Black;
+                            selectedFileSystemInfos.Remove(fileSystemInfo);
+                            updateSelectedTotalSize(-fileSystemInfo.Size);
+                        }
+
+                        item.Focused = false;
+                        item.Selected = false;
+                    }
+
+                    int nextIndex = maxIndex + 1;
+                    if (this.Items.Count > nextIndex) {
+                        this.Items[nextIndex].Focused = true;
+                        this.Items[nextIndex].Selected = true;
+                    }
+                }
+            }
+        }
 
 		/// <summary>
 		/// Updates the image indexes intelligently.
 		/// </summary>
-		private void updateImageIndexes() {
-			timer.Enabled = false;
+        private void updateImageIndexes() {
+            if (!Settings.Instance.Icons.IncrementalDisplay) {
+                this.Invoke((MethodInvoker)delegate {
+                    foreach (ListViewItem item in Items) {
+                        IChildResource resource = (IChildResource)item.Tag;
+                        int imageIndex = OnGetImageIndex(resource);
 
-			int beginningIndex = this.TopItem.Index;
-			int numberOfItems = (this.Height / this.FontHeight) + 100;
-			int endIndex = beginningIndex + numberOfItems;
+                        if (imageIndex > -1) {
 
-			// Make sure that our end index is not more than the number of items.
-			endIndex = Items.Count < endIndex ? Items.Count : endIndex;
-
-			for (int i = beginningIndex; i < endIndex; i++) {
-				if (Items[i].ImageIndex < 0) {
-					IChildResource resource = (IChildResource)Items[i].Tag;
-					int imageIndex = OnGetImageIndex(resource);
-
-					if (imageIndex > -1) {
-						Items[i].ImageIndex = imageIndex;
-					}
-				}
-			}
-
-			timer.Enabled = true;
-		}
+                            item.ImageIndex = imageIndex;
+                        }
+                    }
+                });
+            }
+        }
 
         /// <summary>
         /// Gets the selected paths.
@@ -920,7 +915,6 @@ namespace SharpFile {
             OnUpdateStatus(string.Format("Selected items: {0}",
                                        General.GetHumanReadableSize(totalSelectedSize.ToString())));
         }
-
         #endregion
 
         #region Properties.
