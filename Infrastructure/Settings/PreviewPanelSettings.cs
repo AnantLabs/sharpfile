@@ -12,6 +12,7 @@ namespace SharpFile.Infrastructure {
         private bool thumbnailImages = false;
         private int maximumLinesOfDetailText = 10;
         private bool alwaysShowDetailText = false;
+        private bool showAllDetailText = false;
 
         public bool AlwaysShowDetailText {
             get {
@@ -19,6 +20,34 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 alwaysShowDetailText = value;
+            }
+        }
+
+        /// <summary>
+        /// Extensions to get text for.
+        /// </summary>
+        [XmlArray("DetailTextExtensions")]
+        [XmlArrayItem("Extension")]
+        public List<string> DetailTextExtensions {
+            get {
+                return detailTextExtensions;
+            }
+            set {
+                detailTextExtensions = value;
+
+                // Make sure the extensions are always lower-cased.
+                detailTextExtensions.ForEach(delegate(string s) {
+                    s = s.ToLower();
+                });
+            }
+        }
+
+        public bool ShowAllDetailText {
+            get {
+                return showAllDetailText;
+            }
+            set {
+                showAllDetailText = value;
             }
         }
 
@@ -64,25 +93,6 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 nameFormatTemplate = value;
-            }
-        }
-
-        /// <summary>
-        /// Extensions to get text for.
-        /// </summary>
-        [XmlArray("DetailTextExtensions")]
-        [XmlArrayItem("Extension")]
-        public List<string> DetailTextExtensions {
-            get {
-                return detailTextExtensions;
-            }
-            set {
-                detailTextExtensions = value;
-
-                // Make sure the extensions are always lower-cased.
-                detailTextExtensions.ForEach(delegate(string s) {
-                    s = s.ToLower();
-                });
             }
         }
     }
