@@ -9,7 +9,7 @@ namespace SharpFile.Infrastructure {
         private List<string> detailTextExtensions = new List<string>();
         private FormatTemplate nameFormatTemplate = new FormatTemplate("{Name}");
         private int splitterPercentage = 10;
-        private bool thumbnailImages = true;
+        private bool thumbnailImages = false;
         private int maximumLinesOfDetailText = 10;
         private bool alwaysShowDetailText = false;
 
