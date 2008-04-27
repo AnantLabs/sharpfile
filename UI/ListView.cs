@@ -34,6 +34,7 @@ namespace SharpFile {
         private long fileCount = 0;
         private long folderCount = 0;
         private int lastSelectedItemIndex = 0;
+        private Dictionary<string, int> previousTopIndexes = new Dictionary<string, int>();
 
         private static readonly object lockObject = new object();
 
@@ -96,6 +97,25 @@ namespace SharpFile {
                 IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
 
                 if (resource != null) {
+                    if (!(resource is FileInfo) && !(resource is RootDirectoryInfo) && !(resource is ParentDirectoryInfo)) {
+                        string path = ((IChildResource)this.TopItem.Tag).Path.ToLower();
+                        int lastVisibleIndex = this.TopItem.Index;
+
+                        for (int i = TopItem.Index + 1; i < Items.Count; i++) {
+                            if (ClientRectangle.Contains(Items[i].Bounds)) {
+                                lastVisibleIndex = i;
+                            } else {
+                                break;
+                            }
+                        }
+
+                        if (previousTopIndexes.ContainsKey(path)) {
+                            previousTopIndexes[path] = lastVisibleIndex;
+                        } else {
+                            previousTopIndexes.Add(path, lastVisibleIndex);
+                        }
+                    }
+
                     resource.Execute(this);
                 }
             }
@@ -598,7 +618,7 @@ namespace SharpFile {
             comparer.ColumnIndex = 0;
             comparer.Order = Order.Ascending;
 
-            this.Invoke((MethodInvoker)delegate {                
+            this.Invoke((MethodInvoker)delegate {               
                 this.Sort();
 
                 // Resize the columns based on the column content.
@@ -608,6 +628,26 @@ namespace SharpFile {
             OnUpdateStatus(Status);
 
             updateImageIndexes();
+
+            string path = string.Empty;
+
+            foreach (IChildResource resource in resources) {
+                if (!(resource is FileInfo) && !(resource is ParentDirectoryInfo) && !(resource is RootDirectoryInfo)) {
+                    path = resource.Path.ToLower();
+                    break;
+                }
+            }
+
+            if (previousTopIndexes.ContainsKey(path)) {
+                int previousTopIndex = previousTopIndexes[path];
+                
+                if (previousTopIndex > 0 && previousTopIndex < Items.Count) {
+                    this.Invoke((MethodInvoker)delegate {
+                        //Items[previousTopIndex].EnsureVisible();
+                        this.TopItem = Items[previousTopIndex];
+                    });
+                }
+            }            
         }
 
         /// <summary>
