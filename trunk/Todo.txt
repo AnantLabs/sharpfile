@@ -1,3 +1,4 @@
+- pressing enter in path textbox updates the previous index incorrectly
 - fix icons in compressed files
 - attributes for plugins (for when there is a settings UI)
 - large icons for preview panel
