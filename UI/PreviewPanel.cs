@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
@@ -177,13 +176,9 @@ namespace SharpFile.UI {
                             image = image.GetThumbnailImage(width, height, null, IntPtr.Zero);
                         }
                     } catch (System.IO.FileNotFoundException ex) {
-                        // Catch any problems with retrieving the thumbnail.
-                        Settings.Instance.Logger.Log(LogLevelType.Verbose, ex, "Thumbnailing image failed for {0}",
-                            resource.FullName);
+                        // Ignore any problems with retrieving the thumbnail.
                     } catch (OutOfMemoryException ex) {
-                        // Catch any problems with retrieving the thumbnail.
-                        Settings.Instance.Logger.Log(LogLevelType.Verbose, ex, "Thumbnailing image failed for {0}",
-                            resource.FullName);
+                        // Ignore any problems with retrieving the thumbnail.
                     }
                 }
 
