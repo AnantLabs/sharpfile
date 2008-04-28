@@ -47,7 +47,6 @@ namespace SharpFile {
         protected ToolStripMenuItem previewPanelToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem toolsMenu = new ToolStripMenuItem();
-		protected ToolStripMenuItem optionsToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem helpMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem aboutToolStripMenuItem = new ToolStripMenuItem();
@@ -234,15 +233,7 @@ namespace SharpFile {
             this.previewPanelToolStripMenuItem.Text = "&Preview Panel";
             this.previewPanelToolStripMenuItem.Click += previewPanelToolStripMenuItem_Click;
 
-			this.toolsMenu.DropDownItems.AddRange(new ToolStripItem[]
-			                                      	{
-			                                      		this.optionsToolStripMenuItem
-			                                      	});
-			this.toolsMenu.Size = new Size(44, 20);
 			this.toolsMenu.Text = "&Tools";
-
-			this.optionsToolStripMenuItem.Size = new Size(122, 22);
-			this.optionsToolStripMenuItem.Text = "&Options";
 
 			this.helpMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
@@ -395,27 +386,34 @@ namespace SharpFile {
 
                 menuItem.Click += (EventHandler)delegate {
                     ToolInfo t = (ToolInfo)menuItem.Tag;
-                    ProcessStartInfo processStartInfo = new ProcessStartInfo();
-                    processStartInfo.ErrorDialog = true;
-                    processStartInfo.UseShellExecute = true;
 
-                    Templater templater = new Templater(this);
-                    processStartInfo.FileName = templater.Generate(t.Path);
+                    if (!t.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
+                        ProcessStartInfo processStartInfo = new ProcessStartInfo();
+                        processStartInfo.ErrorDialog = true;
+                        processStartInfo.UseShellExecute = true;
 
-                    if (!string.IsNullOrEmpty(t.Arguments)) {
-                        processStartInfo.Arguments = templater.Generate(t.Arguments);
-                    }
+                        Templater templater = new Templater(this);
+                        processStartInfo.FileName = templater.Generate(t.Path);
 
-                    try {
-                        Process.Start(processStartInfo);
-                    } catch (Exception ex) {
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Process {0} can not be performed on {1}.",
-                            t.Name,
-                            t.Path);
+                        if (!string.IsNullOrEmpty(t.Arguments)) {
+                            processStartInfo.Arguments = templater.Generate(t.Arguments);
+                        }
+
+                        try {
+                            Process.Start(processStartInfo);
+                        } catch (Exception ex) {
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Process {0} can not be performed on {1}.",
+                                t.Name,
+                                t.Path);
+                        }
                     }
                 };
 
-                this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count -1, menuItem);
+                if (toolInfo.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
+                    this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count, new ToolStripSeparator());
+                } else {
+                    this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count, menuItem);
+                }
             }
         }
 
