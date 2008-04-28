@@ -27,8 +27,10 @@ namespace SharpFile.UI {
         }
 
         protected override void Dispose(bool disposing) {
-            sb = null;
-            image.Dispose();
+            if (image != null) {
+                image.Dispose();
+            }
+
             base.Dispose(disposing);
         }
 
