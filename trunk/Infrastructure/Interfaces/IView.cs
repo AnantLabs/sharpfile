@@ -11,6 +11,8 @@ namespace SharpFile.Infrastructure {
 		void BeginUpdate();
 		void EndUpdate();
         void Invoke(Delegate method);
+        bool Focus();
+
 		string Path { get; }
 		string Filter { get; }
         FileSystemWatcher FileSystemWatcher { get; }
