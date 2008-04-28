@@ -22,8 +22,8 @@ namespace SharpFile {
         private ChildResourceRetrievers childResourceRetrievers;
         private bool handleCreated = false;
         private bool isExecuting = false;
-        private bool isFiltering = false;
         private FormatTemplate driveFormatTemplate;
+        private AutoCompleteStringCollection filterAutoCompleteStringCollection;
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -38,6 +38,9 @@ namespace SharpFile {
         /// Filebrowser ctor.
         /// </summary>
         public FileBrowser(string name) {
+            this.filterAutoCompleteStringCollection = new AutoCompleteStringCollection();
+            this.filterAutoCompleteStringCollection.Add("*.*");
+
             this.Name = name;
             this.toolStrip = new ToolStrip();
             this.tlsDrives = new ToolStripSplitButton();
@@ -69,6 +72,9 @@ namespace SharpFile {
             this.tlsFilter.AutoSize = false;
             this.tlsFilter.Size = new Size(filterWidth, 25);
             this.tlsFilter.Overflow = ToolStripItemOverflow.Never;
+            this.tlsFilter.AutoCompleteMode = AutoCompleteMode.Suggest;
+            this.tlsFilter.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            this.tlsFilter.AutoCompleteCustomSource = filterAutoCompleteStringCollection;
 
             this.Controls.Add(this.view.Control);
             this.Controls.Add(this.toolStrip);
@@ -139,7 +145,6 @@ namespace SharpFile {
         /// </summary>
         private void clearFilter() {
             tlsFilter.Text = "*.*";
-            isFiltering = false;
         }
         #endregion
 
@@ -177,17 +182,13 @@ namespace SharpFile {
         /// Refreshes the view when Enter is pressed in the filter textbox.
         /// </summary>
         private void tlsFilter_KeyUp(object sender, KeyEventArgs e) {
-            if (e.KeyCode != Keys.Left &&
-                e.KeyCode != Keys.Right &&
-                e.KeyCode != Keys.Shift) {
-                isFiltering = true;
-
-                if (e.KeyCode == Keys.Enter) {
-                    isFiltering = false;
-                }
+            if (e.KeyCode == Keys.Enter) {
+                filterAutoCompleteStringCollection.Add(Filter);
 
                 IResource resource = FileSystemInfoFactory.GetFileSystemInfo(Path);
                 execute(resource);
+
+                view.Focus();
             }
         }
 
@@ -195,12 +196,10 @@ namespace SharpFile {
         /// Clears the filter when the focus is lost.
         /// </summary>
         private void tlsFilter_LostFocus(object sender, EventArgs e) {
-            if (!isFiltering) {
-                if (Filter.Equals(string.Empty) ||
-                    Filter.Equals("*") ||
-                    Filter.Equals("*.*")) {
-                    clearFilter();
-                }
+            if (Filter.Equals(string.Empty) ||
+                Filter.Equals("*") ||
+                Filter.Equals("*.*")) {
+                clearFilter();
             }
         }
 
@@ -635,12 +634,6 @@ namespace SharpFile {
                     tlsDrives.Enabled = true;
                     tlsPath.Enabled = true;
                     tlsFilter.Enabled = true;
-                }
-
-                // If we were filtering the selection, focus the textbox correctly again. 
-                // Otherwise the disabling/enabling the textbox kills its focus.
-                if (isFiltering) {
-                    tlsFilter.Focus();
                 }
             }
         }
