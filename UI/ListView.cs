@@ -220,20 +220,20 @@ namespace SharpFile {
 
         #region Events.
         void listView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e) {
-            if (SelectedItems.Count > 0) {
-                lastSelectedItemIndex = e.ItemIndex;
-                IChildResource resource = ((IChildResource)e.Item.Tag);
-                OnUpdatePreviewPanel(resource);
-            } else {
-                if (lastSelectedItemIndex > 0 && lastSelectedItemIndex < Items.Count) {
-                    // Make sure that the item's icon doesn't disappear.
-                    this.BeginInvoke((MethodInvoker)delegate {
-                        ListViewItem item = Items[lastSelectedItemIndex];
-                        item.Selected = true;
-                        item.ImageIndex = OnGetImageIndex((IChildResource)item.Tag);
-                    });
-                }
-            }
+			if (SelectedItems.Count > 0) {
+				lastSelectedItemIndex = e.ItemIndex;
+				IChildResource resource = ((IChildResource)e.Item.Tag);
+				OnUpdatePreviewPanel(resource);
+			} else {
+				// Make sure that the item's icon doesn't disappear.
+				this.BeginInvoke((MethodInvoker)delegate {
+					if (lastSelectedItemIndex > 0 && lastSelectedItemIndex < Items.Count) {
+						ListViewItem item = Items[lastSelectedItemIndex];
+						item.Selected = true;
+						item.ImageIndex = OnGetImageIndex((IChildResource)item.Tag);
+					}
+				});
+			}
         }
 
         void listView_ColumnClick(object sender, ColumnClickEventArgs e) {
