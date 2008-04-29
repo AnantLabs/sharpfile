@@ -124,8 +124,6 @@ namespace SharpFile {
         #region Overrides.
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m) {
-			int wParam = m.WParam.ToInt32();
-
             if (m.Msg == (int)WM.COMMAND) {
                 uint hWordWParam = ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16;
 
@@ -138,7 +136,7 @@ namespace SharpFile {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Error while validating label.");
                     }
 				}
-			} 
+			}
 
             base.WndProc(ref m);
         }
@@ -570,6 +568,16 @@ namespace SharpFile {
             lock (lockObject) {
                 this.Items.RemoveByKey(path);
                 this.itemDictionary.Remove(path);
+
+				IResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
+
+				if (resource != null) {
+					if (resource is FileInfo) {
+						fileCount--;
+					} else if (resource is DirectoryInfo) {
+						folderCount--;
+					}
+				}
             }
         }
 
@@ -666,6 +674,8 @@ namespace SharpFile {
                     OnUpdateStatus(Status);
 
                     this.Sort();
+
+					updateImageIndexes(item.Index, item.Index + 1);
                 } catch (Exception ex) {
                     Settings.Instance.Logger.ProcessContent += ShowMessageBox;
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
@@ -674,7 +684,7 @@ namespace SharpFile {
                 }
             }
         }
-#endregion
+		#endregion
 
         #region Protected methods.
         /// <summary>
