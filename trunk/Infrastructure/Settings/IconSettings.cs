@@ -7,7 +7,6 @@ namespace SharpFile.Infrastructure {
     public sealed class IconSettings {
         private bool showIcons = true;
         private bool showAllOverlays = false;
-        private bool incrementalDisplay = false;
         private List<string> showOverlayPaths = new List<string>();
         private List<string> extensions = new List<string>();
         private List<FullyQualifiedEnum> intensiveSearchDriveTypeEnums = new List<FullyQualifiedEnum>();
@@ -33,18 +32,6 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 showIcons = value;
-            }
-        }
-
-        /// <summary>
-        /// Whether or not to show the icons incrementally.
-        /// </summary>
-        public bool IncrementalDisplay {
-            get {
-                return incrementalDisplay;
-            }
-            set {
-                incrementalDisplay = value;
             }
         }
 

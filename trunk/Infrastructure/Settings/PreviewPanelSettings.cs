@@ -11,15 +11,15 @@ namespace SharpFile.Infrastructure {
         private int splitterPercentage = 10;
         private bool thumbnailImages = false;
         private int maximumLinesOfDetailText = 10;
-        private bool alwaysShowDetailText = false;
+        private bool showDetailTextForAllExtensions = false;
         private bool showAllDetailText = false;
 
-        public bool AlwaysShowDetailText {
+        public bool ShowDetailTextForAllExtensions {
             get {
-                return alwaysShowDetailText;
+                return showDetailTextForAllExtensions;
             }
             set {
-                alwaysShowDetailText = value;
+                showDetailTextForAllExtensions = value;
             }
         }
 

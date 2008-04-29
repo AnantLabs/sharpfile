@@ -101,7 +101,7 @@ namespace SharpFile.UI {
             if (resource != null && resource is FileInfo) {
                 FileInfo fileInfo = (FileInfo)resource;
 
-                bool generateDetailText = (Settings.Instance.PreviewPanel.AlwaysShowDetailText ||
+                bool generateDetailText = (Settings.Instance.PreviewPanel.ShowDetailTextForAllExtensions ||
                     Settings.Instance.PreviewPanel.DetailTextExtensions.Contains(fileInfo.Extension.ToLower()));
 
                 if (generateDetailText) {

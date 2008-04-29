@@ -163,17 +163,6 @@ namespace SharpFile {
 		protected override void OnDrawItem(DrawListViewItemEventArgs e) {
 			e.DrawDefault = true;
 			base.OnDrawItem(e);
-
-            if (Settings.Instance.Icons.IncrementalDisplay) {
-                if (e.Item.ImageIndex < 0) {
-                    IChildResource resource = (IChildResource)e.Item.Tag;
-                    int imageIndex = OnGetImageIndex(resource);
-
-                    if (imageIndex > -1) {
-                        e.Item.ImageIndex = imageIndex;
-                    }
-                }
-            }
 		}
         #endregion
         #endregion
@@ -635,8 +624,6 @@ namespace SharpFile {
 
             OnUpdateStatus(Status);
 
-            updateImageIndexes();
-
             string path = string.Empty;
 
             foreach (IChildResource resource in resources) {
@@ -655,7 +642,7 @@ namespace SharpFile {
                         this.TopItem = Items[previousTopIndex];
                     });
                 }
-            }            
+            }
         }
 
         /// <summary>
@@ -675,7 +662,11 @@ namespace SharpFile {
 
                     this.Sort();
 
-					updateImageIndexes(item.Index, item.Index + 1);
+					int imageIndex = OnGetImageIndex(resource);
+
+					if (imageIndex > -1) {
+						item.ImageIndex = imageIndex;
+					}
                 } catch (Exception ex) {
                     Settings.Instance.Logger.ProcessContent += ShowMessageBox;
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
@@ -783,9 +774,15 @@ namespace SharpFile {
                 }
             }
 
+			int imageIndex = OnGetImageIndex(resource);
+
+			if (imageIndex > -1) {
+				item.ImageIndex = imageIndex;
+			}
+
             return item;
         }
-#endregion
+		#endregion
 
         #region Private methods.
         /// <summary>
@@ -921,32 +918,6 @@ namespace SharpFile {
                         this.Items[nextIndex].Selected = true;
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Updates the image indexes for all ListView items.
-        /// </summary>
-        private void updateImageIndexes() {
-            updateImageIndexes(0, Items.Count - 1);
-        }
-
-		/// <summary>
-		/// Updates the image indexes with the provided start/end indexes.
-		/// </summary>
-        private void updateImageIndexes(int startIndex, int endIndex) {
-            if (!Settings.Instance.Icons.IncrementalDisplay) {
-                this.Invoke((MethodInvoker)delegate {
-                    for (int i = startIndex; i <= endIndex; i++) {
-                        ListViewItem item = Items[i];
-                        IChildResource resource = (IChildResource)item.Tag;
-                        int imageIndex = OnGetImageIndex(resource);
-
-                        if (imageIndex > -1) {
-                            item.ImageIndex = imageIndex;
-                        }
-                    }
-                });
             }
         }
 
