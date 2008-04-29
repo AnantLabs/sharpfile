@@ -22,7 +22,6 @@ namespace SharpFile {
         private ChildResourceRetrievers childResourceRetrievers;
         private bool handleCreated = false;
         private bool isExecuting = false;
-        private FormatTemplate driveFormatTemplate;
         private AutoCompleteStringCollection filterAutoCompleteStringCollection;
 
         private ToolStrip toolStrip;
@@ -331,13 +330,13 @@ namespace SharpFile {
                             ToolStripMenuItem item = new ToolStripMenuItem();
                             string text = resource.Name;
 
-                            if (resource.IsReady && !string.IsNullOrEmpty(driveFormatTemplate.Template)) {
+							if (resource.IsReady && DriveFormatTemplate != null && !string.IsNullOrEmpty(DriveFormatTemplate.Template)) {
                                 Templater templater = new Templater(resource);
-                                text = templater.Generate(driveFormatTemplate.Template);
-                            }
+								text = templater.Generate(DriveFormatTemplate.Template);
 
-                            if (driveFormatTemplate.MethodDelegate != null) {
-                                text = driveFormatTemplate.MethodDelegate(text);
+								if (DriveFormatTemplate.MethodDelegate != null) {
+									text = DriveFormatTemplate.MethodDelegate(text);
+								}
                             }
 
                             item.Text = text;
@@ -640,10 +639,7 @@ namespace SharpFile {
 
         public FormatTemplate DriveFormatTemplate {
             get {
-                return driveFormatTemplate;
-            }
-            set {
-                driveFormatTemplate = value;
+				return Settings.Instance.DualParent.Panel2.DriveFormatTemplate;
             }
         }
         #endregion
