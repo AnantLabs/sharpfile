@@ -140,6 +140,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="UI\ListViewItemCreator.cs" />
     <Compile Include="UI\PreviewPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
