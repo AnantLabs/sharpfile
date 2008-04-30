@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace SharpFile.Infrastructure {
 	public interface IView {
 		void AddItemRange(IList<IChildResource> resources);
-        void AddItem(IResource resource);
+        void AddItem(IChildResource resource);
 		void RemoveItem(string path);
 		void Clear();
 		void BeginUpdate();
@@ -19,9 +19,10 @@ namespace SharpFile.Infrastructure {
 		Control Control { get; }
         void ShowMessageBox(string text);
         IViewComparer Comparer { get; set; }
-        IEnumerable<ColumnInfo> ColumnInfos { get; set; }
+        List<ColumnInfo> ColumnInfos { get; set; }
         string Name { get; set; }
         bool Enabled { get; set; }
+        Dictionary<string, ListViewItem> ItemDictionary { get; }
 
         void OnUpdatePath(string path);
         void OnUpdateProgress(int progress);

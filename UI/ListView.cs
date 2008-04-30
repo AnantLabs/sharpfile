@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Reflection;
 using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
@@ -20,6 +19,7 @@ using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile {
     public class ListView : System.Windows.Forms.ListView, IView {
+        private static readonly object lockObject = new object();
         private const int ALT = 32;
         private const int CTRL = 8;
         private const int SHIFT = 4;
@@ -29,14 +29,11 @@ namespace SharpFile {
         private long totalSelectedSize = 0;
         private Dictionary<string, ListViewItem> itemDictionary = new Dictionary<string, ListViewItem>();
         private IViewComparer comparer = new ListViewItemComparer();
-        private IEnumerable<ColumnInfo> columnInfos;
-        private Dictionary<string, PropertyInfo> propertyInfos = new Dictionary<string, PropertyInfo>();
+        private List<ColumnInfo> columnInfos;
         private long fileCount = 0;
         private long folderCount = 0;
         private int lastSelectedItemIndex = 0;
         private Dictionary<string, int> previousTopIndexes = new Dictionary<string, int>();
-
-        private static readonly object lockObject = new object();
 
         public event View.UpdateStatusDelegate UpdateStatus;
         public event View.UpdateProgressDelegate UpdateProgress;
@@ -576,7 +573,6 @@ namespace SharpFile {
         public void AddItemRange(IList<IChildResource> resources) {
             StringBuilder sb = new StringBuilder();
             Stopwatch sw = new Stopwatch();
-            List<ListViewItem> listViewItems = new List<ListViewItem>();
 
             this.Invoke((MethodInvoker)delegate {
                 if (this.SmallImageList == null) {
@@ -586,17 +582,12 @@ namespace SharpFile {
 
             sw.Start();
 
-            // Create a new listview item with the display name.
-            foreach (IChildResource resource in resources) {
-                try {
-                    ListViewItem item = addItem(resource);
-                    listViewItems.Add(item);
-                } catch (Exception ex) {
-                    sb.AppendFormat("{0}: {1}",
-                         resource.FullName,
-                         ex.Message);
-                }
-            }
+            // Create new listview items from the resources.
+            ListViewItemsCreator listViewItemsCreator = new ListViewItemsCreator(this, resources);
+            List<ListViewItem> listViewItems = listViewItemsCreator.Get(sb);           
+
+            fileCount = listViewItemsCreator.FileCount;
+            folderCount = listViewItemsCreator.FolderCount;
 
             this.Invoke((MethodInvoker)delegate {
                 this.Items.AddRange(listViewItems.ToArray());
@@ -648,139 +639,38 @@ namespace SharpFile {
         /// <summary>
         /// Parses the file/directory information and inserts the file info into the listview.
         /// </summary>
-        public void AddItem(IResource resource) {
+        public void AddItem(IChildResource resource) {
             if (resource != null) {
-                try {
-                    // Create a new listview item with the display name.
-                    ListViewItem item = addItem(resource);
+                // Create a new listview item.
+                StringBuilder sb = new StringBuilder();
+                ListViewItemsCreator listViewItemsCreator = new ListViewItemsCreator(this, resource);
+                List<ListViewItem> items = listViewItemsCreator.Get(sb);
+
+                if (items.Count > 0) {
+                    ListViewItem item = items[0];
+                    fileCount += listViewItemsCreator.FileCount;
+                    folderCount += listViewItemsCreator.FolderCount;
+
+                    if (sb.Length > 0) {
+                        Settings.Instance.Logger.ProcessContent += ShowMessageBox;
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, sb.ToString());
+                        Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
+                    }
+
                     this.Items.Add(item);
 
                     // Basic stuff that should happen everytime files are shown.
                     this.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-
                     OnUpdateStatus(Status);
-
                     this.Sort();
 
-					int imageIndex = OnGetImageIndex(resource);
+                    int imageIndex = OnGetImageIndex(resource);
 
-					if (imageIndex > -1) {
-						item.ImageIndex = imageIndex;
-					}
-                } catch (Exception ex) {
-                    Settings.Instance.Logger.ProcessContent += ShowMessageBox;
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Resource, {0} could not be added to the listview.", resource.FullName);
-                    Settings.Instance.Logger.ProcessContent -= ShowMessageBox;
+                    if (imageIndex > -1) {
+                        item.ImageIndex = imageIndex;
+                    }
                 }
             }
-        }
-		#endregion
-
-        #region Protected methods.
-        /// <summary>
-        /// Adds the item to the view.
-        /// </summary>
-        /// <param name="resource">Resource to add.</param>
-        protected ListViewItem addItem(IResource resource) {
-            lock (lockObject) {
-                if (!itemDictionary.ContainsKey(resource.FullName)) {
-                    ListViewItem item = createListViewItem(resource);
-                    itemDictionary.Add(resource.FullName, item);
-
-                    return item;
-                } else {
-                    return itemDictionary[resource.FullName];
-                }
-            }
-        }
-
-        /// <summary>
-        /// Create listview from the filesystem information.
-        /// </summary>
-        /// <param name="fileSystemInfo">Filesystem information.</param>
-        /// <returns>Listview item that references the filesystem object.</returns>
-        protected ListViewItem createListViewItem(IResource resource) {
-            ListViewItem item = new ListViewItem();
-            List<ListViewItem.ListViewSubItem> listViewSubItems =
-                new List<ListViewItem.ListViewSubItem>(Columns.Count);
-            item.Tag = resource;
-            item.Name = resource.FullName;
-
-            if (resource is FileInfo) {
-                fileCount++;
-            } else if (resource is DirectoryInfo &&
-                !(resource is ParentDirectoryInfo) &&
-                !(resource is RootDirectoryInfo)) {
-                folderCount++;
-            }
-
-            foreach (ColumnInfo columnInfo in ColumnInfos) {
-                try {
-                    PropertyInfo propertyInfo = null;
-                    string propertyName = columnInfo.Property;
-                    string text = string.Empty;
-                    string tag = string.Empty;
-
-                    // Make sure that the type or it's base type is not supposed to be excluded for this particular column.
-                    if (columnInfo.ExcludeForTypes.Find(delegate(FullyQualifiedType f) {
-                        Type resourceType = resource.GetType();
-                        bool isExcludedType = (f.Type.Equals(resourceType.FullName) ||
-                            f.Type.Equals(resourceType.BaseType.FullName));
-
-                        return isExcludedType;
-                    }) == null) {
-                        // TODO: Use LCG to retrieve properties here instead of GetProperty.
-                        // LCG example: TypeUtility<FileInfo>.GetMemberGetPropertyExists<object>(propertyName);
-                        // Would shave ~100 ms off the query to retrieve c:\windows\system32\.
-                        propertyInfo = resource.GetType().GetProperty(propertyName);
-
-                        // Make sure that the property exists on the resource.
-                        if (propertyInfo != null) {
-                            text = propertyInfo.GetValue(resource, null).ToString();
-                        }
-                    }
-
-                    // The original value will be set on the tag for sortability.
-                    tag = text;
-
-                    // Invoke the the method delegate if there is one available.
-                    if (columnInfo.MethodDelegate != null) {
-                        try {
-                            text = columnInfo.MethodDelegate.Invoke(text);
-                        } catch (Exception ex) {
-                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                "Failed to call the provided method delegate {0} for {1}",
-                                    columnInfo.MethodDelegate.Method.Name,
-                                    resource.Name);
-                        }
-                    }
-
-                    if (columnInfo.PrimaryColumn) {
-                        item.Text = text;
-                        item.SubItems[0].Tag = tag;
-                    } else {
-                        ListViewItem.ListViewSubItem listViewSubItem =
-                            new ListViewItem.ListViewSubItem();
-                        listViewSubItem.Text = text;
-                        listViewSubItem.Tag = tag;
-
-                        item.SubItems.Add(listViewSubItem);
-                    }
-                } catch (Exception ex) {
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Column, {0}, with property, {1}, could not be added for {2}.",
-                        columnInfo.Text, columnInfo.Property, resource.FullName);
-                }
-            }
-
-			int imageIndex = OnGetImageIndex(resource);
-
-			if (imageIndex > -1) {
-				item.ImageIndex = imageIndex;
-			}
-
-            return item;
         }
 		#endregion
 
@@ -1007,7 +897,7 @@ namespace SharpFile {
             }
         }
 
-        public IEnumerable<ColumnInfo> ColumnInfos {
+        public List<ColumnInfo> ColumnInfos {
             get {
                 return columnInfos;
             }
@@ -1041,6 +931,12 @@ namespace SharpFile {
                 } else {
                     return ((IChildResource)SelectedItems[0].Tag).FullName;
                 }
+            }
+        }
+
+        public Dictionary<string, ListViewItem> ItemDictionary {
+            get {
+                return itemDictionary;
             }
         }
         #endregion
