@@ -1,4 +1,4 @@
--issues with CDROM's preventing a fast startup
+- CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
 - issues with tabs
 - instead of using the settings.config files, just use default values to be serialized
 - merge infos and settings, so there is consistency
