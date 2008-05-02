@@ -425,6 +425,7 @@ namespace SharpFile {
             }
 
             if (parentResource.IsReady) {
+                view.ClearPreviousTopIndexes();
                 resource.Execute(view);
 
                 // Determine the correct image to be highlighted.
