@@ -96,6 +96,8 @@ namespace SharpFile {
                 if (resource != null) {
                     if (!(resource is FileInfo) && !(resource is RootDirectoryInfo) && !(resource is ParentDirectoryInfo)) {
                         string path = ((IChildResource)this.TopItem.Tag).Path.ToLower();
+
+                        /*
                         int lastVisibleIndex = this.TopItem.Index;
 
                         for (int i = TopItem.Index + 1; i < Items.Count; i++) {
@@ -105,6 +107,21 @@ namespace SharpFile {
                                 break;
                             }
                         }
+                        */
+
+                        //get the top of the bottom scrollbar
+                        int bottomBound = this.ClientRectangle.Bottom;
+                        //get the client height and divide by the top item's rectangle height
+                        //this gives the number of visible items (plus one for the headerbar)
+                        int itemsVisible =
+                            (this.ClientRectangle.Height / this.TopItem.Bounds.Height) - 2;
+
+                        // Subtract one item if the horizontal scrollbar is visible.
+                        if (false) {
+                            itemsVisible++;
+                        }
+
+                        int lastVisibleIndex = this.TopItem.Index + itemsVisible;
 
                         if (previousTopIndexes.ContainsKey(path)) {
                             previousTopIndexes[path] = lastVisibleIndex;
@@ -629,11 +646,22 @@ namespace SharpFile {
                 
                 if (previousTopIndex > 0 && previousTopIndex < Items.Count) {
                     this.Invoke((MethodInvoker)delegate {
-                        //Items[previousTopIndex].EnsureVisible();
-                        this.TopItem = Items[previousTopIndex];
+                        if (previousTopIndex < Items.Count) {
+                            //Items[previousTopIndex].EnsureVisible();
+                            this.EnsureVisible(previousTopIndex);
+                        } else {
+                            //Items[Items.Count-1].EnsureVisible();
+                            this.EnsureVisible(Items.Count - 1);
+                        }
+
+                        previousTopIndexes.Remove(path);
                     });
                 }
             }
+        }
+
+        public void ClearPreviousTopIndexes() {
+            previousTopIndexes.Clear();
         }
 
         /// <summary>

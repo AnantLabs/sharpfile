@@ -11,6 +11,7 @@ namespace SharpFile.Infrastructure {
 		void BeginUpdate();
 		void EndUpdate();
         void Invoke(Delegate method);
+        void ClearPreviousTopIndexes();
         bool Focus();
 
 		string Path { get; }

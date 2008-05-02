@@ -1,7 +1,8 @@
+-issues with CDROM's preventing a fast startup
+- issues with tabs
 - instead of using the settings.config files, just use default values to be serialized
 - merge infos and settings, so there is consistency
 - split out listview class into other classes
-- fix the previous index incorrectly
 - fix compressed files retriever (has to do with retrieving icons)
 - attributes for plugins (for when there is a settings UI)
 - large icons for preview panel
