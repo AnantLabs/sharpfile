@@ -13,7 +13,7 @@ namespace SharpFile.Infrastructure {
 
         public FullyQualifiedType() {
         }
-
+        
         public FullyQualifiedType(string assembly, string type) {
             this.assembly = assembly;
             this.type = type;

@@ -12,6 +12,7 @@ namespace SharpFile.UI {
         public event View.UpdatePathDelegate UpdatePath;
 
         private TabControl tabControl;
+        private FormatTemplate driveFormatTemplate;
 
         public Child(string name) {
             this.Name = name;
@@ -90,15 +91,8 @@ namespace SharpFile.UI {
                 return paths;
             }
             set {
-                if (value.Count == 0) {
-                    Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                            @"Paths are null or empty for {0}; assume C:\ is valid.", Name);
-
-                    AddTab();
-                } else {
-                    foreach (string path in value) {
-                        AddTab(path, false);
-                    }
+                foreach (string path in value) {
+                    AddTab(path, false);
                 }
             }
         }
@@ -106,6 +100,15 @@ namespace SharpFile.UI {
         public string SelectedPath {
             get {
                 return Forms.GetPropertyInChild<string>(this.TabControl.SelectedTab, "Path");
+            }
+        }
+
+        public FormatTemplate DriveFormatTemplate {
+            get {
+                return driveFormatTemplate;
+            }
+            set {
+                driveFormatTemplate = value;
             }
         }
     }

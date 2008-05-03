@@ -34,8 +34,7 @@ namespace SharpFile.Infrastructure {
         private bool showParentDirectory = true;
         private bool showRootDirectory = true;
 
-        // Infos.
-        private List<ParentResourceRetrieverInfo> parentResourceRetrieverInfos;
+        // Infos.        
         private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;        
 
         // Constructed from infos.
@@ -49,6 +48,7 @@ namespace SharpFile.Infrastructure {
         private LoggerSettings loggerSettings;
         private List<ToolSetting> toolSettings;
         private List<ViewSetting> viewSettings;
+        private List<ParentResourceRetrieverSetting> parentResourceRetrieverSettings;
 
         #region Ctors.
         /// <summary>
@@ -69,6 +69,7 @@ namespace SharpFile.Infrastructure {
             loggerSettings = new LoggerSettings();
             toolSettings = new List<ToolSetting>();
             viewSettings = new List<ViewSetting>();
+            parentResourceRetrieverSettings = new List<ParentResourceRetrieverSetting>();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -333,12 +334,19 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         [XmlArray("ParentResourceRetrievers")]
         [XmlArrayItem("ParentResourceRetriever")]
-        public List<ParentResourceRetrieverInfo> ParentResourceRetrieverInfos {
+        public List<ParentResourceRetrieverSetting> ParentResourceRetrieverSettings {
             get {
-                return parentResourceRetrieverInfos;
+                return parentResourceRetrieverSettings;
             }
             set {
-                parentResourceRetrieverInfos = value;
+                parentResourceRetrieverSettings = value;
+
+                if (parentResourceRetrieverSettings.Count == 0) {
+                    FullyQualifiedType retrieverType = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DriveRetriever");
+                    ParentResourceRetrieverSetting retriever = new ParentResourceRetrieverSetting(
+                        "DriveRetriever", retrieverType, "CompressedRetriever", "DefaultRetriever");
+                    parentResourceRetrieverSettings.Add(retriever);
+                }
             }
         }
 
@@ -404,7 +412,7 @@ namespace SharpFile.Infrastructure {
                 return dualParentSettings;
             }
             set {
-                dualParentSettings = value;
+                dualParentSettings = value;                
             }
         }
 
@@ -414,11 +422,6 @@ namespace SharpFile.Infrastructure {
         [XmlElement("Icons")]
         public IconSettings IconSettings {
             get {
-                return iconSettings;
-            }
-            set {
-                iconSettings = value;
-
                 if (iconSettings.RetrieveIconExtensions.Count == 0) {
                     iconSettings.RetrieveIconExtensions.AddRange(new string[] { ".exe", ".lnk", ".ps", ".scr", ".ico", ".icn" });
                 }
@@ -428,6 +431,11 @@ namespace SharpFile.Infrastructure {
                     FullyQualifiedEnum driveTypeEnum = new FullyQualifiedEnum("Fixed", driveType);
                     iconSettings.IntensiveSearchDriveTypeEnums.Add(driveTypeEnum);
                 }
+
+                return iconSettings;
+            }
+            set {
+                iconSettings = value;                
             }
         }
 
@@ -489,15 +497,15 @@ namespace SharpFile.Infrastructure {
         public List<IParentResourceRetriever> ParentResourceRetrievers {
             get {
                 if (parentResourceRetrievers == null || parentResourceRetrievers.Count == 0) {
-                    parentResourceRetrievers = new List<IParentResourceRetriever>(parentResourceRetrieverInfos.Count);
+                    parentResourceRetrievers = new List<IParentResourceRetriever>(parentResourceRetrieverSettings.Count);
 
-                    foreach (ParentResourceRetrieverInfo parentResourceRetrieverInfo in parentResourceRetrieverInfos) {
+                    foreach (ParentResourceRetrieverSetting parentResourceRetrieverSetting in parentResourceRetrieverSettings) {
                         try {
                             IParentResourceRetriever parentResourceRetriever = Reflection.InstantiateObject<IParentResourceRetriever>(
-                                parentResourceRetrieverInfo.FullyQualifiedType.Assembly,
-                                parentResourceRetrieverInfo.FullyQualifiedType.Type);
+                                parentResourceRetrieverSetting.FullyQualifiedType.Assembly,
+                                parentResourceRetrieverSetting.FullyQualifiedType.Type);
 
-                            foreach (string childResourceRetrieverName in parentResourceRetrieverInfo.ChildResourceRetrievers) {
+                            foreach (string childResourceRetrieverName in parentResourceRetrieverSetting.ChildResourceRetrievers) {
                                 ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
                                     return c.Name == childResourceRetrieverName;
                                 });
@@ -569,11 +577,11 @@ namespace SharpFile.Infrastructure {
                         } catch (MissingMethodException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "ResourceRetriever, {0}, could not be instantiated (is it an abstract class?).",
-                                parentResourceRetrieverInfo.Name);
+                                parentResourceRetrieverSetting.Name);
                         } catch (TypeLoadException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "ResourceRetriever, {0}, could not be instantiated.",
-                                parentResourceRetrieverInfo.Name);
+                                parentResourceRetrieverSetting.Name);
                         }
                     }
 

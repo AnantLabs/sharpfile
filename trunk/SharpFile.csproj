@@ -72,6 +72,7 @@
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
     <Compile Include="Infrastructure\Settings\LoggerSettings.cs" />
+    <Compile Include="Infrastructure\Settings\ParentResourceRetrieverSetting.cs" />
     <Compile Include="Infrastructure\Settings\PreviewPanelSettings.cs" />
     <Compile Include="Infrastructure\Settings\ToolSetting.cs" />
     <Compile Include="Infrastructure\Settings\ViewSetting.cs" />
@@ -122,7 +123,6 @@
     <Compile Include="Infrastructure\Resource.Designer.cs" />
     <Compile Include="Infrastructure\SettingInfos\ChildResourceRetrieverInfo.cs" />
     <Compile Include="Infrastructure\SettingInfos\ColumnInfo.cs" />
-    <Compile Include="Infrastructure\SettingInfos\ParentResourceRetrieverInfo.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="Infrastructure\Settings\DualParentSettings.cs" />
     <Compile Include="Infrastructure\Settings\IconSettings.cs" />
