@@ -159,7 +159,7 @@ namespace SharpFile.IO.Retrievers {
                 GetType().Assembly.FullName, GetType().FullName);
 
             // Deep copy the column infos.
-            List<ColumnInfo> clonedColumnInfos = Settings.DeepCopy<List<ColumnInfo>>(ColumnInfos);
+            List<ColumnInfo> clonedColumnInfos = Reflection.DeepCopy<List<ColumnInfo>>(ColumnInfos);
             childResourceRetriever.ColumnInfos = clonedColumnInfos;
             childResourceRetriever.Name = Name;
             childResourceRetriever.View = View;

@@ -1,7 +1,4 @@
-- rename settings classes to SettingsSection
 - fast filesystem watcher events throw an error (compress a small file)
-- merge infos and settings, so there is consistency
-- instead of using the settings.config files, just use default values to be serialized
 - fix compressed files retriever (has to do with retrieving icons)
 - issues with tabs
 - CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program

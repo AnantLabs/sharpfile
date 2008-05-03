@@ -96,5 +96,12 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 nameFormatTemplate = value;
             }
         }
+
+        public static List<string> GenerateDefaultDetailTextExtensions() {
+            List<string> extensions = new List<string>(new string[] { 
+                        string.Empty, ".txt", ".config", ".xml", ".ini", ".cs", ".log" 
+                    });
+            return extensions;
+        }
     }
 }

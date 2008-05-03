@@ -72,22 +72,6 @@ namespace SharpFile.Infrastructure {
 
         #region Static methods.
         /// <summary>
-        /// Deep copies the data from an object to a new object.
-        /// </summary>
-        /// <typeparam name="T">Type of the object.</typeparam>
-        /// <param name="obj">Object to copy.</param>
-        /// <returns>A new version of the object with all of it's values intact.</returns>
-        // TODO: Move this to the Common assembly.
-        // TODO: Provide a way to deepcopy a whole object including delegates that are attached to the original.
-        public static T DeepCopy<T>(T obj) {
-            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            binaryFormatter.Serialize(memoryStream, obj);
-            memoryStream.Position = 0;
-            return (T)binaryFormatter.Deserialize(memoryStream);
-        }
-
-        /// <summary>
         /// Clears the current resources.
         /// </summary>
         public static void ClearResources() {
@@ -279,20 +263,15 @@ namespace SharpFile.Infrastructure {
         public Retrievers RetrieverSettings {
             get {
                 if (retrieverSettings.ParentResourceRetrievers.Count == 0) {
-                    FullyQualifiedType type = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DriveRetriever");
-                    ParentResourceRetriever retriever = new ParentResourceRetriever(
-                        "DriveRetriever", type, "CompressedRetriever", "DefaultRetriever");
-                    retrieverSettings.ParentResourceRetrievers.Add(retriever);
+                    retrieverSettings.ParentResourceRetrievers = Retrievers.GenerateDefaultParentResourceRetrievers();
                 }
 
                 if (retrieverSettings.ChildResourceRetrievers.Count == 0) {
-                    retrieverSettings.ChildResourceRetrievers = SettingsSection.ChildResourceRetriever.GenerateDefaults();
+                    retrieverSettings.ChildResourceRetrievers = Retrievers.GenerateDefaultChildResourceRetrievers();
                 }
 
                 if (retrieverSettings.Views.Count == 0) {
-                    FullyQualifiedType viewType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListView");
-                    FullyQualifiedType comparerType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListViewItemComparer");
-                    retrieverSettings.Views.Add(new SettingsSection.View("ListView", viewType, comparerType));
+                    retrieverSettings.Views = Retrievers.GenerateDefaultViews();
                 }
 
                 return retrieverSettings;
@@ -310,7 +289,7 @@ namespace SharpFile.Infrastructure {
         public DualParent DualParent {
             get {
                 if (dualParentSettings.Tools.Count == 0) {
-                    dualParentSettings.Tools = Tool.GenerateDefaults();
+                    dualParentSettings.Tools = DualParent.GenerateDefaultTools();
                 }
 
                 return dualParentSettings;
@@ -327,13 +306,11 @@ namespace SharpFile.Infrastructure {
         public Icons IconSettings {
             get {
                 if (iconSettings.RetrieveIconExtensions.Count == 0) {
-                    iconSettings.RetrieveIconExtensions.AddRange(new string[] { ".exe", ".lnk", ".ps", ".scr", ".ico", ".icn" });
+                    iconSettings.RetrieveIconExtensions = Icons.GenerateDefaultRetrieveIconExtensions();
                 }
 
                 if (iconSettings.IntensiveSearchDriveTypeEnums.Count == 0) {
-                    FullyQualifiedType driveType = new FullyQualifiedType("System", "System.IO.DriveType");
-                    FullyQualifiedEnum driveTypeEnum = new FullyQualifiedEnum("Fixed", driveType);
-                    iconSettings.IntensiveSearchDriveTypeEnums.Add(driveTypeEnum);
+                    iconSettings.IntensiveSearchDriveTypeEnums = Icons.GenerateDefaultIntensiveSearchDriveTypeEnums();
                 }
 
                 return iconSettings;
@@ -350,9 +327,8 @@ namespace SharpFile.Infrastructure {
         public PreviewPanel PreviewPanel {
             get {
                 if (previewPanelSettings.DetailTextExtensions.Count == 0) {
-                    previewPanelSettings.DetailTextExtensions.AddRange(new string[] { 
-                        string.Empty, ".txt", ".config", ".xml", ".ini", ".cs", ".log" 
-                    });
+                    previewPanelSettings.DetailTextExtensions = 
+                        PreviewPanel.GenerateDefaultDetailTextExtensions();
                 }
 
                 return previewPanelSettings;

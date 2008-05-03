@@ -82,5 +82,19 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 intensiveSearchDriveTypeEnums = value;
             }
         }
+
+        public static List<string> GenerateDefaultRetrieveIconExtensions() {
+            List<string> extensions = new List<string>(
+                new string[] { ".exe", ".lnk", ".ps", ".scr", ".ico", ".icn" });
+            return extensions;
+        }
+
+        public static List<FullyQualifiedEnum> GenerateDefaultIntensiveSearchDriveTypeEnums() {
+            List<FullyQualifiedEnum> enums = new List<FullyQualifiedEnum>();
+            FullyQualifiedEnum driveTypeEnum = new FullyQualifiedEnum("Fixed",
+                new FullyQualifiedType("System", "System.IO.DriveType"));
+            enums.Add(driveTypeEnum);
+            return enums;
+        }
     }
 }
