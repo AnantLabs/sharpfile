@@ -1,6 +1,8 @@
 ﻿using System.Xml.Serialization;
+using System;
 
 namespace SharpFile.Infrastructure.SettingsSection {
+    [Serializable]
     public sealed class Tool {
         private string name;
         private string path;

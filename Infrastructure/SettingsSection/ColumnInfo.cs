@@ -17,6 +17,24 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public ColumnInfo() {
         }
 
+        public ColumnInfo(string text, string property, bool primaryColumn)
+            : this(text, property, primaryColumn, null) {
+        }
+
+        public ColumnInfo(string text, string property, bool primaryColumn,
+            FullyQualifiedMethod fullyQualifiedMethod, params FullyQualifiedType[] excludeForTypes) {
+            this.text = text;
+            this.property = property;
+            this.primaryColumn = primaryColumn;
+            this.fullyQualifiedMethod = fullyQualifiedMethod;
+
+            if (excludeForTypes == null) {
+                this.excludeForTypes = new List<FullyQualifiedType>();
+            } else {
+                this.excludeForTypes = new List<FullyQualifiedType>(excludeForTypes);
+            }
+        }
+
         [XmlAttribute("Text")]
         public string Text {
             get {
