@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
+    <Compile Include="Infrastructure\SettingsSection\ChildResourceRetriever.cs" />
     <Compile Include="Infrastructure\SettingsSection\ColumnInfo.cs" />
     <Compile Include="Infrastructure\SettingsSection\DualParent.cs" />
     <Compile Include="Infrastructure\SettingsSection\Icons.cs" />
@@ -126,7 +127,6 @@
     <Compile Include="Infrastructure\Nodes.cs" />
     <Compile Include="Infrastructure\ParentType.cs" />
     <Compile Include="Infrastructure\Resource.Designer.cs" />
-    <Compile Include="Infrastructure\SettingInfos\ChildResourceRetrieverInfo.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\FileInfo.cs" />

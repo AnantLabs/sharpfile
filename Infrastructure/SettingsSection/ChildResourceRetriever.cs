@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
-using SharpFile.Infrastructure.SettingsSection;
 
-namespace SharpFile.Infrastructure {
-    public class ChildResourceRetrieverInfo {
+namespace SharpFile.Infrastructure.SettingsSection {
+    public class ChildResourceRetriever {
         private string name;
         private FullyQualifiedType fullyQualifiedType;
         private List<ColumnInfo> columnInfos;
@@ -18,7 +17,7 @@ namespace SharpFile.Infrastructure {
         /// <summary>
         /// Empty ctor for xml serialization.
         /// </summary>
-        public ChildResourceRetrieverInfo() {
+        public ChildResourceRetriever() {
         }
 
         [XmlAttribute("Name")]
@@ -31,8 +30,8 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-        [XmlArray("ColumnInfos")]
-        [XmlArrayItem("ColumnInfo")]
+        [XmlArray("Columns")]
+        [XmlArrayItem("Column")]
         public List<ColumnInfo> ColumnInfos {
             get {
                 return columnInfos;
@@ -86,14 +85,14 @@ namespace SharpFile.Infrastructure {
                     try {
                         // Create the appropriate method delegate based on whether there were arguments passed in.
                         if (fullyQualifiedMethod.Arguments != null && fullyQualifiedMethod.Arguments.Count > 0) {
-                            filterMethod = Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodWithArgumentsDelegate>(
+                            filterMethod = Reflection.CreateDelegate<Infrastructure.ChildResourceRetriever.FilterMethodWithArgumentsDelegate>(
                                fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                fullyQualifiedMethod.FullyQualifiedType.Type,
                                fullyQualifiedMethod.Name);
 
                             filterMethodArguments = fullyQualifiedMethod.Arguments;
                         } else {
-                            filterMethod = Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
+                            filterMethod = Reflection.CreateDelegate<Infrastructure.ChildResourceRetriever.FilterMethodDelegate>(
                                 fullyQualifiedMethod.FullyQualifiedType.Assembly,
                                 fullyQualifiedMethod.FullyQualifiedType.Type,
                                 fullyQualifiedMethod.Name);
@@ -109,10 +108,10 @@ namespace SharpFile.Infrastructure {
                 // If the filterMethod is still null, then there was an error creating the delegate, 
                 // or the method delegate type was null. Either way, set a default.
                 if (filterMethod == null) {
-                    filterMethod = Reflection.CreateDelegate<ChildResourceRetriever.FilterMethodDelegate>(
+                    filterMethod = Reflection.CreateDelegate<Infrastructure.ChildResourceRetriever.FilterMethodDelegate>(
                                 "SharpFile",
                                 "SharpFile.Infrastructure.ChildResourceRetrievers",
-								"FalseFilterMethod");
+                                "FalseFilterMethod");
                 }
 
                 return filterMethod;
