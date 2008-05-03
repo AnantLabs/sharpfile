@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
+using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.Infrastructure {
     public class ChildResourceRetrieverInfo {

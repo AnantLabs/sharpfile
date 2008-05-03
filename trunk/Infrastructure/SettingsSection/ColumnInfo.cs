@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 using Common;
 using Common.Logger;
 
-namespace SharpFile.Infrastructure {
+namespace SharpFile.Infrastructure.SettingsSection {
     [Serializable]
     public class ColumnInfo {
         private string text;
@@ -77,7 +77,7 @@ namespace SharpFile.Infrastructure {
                             fullyQualifiedMethod.FullyQualifiedType.Type,
                             fullyQualifiedMethod.Name);
                     } catch (Exception ex) {
-                        string message = "Creating the AlterMethod, {0}, for the {1} ColumnInfo failed.";
+                        string message = "Creating the AlterMethod, {0}, for the {1} Column failed.";
 
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, message,
                                 fullyQualifiedMethod.FullyQualifiedType.Type, text);

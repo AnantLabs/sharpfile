@@ -71,11 +71,16 @@
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
-    <Compile Include="Infrastructure\SettingSection\LoggerSettings.cs" />
-    <Compile Include="Infrastructure\SettingSection\ParentResourceRetriever.cs" />
-    <Compile Include="Infrastructure\SettingSection\PreviewPanel.cs" />
-    <Compile Include="Infrastructure\SettingSection\Tool.cs" />
-    <Compile Include="Infrastructure\SettingSection\View.cs" />
+    <Compile Include="Infrastructure\SettingsSection\ColumnInfo.cs" />
+    <Compile Include="Infrastructure\SettingsSection\DualParent.cs" />
+    <Compile Include="Infrastructure\SettingsSection\Icons.cs" />
+    <Compile Include="Infrastructure\SettingsSection\LoggerSettings.cs" />
+    <Compile Include="Infrastructure\SettingsSection\MdiParentSettings.cs" />
+    <Compile Include="Infrastructure\SettingsSection\PanelSettings.cs" />
+    <Compile Include="Infrastructure\SettingsSection\ParentResourceRetriever.cs" />
+    <Compile Include="Infrastructure\SettingsSection\PreviewPanel.cs" />
+    <Compile Include="Infrastructure\SettingsSection\Tool.cs" />
+    <Compile Include="Infrastructure\SettingsSection\View.cs" />
     <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
     <Compile Include="Infrastructure\WindowsApi\FILETIME.cs" />
     <Compile Include="Infrastructure\WindowsApi\Kernel32.cs" />
@@ -122,11 +127,7 @@
     <Compile Include="Infrastructure\ParentType.cs" />
     <Compile Include="Infrastructure\Resource.Designer.cs" />
     <Compile Include="Infrastructure\SettingInfos\ChildResourceRetrieverInfo.cs" />
-    <Compile Include="Infrastructure\SettingInfos\ColumnInfo.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
-    <Compile Include="Infrastructure\SettingSection\DualParent.cs" />
-    <Compile Include="Infrastructure\SettingSection\Icons.cs" />
-    <Compile Include="Infrastructure\SettingSection\PanelSettings.cs" />
     <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\FileInfo.cs" />
     <Compile Include="IO\ChildResources\FileSystemInfo.cs" />

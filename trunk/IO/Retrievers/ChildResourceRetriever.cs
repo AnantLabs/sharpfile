@@ -5,6 +5,7 @@ using System.Diagnostics;
 using Common;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.IO.Retrievers {
     public abstract class ChildResourceRetriever : IChildResourceRetriever {

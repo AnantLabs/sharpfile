@@ -11,6 +11,7 @@ using Common.Logger;
 using Common.WindowsApi;
 using Common.WindowsApi.Messages;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.SettingsSection;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using IOException = SharpFile.IO.IOException;

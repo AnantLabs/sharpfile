@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.IO;
+using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.Infrastructure {
 	public interface IChildResourceRetriever {
