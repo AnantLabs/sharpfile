@@ -5,7 +5,7 @@ using Common.Logger;
 namespace SharpFile.Infrastructure.SettingsSection {
     public class Logger {
         private string file = "log.txt";
-        private LogLevelType logLevel = LogLevelType.ErrorsOnly;
+        private LogLevelType logLevel = LogLevelType.Verbose;
 
         public string File {
             get {

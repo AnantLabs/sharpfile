@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using System;
+using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure.SettingsSection {
     [Serializable]
@@ -45,6 +46,12 @@ namespace SharpFile.Infrastructure.SettingsSection {
             set {
                 arguments = value;
             }
+        }
+
+        public static List<Tool> GenerateDefaults() {
+            List<Tool> tools = new List<Tool>();
+            tools.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
+            return tools;
         }
     }
 }
