@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Common;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.UI {
 	public class BaseParent : Form {
@@ -378,12 +379,12 @@ namespace SharpFile.UI {
             this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 
-            foreach (ToolSetting toolSetting in Settings.Instance.ToolSettings) {
+            foreach (Tool toolSetting in Settings.Instance.ToolSettings) {
                 ToolStripMenuItem menuItem = new ToolStripMenuItem(toolSetting.Name);
                 menuItem.Tag = toolSetting;
 
                 menuItem.Click += (EventHandler)delegate {
-                    ToolSetting t = (ToolSetting)menuItem.Tag;
+                    Tool t = (Tool)menuItem.Tag;
 
                     if (!t.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
                         ProcessStartInfo processStartInfo = new ProcessStartInfo();

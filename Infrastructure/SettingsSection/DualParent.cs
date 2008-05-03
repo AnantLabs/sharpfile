@@ -1,16 +1,16 @@
 ﻿using System.Windows.Forms;
 using System.Xml.Serialization;
 
-namespace SharpFile.Infrastructure {    
-    public sealed class DualParentSettings {
+namespace SharpFile.Infrastructure.SettingsSection {    
+    public sealed class DualParent {
         private const string defaultDrive = @"c:\";
         private int splitterPercentage = 50;
         private Orientation orientation = Orientation.Vertical;        
-        private PanelSettings panel1 = new PanelSettings();
-        private PanelSettings panel2 = new PanelSettings();
+        private Panel panel1 = new Panel();
+        private Panel panel2 = new Panel();
 
         [XmlElement("Panel1")]
-        public PanelSettings Panel1 {
+        public Panel Panel1 {
             get {
                 if (panel1.Paths.Count == 0) {
                     panel1.Paths.Add(defaultDrive);
@@ -24,7 +24,7 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlElement("Panel2")]
-        public PanelSettings Panel2 {
+        public Panel Panel2 {
             get {
                 if (panel2.Paths.Count == 0) {
                     panel2.Paths.Add(defaultDrive);

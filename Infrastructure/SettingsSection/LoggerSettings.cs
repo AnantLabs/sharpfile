@@ -2,8 +2,8 @@
 using System.Xml.Serialization;
 using Common.Logger;
 
-namespace SharpFile.Infrastructure {
-    public class LoggerSettings {
+namespace SharpFile.Infrastructure.SettingsSection {
+    public class Logger {
         private string file = "log.txt";
         private LogLevelType logLevel = LogLevelType.ErrorsOnly;
 
