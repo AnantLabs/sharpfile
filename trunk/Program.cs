@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.UI;
 
 namespace SharpFile {
     static class Program {

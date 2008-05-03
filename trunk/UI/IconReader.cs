@@ -1,8 +1,7 @@
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using SharpFile.Infrastructure;
 using Common.WindowsApi;
-using System;
 
 namespace SharpFile.UI {
 	/// <summary>

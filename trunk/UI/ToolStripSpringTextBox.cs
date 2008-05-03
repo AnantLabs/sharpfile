@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace SharpFile {
+namespace SharpFile.UI {
 	public class ToolStripSpringTextBox : ToolStripTextBox {
 		public override Size GetPreferredSize(Size constrainingSize) {
 			// Use the default size if the text box is on the overflow menu

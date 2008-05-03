@@ -2,9 +2,7 @@
 using System.Windows.Forms;
 using Common.Comparers;
 using SharpFile.Infrastructure;
-//using System.IO;
 using SharpFile.IO.ChildResources;
-//using SharpFile.IO.ChildResources;
 
 namespace SharpFile.UI {
     public class ListViewItemComparer : IViewComparer {
