@@ -17,7 +17,7 @@ using SharpFile.UI;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
 
-namespace SharpFile {
+namespace SharpFile.UI {
     public class ListView : System.Windows.Forms.ListView, IView {
         private static readonly object lockObject = new object();
         private const int ALT = 32;

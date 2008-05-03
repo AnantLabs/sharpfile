@@ -11,7 +11,7 @@ using SharpFile.IO.ParentResources;
 using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
 
-namespace SharpFile {
+namespace SharpFile.UI {
     public class FileBrowser : TabPage {
         private const int filterWidth = 50;
         private static readonly object lockObject = new object();

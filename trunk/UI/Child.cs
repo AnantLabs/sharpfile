@@ -6,7 +6,7 @@ using Common.Logger;
 using SharpFile.Infrastructure;
 using View = SharpFile.Infrastructure.View;
 
-namespace SharpFile {
+namespace SharpFile.UI {
     public class Child : UserControl {
         public event View.GetImageIndexDelegate GetImageIndex;
         public event View.UpdatePathDelegate UpdatePath;

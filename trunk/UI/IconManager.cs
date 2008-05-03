@@ -22,7 +22,7 @@ namespace SharpFile.UI {
         public static int GetImageIndex(IResource resource, ImageList imageList) {
             int imageIndex = -1;
 
-            if (Settings.Instance.Icons.ShowIcons && resource != null && imageList != null) {
+            if (Settings.Instance.IconSettings.ShowIcons && resource != null && imageList != null) {
                 try {
                     // Prevent more than one thread from updating the ImageList at a time.
                     lock (lockObject) {
@@ -37,8 +37,8 @@ namespace SharpFile.UI {
 
                         // Specifies whether overlays are turned on for all files, or if they have 
                         // been turned on specifically for some paths.
-                        if (Settings.Instance.Icons.ShowAllOverlays ||
-                            Settings.Instance.Icons.ShowOverlayPaths.Find(delegate(string s) {
+                        if (Settings.Instance.IconSettings.ShowOverlaysForAllPaths ||
+                            Settings.Instance.IconSettings.ShowOverlayPaths.Find(delegate(string s) {
                             return (fullPath.Contains(s));
                         }) != null) {
                             showOverlay = true;
@@ -55,7 +55,7 @@ namespace SharpFile.UI {
 							// Catch the ArgumentException because CompressedFileInfo/CompressedDirectoryInfo do not have the correct Root.
 						}
 
-                        if (Settings.Instance.Icons.IntensiveSearchDriveTypeEnums.Find(delegate(FullyQualifiedEnum f) {
+                        if (Settings.Instance.IconSettings.IntensiveSearchDriveTypeEnums.Find(delegate(FullyQualifiedEnum f) {
                             return f.ToString().Equals(driveTypeFullyQualifiedEnum);
                         }) != null) {
                             isIntensiveSearch = true;
@@ -71,7 +71,7 @@ namespace SharpFile.UI {
 
                             if (showOverlay ||
                                 (string.IsNullOrEmpty(extension) ||
-                                Settings.Instance.Icons.Extensions.Contains(extension))) {
+                                Settings.Instance.IconSettings.RetrieveIconExtensions.Contains(extension))) {
                                 // Add the full name of the file if it is an executable into the ImageList.
                                 if (!iconHash.ContainsKey(fullPath)) {
                                     Icon icon = IconReader.GetIcon(iconSize, fullPath, true, isIntensiveSearch, 
