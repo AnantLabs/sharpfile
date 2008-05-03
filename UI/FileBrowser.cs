@@ -504,27 +504,10 @@ namespace SharpFile.UI {
         public string Path {
             get {
                 if (string.IsNullOrEmpty(this.tlsPath.Text)) {
-                    if (ParentResource == null ||
-                        string.IsNullOrEmpty(ParentResource.Name)) {
-                        this.tlsPath.Text = @"C:\";
-
-                        Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                            @"Path is null for {0}; assume C:\ is valid.", Name);
-                    } else {
-                        this.tlsPath.Text = ParentResource.Name;
-                    }
+                    this.tlsPath.Text = ParentResource.Name;
                 }
 
-                if (this.tlsPath.Text.Contains(":") &&
-                    !this.tlsPath.Text.Contains(FileSystemInfo.DirectorySeparator)) {
-                    this.tlsPath.Text += FileSystemInfo.DirectorySeparator;
-                } else if (!this.tlsPath.Text.Contains(@":\")) {
-                    this.tlsPath.Text += @":\";
-                } else if (this.tlsPath.Text.EndsWith("/")) {
-                    this.tlsPath.Text = this.tlsPath.Text.Replace("/", FileSystemInfo.DirectorySeparator);
-                }
-
-                return this.tlsPath.Text;
+                return General.CleanupPath(this.tlsPath.Text);
             }
             set {
                 if (value != null) {
@@ -639,7 +622,7 @@ namespace SharpFile.UI {
 
         public FormatTemplate DriveFormatTemplate {
             get {
-				return Settings.Instance.DualParent.Panel2.DriveFormatTemplate;
+                return Forms.GetPropertyInParent<FormatTemplate>(this.Parent, "DriveFormatTemplate");
             }
         }
         #endregion

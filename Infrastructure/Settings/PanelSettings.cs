@@ -8,7 +8,7 @@ namespace SharpFile.Infrastructure {
         private List<string> paths = new List<string>();
         private bool collapsed = false;
         private bool showFilter = true;
-        private FormatTemplate driveFormatTemplate = new FormatTemplate("{Name} &lt;{Size}&gt;");
+        private FormatTemplate driveFormatTemplate;
 
         [XmlArray("Paths")]
         [XmlArrayItem("Path")]
@@ -39,13 +39,18 @@ namespace SharpFile.Infrastructure {
             }
         }
 
-
         public FormatTemplate DriveFormatTemplate {
             get {
+                if (driveFormatTemplate == null) {
+                    driveFormatTemplate = new FormatTemplate("{Name} <{Size}>");
+                }
+
                 return driveFormatTemplate;
             }
             set {
                 driveFormatTemplate = value;
+
+                
             }
         }
     }

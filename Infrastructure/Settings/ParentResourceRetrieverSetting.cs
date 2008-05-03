@@ -10,10 +10,10 @@ namespace SharpFile.Infrastructure {
         public ParentResourceRetrieverSetting() {
         }
 
-        public ParentResourceRetrieverSetting(string name, FullyQualifiedType fullyQualifiedType, List<string> childResourceRetrievers) {
+        public ParentResourceRetrieverSetting(string name, FullyQualifiedType fullyQualifiedType, params string[] childResourceRetrievers) {
             this.name = name;
             this.fullyQualifiedType = fullyQualifiedType;
-            this.childResourceRetrievers = childResourceRetrievers;
+            this.childResourceRetrievers = new List<string>(childResourceRetrievers);
         }
 
         [XmlAttribute("Name")]
@@ -44,6 +44,6 @@ namespace SharpFile.Infrastructure {
             set {
                 childResourceRetrievers = value;
             }
-        }        
+        }
     }
 }
