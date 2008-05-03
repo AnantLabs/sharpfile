@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.SettingsSection;
 using SharpFile.IO.ChildResources;
 
 namespace SharpFile.UI {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.Infrastructure {
 	public interface IView {
