@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
+using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.Infrastructure {
     /// <summary>
@@ -42,13 +43,13 @@ namespace SharpFile.Infrastructure {
         private List<IParentResourceRetriever> parentResourceRetrievers;
 
         // Sub-settings.
-        private DualParentSettings dualParentSettings;
-        private IconSettings iconSettings;
-        private PreviewPanelSettings previewPanelSettings;
-        private LoggerSettings loggerSettings;
-        private List<ToolSetting> toolSettings;
-        private List<ViewSetting> viewSettings;
-        private List<ParentResourceRetrieverSetting> parentResourceRetrieverSettings;
+        private DualParent dualParentSettings;
+        private Icons iconSettings;
+        private PreviewPanel previewPanelSettings;
+        private Logger loggerSettings;
+        private List<Tool> toolSettings;
+        private List<SettingsSection.View> viewSettings;
+        private List<ParentResourceRetriever> parentResourceRetrieverSettings;
 
         #region Ctors.
         /// <summary>
@@ -63,13 +64,13 @@ namespace SharpFile.Infrastructure {
         /// Internal instance ctor.
         /// </summary>
         private Settings() {
-            dualParentSettings = new DualParentSettings();
-            iconSettings = new IconSettings();
-            previewPanelSettings = new PreviewPanelSettings();
-            loggerSettings = new LoggerSettings();
-            toolSettings = new List<ToolSetting>();
-            viewSettings = new List<ViewSetting>();
-            parentResourceRetrieverSettings = new List<ParentResourceRetrieverSetting>();
+            dualParentSettings = new DualParent();
+            iconSettings = new Icons();
+            previewPanelSettings = new PreviewPanel();
+            loggerSettings = new Logger();
+            toolSettings = new List<Tool>();
+            viewSettings = new List<SettingsSection.View>();
+            parentResourceRetrieverSettings = new List<ParentResourceRetriever>();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -320,7 +321,7 @@ namespace SharpFile.Infrastructure {
         /// Logger info.
         /// </summary>
         [XmlElement("Logger")]
-        public LoggerSettings LoggerSettings {
+        public Logger LoggerSettings {
             get {
                 return loggerSettings;
             }
@@ -334,7 +335,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         [XmlArray("ParentResourceRetrievers")]
         [XmlArrayItem("ParentResourceRetriever")]
-        public List<ParentResourceRetrieverSetting> ParentResourceRetrieverSettings {
+        public List<ParentResourceRetriever> ParentResourceRetrieverSettings {
             get {
                 return parentResourceRetrieverSettings;
             }
@@ -343,7 +344,7 @@ namespace SharpFile.Infrastructure {
 
                 if (parentResourceRetrieverSettings.Count == 0) {
                     FullyQualifiedType retrieverType = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DriveRetriever");
-                    ParentResourceRetrieverSetting retriever = new ParentResourceRetrieverSetting(
+                    ParentResourceRetriever retriever = new ParentResourceRetriever(
                         "DriveRetriever", retrieverType, "CompressedRetriever", "DefaultRetriever");
                     parentResourceRetrieverSettings.Add(retriever);
                 }
@@ -369,7 +370,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         [XmlArray("Views")]
         [XmlArrayItem("View")]
-        public List<ViewSetting> ViewSettings {
+        public List<SettingsSection.View> ViewSettings {
             get {
                 return viewSettings;
             }
@@ -379,7 +380,7 @@ namespace SharpFile.Infrastructure {
                 if (viewSettings.Count == 0) {
                     FullyQualifiedType viewType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListView");
                     FullyQualifiedType comparerType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListViewItemComparer");
-                    viewSettings.Add(new ViewSetting("ListView", viewType, comparerType));
+                    viewSettings.Add(new SettingsSection.View("ListView", viewType, comparerType));
                 }
             }
         }
@@ -389,7 +390,7 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         [XmlArray("Tools")]
         [XmlArrayItem("Tool")]
-        public List<ToolSetting> ToolSettings {
+        public List<Tool> ToolSettings {
             get {
                 return toolSettings;
             }
@@ -397,7 +398,7 @@ namespace SharpFile.Infrastructure {
                 toolSettings = value;
 
                 if (toolSettings.Count == 0) {
-                    toolSettings.Add(new ToolSetting("Command Prompt", "cmd", "/K cd {SelectedPath}"));
+                    toolSettings.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
                 }
             }
         }
@@ -407,7 +408,7 @@ namespace SharpFile.Infrastructure {
         /// Dual parent settings.
         /// </summary>
         [XmlElement("DualParent")]
-        public DualParentSettings DualParent {
+        public DualParent DualParent {
             get {
                 return dualParentSettings;
             }
@@ -420,7 +421,7 @@ namespace SharpFile.Infrastructure {
         /// Icon settings.
         /// </summary>
         [XmlElement("Icons")]
-        public IconSettings IconSettings {
+        public Icons IconSettings {
             get {
                 if (iconSettings.RetrieveIconExtensions.Count == 0) {
                     iconSettings.RetrieveIconExtensions.AddRange(new string[] { ".exe", ".lnk", ".ps", ".scr", ".ico", ".icn" });
@@ -443,7 +444,7 @@ namespace SharpFile.Infrastructure {
         /// Icon settings.
         /// </summary>
         [XmlElement("PreviewPanel")]
-        public PreviewPanelSettings PreviewPanel {
+        public PreviewPanel PreviewPanel {
             get {
                 return previewPanelSettings;
             }
@@ -499,7 +500,7 @@ namespace SharpFile.Infrastructure {
                 if (parentResourceRetrievers == null || parentResourceRetrievers.Count == 0) {
                     parentResourceRetrievers = new List<IParentResourceRetriever>(parentResourceRetrieverSettings.Count);
 
-                    foreach (ParentResourceRetrieverSetting parentResourceRetrieverSetting in parentResourceRetrieverSettings) {
+                    foreach (ParentResourceRetriever parentResourceRetrieverSetting in parentResourceRetrieverSettings) {
                         try {
                             IParentResourceRetriever parentResourceRetriever = Reflection.InstantiateObject<IParentResourceRetriever>(
                                 parentResourceRetrieverSetting.FullyQualifiedType.Assembly,
@@ -526,7 +527,7 @@ namespace SharpFile.Infrastructure {
                                             childResourceRetriever.FilterMethod += (ChildResourceRetriever.FilterMethodDelegate)childResourceRetrieverInfo.FilterMethod;
                                         }
 
-                                        ViewSetting viewSetting = viewSettings.Find(delegate(ViewSetting v) {
+                                        SettingsSection.View viewSetting = viewSettings.Find(delegate(SettingsSection.View v) {
                                             return v.Name == childResourceRetrieverInfo.View;
                                         });
 

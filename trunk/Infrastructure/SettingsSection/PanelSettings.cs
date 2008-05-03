@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace SharpFile.Infrastructure {
+namespace SharpFile.Infrastructure.SettingsSection {
     [Serializable]
-    public sealed class PanelSettings {
+    public sealed class Panel {
         private List<string> paths = new List<string>();
         private bool collapsed = false;
         private bool showFilter = true;

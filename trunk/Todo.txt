@@ -1,4 +1,4 @@
-- rename settings classes to settingsection
+- rename settings classes to SettingsSection
 - fast filesystem watcher events throw an error (compress a small file)
 - merge infos and settings, so there is consistency
 - instead of using the settings.config files, just use default values to be serialized

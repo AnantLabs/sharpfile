@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace SharpFile.Infrastructure {
-    public sealed class IconSettings {
+namespace SharpFile.Infrastructure.SettingsSection {
+    public sealed class Icons {
         private bool showIcons = true;
         private bool showOverlaysForAllPaths = false;
         private List<string> showOverlayPaths = new List<string>();

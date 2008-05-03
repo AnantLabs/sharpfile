@@ -4,17 +4,17 @@ using System.Xml.Serialization;
 using Common;
 using Common.Logger;
 
-namespace SharpFile.Infrastructure {
-    public class ViewSetting {
+namespace SharpFile.Infrastructure.SettingsSection {
+    public class View {
         private string name;
         private FullyQualifiedType fullyQualifiedType;
         private FullyQualifiedType comparerType;
         private IViewComparer comparer;
 
-        public ViewSetting() {
+        public View() {
         }
 
-        public ViewSetting(string name, FullyQualifiedType fullyQualifiedType, FullyQualifiedType comparerType) {
+        public View(string name, FullyQualifiedType fullyQualifiedType, FullyQualifiedType comparerType) {
             this.name = name;
             this.fullyQualifiedType = fullyQualifiedType;
             this.comparerType = comparerType;

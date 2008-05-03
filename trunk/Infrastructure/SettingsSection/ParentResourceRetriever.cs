@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
-namespace SharpFile.Infrastructure {
-    public class ParentResourceRetrieverSetting {
+namespace SharpFile.Infrastructure.SettingsSection {
+    public class ParentResourceRetriever {
         private FullyQualifiedType fullyQualifiedType;
         private string name;
         private List<string> childResourceRetrievers;
 
-        public ParentResourceRetrieverSetting() {
+        public ParentResourceRetriever() {
         }
 
-        public ParentResourceRetrieverSetting(string name, FullyQualifiedType fullyQualifiedType, params string[] childResourceRetrievers) {
+        public ParentResourceRetriever(string name, FullyQualifiedType fullyQualifiedType, params string[] childResourceRetrievers) {
             this.name = name;
             this.fullyQualifiedType = fullyQualifiedType;
             this.childResourceRetrievers = new List<string>(childResourceRetrievers);
