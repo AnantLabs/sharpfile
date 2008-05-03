@@ -44,10 +44,7 @@ namespace SharpFile.Infrastructure {
         private Icons iconSettings;
         private PreviewPanel previewPanelSettings;
         private Logger loggerSettings;
-        private Tools toolSettings;
-        private Views viewSettings;
-        private List<ParentResourceRetriever> parentResourceRetrieverSettings;
-        private List<SettingsSection.ChildResourceRetriever> childResourceRetrieverSettings;
+        private Retrievers retrieverSettings;
 
         #region Ctors.
         /// <summary>
@@ -66,10 +63,7 @@ namespace SharpFile.Infrastructure {
             iconSettings = new Icons();
             previewPanelSettings = new PreviewPanel();
             loggerSettings = new Logger();
-            toolSettings = new Tools();
-            viewSettings = new Views();
-            parentResourceRetrieverSettings = new List<ParentResourceRetriever>();
-            childResourceRetrieverSettings = new List<SettingsSection.ChildResourceRetriever>();
+            retrieverSettings = new Retrievers();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -281,79 +275,30 @@ namespace SharpFile.Infrastructure {
         /// <summary>
         /// Resource retriever infos.
         /// </summary>
-        [XmlArray("ParentResourceRetrievers")]
-        [XmlArrayItem("ParentResourceRetriever")]
-        public List<ParentResourceRetriever> ParentResourceRetrieverSettings {
+        [XmlElement("Retrievers")]
+        public Retrievers RetrieverSettings {
             get {
-                return parentResourceRetrieverSettings;
-            }
-            set {
-                parentResourceRetrieverSettings = value;
-
-                if (parentResourceRetrieverSettings.Count == 0) {
+                if (retrieverSettings.ParentResourceRetrievers.Count == 0) {
                     FullyQualifiedType type = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DriveRetriever");
                     ParentResourceRetriever retriever = new ParentResourceRetriever(
                         "DriveRetriever", type, "CompressedRetriever", "DefaultRetriever");
-                    parentResourceRetrieverSettings.Add(retriever);
+                    retrieverSettings.ParentResourceRetrievers.Add(retriever);
                 }
-            }
-        }
 
-        /// <summary>
-        /// Child resource retrievers infos.
-        /// </summary>
-        [XmlArray("ChildResourceRetrievers")]
-        [XmlArrayItem("ChildResourceRetriever")]
-        public List<SettingsSection.ChildResourceRetriever> ChildResourceRetrieverSettings {
-            get {
-                //if (childResourceRetrieverSettings.Count == 0) {
-                //    childResourceRetrieverSettings = SettingsSection.ChildResourceRetriever.GenerateDefaults();
-                //}
-
-                return childResourceRetrieverSettings;
-            }
-            set {
-                childResourceRetrieverSettings = value;
-
-                if (childResourceRetrieverSettings.Count == 0) {
-                    childResourceRetrieverSettings = SettingsSection.ChildResourceRetriever.GenerateDefaults();
+                if (retrieverSettings.ChildResourceRetrievers.Count == 0) {
+                    retrieverSettings.ChildResourceRetrievers = SettingsSection.ChildResourceRetriever.GenerateDefaults();
                 }
-            }
-        }
 
-        /// <summary>
-        /// View infos.
-        /// </summary>
-        public Views ViewSettings {
-            get {
-                if (viewSettings.Count == 0) {
+                if (retrieverSettings.Views.Count == 0) {
                     FullyQualifiedType viewType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListView");
                     FullyQualifiedType comparerType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListViewItemComparer");
-                    viewSettings.Add(new SettingsSection.View("ListView", viewType, comparerType));
+                    retrieverSettings.Views.Add(new SettingsSection.View("ListView", viewType, comparerType));
                 }
 
-                return viewSettings;
+                return retrieverSettings;
             }
             set {
-                viewSettings = value;
-
-                
-            }
-        }
-
-        /// <summary>
-        /// Tool infos.
-        /// </summary>
-        public Tools ToolSettings {
-            get {
-                if (toolSettings.Count == 0) {
-                    toolSettings.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
-                }
-
-                return toolSettings;
-            }
-            set {
-                toolSettings = value;
+                retrieverSettings = value;
             }
         }
 
@@ -364,6 +309,10 @@ namespace SharpFile.Infrastructure {
         [XmlElement("DualParent")]
         public DualParent DualParent {
             get {
+                if (dualParentSettings.Tools.Count == 0) {
+                    dualParentSettings.Tools = Tool.GenerateDefaults();
+                }
+
                 return dualParentSettings;
             }
             set {
@@ -454,16 +403,16 @@ namespace SharpFile.Infrastructure {
         public List<IParentResourceRetriever> ParentResourceRetrievers {
             get {
                 if (parentResourceRetrievers == null || parentResourceRetrievers.Count == 0) {
-                    parentResourceRetrievers = new List<IParentResourceRetriever>(parentResourceRetrieverSettings.Count);
+                    parentResourceRetrievers = new List<IParentResourceRetriever>(retrieverSettings.ParentResourceRetrievers.Count);
 
-                    foreach (ParentResourceRetriever parentResourceRetrieverSetting in parentResourceRetrieverSettings) {
+                    foreach (ParentResourceRetriever parentResourceRetrieverSetting in retrieverSettings.ParentResourceRetrievers) {
                         try {
                             IParentResourceRetriever parentResourceRetriever = Reflection.InstantiateObject<IParentResourceRetriever>(
                                 parentResourceRetrieverSetting.FullyQualifiedType.Assembly,
                                 parentResourceRetrieverSetting.FullyQualifiedType.Type);
 
                             foreach (string childResourceRetrieverName in parentResourceRetrieverSetting.ChildResourceRetrievers) {
-                                SettingsSection.ChildResourceRetriever childResourceRetrieverInfo = childResourceRetrieverSettings.Find(delegate(SettingsSection.ChildResourceRetriever c) {
+                                SettingsSection.ChildResourceRetriever childResourceRetrieverInfo = retrieverSettings.ChildResourceRetrievers.Find(delegate(SettingsSection.ChildResourceRetriever c) {
                                     return c.Name == childResourceRetrieverName;
                                 });
 
@@ -483,7 +432,7 @@ namespace SharpFile.Infrastructure {
                                             childResourceRetriever.FilterMethod += (ChildResourceRetriever.FilterMethodDelegate)childResourceRetrieverInfo.FilterMethod;
                                         }
 
-                                        SettingsSection.View viewSetting = viewSettings.Find(delegate(SettingsSection.View v) {
+                                        SettingsSection.View viewSetting = retrieverSettings.Views.Find(delegate(SettingsSection.View v) {
                                             return v.Name == childResourceRetrieverInfo.View;
                                         });
 

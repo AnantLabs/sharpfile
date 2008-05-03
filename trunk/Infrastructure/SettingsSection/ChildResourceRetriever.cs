@@ -158,13 +158,19 @@ namespace SharpFile.Infrastructure.SettingsSection {
             childResourceRetrieverSettings.Add(retriever);
 
             // Compressed retriever.
-            type = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DefaultRetriever");
-            method = new FullyQualifiedMethod("TrueFilterMethod",
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"));
+            type = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.CompressedRetrievers.ReadOnlyCompressedRetriever");
+            method = new FullyQualifiedMethod("IsFileWithExtension",
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"),
+                ".zip");
 
             columnInfos = new List<ColumnInfo>();
             columnInfos.Add(new ColumnInfo("Filename", "DisplayName", true));
             columnInfos.Add(new ColumnInfo("Size", "Size", false,
+                new FullyQualifiedMethod("GetHumanReadableSize",
+                    new FullyQualifiedType("Common", "Common.General")),
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DriveInfo")));
+            columnInfos.Add(new ColumnInfo("Compressed Size", "CompressedSize", false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),

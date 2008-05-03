@@ -20,6 +20,10 @@ namespace SharpFile.Infrastructure {
             : this(name, fullyQualifiedType, new List<string>()) {
         }
 
+        public FullyQualifiedMethod(string name, FullyQualifiedType fullyQualifiedType, params string[] arguments) :
+            this(name, fullyQualifiedType, new List<string>(arguments)) {
+        }
+
         public FullyQualifiedMethod(string name, FullyQualifiedType fullyQualifiedType, List<string> arguments) {
             this.name = name;
             this.fullyQualifiedType = fullyQualifiedType;

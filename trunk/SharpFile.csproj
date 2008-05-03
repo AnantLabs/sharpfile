@@ -75,15 +75,13 @@
     <Compile Include="Infrastructure\SettingsSection\ColumnInfo.cs" />
     <Compile Include="Infrastructure\SettingsSection\DualParent.cs" />
     <Compile Include="Infrastructure\SettingsSection\Icons.cs" />
-    <Compile Include="Infrastructure\SettingsSection\LoggerSettings.cs" />
-    <Compile Include="Infrastructure\SettingsSection\MdiParentSettings.cs" />
-    <Compile Include="Infrastructure\SettingsSection\PanelSettings.cs" />
+    <Compile Include="Infrastructure\SettingsSection\Logger.cs" />
+    <Compile Include="Infrastructure\SettingsSection\Panel.cs" />
     <Compile Include="Infrastructure\SettingsSection\ParentResourceRetriever.cs" />
+    <Compile Include="Infrastructure\SettingsSection\Retrievers.cs" />
     <Compile Include="Infrastructure\SettingsSection\PreviewPanel.cs" />
     <Compile Include="Infrastructure\SettingsSection\Tool.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Tools.cs" />
     <Compile Include="Infrastructure\SettingsSection\View.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Views.cs" />
     <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
     <Compile Include="Infrastructure\WindowsApi\FILETIME.cs" />
     <Compile Include="Infrastructure\WindowsApi\Kernel32.cs" />
@@ -128,7 +126,6 @@
     <Compile Include="Infrastructure\Interfaces\IViewComparer.cs" />
     <Compile Include="Infrastructure\Nodes.cs" />
     <Compile Include="Infrastructure\ParentType.cs" />
-    <Compile Include="Infrastructure\Resource.Designer.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\FileInfo.cs" />
@@ -153,9 +150,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="UI\BaseParent.resx">
       <DependentUpon>BaseParent.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Infrastructure\Resource.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="UI\TabControl.cs">
@@ -202,10 +196,6 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Infrastructure\Resources\ilmerge_settings.config" />
-    <None Include="Infrastructure\Resources\settings.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

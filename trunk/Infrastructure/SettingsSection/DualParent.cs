@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure.SettingsSection {    
     public sealed class DualParent {
@@ -8,6 +9,36 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private Orientation orientation = Orientation.Vertical;        
         private Panel panel1 = new Panel();
         private Panel panel2 = new Panel();
+        private List<Tool> tools = new List<Tool>();
+
+        public int SplitterPercentage {
+            get {
+                return splitterPercentage;
+            }
+            set {
+                splitterPercentage = value;
+            }
+        }
+
+        public Orientation Orientation {
+            get {
+                return orientation;
+            }
+            set {
+                orientation = value;
+            }
+        }
+
+        [XmlArray("Tools")]
+        [XmlArrayItem("Tool")]
+        public List<Tool> Tools {
+            get {
+                return tools;
+            }
+            set {
+                tools = value;
+            }
+        }
 
         [XmlElement("Panel1")]
         public Panel Panel1 {
@@ -34,24 +65,6 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 panel2 = value;
-            }
-        }
-
-        public int SplitterPercentage {
-            get {
-                return splitterPercentage;
-            }
-            set {
-                splitterPercentage = value;
-            }
-        }
-
-        public Orientation Orientation {
-            get {
-                return orientation;
-            }
-            set {
-                orientation = value;
             }
         }
     }
