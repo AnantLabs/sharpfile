@@ -32,23 +32,23 @@ namespace SharpFile.Infrastructure {
         private Nodes keyCodes;
         private bool directoriesSortedFirst = true;
         private bool showParentDirectory = true;
-        private bool showRootDirectory = false;
+        private bool showRootDirectory = true;
 
         // Infos.
         private List<ParentResourceRetrieverInfo> parentResourceRetrieverInfos;
-        private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;
-        private List<ViewInfo> viewInfos;
-        private List<ToolInfo> toolInfos;
-        private LoggerInfo loggerInfo;
+        private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;        
 
         // Constructed from infos.
-        private LoggerService logger;
+        private LoggerService loggerService;
         private List<IParentResourceRetriever> parentResourceRetrievers;
 
         // Sub-settings.
         private DualParentSettings dualParentSettings;
         private IconSettings iconSettings;
         private PreviewPanelSettings previewPanelSettings;
+        private LoggerSettings loggerSettings;
+        private List<ToolSetting> toolSettings;
+        private List<ViewSetting> viewSettings;
 
         #region Ctors.
         /// <summary>
@@ -66,6 +66,9 @@ namespace SharpFile.Infrastructure {
             dualParentSettings = new DualParentSettings();
             iconSettings = new IconSettings();
             previewPanelSettings = new PreviewPanelSettings();
+            loggerSettings = new LoggerSettings();
+            toolSettings = new List<ToolSetting>();
+            viewSettings = new List<ViewSetting>();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -316,12 +319,12 @@ namespace SharpFile.Infrastructure {
         /// Logger info.
         /// </summary>
         [XmlElement("Logger")]
-        public LoggerInfo LoggerInfo {
+        public LoggerSettings LoggerSettings {
             get {
-                return loggerInfo;
+                return loggerSettings;
             }
             set {
-                loggerInfo = value;
+                loggerSettings = value;
             }
         }
 
@@ -358,12 +361,18 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         [XmlArray("Views")]
         [XmlArrayItem("View")]
-        public List<ViewInfo> ViewInfos {
+        public List<ViewSetting> ViewSettings {
             get {
-                return viewInfos;
+                return viewSettings;
             }
             set {
-                viewInfos = value;
+                viewSettings = value;
+
+                if (viewSettings.Count == 0) {
+                    FullyQualifiedType viewType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListView");
+                    FullyQualifiedType comparerType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListViewItemComparer");
+                    viewSettings.Add(new ViewSetting("ListView", viewType, comparerType));
+                }
             }
         }
 
@@ -372,12 +381,16 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         [XmlArray("Tools")]
         [XmlArrayItem("Tool")]
-        public List<ToolInfo> ToolInfos {
+        public List<ToolSetting> ToolSettings {
             get {
-                return toolInfos;
+                return toolSettings;
             }
             set {
-                toolInfos = value;
+                toolSettings = value;
+
+                if (toolSettings.Count == 0) {
+                    toolSettings.Add(new ToolSetting("Command Prompt", "cmd", "/K cd {SelectedPath}"));
+                }
             }
         }
 
@@ -399,12 +412,22 @@ namespace SharpFile.Infrastructure {
         /// Icon settings.
         /// </summary>
         [XmlElement("Icons")]
-        public IconSettings Icons {
+        public IconSettings IconSettings {
             get {
                 return iconSettings;
             }
             set {
                 iconSettings = value;
+
+                if (iconSettings.RetrieveIconExtensions.Count == 0) {
+                    iconSettings.RetrieveIconExtensions.AddRange(new string[] { ".exe", ".lnk", ".ps", ".scr", ".ico", ".icn" });
+                }
+
+                if (iconSettings.IntensiveSearchDriveTypeEnums.Count == 0) {
+                    FullyQualifiedType driveType = new FullyQualifiedType("System", "System.IO.DriveType");
+                    FullyQualifiedEnum driveTypeEnum = new FullyQualifiedEnum("Fixed", driveType);
+                    iconSettings.IntensiveSearchDriveTypeEnums.Add(driveTypeEnum);
+                }
             }
         }
 
@@ -418,6 +441,12 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 previewPanelSettings = value;
+
+                if (previewPanelSettings.DetailTextExtensions.Count == 0) {
+                    previewPanelSettings.DetailTextExtensions.AddRange(new string[] { 
+                        string.Empty, ".txt", ".config", ".xml", ".ini", ".cs", ".log" 
+                    });
+                }
             }
         }
         #endregion
@@ -429,11 +458,11 @@ namespace SharpFile.Infrastructure {
         [XmlIgnore]
         public LoggerService Logger {
             get {
-                if (logger == null) {
-                    logger = new LoggerService(loggerInfo.File, loggerInfo.LogLevel);
+                if (loggerService == null) {
+                    loggerService = new LoggerService(loggerSettings.File, loggerSettings.LogLevel);
                 }
 
-                return logger;
+                return loggerService;
             }
         }
 
@@ -489,25 +518,25 @@ namespace SharpFile.Infrastructure {
                                             childResourceRetriever.FilterMethod += (ChildResourceRetriever.FilterMethodDelegate)childResourceRetrieverInfo.FilterMethod;
                                         }
 
-                                        ViewInfo viewInfo = viewInfos.Find(delegate(ViewInfo v) {
+                                        ViewSetting viewSetting = viewSettings.Find(delegate(ViewSetting v) {
                                             return v.Name == childResourceRetrieverInfo.View;
                                         });
 
-                                        if (viewInfo != null) {
+                                        if (viewSetting != null) {
                                             try {
                                                 IView view = Reflection.InstantiateObject<IView>(
-                                                    viewInfo.FullyQualifiedType.Assembly,
-                                                    viewInfo.FullyQualifiedType.Type);
+                                                    viewSetting.FullyQualifiedType.Assembly,
+                                                    viewSetting.FullyQualifiedType.Type);
 
-                                                if (viewInfo.Comparer != null) {
-                                                    view.Comparer = viewInfo.Comparer;
+                                                if (viewSetting.Comparer != null) {
+                                                    view.Comparer = viewSetting.Comparer;
                                                 }
 
                                                 childResourceRetriever.View = view;
                                             } catch (TypeLoadException ex) {
                                                 Logger.Log(LogLevelType.ErrorsOnly,
                                                     "{0} is not derived from IView.",
-                                                    viewInfo.Name);
+                                                    viewSetting.Name);
                                             }
                                         } else {
                                             Logger.Log(LogLevelType.ErrorsOnly,
