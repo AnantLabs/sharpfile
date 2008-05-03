@@ -33,7 +33,7 @@ namespace SharpFile.Infrastructure {
         private Nodes keyCodes;
         private bool directoriesSortedFirst = true;
         private bool showParentDirectory = true;
-        private bool showRootDirectory = true;        
+        private bool showRootDirectory = true;
 
         // Constructed from settings.
         private LoggerService loggerService;
@@ -44,8 +44,8 @@ namespace SharpFile.Infrastructure {
         private Icons iconSettings;
         private PreviewPanel previewPanelSettings;
         private Logger loggerSettings;
-        private List<Tool> toolSettings;
-        private List<SettingsSection.View> viewSettings;
+        private Tools toolSettings;
+        private Views viewSettings;
         private List<ParentResourceRetriever> parentResourceRetrieverSettings;
         private List<SettingsSection.ChildResourceRetriever> childResourceRetrieverSettings;
 
@@ -66,8 +66,8 @@ namespace SharpFile.Infrastructure {
             iconSettings = new Icons();
             previewPanelSettings = new PreviewPanel();
             loggerSettings = new Logger();
-            toolSettings = new List<Tool>();
-            viewSettings = new List<SettingsSection.View>();
+            toolSettings = new Tools();
+            viewSettings = new Views();
             parentResourceRetrieverSettings = new List<ParentResourceRetriever>();
             childResourceRetrieverSettings = new List<SettingsSection.ChildResourceRetriever>();
 
@@ -112,66 +112,11 @@ namespace SharpFile.Infrastructure {
 
                 try {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
-                    bool settingsLoaded = false;
                     FileInfo fileInfo = new FileInfo(FilePath);
 
                     // If there is no settings file, create one from some defaults.
                     if (fileInfo.Exists && fileInfo.Length > 0) {
-                        try {
-                            // Set our instance properties from the Xml file.
-                            deserializeSettings(xmlSerializer);
-
-                            settingsLoaded = true;
-                        } catch (Exception ex) {
-                            loggerService.Log(LogLevelType.Verbose, ex,
-                                "There was an error generating the settings; defaults will be loaded instead.");
-
-                            settingsLoaded = false;
-
-                            // TODO: Show a message saying that default values will 
-                            // be loaded because there was an error.
-                        }
-                    } else {
-                        // TODO: Show a message saying that default values will 
-                        // be loaded because the file is missing or empty.
-                    }
-
-                    // Load up some defaults, since it doesn't look like any settings were found.
-                    if (!settingsLoaded) {
-                        // Retrieve default xml from the resource embedded in this assembly.
-                        XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
-                        xmlWriterSettings.Encoding = Encoding.UTF8;
-                        xmlWriterSettings.Indent = true;
-
-                        string settingsXml = Resource.settings;
-
-                        try {
-                            // Check to see if the SharpFile assembly has has the 
-                            // other assemblies ILMerged into it.
-                            Assembly assembly = Assembly.Load("SharpFile");
-
-                            List<Type> types = new List<Type>();
-                            types.AddRange(assembly.GetTypes());
-
-                            if (types.Find(delegate(Type t) {
-                                if (t != null && t.Namespace != null) {
-                                    return t.Namespace.Equals("Common");
-                                }
-
-                                return false;
-                            }) != null) {
-                                settingsXml = Resource.ilmerge_settings;
-                            }
-                        } catch (Exception ex) {
-                            loggerService.Log(LogLevelType.ErrorsOnly, ex, "Generating the correct setting.config file failed.");
-                        }
-
-                        using (XmlWriter xmlWriter = XmlWriter.Create(FilePath, xmlWriterSettings)) {
-                            XmlDocument xml = new XmlDocument();
-                            xml.LoadXml(settingsXml);
-                            xml.WriteTo(xmlWriter);
-                        }
-
+                        // Set our instance properties from the Xml file.
                         deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
@@ -186,10 +131,14 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         public static void Save() {
             lock (lockObject) {
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
+                try {
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
 
-                using (TextWriter tw = new StreamWriter(FilePath)) {
-                    xmlSerializer.Serialize(tw, Instance);
+                    using (TextWriter tw = new StreamWriter(FilePath)) {
+                        xmlSerializer.Serialize(tw, Instance);
+                    }
+                } catch (Exception ex) {
+                    instance.loggerService.Log(LogLevelType.ErrorsOnly, ex, "Error when saving settings.");
                 }
             }
         }
@@ -342,9 +291,9 @@ namespace SharpFile.Infrastructure {
                 parentResourceRetrieverSettings = value;
 
                 if (parentResourceRetrieverSettings.Count == 0) {
-                    FullyQualifiedType retrieverType = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DriveRetriever");
+                    FullyQualifiedType type = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DriveRetriever");
                     ParentResourceRetriever retriever = new ParentResourceRetriever(
-                        "DriveRetriever", retrieverType, "CompressedRetriever", "DefaultRetriever");
+                        "DriveRetriever", type, "CompressedRetriever", "DefaultRetriever");
                     parentResourceRetrieverSettings.Add(retriever);
                 }
             }
@@ -357,48 +306,54 @@ namespace SharpFile.Infrastructure {
         [XmlArrayItem("ChildResourceRetriever")]
         public List<SettingsSection.ChildResourceRetriever> ChildResourceRetrieverSettings {
             get {
+                //if (childResourceRetrieverSettings.Count == 0) {
+                //    childResourceRetrieverSettings = SettingsSection.ChildResourceRetriever.GenerateDefaults();
+                //}
+
                 return childResourceRetrieverSettings;
             }
             set {
                 childResourceRetrieverSettings = value;
+
+                if (childResourceRetrieverSettings.Count == 0) {
+                    childResourceRetrieverSettings = SettingsSection.ChildResourceRetriever.GenerateDefaults();
+                }
             }
         }
 
         /// <summary>
         /// View infos.
         /// </summary>
-        [XmlArray("Views")]
-        [XmlArrayItem("View")]
-        public List<SettingsSection.View> ViewSettings {
+        public Views ViewSettings {
             get {
-                return viewSettings;
-            }
-            set {
-                viewSettings = value;
-
                 if (viewSettings.Count == 0) {
                     FullyQualifiedType viewType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListView");
                     FullyQualifiedType comparerType = new FullyQualifiedType("SharpFile", "SharpFile.UI.ListViewItemComparer");
                     viewSettings.Add(new SettingsSection.View("ListView", viewType, comparerType));
                 }
+
+                return viewSettings;
+            }
+            set {
+                viewSettings = value;
+
+                
             }
         }
 
         /// <summary>
         /// Tool infos.
         /// </summary>
-        [XmlArray("Tools")]
-        [XmlArrayItem("Tool")]
-        public List<Tool> ToolSettings {
+        public Tools ToolSettings {
             get {
+                if (toolSettings.Count == 0) {
+                    toolSettings.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
+                }
+
                 return toolSettings;
             }
             set {
                 toolSettings = value;
-
-                if (toolSettings.Count == 0) {
-                    toolSettings.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
-                }
             }
         }
 
@@ -412,7 +367,7 @@ namespace SharpFile.Infrastructure {
                 return dualParentSettings;
             }
             set {
-                dualParentSettings = value;                
+                dualParentSettings = value;
             }
         }
 
@@ -435,7 +390,7 @@ namespace SharpFile.Infrastructure {
                 return iconSettings;
             }
             set {
-                iconSettings = value;                
+                iconSettings = value;
             }
         }
 
@@ -445,16 +400,18 @@ namespace SharpFile.Infrastructure {
         [XmlElement("PreviewPanel")]
         public PreviewPanel PreviewPanel {
             get {
-                return previewPanelSettings;
-            }
-            set {
-                previewPanelSettings = value;
-
                 if (previewPanelSettings.DetailTextExtensions.Count == 0) {
                     previewPanelSettings.DetailTextExtensions.AddRange(new string[] { 
                         string.Empty, ".txt", ".config", ".xml", ".ini", ".cs", ".log" 
                     });
                 }
+
+                return previewPanelSettings;
+            }
+            set {
+                previewPanelSettings = value;
+
+                
             }
         }
         #endregion

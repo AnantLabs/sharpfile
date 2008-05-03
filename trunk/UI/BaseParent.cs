@@ -379,7 +379,7 @@ namespace SharpFile.UI {
             this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 
-            foreach (Tool toolSetting in Settings.Instance.ToolSettings) {
+            foreach (Tool toolSetting in Settings.Instance.ToolSettings.List) {
                 ToolStripMenuItem menuItem = new ToolStripMenuItem(toolSetting.Name);
                 menuItem.Tag = toolSetting;
 

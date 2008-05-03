@@ -20,6 +20,15 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public ChildResourceRetriever() {
         }
 
+        public ChildResourceRetriever(string name, FullyQualifiedType fullyQualifiedType, FullyQualifiedMethod fullyQualifiedMethod,
+            string view, List<ColumnInfo> columnInfos) {
+            this.name = name;
+            this.fullyQualifiedType = fullyQualifiedType;
+            this.fullyQualifiedMethod = fullyQualifiedMethod;
+            this.view = view;
+            this.columnInfos = columnInfos;
+        }
+
         [XmlAttribute("Name")]
         public string Name {
             get {
@@ -27,17 +36,6 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 name = value;
-            }
-        }
-
-        [XmlArray("Columns")]
-        [XmlArrayItem("Column")]
-        public List<ColumnInfo> ColumnInfos {
-            get {
-                return columnInfos;
-            }
-            set {
-                columnInfos = value;
             }
         }
 
@@ -65,6 +63,17 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 view = value;
+            }
+        }
+
+        [XmlArray("Columns")]
+        [XmlArrayItem("Column")]
+        public List<ColumnInfo> ColumnInfos {
+            get {
+                return columnInfos;
+            }
+            set {
+                columnInfos = value;
             }
         }
 
@@ -116,6 +125,66 @@ namespace SharpFile.Infrastructure.SettingsSection {
 
                 return filterMethod;
             }
+        }
+
+        public static List<ChildResourceRetriever> GenerateDefaults() {
+            List<ChildResourceRetriever> childResourceRetrieverSettings = new List<ChildResourceRetriever>();
+
+            // Default retriever.
+            FullyQualifiedType type = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DefaultRetriever");
+            FullyQualifiedMethod method = new FullyQualifiedMethod("TrueFilterMethod",
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"));
+
+            List<ColumnInfo> columnInfos = new List<ColumnInfo>();
+            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", true));
+            columnInfos.Add(new ColumnInfo("Size", "Size", false,
+                new FullyQualifiedMethod("GetHumanReadableSize",
+                    new FullyQualifiedType("Common", "Common.General")),
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DriveInfo")));
+            columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", false,
+                new FullyQualifiedMethod("GetDateTimeShortDateString",
+                    new FullyQualifiedType("Common", "Common.General")),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
+            columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", false,
+                new FullyQualifiedMethod("GetDateTimeShortDateString",
+                    new FullyQualifiedType("Common", "Common.General")),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
+
+            SettingsSection.ChildResourceRetriever retriever = new SettingsSection.ChildResourceRetriever(
+                "DefaultRetriever", type, method, "ListView", columnInfos);
+            childResourceRetrieverSettings.Add(retriever);
+
+            // Compressed retriever.
+            type = new FullyQualifiedType("SharpFile", "SharpFile.IO.Retrievers.DefaultRetriever");
+            method = new FullyQualifiedMethod("TrueFilterMethod",
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"));
+
+            columnInfos = new List<ColumnInfo>();
+            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", true));
+            columnInfos.Add(new ColumnInfo("Size", "Size", false,
+                new FullyQualifiedMethod("GetHumanReadableSize",
+                    new FullyQualifiedType("Common", "Common.General")),
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DriveInfo")));
+            columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", false,
+                new FullyQualifiedMethod("GetDateTimeShortDateString",
+                    new FullyQualifiedType("Common", "Common.General")),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
+            columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", false,
+                new FullyQualifiedMethod("GetDateTimeShortDateString",
+                    new FullyQualifiedType("Common", "Common.General")),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
+
+            retriever = new SettingsSection.ChildResourceRetriever(
+                "CompressedRetriever", type, method, "ListView", columnInfos);
+            childResourceRetrieverSettings.Add(retriever);
+
+            return childResourceRetrieverSettings;
         }
     }
 }
