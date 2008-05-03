@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure {
-    [Serializable]
     public sealed class PreviewPanelSettings {
         private bool collapsed = false;
         private List<string> detailTextExtensions = new List<string>();
-        private FormatTemplate nameFormatTemplate = new FormatTemplate("{Name}");
+        private FormatTemplate nameFormatTemplate = new FormatTemplate("{Name} {LastWriteTime}");
         private int splitterPercentage = 10;
         private bool thumbnailImages = false;
         private int maximumLinesOfDetailText = 10;
         private bool showDetailTextForAllExtensions = false;
         private bool showAllDetailText = false;
 
+        /// <summary>
+        /// Whether or not to show detail text for all extensions.
+        /// </summary>
         public bool ShowDetailTextForAllExtensions {
             get {
                 return showDetailTextForAllExtensions;

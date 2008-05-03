@@ -1,9 +1,7 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Xml.Serialization;
 
-namespace SharpFile.Infrastructure {
-    [Serializable]
+namespace SharpFile.Infrastructure {    
     public sealed class DualParentSettings {
         private int splitterPercentage = 50;
         private Orientation orientation = Orientation.Vertical;        

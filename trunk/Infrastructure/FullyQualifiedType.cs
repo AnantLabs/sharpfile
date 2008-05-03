@@ -11,6 +11,14 @@ namespace SharpFile.Infrastructure {
         private string assembly;
         private string type;
 
+        public FullyQualifiedType() {
+        }
+
+        public FullyQualifiedType(string assembly, string type) {
+            this.assembly = assembly;
+            this.type = type;
+        }
+
         [XmlAttribute("Assembly")]
         public string Assembly {
             get {

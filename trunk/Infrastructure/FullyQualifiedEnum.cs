@@ -7,6 +7,14 @@ namespace SharpFile.Infrastructure {
         private FullyQualifiedType fullyQualifiedType;
         private string enumeration;
 
+        public FullyQualifiedEnum() {
+        }
+
+        public FullyQualifiedEnum(string enumeration, FullyQualifiedType fullyQualifiedType) {
+            this.enumeration = enumeration;
+            this.fullyQualifiedType = fullyQualifiedType;
+        }
+
         public FullyQualifiedType FullyQualifiedType {
             get {
                 return fullyQualifiedType;

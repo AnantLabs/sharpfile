@@ -5,11 +5,20 @@ using Common;
 using Common.Logger;
 
 namespace SharpFile.Infrastructure {
-    public class ViewInfo {
+    public class ViewSetting {
         private string name;
         private FullyQualifiedType fullyQualifiedType;
         private FullyQualifiedType comparerType;
         private IViewComparer comparer;
+
+        public ViewSetting() {
+        }
+
+        public ViewSetting(string name, FullyQualifiedType fullyQualifiedType, FullyQualifiedType comparerType) {
+            this.name = name;
+            this.fullyQualifiedType = fullyQualifiedType;
+            this.comparerType = comparerType;
+        }
 
         [XmlAttribute("Name")]
         public string Name {
