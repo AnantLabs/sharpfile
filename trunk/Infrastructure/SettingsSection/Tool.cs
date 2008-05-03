@@ -47,11 +47,5 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 arguments = value;
             }
         }
-
-        public static List<Tool> GenerateDefaults() {
-            List<Tool> tools = new List<Tool>();
-            tools.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
-            return tools;
-        }
     }
 }

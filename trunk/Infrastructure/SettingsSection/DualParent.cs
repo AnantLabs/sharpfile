@@ -67,5 +67,11 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 panel2 = value;
             }
         }
+
+        public static List<Tool> GenerateDefaultTools() {
+            List<Tool> tools = new List<Tool>();
+            tools.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
+            return tools;
+        }
     }
 }
