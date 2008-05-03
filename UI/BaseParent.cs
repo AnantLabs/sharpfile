@@ -5,11 +5,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using Common;
 using Common.Logger;
-using ProgressDisk;
 using SharpFile.Infrastructure;
-using SharpFile.UI;
 
-namespace SharpFile {
+namespace SharpFile.UI {
 	public class BaseParent : Form {
 		protected const string formName = "SharpFile";
 
@@ -20,7 +18,7 @@ namespace SharpFile {
 		private int progressCount = 0;
 		protected ToolTip toolTip = new ToolTip();
 		protected Timer timer = new Timer();
-		protected ProgressDisk.ProgressDisk progressDisk = new ProgressDisk.ProgressDisk();
+		protected ProgressDisk progressDisk = new ProgressDisk();
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 		protected MenuStrip menuStrip = new MenuStrip();

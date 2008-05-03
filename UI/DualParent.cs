@@ -4,9 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
-using SharpFile.UI;
 
-namespace SharpFile {
+namespace SharpFile.UI {
     public class DualParent : BaseParent {
         protected ToolStripMenuItem filterPanel1ToolStripMenuItem = new ToolStripMenuItem();
         protected ToolStripMenuItem filterPanel2ToolStripMenuItem = new ToolStripMenuItem();

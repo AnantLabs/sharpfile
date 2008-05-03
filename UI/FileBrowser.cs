@@ -8,7 +8,6 @@ using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
-using SharpFile.UI;
 using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile.UI {

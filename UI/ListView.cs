@@ -13,7 +13,6 @@ using Common.WindowsApi.Messages;
 using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
-using SharpFile.UI;
 using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
 

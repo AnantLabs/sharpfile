@@ -1,8 +1,8 @@
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 
 namespace SharpFile.UI {
 	public class TabControl : System.Windows.Forms.TabControl {

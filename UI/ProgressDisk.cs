@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
-namespace ProgressDisk {
+namespace SharpFile.UI {
 	[DefaultProperty("BlockSize")]
 	public class ProgressDisk : UserControl {
 		private GraphicsPath bkGroundPath1 = new GraphicsPath();
