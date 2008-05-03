@@ -1,9 +1,11 @@
-- CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
-- issues with tabs
-- instead of using the settings.config files, just use default values to be serialized
+- fast filesystem watcher events throw an error (compress a small file)
 - merge infos and settings, so there is consistency
-- split out listview class into other classes
+- instead of using the settings.config files, just use default values to be serialized
 - fix compressed files retriever (has to do with retrieving icons)
+- issues with tabs
+- CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
+
+- split out listview class into other classes
 - attributes for plugins (for when there is a settings UI)
 - large icons for preview panel
 
