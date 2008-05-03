@@ -4,7 +4,7 @@ using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-namespace SharpFile {
+namespace SharpFile.UI {
 	public class TabControl : System.Windows.Forms.TabControl {
 		private bool isVisible = true;
 

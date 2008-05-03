@@ -380,12 +380,12 @@ namespace SharpFile {
             this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 
-            foreach (ToolInfo toolInfo in Settings.Instance.ToolInfos) {
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(toolInfo.Name);
-                menuItem.Tag = toolInfo;
+            foreach (ToolSetting toolSetting in Settings.Instance.ToolSettings) {
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(toolSetting.Name);
+                menuItem.Tag = toolSetting;
 
                 menuItem.Click += (EventHandler)delegate {
-                    ToolInfo t = (ToolInfo)menuItem.Tag;
+                    ToolSetting t = (ToolSetting)menuItem.Tag;
 
                     if (!t.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
                         ProcessStartInfo processStartInfo = new ProcessStartInfo();
@@ -409,7 +409,7 @@ namespace SharpFile {
                     }
                 };
 
-                if (toolInfo.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
+                if (toolSetting.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
                     this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count, new ToolStripSeparator());
                 } else {
                     this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count, menuItem);
