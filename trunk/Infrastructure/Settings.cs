@@ -33,12 +33,9 @@ namespace SharpFile.Infrastructure {
         private Nodes keyCodes;
         private bool directoriesSortedFirst = true;
         private bool showParentDirectory = true;
-        private bool showRootDirectory = true;
+        private bool showRootDirectory = true;        
 
-        // Infos.        
-        private List<ChildResourceRetrieverInfo> childResourceRetrieverInfos;        
-
-        // Constructed from infos.
+        // Constructed from settings.
         private LoggerService loggerService;
         private List<IParentResourceRetriever> parentResourceRetrievers;
 
@@ -50,6 +47,7 @@ namespace SharpFile.Infrastructure {
         private List<Tool> toolSettings;
         private List<SettingsSection.View> viewSettings;
         private List<ParentResourceRetriever> parentResourceRetrieverSettings;
+        private List<SettingsSection.ChildResourceRetriever> childResourceRetrieverSettings;
 
         #region Ctors.
         /// <summary>
@@ -71,6 +69,7 @@ namespace SharpFile.Infrastructure {
             toolSettings = new List<Tool>();
             viewSettings = new List<SettingsSection.View>();
             parentResourceRetrieverSettings = new List<ParentResourceRetriever>();
+            childResourceRetrieverSettings = new List<SettingsSection.ChildResourceRetriever>();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -356,12 +355,12 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         [XmlArray("ChildResourceRetrievers")]
         [XmlArrayItem("ChildResourceRetriever")]
-        public List<ChildResourceRetrieverInfo> ChildResourceRetrieverInfos {
+        public List<SettingsSection.ChildResourceRetriever> ChildResourceRetrieverSettings {
             get {
-                return childResourceRetrieverInfos;
+                return childResourceRetrieverSettings;
             }
             set {
-                childResourceRetrieverInfos = value;
+                childResourceRetrieverSettings = value;
             }
         }
 
@@ -507,7 +506,7 @@ namespace SharpFile.Infrastructure {
                                 parentResourceRetrieverSetting.FullyQualifiedType.Type);
 
                             foreach (string childResourceRetrieverName in parentResourceRetrieverSetting.ChildResourceRetrievers) {
-                                ChildResourceRetrieverInfo childResourceRetrieverInfo = childResourceRetrieverInfos.Find(delegate(ChildResourceRetrieverInfo c) {
+                                SettingsSection.ChildResourceRetriever childResourceRetrieverInfo = childResourceRetrieverSettings.Find(delegate(SettingsSection.ChildResourceRetriever c) {
                                     return c.Name == childResourceRetrieverName;
                                 });
 
