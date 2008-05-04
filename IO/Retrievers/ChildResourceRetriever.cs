@@ -155,16 +155,13 @@ namespace SharpFile.IO.Retrievers {
         /// <returns></returns>
         public IChildResourceRetriever Clone() {
             // Instantiate an object for whatever type this currently is (so that derived classes can call this method).
-            IChildResourceRetriever childResourceRetriever = Reflection.InstantiateObject<IChildResourceRetriever>(
-                GetType().Assembly.FullName, GetType().FullName);
+            //Type type = this.GetType();
+            //IChildResourceRetriever childResourceRetriever = Reflection.InstantiateObject<T>(
+            //        type.Assembly.FullName, type.FullName);
+            IChildResourceRetriever childResourceRetriever = 
+                Reflection.DuplicateObject<IChildResourceRetriever>(this);
 
-            // Deep copy the column infos.
-            List<ColumnInfo> clonedColumnInfos = Reflection.DeepCopy<List<ColumnInfo>>(ColumnInfos);
-            childResourceRetriever.ColumnInfos = clonedColumnInfos;
-            childResourceRetriever.Name = Name;
-            childResourceRetriever.View = View;
-            childResourceRetriever.FilterMethodArguments = FilterMethodArguments;
-
+            // Attach events to the new retriever.
             childResourceRetriever.FilterMethod += OnFilterMethod;
             childResourceRetriever.FilterMethodWithArguments += OnFilterMethodWithArguments;
             childResourceRetriever.GetComplete += OnGetComplete;

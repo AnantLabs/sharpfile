@@ -3,6 +3,7 @@
 - issues with tabs
 - CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
 
+- figure out how to clone events from an object
 - split out listview class into other classes
 - attributes for plugins (for when there is a settings UI)
 - large icons for preview panel

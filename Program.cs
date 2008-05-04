@@ -21,6 +21,8 @@ namespace SharpFile {
 				Settings.Save();
 			};
 
+            Settings.Load();
+
             if (Settings.Instance.ParentType == ParentType.Dual) {
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
                     "Start the Dual program");
