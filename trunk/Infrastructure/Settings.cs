@@ -128,20 +128,7 @@ namespace SharpFile.Infrastructure {
         private static void deserializeSettings(XmlSerializer xmlSerializer) {
             using (TextReader tr = new StreamReader(FilePath)) {
                 Settings settings = (Settings)xmlSerializer.Deserialize(tr);
-
-                foreach (PropertyInfo propertyInfo in settings.GetType().GetProperties()) {
-                    // Only set properties which have a setter.
-                    if (propertyInfo.CanWrite) {
-                        PropertyCaller<Settings, object>.GenGetter getter = PropertyCaller<Settings, object>.CreateGetMethod(propertyInfo);
-                        PropertyCaller<Settings, object>.GenSetter setter = PropertyCaller<Settings, object>.CreateSetMethod(propertyInfo);
-                        setter(instance, getter(settings));
-
-                        //instance.GetType().GetProperty(propertyInfo.Name).SetValue(
-                        //    instance,
-                        //    propertyInfo.GetValue(settings, null),
-                        //    null);
-                    }
-                }
+                Reflection.DuplicateObject<Settings>(settings, instance);
             }
         }
         #endregion
