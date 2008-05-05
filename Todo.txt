@@ -1,4 +1,3 @@
-- fast filesystem watcher events throw an error (compress a small file)
 - fix compressed files retriever (has to do with retrieving icons)
 - issues with tabs
 - CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program

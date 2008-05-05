@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Common;
+using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.WindowsApi;
 
@@ -33,7 +34,8 @@ namespace SharpFile.IO.ChildResources {
 
             using (SafeFindHandle handle = Kernel32.FindFirstFile(validFullName, findData)) {
                 if (handle.IsInvalid) {
-                    throw new Exception("Filesystem object cannot be found for " + fullName);
+                    Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                        "Filesystem object cannot be found for {0}", fullName);
                 } else {
                     getDetails();
                 }
