@@ -1,5 +1,4 @@
 - fix compressed files retriever (has to do with retrieving icons)
-- issues with tabs
 - CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
 
 - figure out how to clone events from an object
