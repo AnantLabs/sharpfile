@@ -29,6 +29,14 @@ namespace SharpFile.UI {
             child1.TabControl.IsVisible = true;
             child1.Dock = DockStyle.Fill;
 
+            child1.UpdateStatus += delegate(string status) {
+                toolStripStatus.Text = status;
+            };
+
+            child1.UpdateProgress += delegate(int value) {
+                updateProgress(value);
+            };
+
             child1.GetImageIndex += delegate(IResource fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
@@ -44,6 +52,14 @@ namespace SharpFile.UI {
             child2.TabControl.IsVisible = true;
             child2.TabControl.Appearance = TabAppearance.FlatButtons;
 
+            child2.UpdateStatus += delegate(string status) {
+                toolStripStatus.Text = status;
+            };
+
+            child2.UpdateProgress += delegate(int value) {
+                updateProgress(value);
+            };
+
             child2.GetImageIndex += delegate(IResource fsi) {
                 return IconManager.GetImageIndex(fsi, ImageList);
             };
@@ -52,19 +68,6 @@ namespace SharpFile.UI {
                 this.Text = string.Format("{0} - {1}",
                                           formName,
                                           path);
-            };
-
-            this.Shown += delegate {
-                // Attach the handler to any children that have the specified event.
-                Forms.AddEventHandlerInChildren(this, "UpdateStatus",
-                (SharpFile.Infrastructure.View.UpdateStatusDelegate)delegate(string status) {
-                    toolStripStatus.Text = status;
-                });
-
-                Forms.AddEventHandlerInChildren(this, "UpdateProgress",
-                (SharpFile.Infrastructure.View.UpdateProgressDelegate)delegate(int value) {
-                    updateProgress(value);
-                });
             };
 
             splitContainer.SplitterWidth = 1;

@@ -8,6 +8,8 @@ using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile.UI {
     public class Child : UserControl {
+        public event View.UpdateStatusDelegate UpdateStatus;
+        public event View.UpdateProgressDelegate UpdateProgress;
         public event View.GetImageIndexDelegate GetImageIndex;
         public event View.UpdatePathDelegate UpdatePath;
 
@@ -29,6 +31,18 @@ namespace SharpFile.UI {
         }
 
         #region Events.
+        private void OnUpdateStatus(string status) {
+            if (UpdateStatus != null) {
+                UpdateStatus(status);
+            }
+        }
+
+        private void OnUpdateProgress(int value) {
+            if (UpdateProgress != null) {
+                UpdateProgress(value);
+            }
+        }
+
         private int OnGetImageIndex(IResource fsi) {
             if (GetImageIndex != null) {
                 return GetImageIndex(fsi);
@@ -37,17 +51,20 @@ namespace SharpFile.UI {
             return -1;
         }
 
-        private void tabControl_Selected(object sender, TabControlEventArgs e) {
-            this.Text = SelectedPath;
-            OnUpdatePath(SelectedPath);
-        }
-
         private void OnUpdatePath(string path) {
             if (UpdatePath != null) {
                 UpdatePath(path);
             }
         }
 
+        private void tabControl_Selected(object sender, TabControlEventArgs e) {
+            this.Text = SelectedPath;
+            OnUpdatePath(SelectedPath);
+
+            // Update status for the currently selected tab.
+            string status = Forms.GetPropertyInChild<string>(e.TabPage, "Status");
+            OnUpdateStatus(status);
+        }
         #endregion
 
         public void AddTab() {
@@ -59,6 +76,8 @@ namespace SharpFile.UI {
             FileBrowser fileBrowser = new FileBrowser(this.Name);
             fileBrowser.GetImageIndex += OnGetImageIndex;
             fileBrowser.UpdatePath += OnUpdatePath;
+            fileBrowser.UpdateProgress += OnUpdateProgress;
+            fileBrowser.UpdateStatus += OnUpdateStatus;
 
             fileBrowser.Path = path;
 
