@@ -133,7 +133,6 @@
     <Compile Include="IO\ChildResources\ParentDirectoryInfo.cs" />
     <Compile Include="IO\ChildResources\RootDirectoryInfo.cs" />
     <Compile Include="IO\FileSystemInfoFactory.cs" />
-    <Compile Include="IO\IOException.cs" />
     <Compile Include="IO\ParentResources\DriveInfo.cs" />
     <Compile Include="IO\Retrievers\DriveRetriever.cs" />
     <Compile Include="UI\ListView.cs">

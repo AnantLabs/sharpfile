@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
@@ -34,6 +32,7 @@ namespace SharpFile.Infrastructure {
         private bool directoriesSortedFirst = true;
         private bool showParentDirectory = true;
         private bool showRootDirectory = true;
+        private string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         // Constructed from settings.
         private LoggerService loggerService;
@@ -83,8 +82,6 @@ namespace SharpFile.Infrastructure {
         /// </summary>
         public static void Load() {
             lock (lockObject) {
-                LoggerService loggerService = new LoggerService("log.txt", LogLevelType.Verbose);
-
                 // Null out the reource retrievers in case settings are being reloaded.
                 instance.parentResourceRetrievers = null;
 
@@ -98,10 +95,42 @@ namespace SharpFile.Infrastructure {
                         deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
-                    loggerService.Log(LogLevelType.Verbose, ex,
+                    LoggerService loggerService = new LoggerService("log.txt", LogLevelType.ErrorsOnly);
+                    loggerService.Log(LogLevelType.ErrorsOnly, ex,
                         "There was an error generating the settings.");
+
+                    throw;
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks to see whether the current assembly version matches the version specified in the settings.
+        /// </summary>
+        /// <param name="settingsVersion">Version specified in the settings.</param>
+        /// <param name="assemblyVersion">Assembly-specified version.</param>
+        /// <returns>Whether the two versions are the same.</returns>
+        public static bool CheckSettingsVersion(ref string settingsVersion, ref string assemblyVersion) {
+            FileInfo fileInfo = new FileInfo(FilePath);
+
+            // If there is no settings file, create one from some defaults.
+            if (fileInfo.Exists && fileInfo.Length > 0) {
+                try {
+                    XmlDocument xml = new XmlDocument();
+                    xml.Load(fileInfo.FullName);
+
+                    assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    settingsVersion = xml.SelectSingleNode("/Settings/Version").InnerText;
+
+                    if (assemblyVersion != settingsVersion) {
+                        return false;
+                    }
+                } catch {
+                    // Ignore any xml exceptions here. They will be caught when the file attempts to deserialize.
+                }
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -145,9 +174,19 @@ namespace SharpFile.Infrastructure {
         #endregion
 
         #region Instance properties
+        public string Version {
+            get {
+                return version;
+            }
+            set {
+                version = value;
+            }
+        }
+
         /// <summary>
         /// Parent type.
         /// </summary>
+        [XmlIgnore]
         public ParentType ParentType {
             get {
                 return parentType;
