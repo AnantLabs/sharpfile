@@ -14,7 +14,6 @@ using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.SettingsSection;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
-using IOException = SharpFile.IO.IOException;
 using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile.UI {
@@ -353,7 +352,7 @@ namespace SharpFile.UI {
                                     // TODO: Need to handle links.
                                     break;
                             }
-                        } catch (IOException ex) {
+                        } catch (System.IO.IOException ex) {
                             Settings.Instance.Logger.ProcessContent += ShowMessageBox;
                             Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                                 "Failed to perform the specified operation for {0}", destination);

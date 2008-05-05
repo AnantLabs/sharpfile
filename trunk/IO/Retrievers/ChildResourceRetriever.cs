@@ -154,10 +154,7 @@ namespace SharpFile.IO.Retrievers {
         /// </summary>
         /// <returns></returns>
         public IChildResourceRetriever Clone() {
-            // Instantiate an object for whatever type this currently is (so that derived classes can call this method).
-            //Type type = this.GetType();
-            //IChildResourceRetriever childResourceRetriever = Reflection.InstantiateObject<T>(
-            //        type.Assembly.FullName, type.FullName);
+            // Clone this object to a new retriever.
             IChildResourceRetriever childResourceRetriever = 
                 Reflection.DuplicateObject<IChildResourceRetriever>(this);
 
