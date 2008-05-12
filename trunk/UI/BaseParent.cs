@@ -133,6 +133,7 @@ namespace SharpFile.UI {
 		private void initializeComponents() {
 			ComponentResourceManager resources = new ComponentResourceManager(typeof(BaseParent));
 
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.menuStrip.SuspendLayout();
 			this.statusStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -243,6 +244,10 @@ namespace SharpFile.UI {
 
 			this.aboutToolStripMenuItem.Size = new Size(173, 22);
 			this.aboutToolStripMenuItem.Text = "&About ...";
+            this.aboutToolStripMenuItem.Click += delegate {
+                AboutBox aboutBox = new AboutBox();
+                aboutBox.Show();
+            };
 
 			this.progressDisk.ActiveForeColor1 = Color.LightGray;
 			this.progressDisk.ActiveForeColor2 = Color.White;
