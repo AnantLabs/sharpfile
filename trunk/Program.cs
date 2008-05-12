@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.UI;
+using System.Reflection;
 
 namespace SharpFile {
     static class Program {
@@ -24,7 +25,27 @@ namespace SharpFile {
             string settingsVersion = string.Empty;
             string assemblyVersion = string.Empty;
 
-            if (!Settings.CheckSettingsVersion(ref settingsVersion, ref assemblyVersion)) {
+            if (!Settings.CompareSettingsVersion(ref settingsVersion, ref assemblyVersion)) {
+                string message = string.Format(@"
+The current configuration file version is {0}. SharpFile's current version is {1}. 
+Settings might have changed between the two versions, so some settings may be lost. 
+Press OK to continue loading the program even though settings may be lost.
+Press CANCEL to exit SharpFile.",
+                    settingsVersion,
+                    assemblyVersion);
+
+                // Show the modal dialog asking about converting the settings.
+                DialogResult dialogResult = MessageBox.Show(message, "Convert Settings?",
+                    MessageBoxButtons.OKCancel);
+
+                if (dialogResult == DialogResult.OK) {
+                    Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                } else if (dialogResult == DialogResult.Cancel) {
+                    Application.Exit();
+                }
+
+                // TODO: Write XSL to convert old version of settings XML to new version of settings XML.
+                /*
                 string message = string.Format(@"
 The current configuration file version is {0}. SharpFile's current version is {1}. 
 Settings might have changed between the two versions, so a conversion might be necessary. 
@@ -40,11 +61,13 @@ Press CANCEL to exit SharpFile.",
 
                 if (dialogResult == DialogResult.Yes) {
                     // TODO: Convert settings file.
+                    Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 } else if (dialogResult == DialogResult.No) {
                     // Start the program normally.
                 } else if (dialogResult == DialogResult.Cancel) {
                     Application.Exit();
                 }
+                */
             }
 
             startProgram();

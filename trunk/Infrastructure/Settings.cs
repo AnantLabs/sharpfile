@@ -110,7 +110,7 @@ namespace SharpFile.Infrastructure {
         /// <param name="settingsVersion">Version specified in the settings.</param>
         /// <param name="assemblyVersion">Assembly-specified version.</param>
         /// <returns>Whether the two versions are the same.</returns>
-        public static bool CheckSettingsVersion(ref string settingsVersion, ref string assemblyVersion) {
+        public static bool CompareSettingsVersion(ref string settingsVersion, ref string assemblyVersion) {
             FileInfo fileInfo = new FileInfo(FilePath);
 
             // If there is no settings file, create one from some defaults.
