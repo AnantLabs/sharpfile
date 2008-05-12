@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("SharpFile")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Orthodox file manager.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Longueur Software")]
 [assembly: AssemblyProduct("SharpFile")]
 [assembly: AssemblyCopyright("Copyright ©  2007")]
 [assembly: AssemblyTrademark("")]
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("0.6.5.033008")]
-[assembly: AssemblyFileVersion("0.6.5.033008")]
+[assembly: AssemblyVersion("0.7.0.051108")]
+[assembly: AssemblyFileVersion("0.7.0.051108")]
