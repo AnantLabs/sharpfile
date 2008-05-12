@@ -1,6 +1,23 @@
 #summary Current changelog
 #labels Featured
 
+=== 0.70 - 05/11/2008 ===
+ * KNOWN ISSUE: Some large compressed files corrupt the program.
+ * Add preview panel that shows text in a file or thumbnails for images and dynamic information about the currently selected filesytem obejct.
+ * Add about box and icon for the program.
+ * Check for correct version of the settings file when starting the program for settings file compatibility.
+ * Add dynamic tools menu to start a process with custom inputs.
+ * Renaming file usability.
+   * Select just the filename.
+   * Show tooltip balloon when an incorrect character is typed for filenames.
+ * Provide ability to define custom template for drive information.
+ * Save previous directory index.
+ * Save filtering history.
+ * Complete update and overhaul of settings XML file and the code to load it.
+ * FIX: Filtering was broken.
+ * FIX: Progress shows correctly for long-running operations.
+ * FIX: Drives that weren't ready, i.e. a floppy disk drive.
+
 === 0.65 - Speedy Gonzales - 3/30/2008 ===
  * Rewritten core of the file retrieval routine which created a dramatic speedup in retrieving files/directories.
    * On my "slow" testbed (700 Mhz, 256 MB RAM, 5400 RPM notebook drive)
