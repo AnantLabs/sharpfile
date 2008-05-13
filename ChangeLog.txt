@@ -1,3 +1,6 @@
+0.7.0512.2008
+	FIX: Default Time column actually showed the date. [Issue 85: Marc.GIRAUDOU]
+
 0.70 - 05/11/2008
 	KNOWN ISSUE: Some large compressed files corrupt the program.
 	Add preview panel that shows text in a file or thumbnails for images and dynamic information about the currently selected filesytem obejct.
