@@ -78,7 +78,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
             columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", false,
-                new FullyQualifiedMethod("GetDateTimeShortDateString",
+                new FullyQualifiedMethod("GetDateTimeShortTimeString",
                     new FullyQualifiedType("Common", "Common.General")),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
