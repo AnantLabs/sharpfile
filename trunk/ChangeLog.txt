@@ -1,7 +1,10 @@
-0.7.0512.2008
-	FIX: Default Time column actually showed the date. [Issue 85: Marc.GIRAUDOU]
+0.7.0.??????
+	FIX: Default Time column for compressed files incorrectly showed the date. [Issue 86: Marc.GIRAUDOU]
 
-0.70 - 05/11/2008
+0.7.0.051208
+	FIX: Default Time column incorrectly showed the date. [Issue 85: Marc.GIRAUDOU]
+
+0.7.0.051108
 	KNOWN ISSUE: Some large compressed files corrupt the program.
 	Add preview panel that shows text in a file or thumbnails for images and dynamic information about the currently selected filesytem obejct.
 	Add about box and icon for the program.
