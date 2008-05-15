@@ -51,10 +51,11 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
                         if (zipEntry.IsFile) {
                             childResources.Add(new CompressedFileInfo(fullName, zipEntryName, zipEntry.Size,
                                 zipEntry.CompressedSize, zipEntry.DateTime));
-                        } else if (zipEntry.IsDirectory) {
-                            childResources.Add(new CompressedDirectoryInfo(fullName, zipEntryName,
-                                    zipEntry.DateTime));
                         }
+                        //} else if (zipEntry.IsDirectory) {
+                        //    childResources.Add(new CompressedDirectoryInfo(fullName, zipEntryName,
+                        //            zipEntry.DateTime));
+                        //}
                     }
                 }
             }
