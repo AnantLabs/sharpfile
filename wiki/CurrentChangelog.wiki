@@ -3,10 +3,10 @@
 === 0.7.0.052008 === 
  * FIX: Compressed files did not show icons for their contents. [Issue: 88]
  * FIX: Compressed files with folders would never show their contents. [Issue: 87]
- * FIX: Compressed file Time column incorrectly showed the date. [Issue 86: Marc.GIRAUDOU]
+ * FIX: Compressed file Time column incorrectly showed the date. [Issue: 86 - Marc.GIRAUDOU]
 
 === 0.7.0.051208 ===
- * FIX: Default Time column incorrectly showed the date. [Issue 85: Marc.GIRAUDOU]
+ * FIX: Default Time column incorrectly showed the date. [Issue: 85 - Marc.GIRAUDOU]
 
 === 0.7.0.051108 ===
  * KNOWN ISSUE: Some large compressed files corrupt the program.
