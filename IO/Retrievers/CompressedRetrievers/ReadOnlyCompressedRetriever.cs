@@ -14,6 +14,7 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
             if (resource is CompressedDirectoryInfo || resource is CompressedFileInfo) {
                 return;
             } else {
+                useFileAttributes = true;
                 base.Execute(view, resource);
             }
         }

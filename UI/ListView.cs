@@ -216,9 +216,9 @@ namespace SharpFile.UI {
         /// </summary>
         /// <param name="fsi"></param>
         /// <returns></returns>
-        public int OnGetImageIndex(IResource fsi) {
+        public int OnGetImageIndex(IResource fsi, bool useFileAttributes) {
             if (GetImageIndex != null) {
-                return GetImageIndex(fsi);
+                return GetImageIndex(fsi, useFileAttributes);
             }
 
             return -1;
@@ -243,7 +243,7 @@ namespace SharpFile.UI {
 					if (lastSelectedItemIndex > 0 && lastSelectedItemIndex < Items.Count) {
 						ListViewItem item = Items[lastSelectedItemIndex];
 						item.Selected = true;
-						item.ImageIndex = OnGetImageIndex((IChildResource)item.Tag);
+						item.ImageIndex = OnGetImageIndex((IChildResource)item.Tag, false);
 					}
 				});
 			}
@@ -600,7 +600,7 @@ namespace SharpFile.UI {
 
             // Create new listview items from the resources.
             ListViewItemsCreator listViewItemsCreator = new ListViewItemsCreator(this, resources);
-            List<ListViewItem> listViewItems = listViewItemsCreator.Get(sb);           
+            List<ListViewItem> listViewItems = listViewItemsCreator.Get(sb);
 
             fileCount = listViewItemsCreator.FileCount;
             folderCount = listViewItemsCreator.FolderCount;
@@ -659,6 +659,11 @@ namespace SharpFile.UI {
             }
         }
 
+        public void UpdateImageIndexes(bool useFileAttributes) {
+            ListViewItemsImageIndexer imageIndexer = new ListViewItemsImageIndexer(this);
+            imageIndexer.Update(useFileAttributes);
+        }
+
         public void ClearPreviousTopIndexes() {
             previousTopIndexes.Clear();
         }
@@ -691,7 +696,7 @@ namespace SharpFile.UI {
                     OnUpdateStatus(Status);
                     this.Sort();
 
-                    int imageIndex = OnGetImageIndex(resource);
+                    int imageIndex = OnGetImageIndex(resource, false);
 
                     if (imageIndex > -1) {
                         item.ImageIndex = imageIndex;

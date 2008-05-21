@@ -81,10 +81,6 @@ namespace SharpFile.UI {
             Closed = 1
         }
 
-        public static Icon GetIcon(IconSize size, string fullName, bool isFile, bool showOverlay, bool isLink) {
-            return GetIcon(size, fullName, isFile, true, showOverlay, isLink);
-        }
-
         /// <summary>
         /// Returns an icon for a given file - indicated by the name parameter.
         /// </summary>

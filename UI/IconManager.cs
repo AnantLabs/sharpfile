@@ -19,7 +19,7 @@ namespace SharpFile.UI {
         /// <param name="fsi">File system object.</param>
         /// <param name="imageList">ImageList.</param>
         /// <returns>Image index.</returns>
-        public static int GetImageIndex(IResource resource, ImageList imageList) {
+        public static int GetImageIndex(IResource resource, bool useFileAttributes, ImageList imageList) {
             int imageIndex = -1;
 
             if (Settings.Instance.IconSettings.ShowIcons && resource != null && imageList != null) {
@@ -35,30 +35,35 @@ namespace SharpFile.UI {
                         // Set the image index correctly.
                         imageIndex = iconHash.Count;
 
-                        // Specifies whether overlays are turned on for all files, or if they have 
-                        // been turned on specifically for some paths.
-                        if (Settings.Instance.IconSettings.ShowOverlaysForAllPaths ||
-                            Settings.Instance.IconSettings.ShowOverlayPaths.Find(delegate(string s) {
-                            return (fullPath.Contains(s));
-                        }) != null) {
-                            showOverlay = true;
-                        }
+                        // When icons are to be retrieved by their file attributes (grabbing an icon by its
+                        // file extension, then don't attempt to get overlays or search intensively.
+                        if (!useFileAttributes) {
+                            // Specifies whether overlays are turned on for all files, or if they have 
+                            // been turned on specifically for some paths.
+                            if (Settings.Instance.IconSettings.ShowOverlaysForAllPaths ||
+                                Settings.Instance.IconSettings.ShowOverlayPaths.Find(delegate(string s) {
+                                return (fullPath.Contains(s));
+                            }) != null) {
+                                showOverlay = true;
+                            }
 
-						string driveTypeFullyQualifiedEnum = string.Empty;
+                            string driveTypeFullyQualifiedEnum = string.Empty;
 
-						try {
-							// HACK: Derive a fully qualified type from the full name of the assembly, plus the enum name.
-                            driveTypeFullyQualifiedEnum = string.Format("{0}.{1}",
-								resource.Root.DriveType.GetType().FullName,
-								resource.Root.DriveType.ToString());
-						} catch (ArgumentException ex) {
-							// Catch the ArgumentException because CompressedFileInfo/CompressedDirectoryInfo do not have the correct Root.
-						}
+                            try {
+                                // HACK: Derive a fully qualified type from the full name of the assembly, plus the enum name.
+                                driveTypeFullyQualifiedEnum = string.Format("{0}.{1}",
+                                    resource.Root.DriveType.GetType().FullName,
+                                    resource.Root.DriveType.ToString());
 
-                        if (Settings.Instance.IconSettings.IntensiveSearchDriveTypeEnums.Find(delegate(FullyQualifiedEnum f) {
-                            return f.ToString().Equals(driveTypeFullyQualifiedEnum);
-                        }) != null) {
-                            isIntensiveSearch = true;
+                                if (Settings.Instance.IconSettings.IntensiveSearchDriveTypeEnums.Find(delegate(FullyQualifiedEnum f) {
+                                    return f.ToString().Equals(driveTypeFullyQualifiedEnum);
+                                }) != null) {
+                                    isIntensiveSearch = true;
+                                }
+                            } catch (ArgumentException ex) {
+                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                    "ArgumentException when determining the drive type's fully qualified enumeration.");
+                            }
                         }
 
                         if (resource is FileInfo) {
@@ -93,7 +98,7 @@ namespace SharpFile.UI {
                             }
                         } else if (resource is DriveInfo || resource is ParentDirectoryInfo || resource is RootDirectoryInfo) {
                             if (!iconHash.ContainsKey(fullPath)) {
-                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, false, showOverlay, 
+                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, false, true, showOverlay, 
                                         isLink);
                                     imageList.Images.Add(fullPath, icon);
                                     iconHash.Add(fullPath, imageIndex);
@@ -103,7 +108,7 @@ namespace SharpFile.UI {
                         } else if (resource is DirectoryInfo) {
                             if (isIntensiveSearch) {
                                 if (!iconHash.ContainsKey(fullPath)) {
-                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, false, showOverlay, isLink);
+                                    Icon icon = IconReader.GetIcon(iconSize, fullPath, false, true, showOverlay, isLink);
                                     imageList.Images.Add(fullPath, icon);
                                     iconHash.Add(fullPath, imageIndex);
                                 }

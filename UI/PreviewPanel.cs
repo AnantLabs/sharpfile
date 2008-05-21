@@ -186,7 +186,7 @@ namespace SharpFile.UI {
 
                 // Try to grab the resource's icon if there is no thumbnail for the resource.
                 if (image == null) {
-                    int index = IconManager.GetImageIndex(resource, Settings.Instance.ImageList);
+                    int index = IconManager.GetImageIndex(resource, false, Settings.Instance.ImageList);
 
                     if (index > -1) {
                         image = Settings.Instance.ImageList.Images[index];
