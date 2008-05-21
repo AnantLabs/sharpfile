@@ -9,6 +9,8 @@ using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.IO.Retrievers {
     public abstract class ChildResourceRetriever : IChildResourceRetriever {
+        protected bool useFileAttributes = false;
+
         private List<ColumnInfo> columnInfos;
         private string name;
         private IView view;
@@ -97,6 +99,7 @@ namespace SharpFile.IO.Retrievers {
                             view.Clear();
                             view.ColumnInfos = ColumnInfos;
                             view.AddItemRange(childResources);
+                            view.UpdateImageIndexes(useFileAttributes);
                             view.EndUpdate();
                         }
                     } catch (UnauthorizedAccessException ex) {

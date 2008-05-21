@@ -43,9 +43,9 @@ namespace SharpFile.UI {
             }
         }
 
-        private int OnGetImageIndex(IResource fsi) {
+        private int OnGetImageIndex(IResource fsi, bool useFileAttributes) {
             if (GetImageIndex != null) {
-                return GetImageIndex(fsi);
+                return GetImageIndex(fsi, useFileAttributes);
             }
 
             return -1;

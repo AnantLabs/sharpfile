@@ -93,9 +93,9 @@ namespace SharpFile.UI {
         /// Passes the filesystem info to any listening events.
         /// </summary>
         /// <returns>Image index.</returns>
-        protected int OnGetImageIndex(IResource fsi) {
+        protected int OnGetImageIndex(IResource fsi, bool useFileAttributes) {
             if (GetImageIndex != null) {
-                return GetImageIndex(fsi);
+                return GetImageIndex(fsi, useFileAttributes);
             }
 
             return -1;
@@ -359,7 +359,7 @@ namespace SharpFile.UI {
                             item.Name = resource.Name;
                             item.Tag = resource;
 
-                            int imageIndex = OnGetImageIndex(resource);
+                            int imageIndex = OnGetImageIndex(resource, false);
                             if (imageIndex > -1) {
                                 item.Image = ImageList.Images[imageIndex];
                             }

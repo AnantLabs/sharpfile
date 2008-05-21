@@ -37,8 +37,8 @@ namespace SharpFile.UI {
                 updateProgress(value);
             };
 
-            child1.GetImageIndex += delegate(IResource fsi) {
-                return IconManager.GetImageIndex(fsi, ImageList);
+            child1.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
+                return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
             };
 
             child1.UpdatePath += delegate(string path) {
@@ -60,8 +60,8 @@ namespace SharpFile.UI {
                 updateProgress(value);
             };
 
-            child2.GetImageIndex += delegate(IResource fsi) {
-                return IconManager.GetImageIndex(fsi, ImageList);
+            child2.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
+                return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
             };
 
             child2.UpdatePath += delegate(string path) {
