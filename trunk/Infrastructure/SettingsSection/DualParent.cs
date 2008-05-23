@@ -5,6 +5,13 @@ using System.Collections.Generic;
 namespace SharpFile.Infrastructure.SettingsSection {    
     public sealed class DualParent {
         private const string defaultDrive = @"c:\";
+
+        private string selectedPath;
+        private string selectedPath1;
+        private string selectedPath2;
+        private string selectedFile;
+        private string selectedFile1;
+        private string selectedFile2;
         private int splitterPercentage = 50;
         private Orientation orientation = Orientation.Vertical;        
         private Panel panel1 = new Panel();
@@ -68,9 +75,69 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
         }
 
+        [XmlIgnore]
+        public string SelectedPath {
+            get {
+                return selectedPath;
+            }
+            set {
+                selectedPath = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string SelectedPath1 {
+            get {
+                return selectedPath1;
+            }
+            set {
+                selectedPath1 = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string SelectedPath2 {
+            get {
+                return selectedPath2;
+            }
+            set {
+                selectedPath2 = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string SelectedFile {
+            get {
+                return selectedFile;
+            }
+            set {
+                selectedFile = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string SelectedFile1 {
+            get {
+                return selectedFile1;
+            }
+            set {
+                selectedFile1 = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string SelectedFile2 {
+            get {
+                return selectedFile2;
+            }
+            set {
+                selectedFile2 = value;
+            }
+        }
+
         public static List<Tool> GenerateDefaultTools() {
             List<Tool> tools = new List<Tool>();
-            tools.Add(new Tool("Command Prompt", "cmd", "/K cd {SelectedPath}"));
+            tools.Add(new Tool("Command Prompt", "cmd", "/K cd \"{SelectedPath}\"", Keys.F4));
             return tools;
         }
     }

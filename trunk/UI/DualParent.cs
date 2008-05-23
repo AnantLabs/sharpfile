@@ -20,8 +20,6 @@ namespace SharpFile.UI {
         private ToolStripMenuItem panel1Menu = new ToolStripMenuItem();
         private ToolStripMenuItem panel2Menu = new ToolStripMenuItem();        
         private int splitterPercentage;
-        private bool panel1HasFocus = false;
-        private bool panel2HasFocus = false;
 
         public DualParent() {
             Child child1 = new Child("view1");
@@ -45,6 +43,13 @@ namespace SharpFile.UI {
                 this.Text = string.Format("{0} - {1}",
                                           formName,
                                           path);
+
+                Settings.Instance.DualParent.SelectedPath1 = path;
+            };
+
+            child1.UpdatePreviewPanel += delegate(IResource resource) {
+                this.previewPanel.Update(resource);
+                Settings.Instance.DualParent.SelectedFile1 = resource.Name;
             };
 
             Child child2 = new Child("view2");
@@ -68,6 +73,13 @@ namespace SharpFile.UI {
                 this.Text = string.Format("{0} - {1}",
                                           formName,
                                           path);
+
+                Settings.Instance.DualParent.SelectedPath2 = path;
+            };
+
+            child2.UpdatePreviewPanel += delegate(IResource resource) {
+                this.previewPanel.Update(resource);
+                Settings.Instance.DualParent.SelectedFile2 = resource.Name;
             };
 
             splitContainer.SplitterWidth = 1;
@@ -102,13 +114,13 @@ namespace SharpFile.UI {
             };
 
             splitContainer.Panel1.Enter += delegate {
-                panel1HasFocus = true;
-                panel2HasFocus = false;
+            	Settings.Instance.DualParent.SelectedPath = 
+                    Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedPath");
             };
 
             splitContainer.Panel2.Enter += delegate {
-                panel1HasFocus = false;
-                panel2HasFocus = true;
+                Settings.Instance.DualParent.SelectedPath =
+                    Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedPath");
             };
 
             MenuItem twentyFivePercentMenuItem = new MenuItem("25%", splitterContextMenuOnClick);
@@ -362,50 +374,6 @@ namespace SharpFile.UI {
 
             Forms.SetPropertyInChild<FormatTemplate>(this.splitContainer.Panel2, "DriveFormatTemplate",
                 Settings.Instance.DualParent.Panel2.DriveFormatTemplate);
-        }
-
-        public string SelectedPath1 {
-            get {
-                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedPath");
-            }
-        }
-
-        public string SelectedPath2 {
-            get {
-                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedPath");
-            }
-        }
-
-        public string SelectedPath {
-            get {
-                if (panel1HasFocus) {
-                    return SelectedPath1;
-                } else {
-                    return SelectedPath2;
-                }
-            }
-        }
-
-        public string SelectedFile1 {
-            get {
-                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedFile");
-            }
-        }
-
-        public string SelectedFile2 {
-            get {
-                return Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedFile");
-            }
-        }
-
-        public string SelectedFile {
-            get {
-                if (panel1HasFocus) {
-                    return SelectedFile1;
-                } else {
-                    return SelectedFile2;
-                }
-            }
         }
     }
 }

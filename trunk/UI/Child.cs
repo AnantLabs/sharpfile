@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Common;
-using Common.Logger;
 using SharpFile.Infrastructure;
 using View = SharpFile.Infrastructure.View;
 
@@ -12,6 +11,7 @@ namespace SharpFile.UI {
         public event View.UpdateProgressDelegate UpdateProgress;
         public event View.GetImageIndexDelegate GetImageIndex;
         public event View.UpdatePathDelegate UpdatePath;
+        public event View.UpdatePreviewPanelDelegate UpdatePreviewPanel;
 
         private TabControl tabControl;
         private FormatTemplate driveFormatTemplate;
@@ -55,6 +55,14 @@ namespace SharpFile.UI {
             if (UpdatePath != null) {
                 UpdatePath(path);
             }
+
+            Settings.Instance.DualParent.SelectedPath = SelectedPath;
+        }
+
+        private void OnUpdatePreviewPanel(IResource resource) {
+            if (UpdatePreviewPanel != null) {
+                UpdatePreviewPanel(resource);
+            }
         }
 
         private void tabControl_Selected(object sender, TabControlEventArgs e) {
@@ -78,6 +86,7 @@ namespace SharpFile.UI {
             fileBrowser.UpdatePath += OnUpdatePath;
             fileBrowser.UpdateProgress += OnUpdateProgress;
             fileBrowser.UpdateStatus += OnUpdateStatus;
+            fileBrowser.UpdatePreviewPanel += OnUpdatePreviewPanel;
 
             fileBrowser.Path = path;
 

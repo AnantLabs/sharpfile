@@ -33,6 +33,7 @@ namespace SharpFile.UI {
         public event View.UpdatePathDelegate UpdatePath;
         public event View.UpdateProgressDelegate UpdateProgress;
         public event View.UpdateStatusDelegate UpdateStatus;
+        public event View.UpdatePreviewPanelDelegate UpdatePreviewPanel;
 
         /// <summary>
         /// Filebrowser ctor.
@@ -121,6 +122,12 @@ namespace SharpFile.UI {
                 UpdateStatus(status);
             }
         }
+
+        protected void OnUpdatePreviewPanel(IResource resource) {
+            if (UpdatePreviewPanel != null) {
+                UpdatePreviewPanel(resource);
+            }
+        }
         #endregion
 
         #region Private methods
@@ -144,6 +151,7 @@ namespace SharpFile.UI {
             this.view.GetImageIndex += OnGetImageIndex;
             this.view.UpdateProgress += OnUpdateProgress;
             this.view.UpdateStatus += OnUpdateStatus;
+            this.view.UpdatePreviewPanel += OnUpdatePreviewPanel;
 
             // Wire up the file system watcher.
             fileSystemWatcher = new FileSystemWatcher(this, 100);

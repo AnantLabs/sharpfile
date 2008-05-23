@@ -209,6 +209,8 @@ namespace SharpFile.UI {
             if (UpdatePath != null) {
                 UpdatePath(path);
             }
+
+            Settings.Instance.DualParent.SelectedPath = path;
         }
 
         /// <summary>
@@ -228,6 +230,8 @@ namespace SharpFile.UI {
             if (UpdatePreviewPanel != null) {
                 UpdatePreviewPanel(resource);
             }
+
+            Settings.Instance.DualParent.SelectedFile = resource.Name;
         }
         #endregion
 
@@ -448,6 +452,15 @@ namespace SharpFile.UI {
 
                     if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
                         item.BeginEdit();
+                    }
+                }
+            } else {
+                foreach (Tool tool in Settings.Instance.DualParent.Tools) {
+                    foreach (Keys key in tool.Keys) {
+                        if (e.KeyCode == key) {
+                            tool.Execute();
+                            break;
+                        }
                     }
                 }
             }
