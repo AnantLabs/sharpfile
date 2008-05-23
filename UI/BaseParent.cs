@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using Common;
@@ -61,14 +60,6 @@ namespace SharpFile.UI {
 
             this.FormClosing += BaseParent_FormClosing;
             this.Load += BaseParent_Load;
-
-            // Attach the handler to any children that have the specified event.
-            this.Shown += delegate {
-                Forms.AddEventHandlerInChildren(this, "UpdatePreviewPanel",
-                (SharpFile.Infrastructure.View.UpdatePreviewPanelDelegate)delegate(IResource resource) {
-                    this.previewPanel.Update(resource);
-                });
-            };
 
             this.Resize += delegate {
 				this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
@@ -384,36 +375,28 @@ namespace SharpFile.UI {
             this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 
-            foreach (Tool toolSetting in Settings.Instance.DualParent.Tools) {
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(toolSetting.Name);
-                menuItem.Tag = toolSetting;
+            foreach (Tool tool in Settings.Instance.DualParent.Tools) {
+                string keys = string.Join("+", 
+                    tool.Keys.ConvertAll<string>(delegate(Keys k) {
+                        return k.ToString();
+                    }).ToArray());
+
+                string menuItemName = string.Format("{0} ({1})",
+                    tool.Name,
+                    keys);
+
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(menuItemName);
+                menuItem.Tag = tool;
 
                 menuItem.Click += (EventHandler)delegate {
                     Tool t = (Tool)menuItem.Tag;
 
-                    if (!t.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
-                        ProcessStartInfo processStartInfo = new ProcessStartInfo();
-                        processStartInfo.ErrorDialog = true;
-                        processStartInfo.UseShellExecute = true;
-
-                        Templater templater = new Templater(this);
-                        processStartInfo.FileName = templater.Generate(t.Path);
-
-                        if (!string.IsNullOrEmpty(t.Arguments)) {
-                            processStartInfo.Arguments = templater.Generate(t.Arguments);
-                        }
-
-                        try {
-                            Process.Start(processStartInfo);
-                        } catch (Exception ex) {
-                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Process {0} can not be performed on {1}.",
-                                t.Name,
-                                t.Path);
-                        }
+                    if (!t.Name.Equals(Tool.SeperatorName, StringComparison.InvariantCultureIgnoreCase)) {
+                        t.Execute();
                     }
                 };
 
-                if (toolSetting.Name.Equals("{Separator}", StringComparison.InvariantCultureIgnoreCase)) {
+                if (tool.Name.Equals(Tool.SeperatorName, StringComparison.InvariantCultureIgnoreCase)) {
                     this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count, new ToolStripSeparator());
                 } else {
                     this.toolsMenu.DropDownItems.Insert(this.toolsMenu.DropDownItems.Count, menuItem);
