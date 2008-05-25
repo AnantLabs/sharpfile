@@ -15,7 +15,9 @@ namespace SharpFile.UI {
                 int imageIndex = view.OnGetImageIndex(resource, useFileAttributes);
 
                 if (imageIndex > -1) {
-                    item.ImageIndex = imageIndex;
+                    view.Invoke((MethodInvoker)delegate {
+                        item.ImageIndex = imageIndex;
+                    });
                 }
             }
         }
