@@ -376,14 +376,18 @@ namespace SharpFile.UI {
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 
             foreach (Tool tool in Settings.Instance.DualParent.Tools) {
-                string keys = string.Join("+", 
-                    tool.Keys.ConvertAll<string>(delegate(Keys k) {
+                string menuItemName = tool.Name;
+
+                if (tool.Keys != null && tool.Keys.Count > 0) {
+                    string keys = string.Join("+",
+                         tool.Keys.ConvertAll<string>(delegate(Keys k) {
                         return k.ToString();
                     }).ToArray());
 
-                string menuItemName = string.Format("{0} ({1})",
-                    tool.Name,
-                    keys);
+                    menuItemName = string.Format("{0} ({1})",
+                        menuItemName,
+                        keys);
+                }
 
                 ToolStripMenuItem menuItem = new ToolStripMenuItem(menuItemName);
                 menuItem.Tag = tool;
