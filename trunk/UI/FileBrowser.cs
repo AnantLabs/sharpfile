@@ -141,8 +141,16 @@ namespace SharpFile.UI {
             // Attach to some events.
             this.HandleCreated += fileBrowser_HandleCreated;
             this.tlsPath.KeyDown += tlsPath_KeyDown;
+            this.tlsPath.KeyUp += delegate(object sender, KeyEventArgs e) {
+                handleTexboxHotkeys(this.tlsPath, e);
+            };
+
             this.tlsFilter.KeyUp += tlsFilter_KeyUp;
             this.tlsFilter.LostFocus += tlsFilter_LostFocus;
+            this.tlsFilter.KeyUp += delegate(object sender, KeyEventArgs e) {
+                handleTexboxHotkeys(this.tlsFilter, e);
+            };
+
             this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
             this.tlsDrives.ButtonClick += tlsDrives_ButtonClick;
 
@@ -167,6 +175,26 @@ namespace SharpFile.UI {
         /// </summary>
         private void clearFilter() {
             tlsFilter.Text = "*.*";
+        }
+
+        /// <summary>
+        /// Handles the key event to check for common hotkeys with textboxes.
+        /// </summary>
+        /// <param name="textBox">Textbox to copy/cut/paste from/into.</param>
+        /// <param name="e">Key event args.</param>
+        private void handleTexboxHotkeys(ToolStripTextBox textBox, KeyEventArgs e) {
+            if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C) {
+                if (!string.IsNullOrEmpty(textBox.SelectedText)) {
+                    Clipboard.SetText(textBox.SelectedText);
+                }
+            } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V) {
+                textBox.SelectedText = Clipboard.GetText();
+            } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.X) {
+                if (!string.IsNullOrEmpty(textBox.SelectedText)) {
+                    Clipboard.SetText(textBox.SelectedText);
+                    textBox.SelectedText = string.Empty;
+                }
+            }
         }
         #endregion
 
