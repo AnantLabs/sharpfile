@@ -456,8 +456,8 @@ namespace SharpFile.UI {
                 }
             } else {
                 foreach (Tool tool in Settings.Instance.DualParent.Tools) {
-                    foreach (Keys key in tool.Keys) {
-                        if (e.KeyCode == key) {
+                    if (tool.Key.HasValue && e.KeyCode == tool.Key.Value.PrimaryKey) {
+                         if (e.Modifiers == tool.Key.Value.Modifiers) {
                             tool.Execute();
                             break;
                         }
@@ -544,7 +544,9 @@ namespace SharpFile.UI {
         /// </summary>
         /// <param name="text">Text to show.</param>
         public void ShowMessageBox(string text) {
-            MessageBox.Show(this, text);
+            Invoke((MethodInvoker)delegate {
+                MessageBox.Show(this, text);
+            });
         }
 
         /// <summary>

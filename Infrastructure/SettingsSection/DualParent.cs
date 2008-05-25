@@ -137,7 +137,8 @@ namespace SharpFile.Infrastructure.SettingsSection {
 
         public static List<Tool> GenerateDefaultTools() {
             List<Tool> tools = new List<Tool>();
-            tools.Add(new Tool("Command Prompt", "cmd", "/K cd \"{SelectedPath}\"", Keys.F4));
+            Key key = new Key(new List<Keys>(), Keys.F4);
+            tools.Add(new Tool("Command Prompt", "cmd", "/K cd \"{SelectedPath}\"", key));
             return tools;
         }
     }
