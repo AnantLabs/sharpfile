@@ -378,11 +378,17 @@ namespace SharpFile.UI {
             foreach (Tool tool in Settings.Instance.DualParent.Tools) {
                 string menuItemName = tool.Name;
 
-                if (tool.Keys != null && tool.Keys.Count > 0) {
-                    string keys = string.Join("+",
-                         tool.Keys.ConvertAll<string>(delegate(Keys k) {
-                        return k.ToString();
-                    }).ToArray());
+                if (tool.Key.HasValue && tool.Key.Value.PrimaryKey != Keys.None) {
+                    string keys = tool.Key.Value.PrimaryKey.ToString();
+
+                    if (tool.Key.Value.ModifierKeys != null && tool.Key.Value.ModifierKeys.Count > 0) {
+                        keys = string.Format("{0}+{1}",
+                            string.Join("+",
+                                tool.Key.Value.ModifierKeys.ConvertAll<string>(delegate(Keys k) {
+                                    return k.ToString();
+                                }).ToArray()),
+                                keys);
+                    }
 
                     menuItemName = string.Format("{0} ({1})",
                         menuItemName,

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Forms;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
@@ -14,16 +12,16 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private string name;
         private string path;
         private string arguments;
-        private List<Keys> keys;
+        private Key? key;
 
         public Tool() {
         }
 
-        public Tool(string name, string path, string arguments, params Keys[] keys) {
+        public Tool(string name, string path, string arguments, Key? key) {
             this.name = name;
             this.path = path;
             this.arguments = arguments;
-            this.keys = new List<Keys>(keys);
+            this.key = key;
         }
 
         public void Execute() {
@@ -77,17 +75,12 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
         }
 
-        /// <summary>
-        /// Keys.
-        /// </summary>
-        [XmlArray("Keys")]
-        [XmlArrayItem("Key")]
-        public List<Keys> Keys {
+        public Key? Key {
             get {
-                return keys;
+                return key;
             }
             set {
-                keys = value;
+                key = value;
             }
         }
     }
