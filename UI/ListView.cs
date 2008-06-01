@@ -445,22 +445,12 @@ namespace SharpFile.UI {
         /// Performs actions based on the key pressed.
         /// </summary>
         private void listView_KeyUp(object sender, KeyEventArgs e) {
-            // TODO: Should be specified by config.
             if (e.KeyCode == Keys.F2) {
                 if (this.SelectedItems.Count > 0) {
                     ListViewItem item = this.SelectedItems[0];
 
                     if (!(item.Tag is ParentDirectoryInfo) && !(item.Tag is RootDirectoryInfo)) {
                         item.BeginEdit();
-                    }
-                }
-            } else {
-                foreach (Tool tool in Settings.Instance.DualParent.Tools) {
-                    if (tool.Key.HasValue && e.KeyCode == tool.Key.Value.PrimaryKey) {
-                         if (e.Modifiers == tool.Key.Value.Modifiers) {
-                            tool.Execute();
-                            break;
-                        }
                     }
                 }
             }

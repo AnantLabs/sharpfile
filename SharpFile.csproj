@@ -72,6 +72,9 @@
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
+    <Compile Include="Infrastructure\KeyboardHook.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Infrastructure\SettingsSection\ChildResourceRetriever.cs" />
     <Compile Include="Infrastructure\SettingsSection\ColumnInfo.cs" />
     <Compile Include="Infrastructure\SettingsSection\DualParent.cs" />

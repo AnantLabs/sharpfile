@@ -3,7 +3,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
-using SharpFile.UI;
+using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile {
     static class Program {
@@ -13,7 +13,7 @@ namespace SharpFile {
         [STAThread]
         static void Main() {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            Application.SetCompatibleTextRenderingDefault(false);            
 
             Application.ApplicationExit += delegate {
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
@@ -78,7 +78,25 @@ Press CANCEL to exit SharpFile.",
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
                     "Start the Dual program");
 
-                Application.Run(new DualParent());
+                using (KeyboardHook keyboardHook = new KeyboardHook(HookType.WH_KEYBOARD)) {
+                    keyboardHook.KeyDown += delegate(object sender, KeyEventArgs e) {
+                        Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                            "Keyboard hook event fired for key: {0} w/ modifier: {1}", 
+                            e.KeyCode.ToString(),
+                            e.Modifiers.ToString());
+
+                        foreach (Tool tool in Settings.Instance.DualParent.Tools) {
+                            if (tool.Key.HasValue && e.KeyCode == tool.Key.Value.PrimaryKey) {
+                                if (e.Modifiers == tool.Key.Value.Modifiers) {
+                                    tool.Execute();
+                                    break;
+                                }
+                            }
+                        }
+                    };
+
+                    Application.Run(new SharpFile.UI.DualParent());
+                }
             }
         }
     }

@@ -52,6 +52,18 @@ http://www.codeproject.com/KB/shell/balloontipsarticle.aspx
 Windows messages enum - Anthony Baraff
 http://www.codeproject.com/KB/cs/cswindowsmessages.aspx
 
+Processing Global Mouse and Keyboard Hooks in C# - George Mamaladze
+http://www.codeproject.com/KB/cs/globalhook.aspx
+
+Low-Level Keyboard Hook in C# - Stephen Toub
+http://blogs.msdn.com/toub/archive/2006/05/03/589423.aspx
+
+OpenPandora.WindowsHook.cs - Eitan Pogrebizsky
+http://www.koders.com/csharp/fid6AF179F76C05AF581905FF86477E98F2D4D86622.aspx
+
+ Managed Windows API - Michael Schierl
+http://mwinapi.sourceforge.net/
+
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
 other articles, tips and tricks.
