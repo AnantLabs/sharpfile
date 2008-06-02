@@ -381,13 +381,13 @@ namespace SharpFile.UI {
                             ToolStripMenuItem item = new ToolStripMenuItem();
                             string text = resource.Name;
 
-							if (resource.IsReady && DriveFormatTemplate != null && !string.IsNullOrEmpty(DriveFormatTemplate.Template)) {
+                            if (resource.IsReady && DriveFormatTemplate != null && !string.IsNullOrEmpty(DriveFormatTemplate.Template)) {
                                 Templater templater = new Templater(resource);
-								text = templater.Generate(DriveFormatTemplate.Template);
+                                text = templater.Generate(DriveFormatTemplate.Template);
 
-								if (DriveFormatTemplate.MethodDelegate != null) {
-									text = DriveFormatTemplate.MethodDelegate(text);
-								}
+                                if (DriveFormatTemplate.MethodDelegate != null) {
+                                    text = DriveFormatTemplate.MethodDelegate(text);
+                                }
                             }
 
                             item.Text = text;
@@ -421,12 +421,11 @@ namespace SharpFile.UI {
                                                 break;
                                             }
                                         } else if (pathResource is IParentResource) {
-                                            IParentResource parentResource = (IParentResource)resource;
+                                            IParentResource parentResource = (IParentResource)pathResource;
 
                                             if (parentResource != null &&
-												parentResource.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase) &&
-												parentResource.DriveType == System.IO.DriveType.Fixed &&
-												parentResource.IsReady) {
+                                                parentResource.Root.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase) &&
+                                                parentResource.IsReady) {
                                                 isLocalDiskFound = true;
 
                                                 execute(pathResource);
@@ -438,11 +437,11 @@ namespace SharpFile.UI {
 
                                 // If there is no defined path to retrieve, then attempt to get 
                                 // information about the the first drive found that is local and ready.
+                                // However, continue to look for other non-fixed drives.
                                 if (!isLocalDiskFound) {
                                     if (resource.DriveType == System.IO.DriveType.Fixed &&
                                         resource.IsReady) {
-                                        isLocalDiskFound = true;
-										execute(resource);
+                                        execute(resource);
                                     }
                                 }
                             }

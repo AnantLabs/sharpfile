@@ -665,8 +665,11 @@ namespace SharpFile.UI {
         }
 
         public void UpdateImageIndexes(bool useFileAttributes) {
-            ListViewItemsImageIndexer imageIndexer = new ListViewItemsImageIndexer(this);
-            imageIndexer.Update(useFileAttributes);
+            // Lock this in case the listview items are changed while icons are being generated.
+            lock (lockObject) {
+                ListViewItemsImageIndexer imageIndexer = new ListViewItemsImageIndexer(this);
+                imageIndexer.Update(useFileAttributes);
+            }
         }
 
         public void ClearPreviousTopIndexes() {
