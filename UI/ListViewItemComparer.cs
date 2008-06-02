@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Common.Comparers;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
 
 namespace SharpFile.UI {
     public class ListViewItemComparer : IViewComparer {
@@ -27,71 +28,20 @@ namespace SharpFile.UI {
         /// <returns>Comparison of the first object versus the second.</returns>
         public int Compare(object x, object y) {
             int compareResult = 0;
-
             ListViewItem itemX = (ListViewItem)x;
             ListViewItem itemY = (ListViewItem)y;
+            IResource resourceX = (IResource)itemX.Tag;
+            IResource resourceY = (IResource)itemY.Tag;
+            string valueX = (string)itemX.SubItems[columnIndex].Tag;
+            string valueY = (string)itemY.SubItems[columnIndex].Tag;
 
-            //if (itemX.Tag is IChildResource) {
-            //    IChildResource resourceX = (IChildResource)itemX.Tag;
-            //    IChildResource resourceY = (IChildResource)itemY.Tag;
-            //    string valueX = (string)itemX.SubItems[columnIndex].Tag;
-            //    string valueY = (string)itemY.SubItems[columnIndex].Tag;
-
-            //    if (directoriesSortedFirst) {
-            //        if (resourceX is RootDirectoryInfo) {
-            //            compareResult = 0;
-            //        } else if (resourceX is ParentDirectoryInfo) {
-            //            compareResult = 0;
-            //        } else if (resourceX is DirectoryInfo && resourceY is DirectoryInfo) {
-            //            compareResult = comparer.Compare(
-            //                valueX,
-            //                valueY);
-            //        } else if (!(resourceX is DirectoryInfo) && !(resourceY is DirectoryInfo)) {
-            //            compareResult = comparer.Compare(
-            //                valueX,
-            //                valueY);
-            //        } else if (resourceX is DirectoryInfo && resourceY is FileInfo) {
-            //            compareResult = 0;
-            //        } else if (resourceY is DirectoryInfo && resourceX is FileInfo) {
-            //            compareResult = 1;
-            //        } else {
-            //            compareResult = 0;
-            //        }
-            //    } else {
-                    //if (resourceX is RootDirectoryInfo) {
-                    //    compareResult = 0;
-                    //} else if (resourceX is ParentDirectoryInfo) {
-                    //    compareResult = 0;
-                    //} else {
-                    //    compareResult = comparer.Compare(
-                    //            valueX,
-                    //            valueY);
-                    //}
-            //    }
-
-            //    // Calculate correct return value based on object comparison.
-            //    if (order == Order.Ascending) {
-            //        // Ascending sort is selected, return normal result of compare operation.
-            //        return compareResult;
-            //    } else if (order == Order.Descending) {
-            //        // Descending sort is selected, return negative result of compare operation.
-            //        return (-compareResult);
-            //    } else {
-            //        return 0;
-            //    }
-            //} else {
-            IChildResource resourceX = (IChildResource)itemX.Tag;
-            IChildResource resourceY = (IChildResource)itemY.Tag;
-                string valueX = (string)itemX.SubItems[columnIndex].Tag;
-                string valueY = (string)itemY.SubItems[columnIndex].Tag;
-
-                if (directoriesSortedFirst) {
-                    if (resourceX is RootDirectoryInfo) {
-                        compareResult = 0;
-                    } else if (resourceX is ParentDirectoryInfo) {
-                        compareResult = 0;
-                    } else 
-                        if (resourceX is DirectoryInfo && resourceY is DirectoryInfo) {
+            if (directoriesSortedFirst) {
+                if (resourceX is RootDirectoryInfo || resourceX is DriveInfo) {
+                    compareResult = 0;
+                } else if (resourceX is ParentDirectoryInfo) {
+                    compareResult = 0;
+                } else
+                    if (resourceX is DirectoryInfo && resourceY is DirectoryInfo) {
                         compareResult = comparer.Compare(
                             valueX,
                             valueY);
@@ -106,29 +56,28 @@ namespace SharpFile.UI {
                     } else {
                         compareResult = 0;
                     }
+            } else {
+                if (resourceX is RootDirectoryInfo || resourceX is DriveInfo) {
+                    compareResult = 0;
+                } else if (resourceX is ParentDirectoryInfo) {
+                    compareResult = 0;
                 } else {
-                    if (resourceX is RootDirectoryInfo) {
-                        compareResult = 0;
-                    } else if (resourceX is ParentDirectoryInfo) {
-                        compareResult = 0;
-                    } else {
-                        compareResult = comparer.Compare(
-                                valueX,
-                                valueY);
-                    }
+                    compareResult = comparer.Compare(
+                            valueX,
+                            valueY);
                 }
+            }
 
-                // Calculate correct return value based on object comparison.
-                if (order == Order.Ascending) {
-                    // Ascending sort is selected, return normal result of compare operation.
-                    return compareResult;
-                } else if (order == Order.Descending) {
-                    // Descending sort is selected, return negative result of compare operation.
-                    return (-compareResult);
-                } else {
-                    return 0;
-                }
-            //}
+            // Calculate correct return value based on object comparison.
+            if (order == Order.Ascending) {
+                // Ascending sort is selected, return normal result of compare operation.
+                return compareResult;
+            } else if (order == Order.Descending) {
+                // Descending sort is selected, return negative result of compare operation.
+                return (-compareResult);
+            } else {
+                return 0;
+            }
         }
 
         /// <summary>

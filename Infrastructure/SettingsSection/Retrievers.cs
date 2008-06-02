@@ -71,7 +71,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
-                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DriveInfo")));
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ParentResources.DriveInfo")));
             columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", false,
                 new FullyQualifiedMethod("GetDateTimeShortDateString",
                     new FullyQualifiedType("Common", "Common.General")),
@@ -99,7 +99,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
-                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DriveInfo")));
+                    new FullyQualifiedType("SharpFile", "SharpFile.IO.ParentResources.DriveInfo")));
             columnInfos.Add(new ColumnInfo("Compressed Size", "CompressedSize", false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),

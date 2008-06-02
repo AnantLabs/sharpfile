@@ -14,6 +14,7 @@ using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.SettingsSection;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
+using SharpFile.IO.ParentResources;
 using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile.UI {
@@ -90,32 +91,20 @@ namespace SharpFile.UI {
         /// </summary>
         protected virtual void execute() {
             if (this.SelectedItems.Count > 0) {
-                IChildResource resource = this.SelectedItems[0].Tag as IChildResource;
+                IResource resource = this.SelectedItems[0].Tag as IResource;
 
                 if (resource != null) {
                     if (!(resource is FileInfo) && !(resource is RootDirectoryInfo) && !(resource is ParentDirectoryInfo)) {
-                        string path = ((IChildResource)this.TopItem.Tag).Path.ToLower();
+                        string path = ((IResource)this.TopItem.Tag).Path.ToLower();
 
-                        /*
-                        int lastVisibleIndex = this.TopItem.Index;
-
-                        for (int i = TopItem.Index + 1; i < Items.Count; i++) {
-                            if (ClientRectangle.Contains(Items[i].Bounds)) {
-                                lastVisibleIndex = i;
-                            } else {
-                                break;
-                            }
-                        }
-                        */
-
-                        //get the top of the bottom scrollbar
+                        // Get the top of the bottom scrollbar.
                         int bottomBound = this.ClientRectangle.Bottom;
-                        //get the client height and divide by the top item's rectangle height
-                        //this gives the number of visible items (plus one for the headerbar)
+                        // Get the client height and divide by the top item's rectangle height;
+                        // this gives the number of visible items (plus one for the headerbar)
                         int itemsVisible =
                             (this.ClientRectangle.Height / this.TopItem.Bounds.Height) - 2;
 
-                        // Subtract one item if the horizontal scrollbar is visible.
+                        // Add one item if the horizontal scrollbar is visible.
                         if (false) {
                             itemsVisible++;
                         }
@@ -239,7 +228,7 @@ namespace SharpFile.UI {
         void listView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e) {
 			if (SelectedItems.Count > 0) {
 				lastSelectedItemIndex = e.ItemIndex;
-				IChildResource resource = ((IChildResource)e.Item.Tag);
+				IResource resource = ((IResource)e.Item.Tag);
 				OnUpdatePreviewPanel(resource);
 			} else {
 				// Make sure that the item's icon doesn't disappear.
@@ -247,7 +236,7 @@ namespace SharpFile.UI {
 					if (lastSelectedItemIndex > 0 && lastSelectedItemIndex < Items.Count) {
 						ListViewItem item = Items[lastSelectedItemIndex];
 						item.Selected = true;
-						item.ImageIndex = OnGetImageIndex((IChildResource)item.Tag, false);
+						item.ImageIndex = OnGetImageIndex((IResource)item.Tag, false);
 					}
 				});
 			}
@@ -461,10 +450,11 @@ namespace SharpFile.UI {
         /// </summary>
         private void listView_BeforeLabelEdit(object sender, LabelEditEventArgs e) {
             ListViewItem item = this.Items[e.Item];
-            IChildResource resource = (IChildResource)item.Tag;
+            IResource resource = (IResource)item.Tag;
 
             if (item.Tag is ParentDirectoryInfo ||
-                item.Tag is RootDirectoryInfo) {
+                item.Tag is RootDirectoryInfo ||
+                item.Tag is DriveInfo) {
                 e.CancelEdit = true;
             }
 
@@ -591,7 +581,7 @@ namespace SharpFile.UI {
         /// <summary>
         /// Parses the file/directory information and updates the listview.
         /// </summary>
-        public void AddItemRange(IList<IChildResource> resources) {
+        public void AddItemRange(IList<IResource> resources) {
             StringBuilder sb = new StringBuilder();
             Stopwatch sw = new Stopwatch();
 
@@ -638,7 +628,7 @@ namespace SharpFile.UI {
 
             string path = string.Empty;
 
-            foreach (IChildResource resource in resources) {
+            foreach (IResource resource in resources) {
                 if (!(resource is FileInfo) && !(resource is ParentDirectoryInfo) && !(resource is RootDirectoryInfo)) {
                     path = resource.Path.ToLower();
                     break;
@@ -651,7 +641,6 @@ namespace SharpFile.UI {
                 if (previousTopIndex > 0 && previousTopIndex < Items.Count) {
                     this.Invoke((MethodInvoker)delegate {
                         if (previousTopIndex < Items.Count) {
-                            //Items[previousTopIndex].EnsureVisible();
                             this.EnsureVisible(previousTopIndex);
                         } else {
                             //Items[Items.Count-1].EnsureVisible();
@@ -969,7 +958,7 @@ namespace SharpFile.UI {
                 if (SelectedItems.Count == 0) {
                     return Path;
                 } else {
-                    return ((IChildResource)SelectedItems[0].Tag).FullName;
+                    return ((IResource)SelectedItems[0].Tag).FullName;
                 }
             }
         }
