@@ -19,8 +19,8 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
             }
         }
 
-        protected override IList<IChildResource> getResources(IResource resource, string filter) {
-            List<IChildResource> childResources = new List<IChildResource>();
+        protected override IList<IResource> getResources(IResource resource, string filter) {
+            List<IResource> childResources = new List<IResource>();
 
             if (Settings.Instance.ShowRootDirectory) {
                 childResources.Add(new RootDirectoryInfo(resource.Root.Name));

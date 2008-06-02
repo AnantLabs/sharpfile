@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using Common;
 using SharpFile.Infrastructure;
-using SharpFile.IO.ChildResources;
 
 namespace SharpFile.IO.ParentResources {
     public class DriveInfo : IParentResource {
         private System.IO.DriveInfo driveInfo;
-        private string name;
+        protected string name;
+        protected string displayName;
 
         public DriveInfo(string name) {
             driveInfo = new System.IO.DriveInfo(name);
@@ -15,7 +15,9 @@ namespace SharpFile.IO.ParentResources {
 
         #region IResource Members
         public string FullName {
-            get { return driveInfo.Name; }
+            get {
+                return driveInfo.Name;
+            }
         }
 
         public string Name {
@@ -42,7 +44,11 @@ namespace SharpFile.IO.ParentResources {
 
         public string DisplayName {
             get {
-                return this.Name;
+                if (string.IsNullOrEmpty(displayName)) {
+                    displayName = this.Name;
+                }
+
+                return displayName;
             }
         }
 

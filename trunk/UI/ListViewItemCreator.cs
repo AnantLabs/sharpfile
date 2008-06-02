@@ -13,27 +13,27 @@ namespace SharpFile.UI {
         private static readonly object lockObject = new object();
 
         private IView view;
-        private IList<IChildResource> resources;
+        private IList<IResource> resources;
         private List<ListViewItem> listViewItems;
         private int fileCount = 0;
         private int folderCount = 0;
 
-        public ListViewItemsCreator(IView view, IChildResource resource) {
+        public ListViewItemsCreator(IView view, IResource resource) {
             this.view = view;
             this.listViewItems = new List<ListViewItem>();
 
-            this.resources = new List<IChildResource>();
+            this.resources = new List<IResource>();
             this.resources.Add(resource);
         }
 
-        public ListViewItemsCreator(IView view, IList<IChildResource> resources) {
+        public ListViewItemsCreator(IView view, IList<IResource> resources) {
             this.view = view;
             this.resources = resources;
             this.listViewItems = new List<ListViewItem>();
         }
 
         public List<ListViewItem> Get(StringBuilder sb) {
-            foreach (IChildResource resource in resources) {
+            foreach (IResource resource in resources) {
                 try {
                     ListViewItem item = addItem(resource);
                     listViewItems.Add(item);

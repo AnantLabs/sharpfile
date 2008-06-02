@@ -40,8 +40,8 @@ namespace SharpFile.IO.Retrievers {
         /// <param name="resource">Resource to grab directories/files from.</param>
         /// <param name="filter">The filter.</param>
         /// <returns>List of directories/files.</returns>
-        protected override IList<IChildResource> getResources(IResource resource, string filter) {
-            List<IChildResource> childResources = new List<IChildResource>();
+        protected override IList<IResource> getResources(IResource resource, string filter) {
+            List<IResource> childResources = new List<IResource>();
 
 			// TODO: Encapsulate the decision to show the root/parent director in a static method somewhere.
 			// Show root directory if specified.
@@ -63,7 +63,9 @@ namespace SharpFile.IO.Retrievers {
 			}
 
 			FileSystemEnumerator filesystemEnumerator = filesystemEnumerator = new FileSystemEnumerator(resource.FullName, filter);
-            childResources.AddRange(filesystemEnumerator.Matches());
+            childResources.AddRange(filesystemEnumerator.Matches().ConvertAll(delegate(IChildResource c) {
+                return (IResource)c;
+            }));
 
             return childResources;
         }

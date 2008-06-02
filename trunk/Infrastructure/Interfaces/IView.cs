@@ -5,7 +5,7 @@ using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.Infrastructure {
 	public interface IView {
-		void AddItemRange(IList<IChildResource> resources);
+		void AddItemRange(IList<IResource> resources);
         void AddItem(IChildResource resource);
 		void RemoveItem(string path);
 		void Clear();

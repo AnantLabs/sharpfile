@@ -93,7 +93,7 @@ namespace SharpFile.IO.Retrievers {
                             e.Cancel = true;
                         } else {
                             Common.Forms.SetPropertyInParent<bool>(view.Control, "Executing", true);
-                            IList<IChildResource> childResources = getResources(resource, view.Filter);
+                            IList<IResource> childResources = getResources(resource, view.Filter);
 
                             view.BeginUpdate();
                             view.Clear();
@@ -169,7 +169,7 @@ namespace SharpFile.IO.Retrievers {
             return childResourceRetriever;
         }
 
-		protected abstract IList<IChildResource> getResources(IResource resource, string filter);        
+		protected abstract IList<IResource> getResources(IResource resource, string filter);        
 
         /// <summary>
         /// Column information.

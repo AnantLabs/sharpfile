@@ -45,8 +45,8 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
             }
         }
 
-        protected override IList<IChildResource> getResources(IResource resource, string filter) {
-            List<IChildResource> childResources = new List<IChildResource>();
+        protected override IList<IResource> getResources(IResource resource, string filter) {
+            List<IResource> childResources = new List<IResource>();
 
             if (Settings.Instance.ShowRootDirectory) {
                 childResources.Add(new RootDirectoryInfo(resource.Root.Name));
@@ -95,7 +95,7 @@ namespace SharpFile.IO.Retrievers.CompressedRetrievers {
                                        FileSystemInfo.DirectorySeparator,
                                        directoryName);
 
-                                if (childResources.Find(delegate(IChildResource c) {
+                                if (childResources.Find(delegate(IResource c) {
                                     return c.FullName.Equals(fullName, StringComparison.OrdinalIgnoreCase);
                                 }) == null) {
                                     childResources.Add(new CompressedDirectoryInfo(fullName, directoryName,
