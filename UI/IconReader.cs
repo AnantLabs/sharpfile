@@ -145,8 +145,12 @@ namespace SharpFile.UI {
 
                 // Copy (clone) the returned icon to a new object, thus allowing us to clean-up properly.
                 icon = (Icon)Icon.FromHandle(shfi.hIcon).Clone();
-            }
-            finally {
+            } catch (ArgumentException ex) {
+                string blob = Enum.Format(typeof(SHGFI), flags, "F");
+
+                ex.Data["flags"] = blob;
+                throw;
+            } finally {
                 // Cleanup.
                 Common.WindowsApi.User32.DestroyIcon(shfi.hIcon);
             }
