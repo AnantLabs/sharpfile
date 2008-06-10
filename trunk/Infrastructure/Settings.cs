@@ -28,7 +28,7 @@ namespace SharpFile.Infrastructure {
         private ParentType parentType = ParentType.Dual;
         private int width = 500;
         private int height = 500;
-        private Nodes keyCodes;
+        private bool minimizeToSystray = false;
         private bool directoriesSortedFirst = true;
         private bool showParentDirectory = true;
         private bool showRootDirectory = true;
@@ -197,19 +197,6 @@ namespace SharpFile.Infrastructure {
         }
 
         /// <summary>
-        /// Key codes.
-        /// </summary>
-        [XmlIgnore]
-        public Nodes KeyCodes {
-            get {
-                return keyCodes;
-            }
-            set {
-                keyCodes = value;
-            }
-        }
-
-        /// <summary>
         /// Width of the form.
         /// </summary>
         public int Width {
@@ -230,6 +217,18 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 height = value;
+            }
+        }
+
+        /// <summary>
+        /// Whether or not to minimize the application to the systray.
+        /// </summary>
+        public bool MinimizeToSystray {
+            get {
+                return minimizeToSystray;
+            }
+            set {
+                minimizeToSystray = value;
             }
         }
 
