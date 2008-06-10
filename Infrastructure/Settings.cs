@@ -95,8 +95,8 @@ namespace SharpFile.Infrastructure {
                         deserializeSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
-                    LoggerService loggerService = new LoggerService("log.txt", LogLevelType.ErrorsOnly);
-                    loggerService.Log(LogLevelType.ErrorsOnly, ex,
+                    LoggerService loggerService = new LoggerService("log.txt", LogLevelType.Verbose);
+                    loggerService.Log(LogLevelType.Verbose, ex,
                         "There was an error generating the settings.");
 
                     throw;
