@@ -13,6 +13,26 @@ namespace SharpFile.IO.ParentResources {
             driveInfo = new System.IO.DriveInfo(name);
         }
 
+        #region IParentResource Members 
+        public long FreeSpace {
+            get {
+                return driveInfo.TotalFreeSpace;
+            }
+        }
+
+        public bool IsReady {
+            get {
+                return driveInfo.IsReady;
+            }
+        }
+
+        public System.IO.DriveType DriveType {
+            get {
+                return driveInfo.DriveType;
+            }
+        }
+        #endregion
+
         #region IResource Members
         public string FullName {
             get {
@@ -36,12 +56,6 @@ namespace SharpFile.IO.ParentResources {
             }
         }
 
-        public bool IsReady {
-            get {
-                return driveInfo.IsReady;
-            }
-        }
-
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty(displayName)) {
@@ -49,12 +63,6 @@ namespace SharpFile.IO.ParentResources {
                 }
 
                 return displayName;
-            }
-        }
-
-        public System.IO.DriveType DriveType {
-            get {
-                return driveInfo.DriveType;
             }
         }
 
@@ -142,7 +150,6 @@ namespace SharpFile.IO.ParentResources {
                 throw new Exception("ChildResourceRetrievers not found for " + this.Name);
             }
         }
-
         #endregion
     }
 }
