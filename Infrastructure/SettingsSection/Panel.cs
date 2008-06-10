@@ -43,6 +43,8 @@ namespace SharpFile.Infrastructure.SettingsSection {
             get {
                 if (driveFormatTemplate == null) {
                     driveFormatTemplate = new FormatTemplate("{Name} <{Size}>");
+                    driveFormatTemplate.FullyQualifiedMethod = new FullyQualifiedMethod("GetHumanReadableSize",
+                        new FullyQualifiedType("Common", "Common.General"));
                 }
 
                 return driveFormatTemplate;
