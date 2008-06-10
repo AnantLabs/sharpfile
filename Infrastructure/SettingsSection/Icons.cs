@@ -94,6 +94,9 @@ namespace SharpFile.Infrastructure.SettingsSection {
             FullyQualifiedEnum driveTypeEnum = new FullyQualifiedEnum("Fixed",
                 new FullyQualifiedType("System", "System.IO.DriveType"));
             enums.Add(driveTypeEnum);
+            driveTypeEnum = new FullyQualifiedEnum("CDRom",
+                new FullyQualifiedType("System", "System.IO.DriveType"));
+            enums.Add(driveTypeEnum);
             return enums;
         }
     }
