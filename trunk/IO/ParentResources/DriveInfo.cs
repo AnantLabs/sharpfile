@@ -45,7 +45,7 @@ namespace SharpFile.IO.ParentResources {
         public string DisplayName {
             get {
                 if (string.IsNullOrEmpty(displayName)) {
-                    displayName = this.Name;
+                    displayName = driveInfo.VolumeLabel;
                 }
 
                 return displayName;
