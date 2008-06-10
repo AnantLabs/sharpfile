@@ -50,9 +50,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 return driveFormatTemplate;
             }
             set {
-                driveFormatTemplate = value;
-
-                
+                driveFormatTemplate = value;                
             }
         }
     }
