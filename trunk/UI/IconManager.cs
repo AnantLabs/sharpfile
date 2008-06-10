@@ -131,10 +131,12 @@ namespace SharpFile.UI {
                     }
                 } catch (ArgumentException ex) {
                     imageIndex = -1;
+                    string flags = (string)ex.Data["flags"];
 
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Icon image could not be retrieved for {0}.",
-                        resource.FullName);
+                        "Icon image could not be retrieved for {0} with flags {1}.",
+                        resource.FullName,
+                        flags);
                 }
             }
 
