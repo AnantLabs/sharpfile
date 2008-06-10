@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using Common;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.SettingsSection;
@@ -14,8 +13,8 @@ namespace SharpFile.UI {
 		private static readonly object lockObject = new object();
         private DriveDetector driveDetector;
         private int splitterPercentage;
-
 		private int progressCount = 0;
+
 		protected ToolTip toolTip = new ToolTip();
 		protected Timer timer = new Timer();
 		protected ProgressDisk progressDisk = new ProgressDisk();
@@ -24,6 +23,7 @@ namespace SharpFile.UI {
 		protected MenuStrip menuStrip = new MenuStrip();
         protected SplitContainer baseSplitContainer = new SplitContainer();
         protected PreviewPanel previewPanel = new PreviewPanel();
+        protected NotifyIcon notifyIcon = new NotifyIcon();
 
 		protected ToolStripMenuItem fileMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem exitToolStripMenuItem = new ToolStripMenuItem();
@@ -64,6 +64,13 @@ namespace SharpFile.UI {
             this.Resize += delegate {
 				this.progressDisk.Location = new Point(base.ClientSize.Width - 35,
 													   base.ClientSize.Height - 18);
+
+                if (Settings.Instance.MinimizeToSystray) {
+                    if (FormWindowState.Minimized == WindowState) {
+                        Hide();
+                        this.notifyIcon.Visible = true;
+                    }
+                }
 			};
 
 			timer.Enabled = true;
@@ -305,6 +312,17 @@ namespace SharpFile.UI {
 			this.menuStrip.PerformLayout();
 			this.statusStrip.ResumeLayout(false);
 			this.statusStrip.PerformLayout();
+
+            this.notifyIcon.Text = "SharpFile";
+            this.notifyIcon.Visible = false;
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            
+            this.notifyIcon.DoubleClick += delegate(object sender, EventArgs e) {
+                Show();
+                this.WindowState = FormWindowState.Normal;
+                this.notifyIcon.Visible = false;
+            };
+
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
