@@ -1,5 +1,14 @@
 #summary Current changelog
 #labels Featured
+=== 0.7.0.061208 ===
+ * Application-wide keyboard shortcuts (with modifiers) for tools. [Issue: 25]
+ * Cut/copy/paste in path and filter textbox.
+ * Minimize to the system tray. [Issue: 90 - Marc.GIRAUDOU]
+ * Add more information for drives. [Issue: 89 - Marc.GIRAUDOU]
+ * FIX: Starting the program with a non-fixed drive path and/or with a child resource path would break.
+ * FIX: Some filesystem info couldn't be retrieved for fixed drives other than the current drive. [Issue: 93 - Marc.GIRAUDOU]
+ * FIX: Show icons for files on CD-Roms.
+
 === 0.7.0.052008 === 
  * FIX: Compressed files did not show icons for their contents. [Issue: 88]
  * FIX: Compressed files with folders would never show their contents. [Issue: 87]
