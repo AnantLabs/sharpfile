@@ -1,5 +1,5 @@
 ﻿SharpFile
-Version 0.6.5.033008
+Version 0.7.0.061208
 
 A small, efficient orthodox file manager written in C#.
 
