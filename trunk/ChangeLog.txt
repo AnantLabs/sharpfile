@@ -1,5 +1,5 @@
 0.7.0.061208
-	Application-wide keyboard shortcuts (with modifiers) for tools.
+	Application-wide keyboard shortcuts (with modifiers) for tools. [Issue 25]
 	Cut/copy/paste in path and filter textbox.
 	Minimize to the system tray. [Issue 90: Marc.GIRAUDOU]
 	Add more information for drives. [Issue 89: Marc.GIRAUDOU]

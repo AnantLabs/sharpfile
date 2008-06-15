@@ -9,23 +9,5 @@ namespace SharpFile.IO.ChildResources {
             name = Path;
             displayName = rootDirectoryName;
         }
-
-        public string LastWriteTime {
-            get {
-                return string.Empty;
-            }
-        }
-
-        public string CreationTime {
-            get {
-                return string.Empty;
-            }
-        }
-
-        public string LastAccessTime {
-            get {
-                return string.Empty;
-            }
-        }
     }
 }
