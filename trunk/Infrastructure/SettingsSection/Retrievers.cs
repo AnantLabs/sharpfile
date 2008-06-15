@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure.SettingsSection {
@@ -66,18 +67,18 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"));
 
             List<ColumnInfo> columnInfos = new List<ColumnInfo>();
-            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", true));
-            columnInfos.Add(new ColumnInfo("Size", "Size", false,
+            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", SortOrder.Descending, true));
+            columnInfos.Add(new ColumnInfo("Size", "Size", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ParentResources.DriveInfo")));
-            columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", false,
+            columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortDateString",
                     new FullyQualifiedType("Common", "Common.General")),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
-            columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", false,
+            columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortTimeString",
                     new FullyQualifiedType("Common", "Common.General")),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
@@ -94,23 +95,23 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 ".zip");
 
             columnInfos = new List<ColumnInfo>();
-            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", true));
-            columnInfos.Add(new ColumnInfo("Size", "Size", false,
+            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", SortOrder.Descending, true));
+            columnInfos.Add(new ColumnInfo("Size", "Size", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ParentResources.DriveInfo")));
-            columnInfos.Add(new ColumnInfo("Compressed Size", "CompressedSize", false,
+            columnInfos.Add(new ColumnInfo("Compressed Size", "CompressedSize", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DirectoryInfo"),
                     new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.DriveInfo")));
-            columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", false,
+            columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortDateString",
                     new FullyQualifiedType("Common", "Common.General")),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.RootDirectoryInfo")));
-            columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", false,
+            columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortTimeString",
                     new FullyQualifiedType("Common", "Common.General")),
                 new FullyQualifiedType("SharpFile", "SharpFile.IO.ChildResources.ParentDirectoryInfo"),
