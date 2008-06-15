@@ -113,6 +113,8 @@ namespace SharpFile.UI {
             } catch (Exception ex) {
                 Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                     "Error while trying to generate settings when the form was opening.");
+
+                throw;
             }
         }
 

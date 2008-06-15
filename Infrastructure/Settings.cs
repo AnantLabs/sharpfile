@@ -42,11 +42,13 @@ namespace SharpFile.Infrastructure {
         private Logger loggerSettings;
         private Retrievers retrieverSettings;
         private FontInfo fontInfo;
+        private ViewInfo viewInfo;
 
         // Constructed from settings.
         private LoggerService loggerService;
         private List<IParentResourceRetriever> parentResourceRetrievers;
         private Font font;
+        private System.Windows.Forms.View view;
 
         #region Ctors.
         /// <summary>
@@ -66,7 +68,8 @@ namespace SharpFile.Infrastructure {
             previewPanelSettings = new PreviewPanel();
             loggerSettings = new Logger();
             retrieverSettings = new Retrievers();
-            fontInfo = new FontInfo("Arial", 8, FontStyle.Regular);
+            fontInfo = new FontInfo();
+            viewInfo = new ViewInfo();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -273,6 +276,18 @@ namespace SharpFile.Infrastructure {
         }
 
         /// <summary>
+        /// View information to derive a System.Windows.Forms.View object.
+        /// </summary>
+        public ViewInfo ViewInfo {
+            get {
+                return viewInfo;
+            }
+            set {
+                viewInfo = value;
+            }
+        }
+
+        /// <summary>
         /// Font information to derive a System.Drawing.Font object.
         /// </summary>
         public FontInfo FontInfo {
@@ -391,6 +406,17 @@ namespace SharpFile.Infrastructure {
                 }
 
                 return font;
+            }
+        }
+
+        [XmlIgnore]
+        public System.Windows.Forms.View View {
+            get {
+                if (!view.ToString().Equals(viewInfo.Type)) {
+                    view = (System.Windows.Forms.View)Enum.Parse(typeof(System.Windows.Forms.View), viewInfo.Type);
+                }
+
+                return view;
             }
         }
 

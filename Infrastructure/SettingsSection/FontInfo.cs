@@ -2,17 +2,11 @@
 
 namespace SharpFile.Infrastructure.SettingsSection {
     public class FontInfo {
-        private string familyName;
-        private float size;
-        private FontStyle style;
+        private string familyName = "Arial";
+        private float size = 10;
+        private FontStyle style = FontStyle.Regular;
 
         public FontInfo() {
-        }
-
-        public FontInfo(string familyName, float size, FontStyle style) {
-            this.familyName = familyName;
-            this.size = size;
-            this.style = style;
         }
 
         public string FamilyName {
