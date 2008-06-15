@@ -78,6 +78,7 @@
     <Compile Include="Infrastructure\SettingsSection\ChildResourceRetriever.cs" />
     <Compile Include="Infrastructure\SettingsSection\ColumnInfo.cs" />
     <Compile Include="Infrastructure\SettingsSection\DualParent.cs" />
+    <Compile Include="Infrastructure\SettingsSection\FontInfo.cs" />
     <Compile Include="Infrastructure\SettingsSection\Icons.cs" />
     <Compile Include="Infrastructure\SettingsSection\Key.cs" />
     <Compile Include="Infrastructure\SettingsSection\Logger.cs" />

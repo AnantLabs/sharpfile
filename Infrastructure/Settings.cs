@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
@@ -34,16 +35,18 @@ namespace SharpFile.Infrastructure {
         private bool showRootDirectory = true;
         private string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-        // Constructed from settings.
-        private LoggerService loggerService;
-        private List<IParentResourceRetriever> parentResourceRetrievers;
-
         // Sub-settings.
         private DualParent dualParentSettings;
         private Icons iconSettings;
         private PreviewPanel previewPanelSettings;
         private Logger loggerSettings;
         private Retrievers retrieverSettings;
+        private FontInfo fontInfo;
+
+        // Constructed from settings.
+        private LoggerService loggerService;
+        private List<IParentResourceRetriever> parentResourceRetrievers;
+        private Font font;
 
         #region Ctors.
         /// <summary>
@@ -63,6 +66,7 @@ namespace SharpFile.Infrastructure {
             previewPanelSettings = new PreviewPanel();
             loggerSettings = new Logger();
             retrieverSettings = new Retrievers();
+            fontInfo = new FontInfo("Arial", 8, FontStyle.Regular);
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -269,6 +273,18 @@ namespace SharpFile.Infrastructure {
         }
 
         /// <summary>
+        /// Font information to derive a System.Drawing.Font object.
+        /// </summary>
+        public FontInfo FontInfo {
+            get {
+                return fontInfo;
+            }
+            set {
+                fontInfo = value;
+            }
+        }
+
+        /// <summary>
         /// Logger info.
         /// </summary>
         [XmlElement("Logger")]
@@ -367,6 +383,17 @@ namespace SharpFile.Infrastructure {
         #endregion
 
         #region Properties not derived from settings.config.
+        [XmlIgnore]
+        public Font Font {
+            get {
+                if (font == null) {
+                    font = new Font(fontInfo.FamilyName, fontInfo.Size, fontInfo.Style);
+                }
+
+                return font;
+            }
+        }
+
         /// <summary>
         /// Derived Logger service.
         /// </summary>
