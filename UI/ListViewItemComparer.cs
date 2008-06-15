@@ -8,7 +8,7 @@ using SharpFile.IO.ParentResources;
 namespace SharpFile.UI {
     public class ListViewItemComparer : IViewComparer {
         private int columnIndex;
-        private Order order;
+        private SortOrder order;
         private IComparer comparer;
         private bool directoriesSortedFirst = true;
 
@@ -69,10 +69,10 @@ namespace SharpFile.UI {
             }
 
             // Calculate correct return value based on object comparison.
-            if (order == Order.Ascending) {
+            if (order == SortOrder.Ascending) {
                 // Ascending sort is selected, return normal result of compare operation.
                 return compareResult;
-            } else if (order == Order.Descending) {
+            } else if (order == SortOrder.Descending) {
                 // Descending sort is selected, return negative result of compare operation.
                 return (-compareResult);
             } else {
@@ -95,7 +95,7 @@ namespace SharpFile.UI {
         /// <summary>
         /// Order of sorting.
         /// </summary>
-        public Order Order {
+        public SortOrder SortOrder {
             get {
                 return order;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
@@ -10,6 +11,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private string text;
         private string property;
         private bool primaryColumn = false;
+        private SortOrder sortOrder = SortOrder.None;
         private List<FullyQualifiedType> excludeForTypes;
         private FullyQualifiedMethod.AlterMethod alterMethod;
         private FullyQualifiedMethod fullyQualifiedMethod;
@@ -17,14 +19,15 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public ColumnInfo() {
         }
 
-        public ColumnInfo(string text, string property, bool primaryColumn)
-            : this(text, property, primaryColumn, null) {
+        public ColumnInfo(string text, string property, SortOrder sortOrder, bool primaryColumn)
+            : this(text, property, sortOrder, primaryColumn, null) {
         }
 
-        public ColumnInfo(string text, string property, bool primaryColumn,
+        public ColumnInfo(string text, string property, SortOrder sortOrder, bool primaryColumn,
             FullyQualifiedMethod fullyQualifiedMethod, params FullyQualifiedType[] excludeForTypes) {
             this.text = text;
             this.property = property;
+            this.sortOrder = sortOrder;
             this.primaryColumn = primaryColumn;
             this.fullyQualifiedMethod = fullyQualifiedMethod;
 
@@ -52,6 +55,16 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 property = value;
+            }
+        }
+
+        [XmlAttribute("SortOrder")]
+        public SortOrder SortOrder {
+            get {
+                return sortOrder;
+            }
+            set {
+                sortOrder = value;
             }
         }
 
