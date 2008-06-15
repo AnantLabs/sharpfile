@@ -88,6 +88,7 @@
     <Compile Include="Infrastructure\SettingsSection\PreviewPanel.cs" />
     <Compile Include="Infrastructure\SettingsSection\Tool.cs" />
     <Compile Include="Infrastructure\SettingsSection\View.cs" />
+    <Compile Include="Infrastructure\SettingsSection\ViewInfo.cs" />
     <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
     <Compile Include="Infrastructure\WindowsApi\FILETIME.cs" />
     <Compile Include="Infrastructure\WindowsApi\Kernel32.cs" />
