@@ -78,6 +78,24 @@ namespace SharpFile.IO.ParentResources {
             }
         }
 
+        public string LastWriteTime {
+            get {
+                return string.Empty;
+            }
+        }
+
+        public string CreationTime {
+            get {
+                return string.Empty;
+            }
+        }
+
+        public string LastAccessTime {
+            get {
+                return string.Empty;
+            }
+        }
+
         /// <summary>
         /// Execute the appropriate child resource retriever for the file 
         /// system object and populate the correct view accordingly.
