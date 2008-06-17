@@ -1,5 +1,11 @@
 #summary Current changelog
 #labels Featured
+=== Recent svn commits ===
+ * Customize font of listview.
+ * Customize listview view type. Defaults to "Details" and other types might pose unknown issues.
+ * Show sort graphic in column header.
+ * Store sort order of column. 
+
 === 0.7.0.061208 ===
  * Application-wide keyboard shortcuts (with modifiers) for tools. [Issue: 25]
  * Cut/copy/paste in path and filter textbox.
