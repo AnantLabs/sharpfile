@@ -67,7 +67,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"));
 
             List<ColumnInfo> columnInfos = new List<ColumnInfo>();
-            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", SortOrder.Descending, true));
+            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", SortOrder.Ascending, true));
             columnInfos.Add(new ColumnInfo("Size", "Size", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
@@ -95,7 +95,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 ".zip");
 
             columnInfos = new List<ColumnInfo>();
-            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", SortOrder.Descending, true));
+            columnInfos.Add(new ColumnInfo("Filename", "DisplayName", SortOrder.Ascending, true));
             columnInfos.Add(new ColumnInfo("Size", "Size", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
