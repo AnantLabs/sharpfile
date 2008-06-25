@@ -413,7 +413,14 @@ namespace SharpFile.Infrastructure {
         public System.Windows.Forms.View View {
             get {
                 if (!view.ToString().Equals(viewInfo.Type)) {
-                    view = (System.Windows.Forms.View)Enum.Parse(typeof(System.Windows.Forms.View), viewInfo.Type);
+                    if (Enum.IsDefined(typeof(System.Windows.Forms.View), viewInfo.Type)) {
+                        view = (System.Windows.Forms.View)Enum.Parse(typeof(System.Windows.Forms.View), viewInfo.Type);
+                    } else {
+                        Logger.Log(LogLevelType.ErrorsOnly, "{0} is not a valid view type. Setting view type to default of Details.",
+                            viewInfo.Type);
+                        view = System.Windows.Forms.View.Details;
+                        viewInfo.Type = view.ToString();
+                    }
                 }
 
                 return view;
