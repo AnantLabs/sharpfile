@@ -21,8 +21,10 @@ namespace SharpFile.UI {
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 		protected MenuStrip menuStrip = new MenuStrip();
-        protected SplitContainer baseSplitContainer = new SplitContainer();
+        protected SplitContainer previewPanelSplitContainer = new SplitContainer();
+        protected SplitContainer commandLinePanelSplitContainer = new SplitContainer();
         protected PreviewPanel previewPanel = new PreviewPanel();
+        protected CommandLinePanel commandLinePanel = new CommandLinePanel();
         protected NotifyIcon notifyIcon = new NotifyIcon();
 
 		protected ToolStripMenuItem fileMenu = new ToolStripMenuItem();
@@ -272,18 +274,18 @@ namespace SharpFile.UI {
 			this.toolStripStatus.Size = new Size(0, 10);
 			this.toolStripStatus.Dock = DockStyle.Bottom;
 
-            this.baseSplitContainer.Dock = DockStyle.Fill;
-            this.baseSplitContainer.Name = "baseSplitContainer";
-            baseSplitContainer.SplitterWidth = 1;
-            baseSplitContainer.Orientation = Orientation.Horizontal;
-            baseSplitContainer.Panel2.Controls.Add(previewPanel);
+            this.previewPanelSplitContainer.Dock = DockStyle.Fill;
+            this.previewPanelSplitContainer.Name = "previewPanelSplitContainer";
+            this.previewPanelSplitContainer.SplitterWidth = 1;
+            this.previewPanelSplitContainer.Orientation = Orientation.Horizontal;
+            this.previewPanelSplitContainer.Panel2.Controls.Add(previewPanel);
 
-            baseSplitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
+            this.previewPanelSplitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
                 decimal percent = 0;
                 int mouseCursorX = 0;
                 int mouseCursorY = 0;
 
-                if (this.baseSplitContainer.Orientation == Orientation.Vertical) {
+                if (this.previewPanelSplitContainer.Orientation == Orientation.Vertical) {
                     percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
                     mouseCursorX = e.MouseCursorX - 10;
                     mouseCursorY = e.MouseCursorY;
@@ -301,11 +303,47 @@ namespace SharpFile.UI {
                 toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
             };
 
-            baseSplitContainer.SplitterMoved += delegate {
+            this.previewPanelSplitContainer.SplitterMoved += delegate {
                 toolTip.RemoveAll();
             };
 
-            this.Controls.Add(this.baseSplitContainer);
+            this.Controls.Add(this.previewPanelSplitContainer);
+
+            this.commandLinePanelSplitContainer.Dock = DockStyle.Fill;
+            this.commandLinePanelSplitContainer.Name = "commandLinePanelSplitContainer";
+            this.commandLinePanelSplitContainer.SplitterWidth = 1;
+            this.commandLinePanelSplitContainer.Orientation = Orientation.Horizontal;
+            this.commandLinePanelSplitContainer.Panel2.Controls.Add(commandLinePanel);
+
+            this.commandLinePanelSplitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
+                decimal percent = 0;
+                int mouseCursorX = 0;
+                int mouseCursorY = 0;
+
+                if (this.commandLinePanelSplitContainer.Orientation == Orientation.Vertical) {
+                    percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
+                    mouseCursorX = e.MouseCursorX - 10;
+                    mouseCursorY = e.MouseCursorY;
+                } else {
+                    percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
+                    mouseCursorX = e.MouseCursorX;
+                    mouseCursorY = e.MouseCursorY - 10;
+                }
+
+                splitterPercentage = Convert.ToInt32(percent * 100);
+
+                string tip = string.Format("{0}%",
+                    splitterPercentage);
+
+                toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
+            };
+
+            this.commandLinePanelSplitContainer.SplitterMoved += delegate {
+                toolTip.RemoveAll();
+            };
+
+            //this.Controls.Add(this.commandLinePanelSplitContainer);
+
 			addControls();
 
 			this.MainMenuStrip = this.menuStrip;
@@ -357,7 +395,7 @@ namespace SharpFile.UI {
 		}
 
         private void previewPanelToolStripMenuItem_Click(object sender, EventArgs e) {
-            baseSplitContainer.Panel2Collapsed = previewPanelToolStripMenuItem.Checked;
+            previewPanelSplitContainer.Panel2Collapsed = previewPanelToolStripMenuItem.Checked;
             previewPanelToolStripMenuItem.Checked = !previewPanelToolStripMenuItem.Checked;
         }
 
@@ -365,7 +403,7 @@ namespace SharpFile.UI {
             decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
             int splitterDistance = 0;
 
-            switch (this.baseSplitContainer.Orientation) {
+            switch (this.previewPanelSplitContainer.Orientation) {
                 case Orientation.Horizontal:
                     splitterDistance = Convert.ToInt32(percent * (this.Height - 75));
                     break;
@@ -374,7 +412,7 @@ namespace SharpFile.UI {
                     break;
             }
 
-            baseSplitContainer.SplitterDistance = splitterDistance;
+            previewPanelSplitContainer.SplitterDistance = splitterDistance;
         }
 
 		protected virtual void addControls() {
@@ -384,7 +422,7 @@ namespace SharpFile.UI {
 		}
 
 		protected virtual void onFormClosing() {
-            Settings.Instance.PreviewPanel.Collapsed = this.baseSplitContainer.Panel2Collapsed;
+            Settings.Instance.PreviewPanel.Collapsed = this.previewPanelSplitContainer.Panel2Collapsed;
             Settings.Instance.PreviewPanel.SplitterPercentage = 100 - splitterPercentage;
 		}
 
@@ -392,7 +430,7 @@ namespace SharpFile.UI {
             splitterPercentage = (100 - Settings.Instance.PreviewPanel.SplitterPercentage);
             setSplitterDistance();
 
-            this.baseSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
+            this.previewPanelSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 
             foreach (Tool tool in Settings.Instance.DualParent.Tools) {

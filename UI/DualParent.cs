@@ -44,6 +44,8 @@ namespace SharpFile.UI {
                                           formName,
                                           path);
 
+                this.commandLinePanel.Update(path);
+
                 Settings.Instance.DualParent.SelectedPath1 = path;
             };
 
@@ -73,6 +75,8 @@ namespace SharpFile.UI {
                 this.Text = string.Format("{0} - {1}",
                                           formName,
                                           path);
+
+                this.commandLinePanel.Update(path);
 
                 Settings.Instance.DualParent.SelectedPath2 = path;
             };
@@ -291,7 +295,8 @@ namespace SharpFile.UI {
             this.splitContainer.Size = new Size(641, 364);
             this.splitContainer.SplitterDistance = 318;
 
-            ((SplitContainer)this.Controls["baseSplitContainer"]).Panel1.Controls.Add(this.splitContainer);
+            ((SplitContainer)this.Controls["previewPanelSplitContainer"]).Panel1.Controls.Add(this.splitContainer);
+            //((SplitContainer)this.Controls["commandLinePanelSplitContainer"]).Panel1.Controls.Add(this.splitContainer);
             base.addControls();
         }
 
