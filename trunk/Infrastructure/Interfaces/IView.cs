@@ -26,6 +26,7 @@ namespace SharpFile.Infrastructure {
         string Name { get; set; }
         bool Enabled { get; set; }
         Dictionary<string, ListViewItem> ItemDictionary { get; }
+        IResource SelectedResource { get; }
 
         void OnUpdatePath(string path);
         void OnUpdateProgress(int progress);

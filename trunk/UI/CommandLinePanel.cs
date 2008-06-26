@@ -1,8 +1,9 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
+using SharpFile.Infrastructure;
 
 namespace SharpFile.UI {
-    public partial class CommandLinePanel : UserControl {
+    public partial class CommandLinePanel : UserControl, IPanel {
         public CommandLinePanel() {
             InitializeComponent();
             this.Dock = DockStyle.Top;
@@ -25,6 +26,11 @@ namespace SharpFile.UI {
             //this.txtPath.Text = path;
 
             this.txtCommandLine.Text = path;
+            Refresh();
+        }
+
+        public void Update(IView view) {
+            this.txtCommandLine.Text = view.Path;
             Refresh();
         }
 
