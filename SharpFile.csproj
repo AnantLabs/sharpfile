@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
+    <Compile Include="Infrastructure\Interfaces\IPanel.cs" />
     <Compile Include="Infrastructure\KeyboardHook.cs">
       <SubType>Code</SubType>
     </Compile>
