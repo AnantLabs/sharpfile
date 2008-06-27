@@ -12,13 +12,14 @@ namespace SharpFile.UI {
         public CommandLineTextBox() {
             InitializeComponent();
 
+            this.txtFile.AutoCompleteMode = AutoCompleteMode.Append;
+            this.txtFile.AutoCompleteSource = AutoCompleteSource.CustomSource;
+
             this.txtFile.KeyUp += delegate(object sender, KeyEventArgs e) {
                 if (e.KeyCode == Keys.Enter) {
                     string fileName = path + this.txtFile.Text;
-
                     ProcessStartInfo processStartInfo = new ProcessStartInfo();
                     processStartInfo.FileName = fileName;
-                    processStartInfo.UseShellExecute = false;
 
                     try {
                         Process.Start(processStartInfo);
@@ -30,22 +31,18 @@ namespace SharpFile.UI {
             };
         }
 
-        public override string Text {
-            set {
-                path = value;
+        public void UpdateText(IView view) {
+            if (path != view.Path) {
+                path = view.Path;
                 this.txtPath.Text = path + ">";
                 this.txtFile.Text = string.Empty;
-
-                this.txtFile.AutoCompleteMode = AutoCompleteMode.Append;
-                this.txtFile.AutoCompleteSource = AutoCompleteSource.CustomSource;
                 this.txtFile.AutoCompleteCustomSource.Clear();
 
-                // TODO: This shouldn't be necessary since the resources have already been retrieved for the listview.
-                //using (FileSystemEnumerator fileSystemEnumerator = new FileSystemEnumerator(path)) {
-                //    foreach (IChildResource resource in fileSystemEnumerator.Matches()) {
-                //        this.txtFile.AutoCompleteCustomSource.Add(resource.Name);
-                //    }
-                //}
+                // Load the auto-complete source for the path.
+                foreach (string key in view.ItemDictionary.Keys) {
+                    string source = key.Replace(path, string.Empty);
+                    this.txtFile.AutoCompleteCustomSource.Add(source);
+                }
 
                 Refresh();
             }

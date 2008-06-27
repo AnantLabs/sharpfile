@@ -13,7 +13,7 @@ namespace SharpFile.UI {
         }
 
         public void Update(IView view) {
-            this.txtCommandLine.Text = view.Path;
+            this.txtCommandLine.UpdateText(view);
             Refresh();
         }
     }
