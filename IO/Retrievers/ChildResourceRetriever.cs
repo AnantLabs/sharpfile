@@ -133,6 +133,7 @@ namespace SharpFile.IO.Retrievers {
                         !e.Cancelled) {
                         // Update some information about the current directory.
                         view.OnUpdatePath(resource.FullName);
+                        view.OnUpdatePanels(view);
 
                         // Set up the watcher.
                         view.FileSystemWatcher.Path = resource.FullName;

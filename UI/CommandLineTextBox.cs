@@ -52,6 +52,7 @@ namespace SharpFile.UI {
         }
 
         protected override void OnPaint(PaintEventArgs e) {
+            //http://bytes.com/forum/thread266167.html
             Graphics graphics = e.Graphics;
             SizeF size = graphics.MeasureString(this.txtPath.Text, this.Font);
 
