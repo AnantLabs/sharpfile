@@ -49,9 +49,9 @@ namespace SharpFile.UI {
                 Settings.Instance.DualParent.SelectedPath1 = path;
             };
 
-            child1.UpdatePreviewPanel += delegate(IResource resource) {
-                this.previewPanel.Update(resource);
-                Settings.Instance.DualParent.SelectedFile1 = resource.Name;
+            child1.UpdatePanels += delegate(IView view) {
+                this.previewPanel.Update(view.SelectedResource);
+                Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.Name;
             };
 
             Child child2 = new Child("view2");
@@ -81,9 +81,9 @@ namespace SharpFile.UI {
                 Settings.Instance.DualParent.SelectedPath2 = path;
             };
 
-            child2.UpdatePreviewPanel += delegate(IResource resource) {
-                this.previewPanel.Update(resource);
-                Settings.Instance.DualParent.SelectedFile2 = resource.Name;
+            child2.UpdatePanels += delegate(IView view) {
+                this.previewPanel.Update(view.SelectedResource);
+                Settings.Instance.DualParent.SelectedFile2 = view.SelectedResource.Name;
             };
 
             splitContainer.SplitterWidth = 1;

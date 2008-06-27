@@ -11,7 +11,7 @@ namespace SharpFile.UI {
         public event View.UpdateProgressDelegate UpdateProgress;
         public event View.GetImageIndexDelegate GetImageIndex;
         public event View.UpdatePathDelegate UpdatePath;
-        public event View.UpdatePreviewPanelDelegate UpdatePreviewPanel;
+        public event View.UpdatePanelsDelegate UpdatePanels;
 
         private TabControl tabControl;
         private FormatTemplate driveFormatTemplate;
@@ -59,9 +59,9 @@ namespace SharpFile.UI {
             Settings.Instance.DualParent.SelectedPath = SelectedPath;
         }
 
-        private void OnUpdatePreviewPanel(IResource resource) {
-            if (UpdatePreviewPanel != null) {
-                UpdatePreviewPanel(resource);
+        private void OnUpdatePanels(IView view) {
+            if (UpdatePanels != null) {
+                UpdatePanels(view);
             }
         }
 
@@ -86,7 +86,7 @@ namespace SharpFile.UI {
             fileBrowser.UpdatePath += OnUpdatePath;
             fileBrowser.UpdateProgress += OnUpdateProgress;
             fileBrowser.UpdateStatus += OnUpdateStatus;
-            fileBrowser.UpdatePreviewPanel += OnUpdatePreviewPanel;
+            fileBrowser.UpdatePanels += OnUpdatePanels;
 
             fileBrowser.Path = path;
 
