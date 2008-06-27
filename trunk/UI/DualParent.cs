@@ -44,13 +44,12 @@ namespace SharpFile.UI {
                                           formName,
                                           path);
 
-                this.commandLinePanel.Update(path);
-
                 Settings.Instance.DualParent.SelectedPath1 = path;
             };
 
             child1.UpdatePanels += delegate(IView view) {
-                this.previewPanel.Update(view.SelectedResource);
+                this.previewPanel.Update(view);
+                this.commandLinePanel.Update(view);
                 Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.Name;
             };
 
@@ -76,13 +75,12 @@ namespace SharpFile.UI {
                                           formName,
                                           path);
 
-                this.commandLinePanel.Update(path);
-
                 Settings.Instance.DualParent.SelectedPath2 = path;
             };
 
             child2.UpdatePanels += delegate(IView view) {
-                this.previewPanel.Update(view.SelectedResource);
+                this.previewPanel.Update(view);
+                this.commandLinePanel.Update(view);
                 Settings.Instance.DualParent.SelectedFile2 = view.SelectedResource.Name;
             };
 
