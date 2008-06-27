@@ -11,8 +11,6 @@ namespace SharpFile.UI {
                 this.txtCommandLine.Width = this.Width - 10;
             };
         }
-        
-        //http://bytes.com/forum/thread266167.html
 
         public void Update(IView view) {
             this.txtCommandLine.Text = view.Path;

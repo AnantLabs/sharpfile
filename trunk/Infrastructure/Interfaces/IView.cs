@@ -32,6 +32,7 @@ namespace SharpFile.Infrastructure {
         void OnUpdateProgress(int progress);
         int OnGetImageIndex(IResource resource, bool useFileAttributes);
         void OnUpdateStatus(string status);
+        void OnUpdatePanels(IView view);
 
 		event View.GetImageIndexDelegate GetImageIndex;
 		event View.UpdateProgressDelegate UpdateProgress;
