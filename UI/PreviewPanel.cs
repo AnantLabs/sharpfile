@@ -6,7 +6,7 @@ using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
 namespace SharpFile.UI {
-    public partial class PreviewPanel : UserControl {
+    public partial class PreviewPanel : UserControl, IPanel {
         private IResource resource;
         private PictureBox pictureBox;
         private TextBox textBox;
@@ -37,9 +37,9 @@ namespace SharpFile.UI {
         /// <summary>
         /// Updates the preview panel from the resource.
         /// </summary>
-        /// <param name="resource">Resource.</param>
-        public void Update(IResource resource) {
-            this.resource = resource;
+        /// <param name="view">View.</param>
+        public void Update(IView view) {
+            this.resource = view.SelectedResource;
             sb = new StringBuilder();
             image = null;
 
