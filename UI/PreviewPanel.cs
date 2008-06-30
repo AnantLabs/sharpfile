@@ -6,7 +6,7 @@ using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
 
 namespace SharpFile.UI {
-    public partial class PreviewPanel : UserControl, IPanel {
+    public partial class PreviewPanel : UserControl, IPluginPanel {
         private IResource resource;
         private PictureBox pictureBox;
         private TextBox textBox;

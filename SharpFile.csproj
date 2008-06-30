@@ -72,7 +72,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
-    <Compile Include="Infrastructure\Interfaces\IPanel.cs" />
+    <Compile Include="Infrastructure\Interfaces\IPluginPanel.cs" />
     <Compile Include="Infrastructure\KeyboardHook.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -84,6 +84,7 @@
     <Compile Include="Infrastructure\SettingsSection\Key.cs" />
     <Compile Include="Infrastructure\SettingsSection\Logger.cs" />
     <Compile Include="Infrastructure\SettingsSection\Panel.cs" />
+    <Compile Include="Infrastructure\SettingsSection\PluginPanel.cs" />
     <Compile Include="Infrastructure\SettingsSection\ParentResourceRetriever.cs" />
     <Compile Include="Infrastructure\SettingsSection\Retrievers.cs" />
     <Compile Include="Infrastructure\SettingsSection\PreviewPanel.cs" />
@@ -150,7 +151,6 @@
     <Compile Include="Infrastructure\Interfaces\IParentResourceRetriever.cs" />
     <Compile Include="Infrastructure\Interfaces\IView.cs" />
     <Compile Include="Infrastructure\Interfaces\IViewComparer.cs" />
-    <Compile Include="Infrastructure\Nodes.cs" />
     <Compile Include="Infrastructure\ParentType.cs" />
     <Compile Include="Infrastructure\Settings.cs" />
     <Compile Include="IO\ChildResources\DirectoryInfo.cs" />

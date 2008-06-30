@@ -2,7 +2,7 @@
 using SharpFile.Infrastructure;
 
 namespace SharpFile.UI {
-    public partial class CommandLinePanel : UserControl, IPanel {
+    public partial class CommandLinePanel : UserControl, IPluginPanel {
         public CommandLinePanel() {
             InitializeComponent();
 

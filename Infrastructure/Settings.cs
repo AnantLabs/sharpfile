@@ -43,12 +43,14 @@ namespace SharpFile.Infrastructure {
         private Retrievers retrieverSettings;
         private FontInfo fontInfo;
         private ViewInfo viewInfo;
+        private List<PluginPanel> pluginPanelSettings;
 
         // Constructed from settings.
         private LoggerService loggerService;
         private List<IParentResourceRetriever> parentResourceRetrievers;
         private Font font;
         private System.Windows.Forms.View view;
+        private List<IPluginPanel> pluginPanels;
 
         #region Ctors.
         /// <summary>
@@ -70,6 +72,7 @@ namespace SharpFile.Infrastructure {
             retrieverSettings = new Retrievers();
             fontInfo = new FontInfo();
             viewInfo = new ViewInfo();
+            pluginPanelSettings = new List<PluginPanel>();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -91,6 +94,7 @@ namespace SharpFile.Infrastructure {
             lock (lockObject) {
                 // Null out the reource retrievers in case settings are being reloaded.
                 instance.parentResourceRetrievers = null;
+                instance.pluginPanels = null;
 
                 try {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
@@ -348,6 +352,10 @@ namespace SharpFile.Infrastructure {
                     dualParentSettings.Tools = DualParent.GenerateDefaultTools();
                 }
 
+                if (dualParentSettings.PluginPanels.Count == 0) {
+                    dualParentSettings.PluginPanels = DualParent.GenerateDefaultPluginPanels();
+                }
+
                 return dualParentSettings;
             }
             set {
@@ -556,6 +564,31 @@ namespace SharpFile.Infrastructure {
                 }
 
                 return parentResourceRetrievers;
+            }
+        }
+
+        [XmlIgnore]
+        public List<IPluginPanel> PluginPanels {
+            get {
+                if (pluginPanels == null || pluginPanels.Count == 0) {
+                    pluginPanels = new List<IPluginPanel>();
+
+                    foreach (PluginPanel pluginPanelSetting in dualParentSettings.PluginPanels) {
+                        try {
+                            IPluginPanel pluginPanel = Reflection.InstantiateObject<IPluginPanel>(
+                                pluginPanelSetting.Type.Assembly,
+                                pluginPanelSetting.Type.Type);
+
+                            pluginPanels.Add(pluginPanel);
+                        } catch (TypeLoadException ex) {
+                            Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "PluginPanel, {0}, could not be instantiated.",
+                                pluginPanelSetting.Name);
+                        }
+                    }
+                }
+
+                return pluginPanels;
             }
         }
 

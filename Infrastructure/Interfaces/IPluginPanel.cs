@@ -1,5 +1,5 @@
 ﻿namespace SharpFile.Infrastructure {
-    public interface IPanel {
+    public interface IPluginPanel {
         void Update(IView view);
     }
 }
