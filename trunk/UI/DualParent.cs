@@ -4,12 +4,13 @@ using System.Drawing;
 using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
         protected ToolStripMenuItem filterPanel1ToolStripMenuItem = new ToolStripMenuItem();
         protected ToolStripMenuItem filterPanel2ToolStripMenuItem = new ToolStripMenuItem();
-        private SplitContainer splitContainer = new SplitContainer();
+        //private SplitContainer splitContainer = new SplitContainer();
         private ToolStripMenuItem swapPanelItem = new ToolStripMenuItem();
         private ToolStripMenuItem displayPanelItem = new ToolStripMenuItem();
         private ToolStripMenuItem displayPanel1Item = new ToolStripMenuItem();
@@ -19,151 +20,200 @@ namespace SharpFile.UI {
         private ToolStripMenuItem horizontalPanelOrientationItem = new ToolStripMenuItem();
         private ToolStripMenuItem panel1Menu = new ToolStripMenuItem();
         private ToolStripMenuItem panel2Menu = new ToolStripMenuItem();        
-        private int splitterPercentage;
+        //private int splitterPercentage;
 
         public DualParent() {
-            Child child1 = new Child("view1");
-            child1.TabControl.Appearance = TabAppearance.FlatButtons;
-            child1.TabControl.IsVisible = true;
-            child1.Dock = DockStyle.Fill;
+            //Child child1 = new Child("view1");
+            //child1.TabControl.Appearance = TabAppearance.FlatButtons;
+            //child1.TabControl.IsVisible = true;
+            //child1.Dock = DockStyle.Fill;
 
-            child1.UpdateStatus += delegate(string status) {
-                toolStripStatus.Text = status;
-            };
+            //child1.UpdateStatus += delegate(string status) {
+            //    toolStripStatus.Text = status;
+            //};
 
-            child1.UpdateProgress += delegate(int value) {
-                updateProgress(value);
-            };
+            //child1.UpdateProgress += delegate(int value) {
+            //    updateProgress(value);
+            //};
 
-            child1.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
-                return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
-            };
+            //child1.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
+            //    return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
+            //};
 
-            child1.UpdatePath += delegate(string path) {
-                this.Text = string.Format("{0} - {1}",
-                                          formName,
-                                          path);
+            //child1.UpdatePath += delegate(string path) {
+            //    this.Text = string.Format("{0} - {1}",
+            //                              formName,
+            //                              path);
 
-                Settings.Instance.DualParent.SelectedPath1 = path;
-            };
+            //    Settings.Instance.DualParent.SelectedPath1 = path;
+            //};
 
-            child1.UpdatePanels += delegate(IView view) {
-                this.previewPanel.Update(view);
-                this.commandLinePanel.Update(view);
-                Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.Name;
-            };
+            //child1.UpdatePanels += delegate(IView view) {
+            //    this.previewPanel.Update(view);
+            //    this.commandLinePanel.Update(view);
+            //    Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.Name;
+            //};
 
-            Child child2 = new Child("view2");
-            child2.Dock = DockStyle.Fill;
-            child2.TabControl.IsVisible = true;
-            child2.TabControl.Appearance = TabAppearance.FlatButtons;
+            //Child child2 = new Child("view2");
+            //child2.Dock = DockStyle.Fill;
+            //child2.TabControl.IsVisible = true;
+            //child2.TabControl.Appearance = TabAppearance.FlatButtons;
 
-            child2.UpdateStatus += delegate(string status) {
-                toolStripStatus.Text = status;
-            };
+            //child2.UpdateStatus += delegate(string status) {
+            //    toolStripStatus.Text = status;
+            //};
 
-            child2.UpdateProgress += delegate(int value) {
-                updateProgress(value);
-            };
+            //child2.UpdateProgress += delegate(int value) {
+            //    updateProgress(value);
+            //};
 
-            child2.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
-                return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
-            };
+            //child2.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
+            //    return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
+            //};
 
-            child2.UpdatePath += delegate(string path) {
-                this.Text = string.Format("{0} - {1}",
-                                          formName,
-                                          path);
+            //child2.UpdatePath += delegate(string path) {
+            //    this.Text = string.Format("{0} - {1}",
+            //                              formName,
+            //                              path);
 
-                Settings.Instance.DualParent.SelectedPath2 = path;
-            };
+            //    Settings.Instance.DualParent.SelectedPath2 = path;
+            //};
 
-            child2.UpdatePanels += delegate(IView view) {
-                this.previewPanel.Update(view);
-                this.commandLinePanel.Update(view);
-                Settings.Instance.DualParent.SelectedFile2 = view.SelectedResource.Name;
-            };
+            //child2.UpdatePanels += delegate(IView view) {
+            //    this.previewPanel.Update(view);
+            //    this.commandLinePanel.Update(view);
+            //    Settings.Instance.DualParent.SelectedFile2 = view.SelectedResource.Name;
+            //};
 
-            splitContainer.SplitterWidth = 1;
-            splitContainer.Panel1.Controls.Add(child1);
-            splitContainer.Panel2.Controls.Add(child2);
+            //splitContainer.SplitterWidth = 1;
+            //splitContainer.Panel1.Controls.Add(child1);
+            //splitContainer.Panel2.Controls.Add(child2);
 
-            splitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
-                decimal percent = 0;
-                int mouseCursorX = 0;
-                int mouseCursorY = 0;
+            //splitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
+            //    decimal percent = 0;
+            //    int mouseCursorX = 0;
+            //    int mouseCursorY = 0;
 
-                if (this.splitContainer.Orientation == Orientation.Vertical) {
-                    percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
-                    mouseCursorX = e.MouseCursorX - 10;
-                    mouseCursorY = e.MouseCursorY;
-                } else {
-                    percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
-                    mouseCursorX = e.MouseCursorX;
-                    mouseCursorY = e.MouseCursorY - 10;
-                }
+            //    if (this.splitContainer.Orientation == Orientation.Vertical) {
+            //        percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
+            //        mouseCursorX = e.MouseCursorX - 10;
+            //        mouseCursorY = e.MouseCursorY;
+            //    } else {
+            //        percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
+            //        mouseCursorX = e.MouseCursorX;
+            //        mouseCursorY = e.MouseCursorY - 10;
+            //    }
 
-                splitterPercentage = Convert.ToInt32(percent * 100);
+            //    splitterPercentage = Convert.ToInt32(percent * 100);
 
-                string tip = string.Format("{0}%",
-                    splitterPercentage);
+            //    string tip = string.Format("{0}%",
+            //        splitterPercentage);
 
-                toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
-            };
+            //    toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
+            //};
 
-            splitContainer.SplitterMoved += delegate {
-                toolTip.RemoveAll();
-            };
+            //splitContainer.SplitterMoved += delegate {
+            //    toolTip.RemoveAll();
+            //};
 
-            splitContainer.Panel1.Enter += delegate {
-            	Settings.Instance.DualParent.SelectedPath = 
-                    Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedPath");
-            };
+            //splitContainer.Panel1.Enter += delegate {
+            //    Settings.Instance.DualParent.SelectedPath = 
+            //        Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedPath");
+            //};
 
-            splitContainer.Panel2.Enter += delegate {
-                Settings.Instance.DualParent.SelectedPath =
-                    Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedPath");
-            };
+            //splitContainer.Panel2.Enter += delegate {
+            //    Settings.Instance.DualParent.SelectedPath =
+            //        Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedPath");
+            //};
 
-            MenuItem twentyFivePercentMenuItem = new MenuItem("25%", splitterContextMenuOnClick);
-            MenuItem fiftyPercentMenuItem = new MenuItem("50%", splitterContextMenuOnClick);
-            MenuItem seventyFivePercentMenuItem = new MenuItem("75%", splitterContextMenuOnClick);
-            ContextMenu splitterContextMenu = new ContextMenu(new MenuItem[] {
-				twentyFivePercentMenuItem,
-				fiftyPercentMenuItem,
-				seventyFivePercentMenuItem
-			});
+            //MenuItem twentyFivePercentMenuItem = new MenuItem("25%", splitterContextMenuOnClick);
+            //MenuItem fiftyPercentMenuItem = new MenuItem("50%", splitterContextMenuOnClick);
+            //MenuItem seventyFivePercentMenuItem = new MenuItem("75%", splitterContextMenuOnClick);
+            //ContextMenu splitterContextMenu = new ContextMenu(new MenuItem[] {
+            //    twentyFivePercentMenuItem,
+            //    fiftyPercentMenuItem,
+            //    seventyFivePercentMenuItem
+            //});
 
-            splitContainer.ContextMenu = splitterContextMenu;
+            //splitContainer.ContextMenu = splitterContextMenu;
+
+            //Browsers browsers = new Browsers();
+            //browsers.Show(dockPanel);
+
+            Browser leftBrowser = new Browser("view1");
+            leftBrowser.AllowEndUserDocking = false;
+            leftBrowser.CloseButton = false;
+            leftBrowser.DockHandler.DockAreas = DockAreas.Document;
+            leftBrowser.Show(dockPanel);
+
+            Browser rightBrowser = new Browser("view2");
+            rightBrowser.AllowEndUserDocking = false;
+            rightBrowser.CloseButton = false;
+            rightBrowser.DockHandler.DockAreas = DockAreas.Document;
+            rightBrowser.Show(dockPanel.Panes[0], DockAlignment.Right, .5);
+
+            /*
+            // Left tab
+            FakeListView fakeListView1 = new FakeListView();
+            fakeListView1.AllowEndUserDocking = false;
+            fakeListView1.CloseButton = false;
+            fakeListView1.TabText = "listview1";
+            fakeListView1.DockHandler.DockAreas = DockAreas.Document;
+            fakeListView1.Show(dockPanel, DockState.Document);
+
+            // right tab
+            FakeListView fakeListView2 = new FakeListView();
+            fakeListView2.AllowEndUserDocking = false;
+            fakeListView2.CloseButton = false;
+            fakeListView2.TabText = "listview2";
+            fakeListView2.DockHandler.DockAreas = DockAreas.Document;
+            fakeListView2.Show(dockPanel.Panes[0], DockAlignment.Right, .5);
+
+            // Second left tab
+            FakeListView fakeListView3 = new FakeListView();
+            fakeListView3.AllowEndUserDocking = false;
+            fakeListView3.CloseButton = false;
+            fakeListView3.TabText = "listview3";
+            fakeListView3.DockHandler.DockAreas = DockAreas.Document;
+            fakeListView3.Show(dockPanel);
+
+            // Second right tab
+            FakeListView fakeListView4 = new FakeListView();
+            fakeListView4.AllowEndUserDocking = false;
+            fakeListView4.CloseButton = false;
+            fakeListView4.TabText = "listview4";
+            fakeListView4.DockHandler.DockAreas = DockAreas.Document;
+            fakeListView4.Show(dockPanel.Panes[1], fakeListView2);
+             */
         }
 
-        private void splitterContextMenuOnClick(object sender, EventArgs e) {
-            MenuItem menuItem = (MenuItem)sender;
-            splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
-            double percent = Convert.ToDouble(splitterPercentage) * 0.01;
+        //private void splitterContextMenuOnClick(object sender, EventArgs e) {
+        //    MenuItem menuItem = (MenuItem)sender;
+        //    splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
+        //    double percent = Convert.ToDouble(splitterPercentage) * 0.01;
 
-            if (splitContainer.Orientation == Orientation.Vertical) {
-                splitContainer.SplitterDistance = Convert.ToInt32(this.Width * percent);
-            } else if (splitContainer.Orientation == Orientation.Horizontal) {
-                splitContainer.SplitterDistance = Convert.ToInt32((this.Height - 75) * percent);
-            }
-        }
+        //    if (splitContainer.Orientation == Orientation.Vertical) {
+        //        splitContainer.SplitterDistance = Convert.ToInt32(this.Width * percent);
+        //    } else if (splitContainer.Orientation == Orientation.Horizontal) {
+        //        splitContainer.SplitterDistance = Convert.ToInt32((this.Height - 75) * percent);
+        //    }
+        //}
 
-        private void setSplitterDistance() {
-            decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
-            int splitterDistance = 0;
+        //private void setSplitterDistance() {
+        //    decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
+        //    int splitterDistance = 0;
 
-            switch (this.splitContainer.Orientation) {
-                case Orientation.Horizontal:
-                    splitterDistance = Convert.ToInt32(percent * (this.Height - 75));
-                    break;
-                case Orientation.Vertical:
-                    splitterDistance = Convert.ToInt32(percent * this.Width);
-                    break;
-            }
+        //    switch (this.splitContainer.Orientation) {
+        //        case Orientation.Horizontal:
+        //            splitterDistance = Convert.ToInt32(percent * (this.Height - 75));
+        //            break;
+        //        case Orientation.Vertical:
+        //            splitterDistance = Convert.ToInt32(percent * this.Width);
+        //            break;
+        //    }
 
-            splitContainer.SplitterDistance = splitterDistance;
-        }
+        //    splitContainer.SplitterDistance = splitterDistance;
+        //}
 
         protected override void addMenuStripItems() {
             this.menuStrip.Items.AddRange(new ToolStripItem[]
@@ -192,20 +242,20 @@ namespace SharpFile.UI {
             this.filterPanel1ToolStripMenuItem.CheckState = CheckState.Checked;
             this.filterPanel1ToolStripMenuItem.Size = new Size(135, 22);
             this.filterPanel1ToolStripMenuItem.Text = "&Show Filter";
-            this.filterPanel1ToolStripMenuItem.Click += delegate {
-                Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel1, "ShowFilter",
-                    this.filterPanel1ToolStripMenuItem.Checked);
-            };
+            //this.filterPanel1ToolStripMenuItem.Click += delegate {
+            //    Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel1, "ShowFilter",
+            //        this.filterPanel1ToolStripMenuItem.Checked);
+            //};
 
             this.filterPanel2ToolStripMenuItem.Checked = true;
             this.filterPanel2ToolStripMenuItem.CheckOnClick = true;
             this.filterPanel2ToolStripMenuItem.CheckState = CheckState.Checked;
             this.filterPanel2ToolStripMenuItem.Size = new Size(135, 22);
             this.filterPanel2ToolStripMenuItem.Text = "&Show Filter";
-            this.filterPanel2ToolStripMenuItem.Click += delegate {
-                Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel2, "ShowFilter",
-                    this.filterPanel2ToolStripMenuItem.Checked);
-            };
+            //this.filterPanel2ToolStripMenuItem.Click += delegate {
+            //    Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel2, "ShowFilter",
+            //        this.filterPanel2ToolStripMenuItem.Checked);
+            //};
 
             this.viewMenu.DropDownItems.AddRange(new ToolStripItem[] {
                 this.displayPanelItem,
@@ -222,24 +272,24 @@ namespace SharpFile.UI {
             this.displayPanel1Item.Text = "Panel 1";
             this.displayPanel1Item.Checked = true;
             this.displayPanel1Item.CheckOnClick = true;
-            this.displayPanel1Item.CheckStateChanged += delegate(object sender, EventArgs e) {
-                if (!this.splitContainer.Panel2Collapsed) {
-                    this.splitContainer.Panel1Collapsed = !this.displayPanel1Item.Checked;
-                } else {
-                    this.displayPanel1Item.Checked = true;
-                }
-            };
+            //this.displayPanel1Item.CheckStateChanged += delegate(object sender, EventArgs e) {
+            //    if (!this.splitContainer.Panel2Collapsed) {
+            //        this.splitContainer.Panel1Collapsed = !this.displayPanel1Item.Checked;
+            //    } else {
+            //        this.displayPanel1Item.Checked = true;
+            //    }
+            //};
 
             this.displayPanel2Item.Text = "Panel 2";
             this.displayPanel2Item.Checked = true;
             this.displayPanel2Item.CheckOnClick = true;
-            this.displayPanel2Item.CheckStateChanged += delegate(object sender, EventArgs e) {
-                if (!this.splitContainer.Panel1Collapsed) {
-                    this.splitContainer.Panel2Collapsed = !this.displayPanel2Item.Checked;
-                } else {
-                    this.displayPanel2Item.Checked = true;
-                }
-            };
+            //this.displayPanel2Item.CheckStateChanged += delegate(object sender, EventArgs e) {
+            //    if (!this.splitContainer.Panel1Collapsed) {
+            //        this.splitContainer.Panel2Collapsed = !this.displayPanel2Item.Checked;
+            //    } else {
+            //        this.displayPanel2Item.Checked = true;
+            //    }
+            //};
 
             this.panelOrientationItem.Text = "Orientation";
             this.panelOrientationItem.DropDownItems.AddRange(new ToolStripItem[] {
@@ -248,52 +298,52 @@ namespace SharpFile.UI {
 			});
 
             this.horizontalPanelOrientationItem.Text = "Horizontal";
-            this.horizontalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
-                if (this.splitContainer.Orientation != Orientation.Horizontal) {
-                    this.splitContainer.Orientation = Orientation.Horizontal;
-                    this.horizontalPanelOrientationItem.Checked = true;
-                    this.verticalPanelOrientationItem.Checked = false;
-                } else {
-                    this.horizontalPanelOrientationItem.Checked = true;
-                    this.verticalPanelOrientationItem.Checked = false;
-                }
+            //this.horizontalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
+            //    if (this.splitContainer.Orientation != Orientation.Horizontal) {
+            //        this.splitContainer.Orientation = Orientation.Horizontal;
+            //        this.horizontalPanelOrientationItem.Checked = true;
+            //        this.verticalPanelOrientationItem.Checked = false;
+            //    } else {
+            //        this.horizontalPanelOrientationItem.Checked = true;
+            //        this.verticalPanelOrientationItem.Checked = false;
+            //    }
 
-                setSplitterDistance();
-            };
+            //    setSplitterDistance();
+            //};
 
             this.verticalPanelOrientationItem.Text = "Vertical";
-            this.verticalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
-                if (this.splitContainer.Orientation != Orientation.Vertical) {
-                    this.splitContainer.Orientation = Orientation.Vertical;
-                    this.verticalPanelOrientationItem.Checked = true;
-                    this.horizontalPanelOrientationItem.Checked = false;
-                } else {
-                    this.verticalPanelOrientationItem.Checked = true;
-                    this.horizontalPanelOrientationItem.Checked = false;
-                }
+            //this.verticalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
+            //    if (this.splitContainer.Orientation != Orientation.Vertical) {
+            //        this.splitContainer.Orientation = Orientation.Vertical;
+            //        this.verticalPanelOrientationItem.Checked = true;
+            //        this.horizontalPanelOrientationItem.Checked = false;
+            //    } else {
+            //        this.verticalPanelOrientationItem.Checked = true;
+            //        this.horizontalPanelOrientationItem.Checked = false;
+            //    }
 
-                setSplitterDistance();
-            };
+            //    setSplitterDistance();
+            //};
 
             this.swapPanelItem.Text = "Swap Panels";
-            this.swapPanelItem.MouseUp += delegate(object sender, MouseEventArgs e) {
-                Control panel1Control = this.splitContainer.Panel1.Controls[0];
-                Control panel2Control = this.splitContainer.Panel2.Controls[0];
+            //this.swapPanelItem.MouseUp += delegate(object sender, MouseEventArgs e) {
+            //    Control panel1Control = this.splitContainer.Panel1.Controls[0];
+            //    Control panel2Control = this.splitContainer.Panel2.Controls[0];
 
-                this.splitContainer.Panel2.Controls.Clear();
-                this.splitContainer.Panel2.Controls.Add(panel1Control);
+            //    this.splitContainer.Panel2.Controls.Clear();
+            //    this.splitContainer.Panel2.Controls.Add(panel1Control);
 
-                this.splitContainer.Panel1.Controls.Clear();
-                this.splitContainer.Panel1.Controls.Add(panel2Control);
-            };
+            //    this.splitContainer.Panel1.Controls.Clear();
+            //    this.splitContainer.Panel1.Controls.Add(panel2Control);
+            //};
         }
 
         protected override void addControls() {
-            this.splitContainer.Dock = DockStyle.Fill;
-            this.splitContainer.Size = new Size(641, 364);
-            this.splitContainer.SplitterDistance = 318;
+            //this.splitContainer.Dock = DockStyle.Fill;
+            //this.splitContainer.Size = new Size(641, 364);
+            //this.splitContainer.SplitterDistance = 318;
 
-            ((SplitContainer)this.Controls["previewPanelSplitContainer"]).Panel1.Controls.Add(this.splitContainer);
+            //((SplitContainer)this.Controls["previewPanelSplitContainer"]).Panel1.Controls.Add(this.splitContainer);
             //((SplitContainer)this.Controls["commandLinePanelSplitContainer"]).Panel1.Controls.Add(this.splitContainer);
             base.addControls();
         }
@@ -301,6 +351,7 @@ namespace SharpFile.UI {
         protected override void onFormClosing() {
             base.onFormClosing();
 
+            /*
             // Save the paths for each panel.
             Settings.Instance.DualParent.Panel1.Paths = Forms.GetPropertyInChild<List<string>>(
                 this.splitContainer.Panel1, "Paths");
@@ -320,11 +371,13 @@ namespace SharpFile.UI {
                 this.splitContainer.Panel1, "ShowFilter");
             Settings.Instance.DualParent.Panel2.ShowFilter = Forms.GetPropertyInChild<bool>(
                 this.splitContainer.Panel2, "ShowFilter");
+             */
         }
 
         protected override void onFormLoad() {
             base.onFormLoad();
 
+            /*
             // Get the paths from the panels.
             Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", 
                 Settings.Instance.DualParent.Panel1.Paths);
@@ -377,6 +430,7 @@ namespace SharpFile.UI {
 
             Forms.SetPropertyInChild<FormatTemplate>(this.splitContainer.Panel2, "DriveFormatTemplate",
                 Settings.Instance.DualParent.Panel2.DriveFormatTemplate);
+             */
         }
     }
 }

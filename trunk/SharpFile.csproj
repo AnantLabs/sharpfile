@@ -68,6 +68,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.2.3102.27317, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
@@ -118,6 +122,9 @@
     <Compile Include="UI\BaseParent.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Browser.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\Child.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -135,6 +142,12 @@
     </Compile>
     <Compile Include="UI\DualParent.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\FakeListView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\FakeListView.Designer.cs">
+      <DependentUpon>FakeListView.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\FileBrowser.cs">
       <SubType>Component</SubType>
@@ -190,6 +203,9 @@
     <EmbeddedResource Include="UI\CommandLineTextBox.resx">
       <DependentUpon>CommandLineTextBox.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FakeListView.resx">
+      <DependentUpon>FakeListView.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="UI\TabControl.cs">
       <SubType>Component</SubType>

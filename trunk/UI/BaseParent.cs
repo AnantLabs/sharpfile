@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.SettingsSection;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
 	public class BaseParent : Form {
@@ -21,11 +22,13 @@ namespace SharpFile.UI {
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 		protected MenuStrip menuStrip = new MenuStrip();
-        protected SplitContainer previewPanelSplitContainer = new SplitContainer();
-        protected SplitContainer commandLinePanelSplitContainer = new SplitContainer();
         protected PreviewPanel previewPanel = new PreviewPanel();
         protected CommandLinePanel commandLinePanel = new CommandLinePanel();
         protected NotifyIcon notifyIcon = new NotifyIcon();
+        protected DockPanel dockPanel = new DockPanel();
+
+        //protected SplitContainer previewPanelSplitContainer = new SplitContainer();
+        //protected SplitContainer commandLinePanelSplitContainer = new SplitContainer();
 
 		protected ToolStripMenuItem fileMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem exitToolStripMenuItem = new ToolStripMenuItem();
@@ -274,6 +277,47 @@ namespace SharpFile.UI {
 			this.toolStripStatus.Size = new Size(0, 10);
 			this.toolStripStatus.Dock = DockStyle.Bottom;
 
+            MenuItem addTabMenuItem = new MenuItem("Add tab", dockPanelContextMenuOnClick);
+            MenuItem closeTabMenuItem = new MenuItem("Close tab", dockPanelContextMenuOnClick);
+
+            ContextMenu dockPanelContextMenu = new ContextMenu(new MenuItem[] {
+                addTabMenuItem,
+                closeTabMenuItem
+            });
+
+            dockPanelContextMenu.Popup += delegate(object sender, EventArgs e) {
+                if (true) {
+                    //DockContent d = null;
+                    //d.GetChildAtPoint
+
+                    //dockPanel.Documents
+
+                    Control control = GetChildAtPoint(new Point(MousePosition.X, MousePosition.Y));
+
+                    MessageBox.Show(control.GetType().ToString());
+
+                    //if (control is DockPaneStripBase) {
+                    //    MessageBox.Show("content");
+                    //} else {
+                    //    MessageBox.Show("blob");
+                    //}
+
+                    //MousePosition.
+
+                    dockPanelContextMenu.MenuItems[1].Visible = false;
+                }
+            };
+
+            this.dockPanel.Dock = DockStyle.Fill;
+            this.dockPanel.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.World, ((byte)(0)));
+            this.dockPanel.Name = "dockPanel";
+            this.dockPanel.TabIndex = 0;
+            this.dockPanel.DocumentStyle = DocumentStyle.DockingWindow;
+            this.dockPanel.ContextMenu = dockPanelContextMenu;
+
+            this.Controls.Add(this.dockPanel);
+
+            /*
             this.previewPanelSplitContainer.Dock = DockStyle.Fill;
             this.previewPanelSplitContainer.Name = "previewPanelSplitContainer";
             this.previewPanelSplitContainer.SplitterWidth = 1;
@@ -343,6 +387,7 @@ namespace SharpFile.UI {
             };
 
             //this.Controls.Add(this.commandLinePanelSplitContainer);
+            */
 
 			addControls();
 
@@ -366,6 +411,20 @@ namespace SharpFile.UI {
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+
+        private void dockPanelContextMenuOnClick(object sender, EventArgs e) {
+            MenuItem menuItem = (MenuItem)sender;
+            switch (menuItem.Text) {
+                case "Add tab":
+                    MessageBox.Show("add tab");
+                    break;
+                case "Close tab":
+                    MessageBox.Show("close tab");
+                    // TODO: Calculate if we are over top of a current tab.
+                    //menuItem.
+                    break;
+            }
+        }
 
         private void reloadSettingsStripMenuItem_Click(object sender, EventArgs e) {
             Settings.Load();
@@ -395,7 +454,7 @@ namespace SharpFile.UI {
 		}
 
         private void previewPanelToolStripMenuItem_Click(object sender, EventArgs e) {
-            previewPanelSplitContainer.Panel2Collapsed = previewPanelToolStripMenuItem.Checked;
+            //previewPanelSplitContainer.Panel2Collapsed = previewPanelToolStripMenuItem.Checked;
             previewPanelToolStripMenuItem.Checked = !previewPanelToolStripMenuItem.Checked;
         }
 
@@ -403,16 +462,16 @@ namespace SharpFile.UI {
             decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
             int splitterDistance = 0;
 
-            switch (this.previewPanelSplitContainer.Orientation) {
-                case Orientation.Horizontal:
-                    splitterDistance = Convert.ToInt32(percent * (this.Height - 75));
-                    break;
-                case Orientation.Vertical:
-                    splitterDistance = Convert.ToInt32(percent * this.Width);
-                    break;
-            }
+            //switch (this.previewPanelSplitContainer.Orientation) {
+            //    case Orientation.Horizontal:
+            //        splitterDistance = Convert.ToInt32(percent * (this.Height - 75));
+            //        break;
+            //    case Orientation.Vertical:
+            //        splitterDistance = Convert.ToInt32(percent * this.Width);
+            //        break;
+            //}
 
-            previewPanelSplitContainer.SplitterDistance = splitterDistance;
+            //previewPanelSplitContainer.SplitterDistance = splitterDistance;
         }
 
 		protected virtual void addControls() {
@@ -422,7 +481,7 @@ namespace SharpFile.UI {
 		}
 
 		protected virtual void onFormClosing() {
-            Settings.Instance.PreviewPanel.Collapsed = this.previewPanelSplitContainer.Panel2Collapsed;
+            //Settings.Instance.PreviewPanel.Collapsed = this.previewPanelSplitContainer.Panel2Collapsed;
             Settings.Instance.PreviewPanel.SplitterPercentage = 100 - splitterPercentage;
 		}
 
@@ -430,7 +489,7 @@ namespace SharpFile.UI {
             splitterPercentage = (100 - Settings.Instance.PreviewPanel.SplitterPercentage);
             setSplitterDistance();
 
-            this.previewPanelSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
+            //this.previewPanelSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
 
             foreach (Tool tool in Settings.Instance.DualParent.Tools) {
