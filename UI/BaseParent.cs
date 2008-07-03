@@ -286,24 +286,11 @@ namespace SharpFile.UI {
             });
 
             dockPanelContextMenu.Popup += delegate(object sender, EventArgs e) {
-                if (true) {
-                    //DockContent d = null;
-                    //d.GetChildAtPoint
+                Control control = GetChildAtPoint(new Point(MousePosition.X, MousePosition.Y));
 
-                    //dockPanel.Documents
-
-                    Control control = GetChildAtPoint(new Point(MousePosition.X, MousePosition.Y));
-
-                    MessageBox.Show(control.GetType().ToString());
-
-                    //if (control is DockPaneStripBase) {
-                    //    MessageBox.Show("content");
-                    //} else {
-                    //    MessageBox.Show("blob");
-                    //}
-
-                    //MousePosition.
-
+                if (control is DockPaneStripBase) {
+                    dockPanelContextMenu.MenuItems[1].Visible = true;
+                } else {
                     dockPanelContextMenu.MenuItems[1].Visible = false;
                 }
             };
@@ -412,16 +399,54 @@ namespace SharpFile.UI {
 			this.PerformLayout();
 		}
 
-        private void dockPanelContextMenuOnClick(object sender, EventArgs e) {
+        private void addBrowser() {
+            Browser browser = getBrowser();
+            browser.Show(dockPanel);
+        }
+
+        protected Browser getBrowser() {
+            Browser browser = new Browser("view1");
+            browser.AllowEndUserDocking = false;
+            browser.DockHandler.DockAreas = DockAreas.Document;
+
+            browser.UpdateStatus += delegate(string status) {
+                toolStripStatus.Text = status;
+            };
+
+            browser.UpdateProgress += delegate(int value) {
+                updateProgress(value);
+            };
+
+            browser.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
+                return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
+            };
+
+            browser.UpdatePath += delegate(string path) {
+                this.Text = string.Format("{0} - {1}",
+                                          formName,
+                                          path);
+
+                Settings.Instance.DualParent.SelectedPath1 = path;
+            };
+
+            browser.UpdatePanels += delegate(IView view) {
+                this.previewPanel.Update(view);
+                this.commandLinePanel.Update(view);
+                Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.Name;
+            };
+
+            return browser;
+        }
+
+        protected virtual void dockPanelContextMenuOnClick(object sender, EventArgs e) {
             MenuItem menuItem = (MenuItem)sender;
             switch (menuItem.Text) {
                 case "Add tab":
-                    MessageBox.Show("add tab");
+                    addBrowser();
                     break;
                 case "Close tab":
                     MessageBox.Show("close tab");
                     // TODO: Calculate if we are over top of a current tab.
-                    //menuItem.
                     break;
             }
         }

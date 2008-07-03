@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Common;
 using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
+using System;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
@@ -137,55 +135,38 @@ namespace SharpFile.UI {
 
             //splitContainer.ContextMenu = splitterContextMenu;
 
-            //Browsers browsers = new Browsers();
-            //browsers.Show(dockPanel);
-
-            Browser leftBrowser = new Browser("view1");
-            leftBrowser.AllowEndUserDocking = false;
-            leftBrowser.CloseButton = false;
-            leftBrowser.DockHandler.DockAreas = DockAreas.Document;
-            leftBrowser.Show(dockPanel);
-
-            Browser rightBrowser = new Browser("view2");
-            rightBrowser.AllowEndUserDocking = false;
-            rightBrowser.CloseButton = false;
-            rightBrowser.DockHandler.DockAreas = DockAreas.Document;
-            rightBrowser.Show(dockPanel.Panes[0], DockAlignment.Right, .5);
-
-            /*
-            // Left tab
-            FakeListView fakeListView1 = new FakeListView();
-            fakeListView1.AllowEndUserDocking = false;
-            fakeListView1.CloseButton = false;
-            fakeListView1.TabText = "listview1";
-            fakeListView1.DockHandler.DockAreas = DockAreas.Document;
-            fakeListView1.Show(dockPanel, DockState.Document);
-
-            // right tab
-            FakeListView fakeListView2 = new FakeListView();
-            fakeListView2.AllowEndUserDocking = false;
-            fakeListView2.CloseButton = false;
-            fakeListView2.TabText = "listview2";
-            fakeListView2.DockHandler.DockAreas = DockAreas.Document;
-            fakeListView2.Show(dockPanel.Panes[0], DockAlignment.Right, .5);
-
-            // Second left tab
-            FakeListView fakeListView3 = new FakeListView();
-            fakeListView3.AllowEndUserDocking = false;
-            fakeListView3.CloseButton = false;
-            fakeListView3.TabText = "listview3";
-            fakeListView3.DockHandler.DockAreas = DockAreas.Document;
-            fakeListView3.Show(dockPanel);
-
-            // Second right tab
-            FakeListView fakeListView4 = new FakeListView();
-            fakeListView4.AllowEndUserDocking = false;
-            fakeListView4.CloseButton = false;
-            fakeListView4.TabText = "listview4";
-            fakeListView4.DockHandler.DockAreas = DockAreas.Document;
-            fakeListView4.Show(dockPanel.Panes[1], fakeListView2);
-             */
+            addPanel1Browser();
+            addPanel2Browser();
         }
+
+        protected override void dockPanelContextMenuOnClick(object sender, EventArgs e) {
+            MenuItem menuItem = (MenuItem)sender;
+            switch (menuItem.Text) {
+                case "Add tab":
+                    addPanel1Browser();
+                    break;
+                case "Close tab":
+                    MessageBox.Show("close tab");
+                    // TODO: Calculate if we are over top of a current tab.
+                    break;
+            }
+        }
+
+        private void addPanel1Browser() {
+            Browser browser = getBrowser();
+            browser.Show(dockPanel);
+        }
+
+        private void addPanel2Browser() {
+            Browser browser = getBrowser();
+
+            // Create the second pane if necessary, otherwise just add a tab to the second pane.
+            if (dockPanel.Panes.Count == 1) {
+                browser.Show(dockPanel.Panes[0], DockAlignment.Right, .5);
+            } else {
+                browser.Show(dockPanel.Panes[1], null);
+            }
+        }        
 
         //private void splitterContextMenuOnClick(object sender, EventArgs e) {
         //    MenuItem menuItem = (MenuItem)sender;
