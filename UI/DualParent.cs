@@ -162,7 +162,8 @@ namespace SharpFile.UI {
 
             // Create the second pane if necessary, otherwise just add a tab to the second pane.
             if (dockPanel.Panes.Count == 1) {
-                browser.Show(dockPanel.Panes[0], DockAlignment.Right, .5);
+                double splitterPercentage = (Settings.Instance.DualParent.SplitterPercentage) * 0.01;
+                browser.Show(dockPanel.Panes[0], DockAlignment.Right, splitterPercentage);
             } else {
                 browser.Show(dockPanel.Panes[1], null);
             }
@@ -353,6 +354,9 @@ namespace SharpFile.UI {
             Settings.Instance.DualParent.Panel2.ShowFilter = Forms.GetPropertyInChild<bool>(
                 this.splitContainer.Panel2, "ShowFilter");
              */
+
+            Settings.Instance.DualParent.SplitterPercentage = 
+                Convert.ToInt32(Convert.ToDouble(dockPanel.Panes[1].Width) / (Convert.ToDouble(this.Width)) * 100);
         }
 
         protected override void onFormLoad() {
