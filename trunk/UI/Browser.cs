@@ -36,6 +36,9 @@ namespace SharpFile.UI {
         public event View.UpdateStatusDelegate UpdateStatus;
         public event View.UpdatePanelsDelegate UpdatePanels;
 
+        public Browser() : this(string.Empty) {
+        }
+
         /// <summary>
         /// Filebrowser ctor.
         /// </summary>
