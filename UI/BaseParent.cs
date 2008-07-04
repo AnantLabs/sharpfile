@@ -404,13 +404,14 @@ namespace SharpFile.UI {
             }
         }
 
-        private void addBrowser() {
-            Browser browser = getBrowser();
+        private void addBrowser(string path) {
+            Browser browser = getBrowser(path);
             browser.Show(dockPanel);
         }
 
-        protected Browser getBrowser() {
+        protected Browser getBrowser(string path) {
             Browser browser = new Browser("view1");
+            browser.Path = path;
             browser.DockHandler.DockAreas = DockAreas.Document | DockAreas.DockBottom;
 
             if (isAdvancedLayout) {
@@ -431,10 +432,10 @@ namespace SharpFile.UI {
                 return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
             };
 
-            browser.UpdatePath += delegate(string path) {
+            browser.UpdatePath += delegate(string updatePath) {
                 this.Text = string.Format("{0} - {1}",
                                           formName,
-                                          path);
+                                          updatePath);
 
                 Settings.Instance.DualParent.SelectedPath = path;
             };
@@ -455,7 +456,7 @@ namespace SharpFile.UI {
             MenuItem menuItem = (MenuItem)sender;
             switch (menuItem.Text) {
                 case "Add tab":
-                    addBrowser();
+                    addBrowser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                     break;
                 case "Close tab":
                     dockPanel.ActiveDocument.DockHandler.Close();

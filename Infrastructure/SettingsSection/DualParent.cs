@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure.SettingsSection {    
     public sealed class DualParent {
-        private const string defaultDrive = @"c:\";
+        public const string DefaultDrive = @"c:\";
 
         private string selectedPath;
         private string selectedPath1;
@@ -69,7 +69,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public Panel Panel1 {
             get {
                 if (panel1.Paths.Count == 0) {
-                    panel1.Paths.Add(defaultDrive);
+                    panel1.Paths.Add(DefaultDrive);
                 }
 
                 return panel1;
@@ -83,7 +83,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public Panel Panel2 {
             get {
                 if (panel2.Paths.Count == 0) {
-                    panel2.Paths.Add(defaultDrive);
+                    panel2.Paths.Add(DefaultDrive);
                 }
 
                 return panel2;
