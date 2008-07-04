@@ -213,30 +213,15 @@ namespace SharpFile.UI {
             this.displayPanel1Item.Checked = true;
             this.displayPanel1Item.CheckOnClick = true;
             this.displayPanel1Item.CheckStateChanged += delegate(object sender, EventArgs e) {
-                if (dockPanel.Panes[0].Visible) {
-                    ///dockPanel.Panes[0].AutoSizeMode = AutoSizeMode.
-                    //dockPanel.Panes[1].Width = 
-                } else {
-                    dockPanel.Panes[0].Visible = true;
-                }
-
-                //if (!this.splitContainer.Panel2Collapsed) {
-                //    this.splitContainer.Panel1Collapsed = !this.displayPanel1Item.Checked;
-                //} else {
-                //    this.displayPanel1Item.Checked = true;
-                //}
+                displayPanelChanged(dockPanel.Panes[0]);
             };
 
             this.displayPanel2Item.Text = "Panel 2";
             this.displayPanel2Item.Checked = true;
             this.displayPanel2Item.CheckOnClick = true;
-            //this.displayPanel2Item.CheckStateChanged += delegate(object sender, EventArgs e) {
-            //    if (!this.splitContainer.Panel1Collapsed) {
-            //        this.splitContainer.Panel2Collapsed = !this.displayPanel2Item.Checked;
-            //    } else {
-            //        this.displayPanel2Item.Checked = true;
-            //    }
-            //};
+            this.displayPanel2Item.CheckStateChanged += delegate(object sender, EventArgs e) {
+                displayPanelChanged(dockPanel.Panes[1]);
+            };
 
             this.panelOrientationItem.Text = "Orientation";
             this.panelOrientationItem.DropDownItems.AddRange(new ToolStripItem[] {
@@ -245,44 +230,64 @@ namespace SharpFile.UI {
 			});
 
             this.horizontalPanelOrientationItem.Text = "Horizontal";
-            //this.horizontalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
-            //    if (this.splitContainer.Orientation != Orientation.Horizontal) {
-            //        this.splitContainer.Orientation = Orientation.Horizontal;
-            //        this.horizontalPanelOrientationItem.Checked = true;
-            //        this.verticalPanelOrientationItem.Checked = false;
-            //    } else {
-            //        this.horizontalPanelOrientationItem.Checked = true;
-            //        this.verticalPanelOrientationItem.Checked = false;
-            //    }
-
-            //    setSplitterDistance();
-            //};
+            this.horizontalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
+                if (!this.horizontalPanelOrientationItem.Checked) {
+                    if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Right) {
+                        dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Bottom, .5);
+                        this.horizontalPanelOrientationItem.Checked = true;
+                        this.verticalPanelOrientationItem.Checked = false;
+                    } else if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Left) {
+                        dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Top, .5);
+                        this.horizontalPanelOrientationItem.Checked = true;
+                        this.verticalPanelOrientationItem.Checked = false;
+                    }
+                }
+            };
 
             this.verticalPanelOrientationItem.Text = "Vertical";
-            //this.verticalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
-            //    if (this.splitContainer.Orientation != Orientation.Vertical) {
-            //        this.splitContainer.Orientation = Orientation.Vertical;
-            //        this.verticalPanelOrientationItem.Checked = true;
-            //        this.horizontalPanelOrientationItem.Checked = false;
-            //    } else {
-            //        this.verticalPanelOrientationItem.Checked = true;
-            //        this.horizontalPanelOrientationItem.Checked = false;
-            //    }
-
-            //    setSplitterDistance();
-            //};
+            this.verticalPanelOrientationItem.Checked = true;
+            this.verticalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
+                if (!this.verticalPanelOrientationItem.Checked) {
+                    if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Bottom) {
+                        dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Right, .5);
+                        this.horizontalPanelOrientationItem.Checked = false;
+                        this.verticalPanelOrientationItem.Checked = true;
+                    } else if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Top) {
+                        dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Left, .5);
+                        this.horizontalPanelOrientationItem.Checked = false;
+                        this.verticalPanelOrientationItem.Checked = true;
+                    }
+                }
+            };
 
             this.swapPanelItem.Text = "Swap Panels";
-            //this.swapPanelItem.MouseUp += delegate(object sender, MouseEventArgs e) {
-            //    Control panel1Control = this.splitContainer.Panel1.Controls[0];
-            //    Control panel2Control = this.splitContainer.Panel2.Controls[0];
+            this.swapPanelItem.MouseUp += delegate(object sender, MouseEventArgs e) {
+                if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Right) {
+                    dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Left, .5);
+                } else if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Bottom) {
+                    dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Top, .5);
+                } else if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Left) {
+                    dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Right, .5);
+                } else if (dockPanel.Panes[1].NestedDockingStatus.Alignment == DockAlignment.Top) {
+                    dockPanel.Panes[1].DockTo(dockPanel.Panes[0].NestedPanesContainer, dockPanel.Panes[0], DockAlignment.Bottom, .5);
+                }
+            };
+        }
 
-            //    this.splitContainer.Panel2.Controls.Clear();
-            //    this.splitContainer.Panel2.Controls.Add(panel1Control);
+        private void displayPanelChanged(DockPane pane) {
+            if (pane.Visible) {
+                pane.Visible = false;
 
-            //    this.splitContainer.Panel1.Controls.Clear();
-            //    this.splitContainer.Panel1.Controls.Add(panel2Control);
-            //};
+                foreach (IDockContent content in pane.Contents) {
+                    content.DockHandler.Hide();
+                }
+            } else {
+                pane.Visible = true;
+
+                foreach (IDockContent content in pane.Contents) {
+                    content.DockHandler.Show();
+                }
+            }
         }
 
         protected override void addControls() {
