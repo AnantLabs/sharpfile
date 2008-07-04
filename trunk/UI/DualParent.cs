@@ -1,8 +1,8 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Collections.Generic;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
@@ -23,9 +23,9 @@ namespace SharpFile.UI {
             switch (menuItem.Text) {
                 case "Add tab":
                     if (MousePosition.X < PointToScreen(dockPanel.Panes[1].Location).X) {
-                        addPanel1Browser();
+                        addPanel1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                     } else {
-                        addPanel2Browser();
+                        addPanel2Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                     }
                     break;
                 case "Close tab":
@@ -42,8 +42,8 @@ namespace SharpFile.UI {
             }
         }
 
-        protected new Browser getBrowser() {
-            Browser browser = base.getBrowser();
+        protected new Browser getBrowser(string path) {
+            Browser browser = base.getBrowser(path);
             browser.FormClosing += delegate {
                 // Prevent the last browser from being closed if there is only one browser left in the active pane.
                 if (browser.Pane.Contents.Count == 2) {
@@ -77,11 +77,11 @@ namespace SharpFile.UI {
             }
         }
 
-        private void addPanel1Browser() {
-            Browser browser = getBrowser();
+        private void addPanel1Browser(string path) {
+            Browser browser = getBrowser(path);
 
-            browser.UpdatePath += delegate(string path) {
-                Settings.Instance.DualParent.SelectedPath1 = path;
+            browser.UpdatePath += delegate(string updatePath) {
+                Settings.Instance.DualParent.SelectedPath1 = updatePath;
             };
 
             browser.UpdatePanels += delegate(IView view) {
@@ -101,11 +101,11 @@ namespace SharpFile.UI {
             }
         }
 
-        private void addPanel2Browser() {
-            Browser browser = getBrowser();
+        private void addPanel2Browser(string path) {
+            Browser browser = getBrowser(path);
 
-            browser.UpdatePath += delegate(string path) {
-                Settings.Instance.DualParent.SelectedPath2 = path;
+            browser.UpdatePath += delegate(string updatePath) {
+                Settings.Instance.DualParent.SelectedPath2 = updatePath;
             };
 
             browser.UpdatePanels += delegate(IView view) {
@@ -291,8 +291,8 @@ namespace SharpFile.UI {
         }
 
         protected override void addControls() {
-            addPanel1Browser();
-            addPanel2Browser();
+            //addPanel1Browser();
+            //addPanel2Browser();
 
             //this.splitContainer.Dock = DockStyle.Fill;
             //this.splitContainer.Size = new Size(641, 364);
@@ -303,16 +303,24 @@ namespace SharpFile.UI {
             base.addControls();
         }
 
+        private List<string> getPanePaths(DockPane pane) {
+            List<string> paths = new List<string>();
+
+            foreach (IDockContent content in pane.Contents) {
+                paths.Add(((Browser)content).Path);
+            }
+
+            return paths;
+        }
+
         protected override void onFormClosing() {
             base.onFormClosing();
 
-            /*
             // Save the paths for each panel.
-            Settings.Instance.DualParent.Panel1.Paths = Forms.GetPropertyInChild<List<string>>(
-                this.splitContainer.Panel1, "Paths");
-            Settings.Instance.DualParent.Panel2.Paths = Forms.GetPropertyInChild<List<string>>(
-                this.splitContainer.Panel2, "Paths");
+            Settings.Instance.DualParent.Panel1.Paths = getPanePaths(dockPanel.Panes[0]);
+            Settings.Instance.DualParent.Panel2.Paths = getPanePaths(dockPanel.Panes[1]);
 
+            /*
             // Save whether each panel is collapsed or not.
             Settings.Instance.DualParent.Panel1.Collapsed = this.splitContainer.Panel1Collapsed;
             Settings.Instance.DualParent.Panel2.Collapsed = this.splitContainer.Panel2Collapsed;
@@ -336,13 +344,22 @@ namespace SharpFile.UI {
 
             splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 
-            /*
-            // Get the paths from the panels.
-            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", 
-                Settings.Instance.DualParent.Panel1.Paths);
-            Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", 
-                Settings.Instance.DualParent.Panel2.Paths);
+            // Set the paths for the panels.
+            foreach (string path in Settings.Instance.DualParent.Panel1.Paths) {
+                addPanel1Browser(path);
+            }
 
+            foreach (string path in Settings.Instance.DualParent.Panel2.Paths) {
+                addPanel2Browser(path);
+            }
+
+            // Get the paths from the panels.
+            //Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel1, "Paths", 
+            //    Settings.Instance.DualParent.Panel1.Paths);
+            //Forms.SetPropertyInChild<List<string>>(this.splitContainer.Panel2, "Paths", 
+            //    Settings.Instance.DualParent.Panel2.Paths);
+
+            /* 
             // Get the split container orientation.
             Orientation orientation = Settings.Instance.DualParent.Orientation;
             this.splitContainer.Orientation = orientation;
