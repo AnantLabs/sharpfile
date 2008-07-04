@@ -411,7 +411,7 @@ namespace SharpFile.UI {
 
         protected Browser getBrowser() {
             Browser browser = new Browser("view1");
-            browser.DockHandler.DockAreas = DockAreas.Document;
+            browser.DockHandler.DockAreas = DockAreas.Document | DockAreas.DockBottom;
 
             if (isAdvancedLayout) {
                 browser.AllowEndUserDocking = true;
