@@ -3,12 +3,12 @@ using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
 using System;
+using Common;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
         protected ToolStripMenuItem filterPanel1ToolStripMenuItem = new ToolStripMenuItem();
         protected ToolStripMenuItem filterPanel2ToolStripMenuItem = new ToolStripMenuItem();
-        //private SplitContainer splitContainer = new SplitContainer();
         private ToolStripMenuItem swapPanelItem = new ToolStripMenuItem();
         private ToolStripMenuItem displayPanelItem = new ToolStripMenuItem();
         private ToolStripMenuItem displayPanel1Item = new ToolStripMenuItem();
@@ -18,156 +18,138 @@ namespace SharpFile.UI {
         private ToolStripMenuItem horizontalPanelOrientationItem = new ToolStripMenuItem();
         private ToolStripMenuItem panel1Menu = new ToolStripMenuItem();
         private ToolStripMenuItem panel2Menu = new ToolStripMenuItem();        
-        //private int splitterPercentage;
-
-        public DualParent() {
-            //Child child1 = new Child("view1");
-            //child1.TabControl.Appearance = TabAppearance.FlatButtons;
-            //child1.TabControl.IsVisible = true;
-            //child1.Dock = DockStyle.Fill;
-
-            //child1.UpdateStatus += delegate(string status) {
-            //    toolStripStatus.Text = status;
-            //};
-
-            //child1.UpdateProgress += delegate(int value) {
-            //    updateProgress(value);
-            //};
-
-            //child1.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
-            //    return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
-            //};
-
-            //child1.UpdatePath += delegate(string path) {
-            //    this.Text = string.Format("{0} - {1}",
-            //                              formName,
-            //                              path);
-
-            //    Settings.Instance.DualParent.SelectedPath1 = path;
-            //};
-
-            //child1.UpdatePanels += delegate(IView view) {
-            //    this.previewPanel.Update(view);
-            //    this.commandLinePanel.Update(view);
-            //    Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.Name;
-            //};
-
-            //Child child2 = new Child("view2");
-            //child2.Dock = DockStyle.Fill;
-            //child2.TabControl.IsVisible = true;
-            //child2.TabControl.Appearance = TabAppearance.FlatButtons;
-
-            //child2.UpdateStatus += delegate(string status) {
-            //    toolStripStatus.Text = status;
-            //};
-
-            //child2.UpdateProgress += delegate(int value) {
-            //    updateProgress(value);
-            //};
-
-            //child2.GetImageIndex += delegate(IResource fsi, bool useFileAttributes) {
-            //    return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
-            //};
-
-            //child2.UpdatePath += delegate(string path) {
-            //    this.Text = string.Format("{0} - {1}",
-            //                              formName,
-            //                              path);
-
-            //    Settings.Instance.DualParent.SelectedPath2 = path;
-            //};
-
-            //child2.UpdatePanels += delegate(IView view) {
-            //    this.previewPanel.Update(view);
-            //    this.commandLinePanel.Update(view);
-            //    Settings.Instance.DualParent.SelectedFile2 = view.SelectedResource.Name;
-            //};
-
-            //splitContainer.SplitterWidth = 1;
-            //splitContainer.Panel1.Controls.Add(child1);
-            //splitContainer.Panel2.Controls.Add(child2);
-
-            //splitContainer.SplitterMoving += delegate(object sender, SplitterCancelEventArgs e) {
-            //    decimal percent = 0;
-            //    int mouseCursorX = 0;
-            //    int mouseCursorY = 0;
-
-            //    if (this.splitContainer.Orientation == Orientation.Vertical) {
-            //        percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
-            //        mouseCursorX = e.MouseCursorX - 10;
-            //        mouseCursorY = e.MouseCursorY;
-            //    } else {
-            //        percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
-            //        mouseCursorX = e.MouseCursorX;
-            //        mouseCursorY = e.MouseCursorY - 10;
-            //    }
-
-            //    splitterPercentage = Convert.ToInt32(percent * 100);
-
-            //    string tip = string.Format("{0}%",
-            //        splitterPercentage);
-
-            //    toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
-            //};
-
-            //splitContainer.SplitterMoved += delegate {
-            //    toolTip.RemoveAll();
-            //};
-
-            //splitContainer.Panel1.Enter += delegate {
-            //    Settings.Instance.DualParent.SelectedPath = 
-            //        Forms.GetPropertyInChild<string>(this.splitContainer.Panel1, "SelectedPath");
-            //};
-
-            //splitContainer.Panel2.Enter += delegate {
-            //    Settings.Instance.DualParent.SelectedPath =
-            //        Forms.GetPropertyInChild<string>(this.splitContainer.Panel2, "SelectedPath");
-            //};
-
-            //MenuItem twentyFivePercentMenuItem = new MenuItem("25%", splitterContextMenuOnClick);
-            //MenuItem fiftyPercentMenuItem = new MenuItem("50%", splitterContextMenuOnClick);
-            //MenuItem seventyFivePercentMenuItem = new MenuItem("75%", splitterContextMenuOnClick);
-            //ContextMenu splitterContextMenu = new ContextMenu(new MenuItem[] {
-            //    twentyFivePercentMenuItem,
-            //    fiftyPercentMenuItem,
-            //    seventyFivePercentMenuItem
-            //});
-
-            //splitContainer.ContextMenu = splitterContextMenu;
-
-            addPanel1Browser();
-            addPanel2Browser();
-        }
+        private int splitterPercentage = 50;
 
         protected override void dockPanelContextMenuOnClick(object sender, EventArgs e) {
             MenuItem menuItem = (MenuItem)sender;
+
             switch (menuItem.Text) {
                 case "Add tab":
-                    addPanel1Browser();
+                    if (MousePosition.X < PointToScreen(dockPanel.Panes[1].Location).X) {
+                        addPanel1Browser();
+                    } else {
+                        addPanel2Browser();
+                    }
                     break;
                 case "Close tab":
-                    MessageBox.Show("close tab");
-                    // TODO: Calculate if we are over top of a current tab.
+                    dockPanel.ActiveDocument.DockHandler.Close();
                     break;
+                case "25%":
+                case "50%":
+                case "75%":
+                    splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
+                    double percent = Convert.ToDouble(splitterPercentage) * 0.01;
+                    dockPanel.Panes[1].Width = Convert.ToInt32(dockPanel.Panes[1].Width * percent);
+                    break;
+            }
+        }
+
+        protected new Browser getBrowser() {
+            Browser browser = base.getBrowser();
+            browser.FormClosing += delegate {
+                // Prevent the last browser from being closed if there is only one browser left in the active pane.
+                if (browser.Pane.Contents.Count == 2) {
+                    foreach (IDockContent content in browser.Pane.Contents) {
+                        content.DockHandler.CloseButton = false;
+                    }
+                }
+            };
+
+            return browser;
+        }
+
+        protected override void dockPanelContextMenu_Popup(object sender, EventArgs e) {
+            base.dockPanelContextMenu_Popup(sender, e);
+
+            if (dockPanel.Panes.Count == 2
+                && (MousePosition.X > (PointToScreen(dockPanel.Panes[1].Location).X - 5)
+                && MousePosition.X < (PointToScreen(dockPanel.Panes[1].Location).X + 5))) {
+                ContextMenu dockPanelContextMenu = (ContextMenu)sender;
+                dockPanelContextMenu.MenuItems.Clear();
+
+                MenuItem twentyFiveMenuItem = new MenuItem("25%", dockPanelContextMenuOnClick);
+                MenuItem fiftyMenuItem = new MenuItem("50%", dockPanelContextMenuOnClick);
+                MenuItem seventyFiveMenuItem = new MenuItem("75%", dockPanelContextMenuOnClick);
+
+                dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+                    twentyFiveMenuItem,
+                    fiftyMenuItem,
+                    seventyFiveMenuItem
+                });
             }
         }
 
         private void addPanel1Browser() {
             Browser browser = getBrowser();
+
+            browser.UpdatePath += delegate(string path) {
+                Settings.Instance.DualParent.SelectedPath1 = path;
+            };
+
             browser.Show(dockPanel);
+
+            if (dockPanel.Panes[0].Contents.Count == 1) {
+                dockPanel.Panes[0].Contents[0].DockHandler.CloseButton = false;
+            } else {
+                foreach (IDockContent content in dockPanel.Panes[0].Contents) {
+                    content.DockHandler.CloseButton = true;
+                }
+            }
         }
 
         private void addPanel2Browser() {
             Browser browser = getBrowser();
 
+            browser.UpdatePath += delegate(string path) {
+                Settings.Instance.DualParent.SelectedPath2 = path;
+            };
+
             // Create the second pane if necessary, otherwise just add a tab to the second pane.
             if (dockPanel.Panes.Count == 1) {
-                double splitterPercentage = (Settings.Instance.DualParent.SplitterPercentage) * 0.01;
-                browser.Show(dockPanel.Panes[0], DockAlignment.Right, splitterPercentage);
+                browser.Show(dockPanel.Panes[0], DockAlignment.Right, (splitterPercentage * 0.01));
             } else {
                 browser.Show(dockPanel.Panes[1], null);
             }
-        }        
+
+            if (dockPanel.Panes[1].Contents.Count == 1) {
+                dockPanel.Panes[1].Contents[0].DockHandler.CloseButton = false;
+            } else {
+                foreach (IDockContent content in dockPanel.Panes[1].Contents) {
+                    content.DockHandler.CloseButton = true;
+                }
+            }
+
+            dockPanel.Panes[1].SizeChanged += delegate(object sender, EventArgs e) {
+                splitterPercentage = Convert.ToInt32(
+                    Convert.ToDouble(dockPanel.Panes[1].Width) / (Convert.ToDouble(this.Width)) * 100);
+
+                string tip = string.Format("{0}%",
+                    splitterPercentage);
+
+                int mouseCursorX = 0;
+                int mouseCursorY = 0;
+
+                mouseCursorX = MousePosition.X - 10;
+                mouseCursorY = MousePosition.Y;
+
+                //if (this.splitContainer.Orientation == Orientation.Vertical) {
+                //    //percent = Convert.ToDecimal(e.SplitX) / Convert.ToDecimal(this.Width);
+                //    mouseCursorX = e.MouseCursorX - 10;
+                //    mouseCursorY = e.MouseCursorY;
+                //} else {
+                //    //percent = Convert.ToDecimal(e.SplitY) / Convert.ToDecimal(this.Height - 75);
+                //    mouseCursorX = e.MouseCursorX;
+                //    mouseCursorY = e.MouseCursorY - 10;
+                //}
+
+                toolTip.Show(tip, this, mouseCursorX, mouseCursorY);
+                toolTip.RemoveAll();
+
+                //splitContainer.SplitterMoved += delegate {
+                //    toolTip.RemoveAll();
+                //};
+            };
+        }     
 
         //private void splitterContextMenuOnClick(object sender, EventArgs e) {
         //    MenuItem menuItem = (MenuItem)sender;
@@ -321,6 +303,9 @@ namespace SharpFile.UI {
         }
 
         protected override void addControls() {
+            addPanel1Browser();
+            addPanel2Browser();
+
             //this.splitContainer.Dock = DockStyle.Fill;
             //this.splitContainer.Size = new Size(641, 364);
             //this.splitContainer.SplitterDistance = 318;
@@ -355,12 +340,13 @@ namespace SharpFile.UI {
                 this.splitContainer.Panel2, "ShowFilter");
              */
 
-            Settings.Instance.DualParent.SplitterPercentage = 
-                Convert.ToInt32(Convert.ToDouble(dockPanel.Panes[1].Width) / (Convert.ToDouble(this.Width)) * 100);
+            Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
         }
 
         protected override void onFormLoad() {
             base.onFormLoad();
+
+            splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 
             /*
             // Get the paths from the panels.

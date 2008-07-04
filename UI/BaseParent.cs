@@ -15,6 +15,7 @@ namespace SharpFile.UI {
         private DriveDetector driveDetector;
         private int splitterPercentage;
 		private int progressCount = 0;
+        private bool isAdvancedLayout = false;
 
 		protected ToolTip toolTip = new ToolTip();
 		protected Timer timer = new Timer();
@@ -277,23 +278,8 @@ namespace SharpFile.UI {
 			this.toolStripStatus.Size = new Size(0, 10);
 			this.toolStripStatus.Dock = DockStyle.Bottom;
 
-            MenuItem addTabMenuItem = new MenuItem("Add tab", dockPanelContextMenuOnClick);
-            MenuItem closeTabMenuItem = new MenuItem("Close tab", dockPanelContextMenuOnClick);
-
-            ContextMenu dockPanelContextMenu = new ContextMenu(new MenuItem[] {
-                addTabMenuItem,
-                closeTabMenuItem
-            });
-
-            dockPanelContextMenu.Popup += delegate(object sender, EventArgs e) {
-                Control control = GetChildAtPoint(new Point(MousePosition.X, MousePosition.Y));
-
-                if (control is DockPaneStripBase) {
-                    dockPanelContextMenu.MenuItems[1].Visible = true;
-                } else {
-                    dockPanelContextMenu.MenuItems[1].Visible = false;
-                }
-            };
+            ContextMenu dockPanelContextMenu = new ContextMenu();
+            dockPanelContextMenu.Popup += new EventHandler(dockPanelContextMenu_Popup);
 
             this.dockPanel.Dock = DockStyle.Fill;
             this.dockPanel.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.World, ((byte)(0)));
@@ -399,6 +385,25 @@ namespace SharpFile.UI {
 			this.PerformLayout();
 		}
 
+        protected virtual void dockPanelContextMenu_Popup(object sender, EventArgs e) {
+            ContextMenu dockPanelContextMenu = (ContextMenu)sender;
+            dockPanelContextMenu.MenuItems.Clear();
+
+            MenuItem addTabMenuItem = new MenuItem("Add tab", dockPanelContextMenuOnClick);
+            MenuItem closeTabMenuItem = new MenuItem("Close tab", dockPanelContextMenuOnClick);
+
+            if (dockPanel.ActivePane.Contents.Count == 1) {
+                dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+                        addTabMenuItem
+                    });
+            } else {
+                dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+                        addTabMenuItem,
+                        closeTabMenuItem
+                    });
+            }
+        }
+
         private void addBrowser() {
             Browser browser = getBrowser();
             browser.Show(dockPanel);
@@ -406,8 +411,13 @@ namespace SharpFile.UI {
 
         protected Browser getBrowser() {
             Browser browser = new Browser("view1");
-            browser.AllowEndUserDocking = false;
             browser.DockHandler.DockAreas = DockAreas.Document;
+
+            if (isAdvancedLayout) {
+                browser.AllowEndUserDocking = true;
+            } else {
+                browser.AllowEndUserDocking = false;
+            }
 
             browser.UpdateStatus += delegate(string status) {
                 toolStripStatus.Text = status;
@@ -426,13 +436,12 @@ namespace SharpFile.UI {
                                           formName,
                                           path);
 
-                Settings.Instance.DualParent.SelectedPath1 = path;
+                Settings.Instance.DualParent.SelectedPath = path;
             };
 
             browser.UpdatePanels += delegate(IView view) {
                 this.previewPanel.Update(view);
                 this.commandLinePanel.Update(view);
-                Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.Name;
             };
 
             return browser;
@@ -445,8 +454,11 @@ namespace SharpFile.UI {
                     addBrowser();
                     break;
                 case "Close tab":
-                    MessageBox.Show("close tab");
-                    // TODO: Calculate if we are over top of a current tab.
+                    dockPanel.ActiveDocument.DockHandler.Close();
+
+                    if (dockPanel.ActivePane.Contents.Count == 1) {
+                        dockPanel.ActivePane.Contents[0].DockHandler.CloseButton = false;
+                    }
                     break;
             }
         }
