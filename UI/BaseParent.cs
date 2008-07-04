@@ -442,6 +442,10 @@ namespace SharpFile.UI {
             browser.UpdatePanels += delegate(IView view) {
                 this.previewPanel.Update(view);
                 this.commandLinePanel.Update(view);
+
+                if (view.SelectedResource != null) {
+                    Settings.Instance.DualParent.SelectedFile = view.SelectedResource.FullName;
+                }
             };
 
             return browser;
