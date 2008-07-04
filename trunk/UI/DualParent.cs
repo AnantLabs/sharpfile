@@ -1,14 +1,11 @@
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
-using System;
-using Common;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
-        protected ToolStripMenuItem filterPanel1ToolStripMenuItem = new ToolStripMenuItem();
-        protected ToolStripMenuItem filterPanel2ToolStripMenuItem = new ToolStripMenuItem();
         private ToolStripMenuItem swapPanelItem = new ToolStripMenuItem();
         private ToolStripMenuItem displayPanelItem = new ToolStripMenuItem();
         private ToolStripMenuItem displayPanel1Item = new ToolStripMenuItem();
@@ -37,6 +34,7 @@ namespace SharpFile.UI {
                 case "25%":
                 case "50%":
                 case "75%":
+                    // TODO: Setting widths doesn't work correctly.
                     splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
                     double percent = Convert.ToDouble(splitterPercentage) * 0.01;
                     dockPanel.Panes[1].Width = Convert.ToInt32(dockPanel.Panes[1].Width * percent);
@@ -58,7 +56,7 @@ namespace SharpFile.UI {
             return browser;
         }
 
-        protected override void dockPanelContextMenu_Popup(object sender, EventArgs e) {
+        protected new void dockPanelContextMenu_Popup(object sender, EventArgs e) {
             base.dockPanelContextMenu_Popup(sender, e);
 
             if (dockPanel.Panes.Count == 2
@@ -86,6 +84,12 @@ namespace SharpFile.UI {
                 Settings.Instance.DualParent.SelectedPath1 = path;
             };
 
+            browser.UpdatePanels += delegate(IView view) {
+                if (view.SelectedResource != null) {
+                    Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.FullName;
+                }
+            };
+
             browser.Show(dockPanel);
 
             if (dockPanel.Panes[0].Contents.Count == 1) {
@@ -102,6 +106,12 @@ namespace SharpFile.UI {
 
             browser.UpdatePath += delegate(string path) {
                 Settings.Instance.DualParent.SelectedPath2 = path;
+            };
+
+            browser.UpdatePanels += delegate(IView view) {
+                if (view.SelectedResource != null) {
+                    Settings.Instance.DualParent.SelectedFile2 = view.SelectedResource.FullName;
+                }
             };
 
             // Create the second pane if necessary, otherwise just add a tab to the second pane.
@@ -149,19 +159,7 @@ namespace SharpFile.UI {
                 //    toolTip.RemoveAll();
                 //};
             };
-        }     
-
-        //private void splitterContextMenuOnClick(object sender, EventArgs e) {
-        //    MenuItem menuItem = (MenuItem)sender;
-        //    splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
-        //    double percent = Convert.ToDouble(splitterPercentage) * 0.01;
-
-        //    if (splitContainer.Orientation == Orientation.Vertical) {
-        //        splitContainer.SplitterDistance = Convert.ToInt32(this.Width * percent);
-        //    } else if (splitContainer.Orientation == Orientation.Horizontal) {
-        //        splitContainer.SplitterDistance = Convert.ToInt32((this.Height - 75) * percent);
-        //    }
-        //}
+        }
 
         //private void setSplitterDistance() {
         //    decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
@@ -183,43 +181,21 @@ namespace SharpFile.UI {
             this.menuStrip.Items.AddRange(new ToolStripItem[]
 			                              	{
 			                              		this.fileMenu,
-                                                this.panel1Menu,
+                                                //this.panel1Menu,
 			                              		this.editMenu,
 			                              		this.viewMenu,
 			                              		this.toolsMenu,
-                                                this.panel2Menu,
+                                                //this.panel2Menu,
 			                              		this.helpMenu
 			                              	});
 
-            this.panel1Menu.Text = "Panel &1";
-            this.panel1Menu.DropDownItems.AddRange(new ToolStripItem[] {
-                this.filterPanel1ToolStripMenuItem
-            });
+            //this.panel1Menu.Text = "Panel &1";
+            //this.panel1Menu.DropDownItems.AddRange(new ToolStripItem[] {
+            //});
 
-            this.panel2Menu.Text = "Panel &2";
-            this.panel2Menu.DropDownItems.AddRange(new ToolStripItem[] {
-                this.filterPanel2ToolStripMenuItem
-            });
-
-            this.filterPanel1ToolStripMenuItem.Checked = true;
-            this.filterPanel1ToolStripMenuItem.CheckOnClick = true;
-            this.filterPanel1ToolStripMenuItem.CheckState = CheckState.Checked;
-            this.filterPanel1ToolStripMenuItem.Size = new Size(135, 22);
-            this.filterPanel1ToolStripMenuItem.Text = "&Show Filter";
-            //this.filterPanel1ToolStripMenuItem.Click += delegate {
-            //    Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel1, "ShowFilter",
-            //        this.filterPanel1ToolStripMenuItem.Checked);
-            //};
-
-            this.filterPanel2ToolStripMenuItem.Checked = true;
-            this.filterPanel2ToolStripMenuItem.CheckOnClick = true;
-            this.filterPanel2ToolStripMenuItem.CheckState = CheckState.Checked;
-            this.filterPanel2ToolStripMenuItem.Size = new Size(135, 22);
-            this.filterPanel2ToolStripMenuItem.Text = "&Show Filter";
-            //this.filterPanel2ToolStripMenuItem.Click += delegate {
-            //    Common.Forms.SetPropertyInChild<bool>(this.splitContainer.Panel2, "ShowFilter",
-            //        this.filterPanel2ToolStripMenuItem.Checked);
-            //};
+            //this.panel2Menu.Text = "Panel &2";
+            //this.panel2Menu.DropDownItems.AddRange(new ToolStripItem[] {
+            //});
 
             this.viewMenu.DropDownItems.AddRange(new ToolStripItem[] {
                 this.displayPanelItem,
@@ -236,13 +212,20 @@ namespace SharpFile.UI {
             this.displayPanel1Item.Text = "Panel 1";
             this.displayPanel1Item.Checked = true;
             this.displayPanel1Item.CheckOnClick = true;
-            //this.displayPanel1Item.CheckStateChanged += delegate(object sender, EventArgs e) {
-            //    if (!this.splitContainer.Panel2Collapsed) {
-            //        this.splitContainer.Panel1Collapsed = !this.displayPanel1Item.Checked;
-            //    } else {
-            //        this.displayPanel1Item.Checked = true;
-            //    }
-            //};
+            this.displayPanel1Item.CheckStateChanged += delegate(object sender, EventArgs e) {
+                if (dockPanel.Panes[0].Visible) {
+                    ///dockPanel.Panes[0].AutoSizeMode = AutoSizeMode.
+                    //dockPanel.Panes[1].Width = 
+                } else {
+                    dockPanel.Panes[0].Visible = true;
+                }
+
+                //if (!this.splitContainer.Panel2Collapsed) {
+                //    this.splitContainer.Panel1Collapsed = !this.displayPanel1Item.Checked;
+                //} else {
+                //    this.displayPanel1Item.Checked = true;
+                //}
+            };
 
             this.displayPanel2Item.Text = "Panel 2";
             this.displayPanel2Item.Checked = true;
