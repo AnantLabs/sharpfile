@@ -311,7 +311,7 @@ namespace SharpFile.UI {
                 addPanel2Browser(path);
             }
 
-            previewPanel.Show(dockPanel, DockState.DockBottomAutoHide);            
+            addPanels();
 
             // Collapse/check menu panel 1 if appropriate.
             bool panel1Collapsed = Settings.Instance.DualParent.Panel1.Collapsed;

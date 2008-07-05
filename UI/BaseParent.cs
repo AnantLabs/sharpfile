@@ -425,27 +425,27 @@ namespace SharpFile.UI {
             previewPanel.Hide();
         }
 
-        private void setSplitterDistance() {
-            decimal percent = Convert.ToDecimal(splitterPercentage * 0.01);
-            int splitterDistance = 0;
-
-            //switch (this.previewPanelSplitContainer.Orientation) {
-            //    case Orientation.Horizontal:
-            //        splitterDistance = Convert.ToInt32(percent * (this.Height - 75));
-            //        break;
-            //    case Orientation.Vertical:
-            //        splitterDistance = Convert.ToInt32(percent * this.Width);
-            //        break;
-            //}
-
-            //previewPanelSplitContainer.SplitterDistance = splitterDistance;
-        }
-
 		protected virtual void addControls() {
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.progressDisk);
             this.Controls.Add(this.statusStrip);
 		}
+
+        protected void addPanels() {
+            previewPanel.Show(dockPanel, DockState.DockBottomAutoHide);
+            commandLinePanel.Show(previewPanel.Pane, null);
+
+            // TODO: Load panels generically.
+            //int paneIndex = dockPanel.Panes.Count - 1;
+
+            //foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
+            //    if (dockPanel.Panes.Count == paneIndex + 1) {
+            //        panel.Show(dockPanel, DockState.DockBottomAutoHide);
+            //    } else {
+            //        panel.Show(dockPanel.Panes[paneIndex], null);
+            //    }
+            //}            
+        }
 
 		protected virtual void onFormClosing() {
             //Settings.Instance.PreviewPanel.Collapsed = this.previewPanelSplitContainer.Panel2Collapsed;
