@@ -99,7 +99,10 @@ namespace SharpFile.UI {
                 pane1.SizeChanged += delegate {
                     if (orientation == Orientation.Vertical) {
                         splitterPercentage = 100 - Convert.ToInt32(
-                            (Convert.ToDouble(dockPanel.Panes[0].Width) / Convert.ToDouble(this.Width)) * 100);
+                            (Convert.ToDouble(pane1.Width) / Convert.ToDouble(this.Width)) * 100);
+                    } else {
+                        splitterPercentage = 100 - Convert.ToInt32(
+                            (Convert.ToDouble(pane1.Height) / Convert.ToDouble(this.Height - 75)) * 100);
                     }
                 };
             } else {
@@ -204,7 +207,6 @@ namespace SharpFile.UI {
             };
 
             this.verticalPanelOrientationItem.Text = "Vertical";
-            this.verticalPanelOrientationItem.Checked = true;
             this.verticalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
                 if (!this.verticalPanelOrientationItem.Checked) {
                     if (pane2.NestedDockingStatus.Alignment == DockAlignment.Bottom) {
@@ -271,8 +273,7 @@ namespace SharpFile.UI {
             // Save the paths for each panel.
             Settings.Instance.DualParent.Panel1.Paths = getPanePaths(pane1);
             Settings.Instance.DualParent.Panel2.Paths = getPanePaths(pane2);
-            Settings.Instance.DualParent.Orientation = this.horizontalPanelOrientationItem.Checked 
-                ? Orientation.Horizontal : Orientation.Vertical;
+            Settings.Instance.DualParent.Orientation = orientation;
 
             // Save whether each panel is collapsed or not.
             Settings.Instance.DualParent.Panel1.Collapsed = !pane1.Visible;
@@ -284,20 +285,6 @@ namespace SharpFile.UI {
 
         protected override void onFormLoad() {
             base.onFormLoad();
-
-            // Calculate the splitter distance based on the percentage stored and the width of the form.
-            splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
-
-            // Set the paths for the panels.
-            foreach (string path in Settings.Instance.DualParent.Panel1.Paths) {
-                addPanel1Browser(path);
-            }
-
-            foreach (string path in Settings.Instance.DualParent.Panel2.Paths) {
-                addPanel2Browser(path);
-            }
-
-            previewPanel.Show(dockPanel, DockState.DockBottomAutoHide);
 
             // Get the split container orientation.
             orientation = Settings.Instance.DualParent.Orientation;
@@ -311,6 +298,20 @@ namespace SharpFile.UI {
                     this.verticalPanelOrientationItem.Checked = true;
                     break;
             }
+
+            // Calculate the splitter distance based on the percentage stored and the width of the form.
+            splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
+
+            // Set the paths for the panels.
+            foreach (string path in Settings.Instance.DualParent.Panel1.Paths) {
+                addPanel1Browser(path);
+            }
+
+            foreach (string path in Settings.Instance.DualParent.Panel2.Paths) {
+                addPanel2Browser(path);
+            }
+
+            previewPanel.Show(dockPanel, DockState.DockBottomAutoHide);            
 
             // Collapse/check menu panel 1 if appropriate.
             bool panel1Collapsed = Settings.Instance.DualParent.Panel1.Collapsed;
