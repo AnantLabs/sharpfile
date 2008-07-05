@@ -4,9 +4,10 @@ using System.Text;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using SharpFile.IO.ChildResources;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
-    public partial class PreviewPanel : UserControl, IPluginPanel {
+    public partial class PreviewPanel : DockContent, IPluginPanel {
         private IResource resource;
         private PictureBox pictureBox;
         private TextBox textBox;
@@ -19,6 +20,9 @@ namespace SharpFile.UI {
         /// </summary>
         public PreviewPanel() {
             InitializeComponent();
+            this.TabText = "Preview";
+            //this.DockAreas = DockAreas.DockTop | DockAreas.DockTop | DockAreas.Document;
+            this.AllowEndUserDocking = false;
 
             this.SizeChanged += delegate {
                 getImageFromResource();
