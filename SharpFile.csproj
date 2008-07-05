@@ -182,7 +182,7 @@
     <Compile Include="UI\ListViewItemCreator.cs" />
     <Compile Include="UI\ListViewItemsImageIndexer.cs" />
     <Compile Include="UI\PreviewPanel.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ProgressDisk.cs">
       <SubType>UserControl</SubType>
