@@ -53,10 +53,9 @@ namespace SharpFile.UI {
                 case "25%":
                 case "50%":
                 case "75%":
-                    // TODO: Setting widths doesn't work correctly.
                     splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
-                    double percent = Convert.ToDouble(splitterPercentage) * 0.01;
-                    pane2.Width = Convert.ToInt32(pane2.Width * percent);
+                    double percent = Convert.ToDouble(100 - splitterPercentage) * 0.01;
+                    pane2.DockTo(pane1.NestedPanesContainer, pane1, pane2.NestedDockingStatus.Alignment, percent);
                     break;
             }
         }
