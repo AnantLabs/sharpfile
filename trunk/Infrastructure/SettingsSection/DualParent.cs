@@ -33,6 +33,10 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 new FullyQualifiedType("SharpFile", "SharpFile.UI.PreviewPanel"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.PreviewPanel")));
 
+            pluginPanels.Add(new PluginPanel("CommandLinePanel",
+                new FullyQualifiedType("SharpFile", "SharpFile.UI.CommandLinePanel"),
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.CommandLinePanel")));
+
             return pluginPanels;
         }
 

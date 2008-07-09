@@ -579,6 +579,10 @@ namespace SharpFile.Infrastructure {
                                 pluginPanelSetting.Type.Assembly,
                                 pluginPanelSetting.Type.Type);
 
+                            pluginPanel.Name = pluginPanelSetting.Name;
+                            pluginPanel.VisibleDockState = pluginPanelSetting.VisibleState;
+                            pluginPanel.AutoHidePortion = pluginPanelSetting.AutoHidePortion;
+
                             pluginPanels.Add(pluginPanel);
                         } catch (TypeLoadException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
@@ -589,6 +593,19 @@ namespace SharpFile.Infrastructure {
                 }
 
                 return pluginPanels;
+            }
+            set {
+                List<IPluginPanel> list = value;
+
+                // Set the original panel settings so that they will be saved to the config file.
+                //foreach (IPluginPanel panel in list) {
+                //    foreach (PluginPanel pluginPanelSettings in dualParentSettings.PluginPanels) {
+                //        if (pluginPanelSettings.Name.Equals(panel.Name)) {
+                //            pluginPanelSettings.VisibleState = panel.VisibleState;
+                //            pluginPanelSettings.AutoHidePortion = panel.AutoHidePortion;
+                //        }
+                //    }
+                //}
             }
         }
 

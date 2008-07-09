@@ -35,6 +35,11 @@ namespace SharpFile.UI {
             });
 
             this.splitterContextMenu.Popup += delegate {
+                /*
+                 if (MousePosition.X > (PointToScreen(pane2.NestedDockingStatus.SplitterBounds.Location).X - 5)
+                 && MousePosition.X < (PointToScreen(pane2.NestedDockingStatus.SplitterBounds.Location).X + 5)) {
+                 */
+
                 if (MousePosition.X > (PointToScreen(dockPanel.Panes[1].Location).X - 5)
                  && MousePosition.X < (PointToScreen(dockPanel.Panes[1].Location).X + 5)) {
                     // Do nothing to show the context menu.

@@ -24,7 +24,6 @@ namespace SharpFile.UI {
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 		protected MenuStrip menuStrip = new MenuStrip();
         protected PreviewPanel previewPanel = new PreviewPanel();
-        protected CommandLinePanel commandLinePanel = new CommandLinePanel();
         protected NotifyIcon notifyIcon = new NotifyIcon();
         
         protected DockPanel dockPanel = new DockPanel();
@@ -365,8 +364,10 @@ namespace SharpFile.UI {
             };
 
             browser.UpdatePanels += delegate(IView view) {
-                this.previewPanel.Update(view);
-                this.commandLinePanel.Update(view);
+                foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
+                    panel.Update(view);
+                    panel.GiveUpFocus();
+                }
 
                 if (view.SelectedResource != null) {
                     Settings.Instance.DualParent.SelectedFile = view.SelectedResource.FullName;
@@ -432,24 +433,35 @@ namespace SharpFile.UI {
 		}
 
         protected void addPanels() {
-            previewPanel.Show(dockPanel, DockState.DockBottomAutoHide);
-            commandLinePanel.Show(previewPanel.Pane, null);
+            // Load plugin panels.
+            int paneIndex = dockPanel.Panes.Count;
 
-            // TODO: Load panels generically.
-            //int paneIndex = dockPanel.Panes.Count - 1;
+            foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
+                // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pain.
+                if (dockPanel.Panes.Count == paneIndex) {
+                    panel.Show(dockPanel, DockState.DockBottomAutoHide);
+                } else {
+                    panel.Show(dockPanel.Panes[paneIndex], null);
+                }
 
-            //foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
-            //    if (dockPanel.Panes.Count == paneIndex + 1) {
-            //        panel.Show(dockPanel, DockState.DockBottomAutoHide);
-            //    } else {
-            //        panel.Show(dockPanel.Panes[paneIndex], null);
-            //    }
-            //}            
+                panel.VisibleState = panel.VisibleDockState;
+            }
         }
 
 		protected virtual void onFormClosing() {
             //Settings.Instance.PreviewPanel.Collapsed = this.previewPanelSplitContainer.Panel2Collapsed;
             //Settings.Instance.PreviewPanel.SplitterPercentage = 100 - splitterPercentage;
+
+            //Settings.Instance.PluginPanels = Settings.Instance.PluginPanels;
+
+            //foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
+            //    foreach (PluginPanel pluginPanelSetting in Settings.Instance.DualParent.PluginPanels) {
+            //        if (panel.Name.Equals(pluginPanelSetting.Name)) {
+            //            pluginPanelSetting.VisibleState = panel.VisibleState;
+            //            //panel.VisibleDockState = panel.VisibleState;
+            //        }
+            //    }
+            //}
 		}
 
         protected virtual void onFormLoad() {
@@ -458,6 +470,15 @@ namespace SharpFile.UI {
 
             //this.previewPanelSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
             previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
+
+            //foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
+            //    // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pain.
+            //    if (dockPanel.Panes.Count == paneIndex) {
+            //        panel.Show(dockPanel, DockState.DockBottomAutoHide);
+            //    } else {
+            //        panel.Show(dockPanel.Panes[paneIndex], null);
+            //    }
+            //}
 
             foreach (Tool tool in Settings.Instance.DualParent.Tools) {
                 string menuItemName = tool.Name;
