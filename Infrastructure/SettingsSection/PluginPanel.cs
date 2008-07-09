@@ -1,10 +1,13 @@
 ﻿using System.Xml.Serialization;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.Infrastructure.SettingsSection {
-    public class PluginPanel {
-        string name;
-        FullyQualifiedType type;
-        FullyQualifiedType settingsType;
+    public sealed class PluginPanel {
+        private string name;
+        private FullyQualifiedType type;
+        private FullyQualifiedType settingsType;
+        private DockState visibleState = DockState.DockBottomAutoHide;
+        private double autoHidePortion = 150;
 
         public PluginPanel() {
         }
@@ -22,6 +25,26 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 name = value;
+            }
+        }
+
+        [XmlAttribute]
+        public DockState VisibleState {
+            get {
+                return visibleState;
+            }
+            set {
+                visibleState = value;
+            }
+        }
+
+        [XmlAttribute]
+        public double AutoHidePortion {
+            get {
+                return autoHidePortion;
+            }
+            set {
+                autoHidePortion = value;
             }
         }
 

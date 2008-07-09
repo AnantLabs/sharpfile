@@ -8,6 +8,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public partial class PreviewPanel : DockContent, IPluginPanel {
+        private DockState visibleState = DockState.DockBottomAutoHide;
         private IResource resource;
         private PictureBox pictureBox;
         private TextBox textBox;
@@ -21,13 +22,17 @@ namespace SharpFile.UI {
         public PreviewPanel() {
             InitializeComponent();
             this.TabText = "Preview";
-            //this.DockAreas = DockAreas.DockTop | DockAreas.DockTop | DockAreas.Document;
             this.AllowEndUserDocking = false;
+            this.Dock = DockStyle.Bottom;
 
             this.SizeChanged += delegate {
                 getImageFromResource();
                 updateImage();
             };
+        }
+
+        public void GiveUpFocus() {
+            this.DockHandler.GiveUpFocus();
         }
 
         protected override void Dispose(bool disposing) {
@@ -244,6 +249,15 @@ namespace SharpFile.UI {
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
+
+        public DockState VisibleDockState {
+            get {
+                return visibleState;
+            }
+            set {
+                visibleState = value;
+            }
         }
     }
 }
