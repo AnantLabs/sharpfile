@@ -598,8 +598,10 @@ namespace SharpFile.Infrastructure {
                                 pluginPaneSetting.Type.Assembly,
                                 pluginPaneSetting.Type.Type);
 
-                            pluginPane.Name = pluginPaneSetting.Name;
                             pluginPane.VisibleDockState = pluginPaneSettings.VisibleState;
+
+                            pluginPane.Name = pluginPaneSetting.Name;
+                            pluginPane.TabText = pluginPaneSetting.TabText;                            
                             pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
 
                             pluginPanes.Add(pluginPane);
