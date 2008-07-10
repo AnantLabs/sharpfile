@@ -21,7 +21,6 @@ namespace SharpFile.UI {
         /// </summary>
         public PreviewPane() {
             InitializeComponent();
-            this.TabText = "Preview";
             this.AllowEndUserDocking = false;
             this.Dock = DockStyle.Bottom;
 

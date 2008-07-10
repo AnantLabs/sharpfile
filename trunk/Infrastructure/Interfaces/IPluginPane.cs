@@ -10,5 +10,6 @@ namespace SharpFile.Infrastructure {
         DockState VisibleDockState { get; set; }
         DockState VisibleState { get; set; }
         double AutoHidePortion { get; set; }
+        string TabText { get; set; }
     }
 }

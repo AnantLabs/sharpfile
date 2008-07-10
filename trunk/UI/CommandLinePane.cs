@@ -8,7 +8,6 @@ namespace SharpFile.UI {
 
         public CommandLinePane() {
             InitializeComponent();
-            this.TabText = "Cmd Line";
             this.AllowEndUserDocking = false;
             this.Dock = DockStyle.Bottom;
 

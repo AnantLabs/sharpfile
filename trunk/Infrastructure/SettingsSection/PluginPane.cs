@@ -7,6 +7,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private FullyQualifiedType type;
         private FullyQualifiedType settingsType;
         private double autoHidePortion = 150;
+        private string tabText;
 
         public PluginPane() {
         }
@@ -34,6 +35,20 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 autoHidePortion = value;
+            }
+        }
+
+        [XmlAttribute]
+        public string TabText {
+            get {
+                if (string.IsNullOrEmpty(tabText)) {
+                    tabText = name;
+                }
+
+                return tabText;
+            }
+            set {
+                tabText = value;
             }
         }
 
