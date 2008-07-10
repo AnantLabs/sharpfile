@@ -76,7 +76,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
     <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
-    <Compile Include="Infrastructure\Interfaces\IPluginPanel.cs" />
+    <Compile Include="Infrastructure\Interfaces\IPluginPane.cs" />
     <Compile Include="Infrastructure\KeyboardHook.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -88,10 +88,11 @@
     <Compile Include="Infrastructure\SettingsSection\Key.cs" />
     <Compile Include="Infrastructure\SettingsSection\Logger.cs" />
     <Compile Include="Infrastructure\SettingsSection\Panel.cs" />
-    <Compile Include="Infrastructure\SettingsSection\PluginPanel.cs" />
+    <Compile Include="Infrastructure\SettingsSection\PluginPane.cs" />
     <Compile Include="Infrastructure\SettingsSection\ParentResourceRetriever.cs" />
+    <Compile Include="Infrastructure\SettingsSection\PluginPanes.cs" />
     <Compile Include="Infrastructure\SettingsSection\Retrievers.cs" />
-    <Compile Include="Infrastructure\SettingsSection\PreviewPanel.cs" />
+    <Compile Include="Infrastructure\SettingsSection\PreviewPane.cs" />
     <Compile Include="Infrastructure\SettingsSection\Tool.cs" />
     <Compile Include="Infrastructure\SettingsSection\View.cs" />
     <Compile Include="Infrastructure\SettingsSection\ViewInfo.cs" />
@@ -128,11 +129,11 @@
     <Compile Include="UI\Child.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UI\CommandLinePanel.cs">
+    <Compile Include="UI\CommandLinePane.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\CommandLinePanel.Designer.cs">
-      <DependentUpon>CommandLinePanel.cs</DependentUpon>
+    <Compile Include="UI\CommandLinePane.Designer.cs">
+      <DependentUpon>CommandLinePane.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\CommandLineTextBox.cs">
       <SubType>UserControl</SubType>
@@ -175,7 +176,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="UI\ListViewItemCreator.cs" />
     <Compile Include="UI\ListViewItemsImageIndexer.cs" />
-    <Compile Include="UI\PreviewPanel.cs">
+    <Compile Include="UI\PreviewPane.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ProgressDisk.cs">
@@ -190,8 +191,8 @@
       <DependentUpon>BaseParent.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\CommandLinePanel.resx">
-      <DependentUpon>CommandLinePanel.cs</DependentUpon>
+    <EmbeddedResource Include="UI\CommandLinePane.resx">
+      <DependentUpon>CommandLinePane.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\CommandLineTextBox.resx">

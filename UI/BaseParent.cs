@@ -23,7 +23,7 @@ namespace SharpFile.UI {
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 		protected MenuStrip menuStrip = new MenuStrip();
-        protected PreviewPanel previewPanel = new PreviewPanel();
+        protected PreviewPane previewPanel = new PreviewPane();
         protected NotifyIcon notifyIcon = new NotifyIcon();
         
         protected DockPanel dockPanel = new DockPanel();
@@ -364,7 +364,7 @@ namespace SharpFile.UI {
             };
 
             browser.UpdatePanels += delegate(IView view) {
-                foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
+                foreach (IPluginPane panel in Settings.Instance.PluginPanels) {
                     panel.Update(view);
                     panel.GiveUpFocus();
                 }
@@ -436,15 +436,16 @@ namespace SharpFile.UI {
             // Load plugin panels.
             int paneIndex = dockPanel.Panes.Count;
 
-            foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
+            foreach (IPluginPane panel in Settings.Instance.PluginPanels) {
                 // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pain.
                 if (dockPanel.Panes.Count == paneIndex) {
                     panel.Show(dockPanel, DockState.DockBottomAutoHide);
+                    panel.VisibleState = panel.VisibleDockState;
                 } else {
                     panel.Show(dockPanel.Panes[paneIndex], null);
                 }
 
-                panel.VisibleState = panel.VisibleDockState;
+                //panel.VisibleState = panel.VisibleDockState;
             }
         }
 
@@ -454,8 +455,8 @@ namespace SharpFile.UI {
 
             //Settings.Instance.PluginPanels = Settings.Instance.PluginPanels;
 
-            //foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
-            //    foreach (PluginPanel pluginPanelSetting in Settings.Instance.DualParent.PluginPanels) {
+            //foreach (IPluginPane panel in Settings.Instance.PluginPanels) {
+            //    foreach (PluginPane pluginPanelSetting in Settings.Instance.DualParent.PluginPanels) {
             //        if (panel.Name.Equals(pluginPanelSetting.Name)) {
             //            pluginPanelSetting.VisibleState = panel.VisibleState;
             //            //panel.VisibleDockState = panel.VisibleState;

@@ -38,19 +38,20 @@ namespace SharpFile.Infrastructure {
         // Sub-settings.
         private DualParent dualParentSettings;
         private Icons iconSettings;
-        private PreviewPanel previewPanelSettings;
+        private PreviewPane previewPanelSettings;
         private Logger loggerSettings;
         private Retrievers retrieverSettings;
         private FontInfo fontInfo;
         private ViewInfo viewInfo;
-        private List<PluginPanel> pluginPanelSettings;
+        //private List<PluginPane> pluginPanelSettings;
+        private PluginPanes pluginPaneSettings;
 
         // Constructed from settings.
         private LoggerService loggerService;
         private List<IParentResourceRetriever> parentResourceRetrievers;
         private Font font;
         private System.Windows.Forms.View view;
-        private List<IPluginPanel> pluginPanels;
+        private List<IPluginPane> pluginPanes;
 
         #region Ctors.
         /// <summary>
@@ -67,12 +68,13 @@ namespace SharpFile.Infrastructure {
         private Settings() {
             dualParentSettings = new DualParent();
             iconSettings = new Icons();
-            previewPanelSettings = new PreviewPanel();
+            previewPanelSettings = new PreviewPane();
             loggerSettings = new Logger();
             retrieverSettings = new Retrievers();
             fontInfo = new FontInfo();
             viewInfo = new ViewInfo();
-            pluginPanelSettings = new List<PluginPanel>();
+            //pluginPanelSettings = new List<PluginPane>();
+            pluginPaneSettings = new PluginPanes();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
@@ -94,7 +96,7 @@ namespace SharpFile.Infrastructure {
             lock (lockObject) {
                 // Null out the reource retrievers in case settings are being reloaded.
                 instance.parentResourceRetrievers = null;
-                instance.pluginPanels = null;
+                instance.pluginPanes = null;
 
                 try {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
@@ -352,14 +354,31 @@ namespace SharpFile.Infrastructure {
                     dualParentSettings.Tools = DualParent.GenerateDefaultTools();
                 }
 
-                if (dualParentSettings.PluginPanels.Count == 0) {
-                    dualParentSettings.PluginPanels = DualParent.GenerateDefaultPluginPanels();
-                }
+                //if (dualParentSettings.PluginPanels.Count == 0) {
+                //    dualParentSettings.PluginPanels = DualParent.GenerateDefaultPluginPanels();
+                //}
 
                 return dualParentSettings;
             }
             set {
                 dualParentSettings = value;
+            }
+        }
+
+        /// <summary>
+        /// Plugin panes settings.
+        /// </summary>
+        //[XmlElement("PluginPanes")]
+        public PluginPanes PluginPanes {
+            get {
+                if (pluginPaneSettings.Panes.Count == 0) {
+                    pluginPaneSettings.Panes = PluginPanes.GenerateDefaultPluginPanels();
+                }
+
+                return pluginPaneSettings;
+            }
+            set {
+                pluginPaneSettings = value;
             }
         }
 
@@ -388,11 +407,11 @@ namespace SharpFile.Infrastructure {
         /// Icon settings.
         /// </summary>
         [XmlElement("PreviewPanel")]
-        public PreviewPanel PreviewPanel {
+        public PreviewPane PreviewPanel {
             get {
                 if (previewPanelSettings.DetailTextExtensions.Count == 0) {
                     previewPanelSettings.DetailTextExtensions = 
-                        PreviewPanel.GenerateDefaultDetailTextExtensions();
+                        PreviewPane.GenerateDefaultDetailTextExtensions();
                 }
 
                 return previewPanelSettings;
@@ -568,34 +587,34 @@ namespace SharpFile.Infrastructure {
         }
 
         [XmlIgnore]
-        public List<IPluginPanel> PluginPanels {
+        public List<IPluginPane> PluginPanels {
             get {
-                if (pluginPanels == null || pluginPanels.Count == 0) {
-                    pluginPanels = new List<IPluginPanel>();
+                if (pluginPanes == null || pluginPanes.Count == 0) {
+                    pluginPanes = new List<IPluginPane>();
 
-                    foreach (PluginPanel pluginPanelSetting in dualParentSettings.PluginPanels) {
+                    foreach (PluginPane pluginPaneSetting in pluginPaneSettings.Panes) {
                         try {
-                            IPluginPanel pluginPanel = Reflection.InstantiateObject<IPluginPanel>(
-                                pluginPanelSetting.Type.Assembly,
-                                pluginPanelSetting.Type.Type);
+                            IPluginPane pluginPane = Reflection.InstantiateObject<IPluginPane>(
+                                pluginPaneSetting.Type.Assembly,
+                                pluginPaneSetting.Type.Type);
 
-                            pluginPanel.Name = pluginPanelSetting.Name;
-                            pluginPanel.VisibleDockState = pluginPanelSetting.VisibleState;
-                            pluginPanel.AutoHidePortion = pluginPanelSetting.AutoHidePortion;
+                            pluginPane.Name = pluginPaneSetting.Name;
+                            pluginPane.VisibleDockState = pluginPaneSettings.VisibleState;
+                            pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
 
-                            pluginPanels.Add(pluginPanel);
+                            pluginPanes.Add(pluginPane);
                         } catch (TypeLoadException ex) {
                             Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                "PluginPanel, {0}, could not be instantiated.",
-                                pluginPanelSetting.Name);
+                                "PluginPane, {0}, could not be instantiated.",
+                                pluginPaneSetting.Name);
                         }
                     }
                 }
 
-                return pluginPanels;
+                return pluginPanes;
             }
             set {
-                List<IPluginPanel> list = value;
+                List<IPluginPane> list = value;
 
                 // Set the original panel settings so that they will be saved to the config file.
                 //foreach (IPluginPanel panel in list) {

@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using System.Drawing;
 namespace SharpFile.UI {
-    partial class CommandLinePanel {
+    partial class CommandLinePane {
         /// <summary> 
         /// Required designer variable.
         /// </summary>

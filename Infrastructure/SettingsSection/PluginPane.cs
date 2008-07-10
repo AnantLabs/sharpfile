@@ -2,17 +2,16 @@
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.Infrastructure.SettingsSection {
-    public sealed class PluginPanel {
+    public sealed class PluginPane {
         private string name;
         private FullyQualifiedType type;
         private FullyQualifiedType settingsType;
-        private DockState visibleState = DockState.DockBottomAutoHide;
         private double autoHidePortion = 150;
 
-        public PluginPanel() {
+        public PluginPane() {
         }
 
-        public PluginPanel(string name, FullyQualifiedType type, FullyQualifiedType settingsType) {
+        public PluginPane(string name, FullyQualifiedType type, FullyQualifiedType settingsType) {
             this.name = name;
             this.type = type;
             this.settingsType = settingsType;
@@ -25,16 +24,6 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 name = value;
-            }
-        }
-
-        [XmlAttribute]
-        public DockState VisibleState {
-            get {
-                return visibleState;
-            }
-            set {
-                visibleState = value;
             }
         }
 

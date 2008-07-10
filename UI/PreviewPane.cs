@@ -7,7 +7,7 @@ using SharpFile.IO.ChildResources;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
-    public partial class PreviewPanel : DockContent, IPluginPanel {
+    public partial class PreviewPane : DockContent, IPluginPane {
         private DockState visibleState = DockState.DockBottomAutoHide;
         private IResource resource;
         private PictureBox pictureBox;
@@ -19,7 +19,7 @@ namespace SharpFile.UI {
         /// <summary>
         /// Ctor.
         /// </summary>
-        public PreviewPanel() {
+        public PreviewPane() {
             InitializeComponent();
             this.TabText = "Preview";
             this.AllowEndUserDocking = false;
