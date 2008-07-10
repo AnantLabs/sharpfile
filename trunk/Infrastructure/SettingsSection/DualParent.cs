@@ -1,6 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 using System.Xml.Serialization;
-using System.Collections.Generic;
 
 namespace SharpFile.Infrastructure.SettingsSection {    
     public sealed class DualParent {
@@ -17,27 +17,12 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private Panel panel1 = new Panel();
         private Panel panel2 = new Panel();
         private List<Tool> tools = new List<Tool>();
-        private List<PluginPanel> pluginPanels = new List<PluginPanel>();
 
         public static List<Tool> GenerateDefaultTools() {
             List<Tool> tools = new List<Tool>();
             Key key = new Key(new List<Keys>(), Keys.F4);
             tools.Add(new Tool("Command Prompt", "cmd", "/K cd \"{SelectedPath}\"", key));
             return tools;
-        }
-
-        public static List<PluginPanel> GenerateDefaultPluginPanels() {
-            List<PluginPanel> pluginPanels = new List<PluginPanel>();
-
-            pluginPanels.Add(new PluginPanel("PreviewPanel",
-                new FullyQualifiedType("SharpFile", "SharpFile.UI.PreviewPanel"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.PreviewPanel")));
-
-            pluginPanels.Add(new PluginPanel("CommandLinePanel",
-                new FullyQualifiedType("SharpFile", "SharpFile.UI.CommandLinePanel"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.CommandLinePanel")));
-
-            return pluginPanels;
         }
 
         public int SplitterPercentage {
@@ -94,17 +79,6 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 panel2 = value;
-            }
-        }
-
-        [XmlArray("PluginPanels")]
-        [XmlArrayItem("PluginPanel")]
-        public List<PluginPanel> PluginPanels {
-            get {
-                return pluginPanels;
-            }
-            set {
-                pluginPanels = value;
             }
         }
 

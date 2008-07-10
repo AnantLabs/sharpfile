@@ -3,10 +3,10 @@ using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
-    public partial class CommandLinePanel : DockContent, IPluginPanel {
+    public partial class CommandLinePane : DockContent, IPluginPane {
         private DockState visibleState = DockState.DockBottomAutoHide;
 
-        public CommandLinePanel() {
+        public CommandLinePane() {
             InitializeComponent();
             this.TabText = "Cmd Line";
             this.AllowEndUserDocking = false;

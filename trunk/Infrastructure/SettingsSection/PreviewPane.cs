@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 
 namespace SharpFile.Infrastructure.SettingsSection {
-    public sealed class PreviewPanel {
+    public sealed class PreviewPane {
         private bool collapsed = false;
         private List<string> detailTextExtensions = new List<string>();
         private FormatTemplate nameFormatTemplate = new FormatTemplate("{Name} {LastWriteTime}");
