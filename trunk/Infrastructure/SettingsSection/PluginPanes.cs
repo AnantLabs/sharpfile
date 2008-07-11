@@ -14,11 +14,11 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public static List<PluginPane> GenerateDefaultPluginPanels() {
             List<PluginPane> pluginPanes = new List<PluginPane>();
 
-            pluginPanes.Add(new PluginPane("PreviewPane",
+            pluginPanes.Add(new PluginPane("PreviewPane", "Preview",
                 new FullyQualifiedType("SharpFile", "SharpFile.UI.PreviewPane"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.PreviewPane")));
 
-            pluginPanes.Add(new PluginPane("CommandLinePane",
+            pluginPanes.Add(new PluginPane("CommandLinePane", "Cmd",
                 new FullyQualifiedType("SharpFile", "SharpFile.UI.CommandLinePane"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.CommandLinePane")));
 

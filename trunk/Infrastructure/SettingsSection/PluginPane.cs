@@ -12,8 +12,9 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public PluginPane() {
         }
 
-        public PluginPane(string name, FullyQualifiedType type, FullyQualifiedType settingsType) {
+        public PluginPane(string name, string tabText, FullyQualifiedType type, FullyQualifiedType settingsType) {
             this.name = name;
+			this.tabText = tabText;
             this.type = type;
             this.settingsType = settingsType;
         }
