@@ -43,7 +43,6 @@ namespace SharpFile.Infrastructure {
         private Retrievers retrieverSettings;
         private FontInfo fontInfo;
         private ViewInfo viewInfo;
-        //private List<PluginPane> pluginPanelSettings;
         private PluginPanes pluginPaneSettings;
 
         // Constructed from settings.
@@ -51,7 +50,7 @@ namespace SharpFile.Infrastructure {
         private List<IParentResourceRetriever> parentResourceRetrievers;
         private Font font;
         private System.Windows.Forms.View view;
-        private List<IPluginPane> pluginPanes;
+        
 
         #region Ctors.
         /// <summary>
@@ -96,7 +95,6 @@ namespace SharpFile.Infrastructure {
             lock (lockObject) {
                 // Null out the reource retrievers in case settings are being reloaded.
                 instance.parentResourceRetrievers = null;
-                instance.pluginPanes = null;
 
                 try {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(Settings));
@@ -368,7 +366,6 @@ namespace SharpFile.Infrastructure {
         /// <summary>
         /// Plugin panes settings.
         /// </summary>
-        //[XmlElement("PluginPanes")]
         public PluginPanes PluginPanes {
             get {
                 if (pluginPaneSettings.Panes.Count == 0) {
@@ -583,50 +580,6 @@ namespace SharpFile.Infrastructure {
                 }
 
                 return parentResourceRetrievers;
-            }
-        }
-
-        [XmlIgnore]
-        public List<IPluginPane> PluginPanels {
-            get {
-                if (pluginPanes == null || pluginPanes.Count == 0) {
-                    pluginPanes = new List<IPluginPane>();
-
-                    foreach (PluginPane pluginPaneSetting in pluginPaneSettings.Panes) {
-                        try {
-                            IPluginPane pluginPane = Reflection.InstantiateObject<IPluginPane>(
-                                pluginPaneSetting.Type.Assembly,
-                                pluginPaneSetting.Type.Type);
-
-                            pluginPane.VisibleDockState = pluginPaneSettings.VisibleState;
-
-                            pluginPane.Name = pluginPaneSetting.Name;
-                            pluginPane.TabText = pluginPaneSetting.TabText;                            
-                            pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
-
-                            pluginPanes.Add(pluginPane);
-                        } catch (TypeLoadException ex) {
-                            Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                "PluginPane, {0}, could not be instantiated.",
-                                pluginPaneSetting.Name);
-                        }
-                    }
-                }
-
-                return pluginPanes;
-            }
-            set {
-                List<IPluginPane> list = value;
-
-                // Set the original panel settings so that they will be saved to the config file.
-                //foreach (IPluginPanel panel in list) {
-                //    foreach (PluginPanel pluginPanelSettings in dualParentSettings.PluginPanels) {
-                //        if (pluginPanelSettings.Name.Equals(panel.Name)) {
-                //            pluginPanelSettings.VisibleState = panel.VisibleState;
-                //            pluginPanelSettings.AutoHidePortion = panel.AutoHidePortion;
-                //        }
-                //    }
-                //}
             }
         }
 
