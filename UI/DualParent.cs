@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
+using Common.Logger;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
@@ -24,27 +25,23 @@ namespace SharpFile.UI {
         }
 
         private void setContextMenu() {
-            MenuItem twentyFiveMenuItem = new MenuItem("25%", splitterMenuOnClick);
-            MenuItem fiftyMenuItem = new MenuItem("50%", splitterMenuOnClick);
-            MenuItem seventyFiveMenuItem = new MenuItem("75%", splitterMenuOnClick);
-
-            splitterContextMenu.MenuItems.AddRange(new MenuItem[] {
-                twentyFiveMenuItem,
-                fiftyMenuItem,
-                seventyFiveMenuItem
-            });
-
             this.splitterContextMenu.Popup += delegate {
-                /*
-                 if (MousePosition.X > (PointToScreen(pane2.NestedDockingStatus.SplitterBounds.Location).X - 5)
-                 && MousePosition.X < (PointToScreen(pane2.NestedDockingStatus.SplitterBounds.Location).X + 5)) {
-                 */
+                splitterContextMenu.MenuItems.Clear();
+                int splitterX = PointToScreen(pane2.NestedDockingStatus.SplitterBounds.Location).X;
 
-                if (MousePosition.X > (PointToScreen(dockPanel.Panes[1].Location).X - 5)
-                 && MousePosition.X < (PointToScreen(dockPanel.Panes[1].Location).X + 5)) {
-                    // Do nothing to show the context menu.
+                if (MousePosition.X > splitterX - 3
+                 && MousePosition.X < (splitterX + pane2.NestedDockingStatus.SplitterBounds.Width)) {
+                    MenuItem twentyFiveMenuItem = new MenuItem("25%", splitterMenuOnClick);
+                    MenuItem fiftyMenuItem = new MenuItem("50%", splitterMenuOnClick);
+                    MenuItem seventyFiveMenuItem = new MenuItem("75%", splitterMenuOnClick);
+
+                    splitterContextMenu.MenuItems.AddRange(new MenuItem[] {
+                        twentyFiveMenuItem,
+                        fiftyMenuItem,
+                        seventyFiveMenuItem
+                    });
                 } else {
-                    splitterContextMenu.Dispose();
+                    // Do nothing.
                 }
             };
 
@@ -61,6 +58,23 @@ namespace SharpFile.UI {
                     splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
                     double percent = Convert.ToDouble(100 - splitterPercentage) * 0.01;
                     pane2.DockTo(pane1.NestedPanesContainer, pane1, pane2.NestedDockingStatus.Alignment, percent);
+                    break;
+            }
+        }
+
+        protected override void dockPanelContextMenuOnClick(object sender, EventArgs e) {
+            MenuItem menuItem = (MenuItem)sender;
+
+            switch (menuItem.Text) {
+                case "Add tab":
+                    if (MousePosition.X < PointToScreen(dockPanel.Panes[1].Location).X) {
+                        addPanel1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
+                    } else {
+                        addPanel2Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
+                    }
+                    break;
+                case "Close tab":
+                    dockPanel.ActiveDocument.DockHandler.Close();
                     break;
             }
         }
@@ -252,7 +266,7 @@ namespace SharpFile.UI {
                 pane.Visible = true;
 
                 foreach (IDockContent content in pane.Contents) {
-                    content.DockHandler.Show();
+                    content.DockHandler.Activate();
                 }
             }
         }
@@ -315,7 +329,7 @@ namespace SharpFile.UI {
                 addPanel2Browser(path);
             }
 
-            addPanels();
+            addPluginPanes();
 
             // Collapse/check menu panel 1 if appropriate.
             bool panel1Collapsed = Settings.Instance.DualParent.Panel1.Collapsed;

@@ -316,15 +316,18 @@ namespace SharpFile.UI {
             MenuItem addTabMenuItem = new MenuItem("Add tab", dockPanelContextMenuOnClick);
             MenuItem closeTabMenuItem = new MenuItem("Close tab", dockPanelContextMenuOnClick);
 
-            if (dockPanel.ActivePane.Contents.Count == 1) {
-                dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+            // Don't show the context menu unless the mouse cursor is inside the "tab" area.
+            if (MousePosition.Y < PointToScreen(dockPanel.Location).Y + 30) {
+                if (dockPanel.ActivePane.Contents.Count == 1) {
+                    dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
                         addTabMenuItem
                     });
-            } else {
-                dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+                } else {
+                    dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
                         addTabMenuItem,
                         closeTabMenuItem
                     });
+                }
             }
         }
 
@@ -385,7 +388,10 @@ namespace SharpFile.UI {
                     addBrowser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                     break;
                 case "Close tab":
-                    dockPanel.ActiveDocument.DockHandler.Close();
+                    if (dockPanel.ActivePane.Contents.Count != 1 
+                        && dockPanel.ActiveDocument.DockHandler.CloseButton) {
+                        dockPanel.ActiveDocument.DockHandler.Close();
+                    }
 
                     if (dockPanel.ActivePane.Contents.Count == 1) {
                         dockPanel.ActivePane.Contents[0].DockHandler.CloseButton = false;
@@ -426,12 +432,18 @@ namespace SharpFile.UI {
 
             foreach (DockPane pane in dockPanel.Panes) {
                 if (pane.Name.Equals("pluginPane")) {
+                    if (pluginPaneToolStripMenuItem.Checked) {
+                        pane.Visible = true;
+                    } else {
+                        pane.Visible = false;
+                    }
+
                     foreach (IDockContent content in pane.Contents) {
                         if (pluginPaneToolStripMenuItem.Checked) {
-                            content.DockHandler.Hide();
-                        } else {
                             content.DockHandler.Activate();
                             content.DockHandler.GiveUpFocus();
+                        } else {
+                            content.DockHandler.Hide();
                         }
                     }
                 }
@@ -444,7 +456,7 @@ namespace SharpFile.UI {
             this.Controls.Add(this.statusStrip);
 		}
 
-        protected void addPanels() {
+        protected void addPluginPanes() {
             // Load plugin panels.
             int paneIndex = dockPanel.Panes.Count;
 
