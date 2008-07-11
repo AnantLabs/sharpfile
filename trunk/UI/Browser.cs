@@ -10,6 +10,7 @@ using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
 using View = SharpFile.Infrastructure.View;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Collections.Generic;
 
 namespace SharpFile.UI {
     public class Browser : DockContent {
@@ -17,12 +18,12 @@ namespace SharpFile.UI {
         private static readonly object lockObject = new object();
 
         private FileSystemWatcher fileSystemWatcher;
-        //private ImageList imageList;
         private DriveDetector driveDetector;
         private ChildResourceRetrievers childResourceRetrievers;
         private bool handleCreated = false;
         private bool isExecuting = false;
         private AutoCompleteStringCollection filterAutoCompleteStringCollection;
+		private List<ToolStripItem> itemList = new List<ToolStripItem>();
 
         private ToolStrip toolStrip;
         private ToolStripSplitButton tlsDrives;
@@ -404,7 +405,16 @@ namespace SharpFile.UI {
                                 item.Image = ImageList.Images[imageIndex];
                             }
 
-                            tlsDrives.DropDownItems.Add(item);
+							// Determine the index of the drive so when new drives are added they are sorted correctly.
+							itemList.Add(item);
+
+							// Sort the item list by name to get the correct item index.
+							itemList.Sort(delegate(ToolStripItem i1, ToolStripItem i2) {
+								return ((DriveInfo)i1.Tag).Name.CompareTo(((DriveInfo)i2.Tag).Name);
+							});
+
+							int itemIndex = itemList.IndexOf(item);
+							tlsDrives.DropDownItems.Insert(itemIndex, item);
 
                             // Gets information about the path already specified or the drive currently being added.
                             if (!isLocalDiskFound) {
@@ -529,12 +539,6 @@ namespace SharpFile.UI {
         /// </summary>
         public ImageList ImageList {
             get {
-                //if (imageList == null) {
-                //    imageList = Forms.GetPropertyInParent<ImageList>(this.Parent, "ImageList");
-                //}
-
-                //return imageList;
-
                 return Settings.Instance.ImageList;
             }
         }
