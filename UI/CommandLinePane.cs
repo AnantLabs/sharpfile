@@ -4,8 +4,6 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public partial class CommandLinePane : DockContent, IPluginPane {
-        private DockState visibleState = DockState.DockBottomAutoHide;
-
         public CommandLinePane() {
             InitializeComponent();
             this.AllowEndUserDocking = false;
@@ -24,15 +22,6 @@ namespace SharpFile.UI {
 
         public void GiveUpFocus() {
             this.DockHandler.GiveUpFocus();
-        }
-
-        public DockState VisibleDockState {
-            get {
-                return visibleState;
-            }
-            set {
-                visibleState = value;
-            }
         }
     }
 }

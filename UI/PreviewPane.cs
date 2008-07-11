@@ -8,7 +8,6 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public partial class PreviewPane : DockContent, IPluginPane {
-        private DockState visibleState = DockState.DockBottomAutoHide;
         private IResource resource;
         private PictureBox pictureBox;
         private TextBox textBox;
@@ -248,15 +247,6 @@ namespace SharpFile.UI {
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
-        }
-
-        public DockState VisibleDockState {
-            get {
-                return visibleState;
-            }
-            set {
-                visibleState = value;
-            }
         }
     }
 }

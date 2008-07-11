@@ -46,7 +46,7 @@ namespace SharpFile.UI {
 
 		protected ToolStripMenuItem viewMenu = new ToolStripMenuItem();
 		protected ToolStripMenuItem statusBarToolStripMenuItem = new ToolStripMenuItem();
-        protected ToolStripMenuItem previewPanelToolStripMenuItem = new ToolStripMenuItem();
+        protected ToolStripMenuItem pluginPaneToolStripMenuItem = new ToolStripMenuItem();
 
 		protected ToolStripMenuItem toolsMenu = new ToolStripMenuItem();
 
@@ -221,7 +221,7 @@ namespace SharpFile.UI {
 			this.viewMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
 			                                     		this.statusBarToolStripMenuItem,
-                                                        this.previewPanelToolStripMenuItem
+                                                        this.pluginPaneToolStripMenuItem
 			                                     	});
 			this.viewMenu.Size = new Size(41, 20);
 			this.viewMenu.Text = "&View";
@@ -233,9 +233,10 @@ namespace SharpFile.UI {
 			this.statusBarToolStripMenuItem.Text = "&Status Bar";
 			this.statusBarToolStripMenuItem.Click += statusBarToolStripMenuItem_Click;
 
-            this.previewPanelToolStripMenuItem.Size = new Size(135, 22);
-            this.previewPanelToolStripMenuItem.Text = "&Preview Panel";
-            this.previewPanelToolStripMenuItem.Click += previewPanelToolStripMenuItem_Click;
+            this.pluginPaneToolStripMenuItem.Size = new Size(135, 22);
+            this.pluginPaneToolStripMenuItem.Text = "&Plugin Panel";
+            this.pluginPaneToolStripMenuItem.Checked = true;
+            this.pluginPaneToolStripMenuItem.Click += pluginPaneToolStripMenuItem_Click;
 
 			this.toolsMenu.Text = "&Tools";
 
@@ -364,7 +365,7 @@ namespace SharpFile.UI {
             };
 
             browser.UpdatePanels += delegate(IView view) {
-                foreach (IPluginPane panel in Settings.Instance.PluginPanels) {
+                foreach (IPluginPane panel in Settings.Instance.PluginPanes.Instances) {
                     panel.Update(view);
                     panel.GiveUpFocus();
                 }
@@ -420,10 +421,21 @@ namespace SharpFile.UI {
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
 
-        private void previewPanelToolStripMenuItem_Click(object sender, EventArgs e) {
-            //previewPanelSplitContainer.Panel2Collapsed = previewPanelToolStripMenuItem.Checked;
-            previewPanelToolStripMenuItem.Checked = !previewPanelToolStripMenuItem.Checked;
-            previewPanel.Hide();
+        private void pluginPaneToolStripMenuItem_Click(object sender, EventArgs e) {
+            pluginPaneToolStripMenuItem.Checked = !pluginPaneToolStripMenuItem.Checked;
+
+            foreach (DockPane pane in dockPanel.Panes) {
+                if (pane.Name.Equals("pluginPane")) {
+                    foreach (IDockContent content in pane.Contents) {
+                        if (pluginPaneToolStripMenuItem.Checked) {
+                            content.DockHandler.Hide();
+                        } else {
+                            content.DockHandler.Activate();
+                            content.DockHandler.GiveUpFocus();
+                        }
+                    }
+                }
+            }            
         }
 
 		protected virtual void addControls() {
@@ -436,51 +448,33 @@ namespace SharpFile.UI {
             // Load plugin panels.
             int paneIndex = dockPanel.Panes.Count;
 
-            foreach (IPluginPane panel in Settings.Instance.PluginPanels) {
+            foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
                 // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pain.
                 if (dockPanel.Panes.Count == paneIndex) {
-                    panel.Show(dockPanel, DockState.DockBottomAutoHide);
-                    panel.VisibleState = panel.VisibleDockState;
+                    pane.Show(dockPanel, Settings.Instance.PluginPanes.VisibleState);
                 } else {
-                    panel.Show(dockPanel.Panes[paneIndex], null);
+                    pane.Show(dockPanel.Panes[paneIndex], null);
                 }
+            }
 
-                //panel.VisibleState = panel.VisibleDockState;
+            if (dockPanel.Panes.Count > paneIndex) {
+                dockPanel.Panes[paneIndex].Name = "pluginPane";
             }
         }
 
-		protected virtual void onFormClosing() {
-            //Settings.Instance.PreviewPanel.Collapsed = this.previewPanelSplitContainer.Panel2Collapsed;
-            //Settings.Instance.PreviewPanel.SplitterPercentage = 100 - splitterPercentage;
+        protected virtual void onFormClosing() {
+            Settings.Instance.PluginPanes.VisibleState = Settings.Instance.PluginPanes.Instances[0].VisibleState;
 
-            //Settings.Instance.PluginPanels = Settings.Instance.PluginPanels;
-
-            //foreach (IPluginPane panel in Settings.Instance.PluginPanels) {
-            //    foreach (PluginPane pluginPanelSetting in Settings.Instance.DualParent.PluginPanels) {
-            //        if (panel.Name.Equals(pluginPanelSetting.Name)) {
-            //            pluginPanelSetting.VisibleState = panel.VisibleState;
-            //            //panel.VisibleDockState = panel.VisibleState;
-            //        }
-            //    }
-            //}
-		}
+            foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
+                foreach (PluginPane pluginPaneSetting in Settings.Instance.PluginPanes.Panes) {
+                    if (pane.Name.Equals(pluginPaneSetting.Name)) {
+                        pluginPaneSetting.AutoHidePortion = pane.AutoHidePortion;
+                    }
+                }
+            }
+        }
 
         protected virtual void onFormLoad() {
-            //splitterPercentage = (100 - Settings.Instance.PreviewPanel.SplitterPercentage);
-            //setSplitterDistance();
-
-            //this.previewPanelSplitContainer.Panel2Collapsed = Settings.Instance.PreviewPanel.Collapsed;
-            previewPanelToolStripMenuItem.Checked = !Settings.Instance.PreviewPanel.Collapsed;
-
-            //foreach (IPluginPanel panel in Settings.Instance.PluginPanels) {
-            //    // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pain.
-            //    if (dockPanel.Panes.Count == paneIndex) {
-            //        panel.Show(dockPanel, DockState.DockBottomAutoHide);
-            //    } else {
-            //        panel.Show(dockPanel.Panes[paneIndex], null);
-            //    }
-            //}
-
             foreach (Tool tool in Settings.Instance.DualParent.Tools) {
                 string menuItemName = tool.Name;
 
