@@ -1,3 +1,7 @@
+- finish up command line pane
+	- results height
+	- location and color of command line textbox
+	- scroll results
 - CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
 
 - figure out how to clone events from an object
