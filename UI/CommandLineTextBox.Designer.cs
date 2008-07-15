@@ -25,6 +25,7 @@
         private void InitializeComponent() {
             this.txtPath = new System.Windows.Forms.TextBox();
             this.txtFile = new System.Windows.Forms.TextBox();
+            this.chkUseCommandLine = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // txtPath
@@ -45,10 +46,21 @@
             this.txtFile.Size = new System.Drawing.Size(100, 13);
             this.txtFile.TabIndex = 1;
             // 
+            // chkUseCommandLine
+            // 
+            this.chkUseCommandLine.AutoSize = true;
+            this.chkUseCommandLine.Location = new System.Drawing.Point(234, 4);
+            this.chkUseCommandLine.Name = "chkUseCommandLine";
+            this.chkUseCommandLine.Size = new System.Drawing.Size(70, 17);
+            this.chkUseCommandLine.TabIndex = 2;
+            this.chkUseCommandLine.Text = "Cmd Line";
+            this.chkUseCommandLine.UseVisualStyleBackColor = true;
+            // 
             // CommandLineTextBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.chkUseCommandLine);
             this.Controls.Add(this.txtPath);
             this.Controls.Add(this.txtFile);
             this.Name = "CommandLineTextBox";
@@ -62,5 +74,6 @@
 
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.TextBox txtFile;
+        private System.Windows.Forms.CheckBox chkUseCommandLine;
     }
 }

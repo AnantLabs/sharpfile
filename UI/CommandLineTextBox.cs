@@ -7,6 +7,12 @@ using SharpFile.Infrastructure;
 
 namespace SharpFile.UI {
     public partial class CommandLineTextBox : UserControl {
+        public delegate void ProcessOutputDelegate(string output);
+        public event ProcessOutputDelegate ProcessOutput;
+
+        public delegate void UseCommandLineDelegate(bool useCommandLine);
+        public event UseCommandLineDelegate UseCommandLine;
+
         private string path;
 
         public CommandLineTextBox() {
@@ -17,18 +23,63 @@ namespace SharpFile.UI {
 
             this.txtFile.KeyUp += delegate(object sender, KeyEventArgs e) {
                 if (e.KeyCode == Keys.Enter) {
+                    bool useCommandLine = chkUseCommandLine.Checked;
+
                     string fileName = path + this.txtFile.Text;
                     ProcessStartInfo processStartInfo = new ProcessStartInfo();
                     processStartInfo.FileName = fileName;
 
+                    if (useCommandLine) {
+                        processStartInfo.UseShellExecute = false;
+                        processStartInfo.CreateNoWindow = true;
+                        processStartInfo.RedirectStandardOutput = true;
+                    }
+
                     try {
-                        Process.Start(processStartInfo);
+                        using (Process process = new Process()) {
+                            process.StartInfo = processStartInfo;
+                            process.Start();
+
+                            if (useCommandLine) {
+                                process.WaitForExit();
+
+                                string stdOutput = process.StandardOutput.ReadToEnd();
+
+                                if (!string.IsNullOrEmpty(stdOutput)) {
+                                    string output = string.Format("{0}>{1}",
+                                        fileName,
+                                        stdOutput);
+
+                                    OnProcessOutput(output);
+                                }
+                            }
+                        }
                     } catch (Win32Exception ex) {
                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "Starting process {0} failed.",
                             fileName);
                     }
                 }
             };
+
+            this.chkUseCommandLine.CheckedChanged += delegate {
+                OnUseCommandLine(this.chkUseCommandLine.Checked);
+            };
+        }
+
+        public void OnProcessOutput(string output) {
+            if (ProcessOutput != null) {
+                ProcessOutput(output);
+            }
+        }
+
+        public new void Focus() {
+            this.txtFile.Focus();
+        }
+
+        public void OnUseCommandLine(bool useCommandLine) {
+            if (UseCommandLine != null) {
+                UseCommandLine(useCommandLine);
+            }
         }
 
         public void UpdateText(IView view) {
@@ -49,15 +100,15 @@ namespace SharpFile.UI {
         }
 
         protected override void OnPaint(PaintEventArgs e) {
-            //http://bytes.com/forum/thread266167.html
-            Graphics graphics = e.Graphics;
-            SizeF size = graphics.MeasureString(this.txtPath.Text, this.Font);
+            string path = this.txtPath.Text;
+            Size size = TextRenderer.MeasureText(path, this.Font);
 
-            this.txtPath.Width = (int)size.Width;
-            this.txtFile.Width = (this.Width - this.txtPath.Width);
+            this.txtPath.Width = (int)size.Width - 5;
+            this.txtFile.Width = (this.Width - this.txtPath.Width - this.chkUseCommandLine.Width - 5);
 
             txtPath.Location = new Point(0, 0);
             txtFile.Location = new Point(txtPath.Width, 0);
+            chkUseCommandLine.Location = new Point(txtFile.Location.X + txtFile.Width + 5, 0);
 
             base.OnPaint(e);
         }
