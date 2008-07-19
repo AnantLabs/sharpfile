@@ -17,27 +17,42 @@ namespace SharpFile.UI {
 
         public void Add(IResource resource) {
             list.Add(resource);
-            size += resource.Size;
+            size = 0;
         }
 
         public void Remove(IResource resource) {
             list.Remove(resource);
-            size -= resource.Size;
+            size = 0;
         }
 
-        public void RemoveAt(int index) {
-            list.RemoveAt(index);
+        public void Clear() {
+            list.Clear();
+            size = 0;
         }
 
+        public void ReevaluateSizes() {
+            size = 0;
+        }
+
+        /// <summary>
+        /// Total size of all resources in the container.
+        /// Lazy-loaded because it can be labor-intensive for directories.
+        /// </summary>
         public long TotalSize {
             get {
+                if (size == 0) {
+                    foreach (IResource resource in list) {
+                        size += resource.Size;
+                    }
+                }
+
                 return size;
             }
         }
 
         public string HumanReadableTotalSize {
             get {
-                return Common.General.GetHumanReadableSize(size.ToString());
+                return Common.General.GetHumanReadableSize(TotalSize.ToString());
             }
         }
 
