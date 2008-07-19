@@ -33,7 +33,9 @@ namespace SharpFile.Infrastructure {
         private bool directoriesSortedFirst = true;
         private bool showParentDirectory = true;
         private bool showRootDirectory = true;
+        private FormWindowState windowState = FormWindowState.Normal;
         private string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        private Point location = new Point(0, 0);
 
         // Sub-settings.
         private DualParent dualParentSettings;
@@ -276,6 +278,30 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 showRootDirectory = value;
+            }
+        }
+
+        /// <summary>
+        /// The form window state.
+        /// </summary>
+        public FormWindowState WindowState {
+            get {
+                return windowState;
+            }
+            set {
+                windowState = value;
+            }
+        }
+
+        /// <summary>
+        /// The location of the form.
+        /// </summary>
+        public Point Location {
+            get {
+                return location;
+            }
+            set {
+                location = value;
             }
         }
 
