@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SharpFile.Infrastructure.SettingsSection;
+using SharpFile.UI;
 
 namespace SharpFile.Infrastructure {
 	public interface IView {
@@ -27,11 +28,14 @@ namespace SharpFile.Infrastructure {
         bool Enabled { get; set; }
         Dictionary<string, ListViewItem> ItemDictionary { get; }
         IResource SelectedResource { get; }
+        ResourceContainer SelectedResources { get; }
+        long FileCount { get; }
+        long FolderCount { get; }
 
         void OnUpdatePath(string path);
         void OnUpdateProgress(int progress);
         int OnGetImageIndex(IResource resource, bool useFileAttributes);
-        void OnUpdateStatus(string status);
+        void OnUpdateStatus(IView view);
         void OnUpdatePanels(IView view);
 
 		event View.GetImageIndexDelegate GetImageIndex;
@@ -45,7 +49,7 @@ namespace SharpFile.Infrastructure {
         public delegate int GetImageIndexDelegate(IResource fsi, bool useFileAttributes);
 		public delegate void UpdateProgressDelegate(int value);
 		public delegate void UpdatePathDelegate(string path);
-		public delegate void UpdateStatusDelegate(string status);
+		public delegate void UpdateStatusDelegate(IView view);
         public delegate void UpdatePanelsDelegate(IView view);
 	}
 }

@@ -347,8 +347,11 @@ namespace SharpFile.UI {
                 browser.AllowEndUserDocking = false;
             }
 
-            browser.UpdateStatus += delegate(string status) {
-                toolStripStatus.Text = status;
+            browser.UpdateStatus += delegate(IView view) {
+                toolStripStatus.Text = string.Format("{0} folders, {1} files, {2} selected",
+                    view.FolderCount,
+                    view.FileCount,
+                    view.SelectedResources.HumanReadableTotalSize);
             };
 
             browser.UpdateProgress += delegate(int value) {
