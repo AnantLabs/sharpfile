@@ -377,7 +377,7 @@ namespace SharpFile.UI {
             browser.UpdatePanels += delegate(IView view) {
                 foreach (IPluginPane panel in Settings.Instance.PluginPanes.Instances) {
                     panel.Update(view);
-                    panel.GiveUpFocus();
+                    panel.DockHandler.GiveUpFocus();
                 }
 
                 if (view.SelectedResource != null) {
@@ -468,7 +468,10 @@ namespace SharpFile.UI {
             int paneIndex = dockPanel.Panes.Count;
 
             foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
-                // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pain.
+                pane.DockAreas = DockAreas.DockBottom;
+                pane.AllowEndUserDocking = false;
+
+                // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pane.
                 if (dockPanel.Panes.Count == paneIndex) {
                     pane.Show(dockPanel, Settings.Instance.PluginPanes.VisibleState);
                 } else {

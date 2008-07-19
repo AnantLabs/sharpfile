@@ -5,10 +5,12 @@ namespace SharpFile.Infrastructure {
         void Update(IView view);
         void Show(DockPanel dockPanel, DockState dockState);
         void Show(DockPane dockPane, IDockContent content);
-        void GiveUpFocus();
         string Name { get; set; }
         DockState VisibleState { get; set; }
         double AutoHidePortion { get; set; }
         string TabText { get; set; }
+        DockAreas DockAreas { get; set; }
+        bool AllowEndUserDocking { get; set; }
+        DockContentHandler DockHandler { get; }
     }
 }
