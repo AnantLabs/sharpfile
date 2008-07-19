@@ -20,17 +20,12 @@ namespace SharpFile.UI {
         /// </summary>
         public PreviewPane() {
             InitializeComponent();
-            this.AllowEndUserDocking = false;
             this.Dock = DockStyle.Bottom;
 
             this.SizeChanged += delegate {
                 getImageFromResource();
                 updateImage();
             };
-        }
-
-        public void GiveUpFocus() {
-            this.DockHandler.GiveUpFocus();
         }
 
         protected override void Dispose(bool disposing) {

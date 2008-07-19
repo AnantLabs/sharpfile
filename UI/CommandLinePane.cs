@@ -6,7 +6,6 @@ namespace SharpFile.UI {
     public partial class CommandLinePane : DockContent, IPluginPane {
         public CommandLinePane() {
             InitializeComponent();
-            this.AllowEndUserDocking = false;
             this.Dock = DockStyle.Bottom;
 
             this.SizeChanged += delegate {
@@ -35,10 +34,6 @@ namespace SharpFile.UI {
         public void Update(IView view) {
             this.txtCommandLine.UpdateText(view);
             Refresh();
-        }
-
-        public void GiveUpFocus() {
-            this.DockHandler.GiveUpFocus();
         }
     }
 }
