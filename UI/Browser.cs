@@ -122,9 +122,9 @@ namespace SharpFile.UI {
             }
         }
 
-        protected void OnUpdateStatus(string status) {
+        protected void OnUpdateStatus(IView view) {
             if (UpdateStatus != null) {
-                UpdateStatus(status);
+                UpdateStatus(view);
             }
         }
 

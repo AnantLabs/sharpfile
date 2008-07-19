@@ -163,7 +163,7 @@
     <Compile Include="IO\FileSystemInfoFactory.cs" />
     <Compile Include="IO\ParentResources\DriveInfo.cs" />
     <Compile Include="IO\Retrievers\DriveRetriever.cs" />
-    <Compile Include="UI\FileSystemInfoContainer.cs" />
+    <Compile Include="UI\ResourceContainer.cs" />
     <Compile Include="UI\ListView.cs">
       <SubType>Component</SubType>
     </Compile>

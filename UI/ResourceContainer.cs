@@ -2,11 +2,11 @@
 using SharpFile.Infrastructure;
 
 namespace SharpFile.UI {
-    public class FileSystemInfoContainer : IEnumerable<IResource> {
+    public class ResourceContainer : IEnumerable<IResource> {
         private IList<IResource> list;
         private long size;
 
-        public FileSystemInfoContainer() {
+        public ResourceContainer() {
             list = new List<IResource>();
             size = 0;
         }
