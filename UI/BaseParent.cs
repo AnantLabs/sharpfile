@@ -111,6 +111,8 @@ namespace SharpFile.UI {
         private void BaseParent_Load(object sender, EventArgs e) {
             this.Width = Settings.Instance.Width;
             this.Height = Settings.Instance.Height;
+            this.Location = Settings.Instance.Location;
+            this.WindowState = Settings.Instance.WindowState;
 
             try {
                 onFormLoad();
@@ -125,6 +127,8 @@ namespace SharpFile.UI {
 		private void BaseParent_FormClosing(object sender, FormClosingEventArgs e) {
 			Settings.Instance.Width = this.Width;
 			Settings.Instance.Height = this.Height;
+            Settings.Instance.Location = this.Location;
+            Settings.Instance.WindowState = this.WindowState;
 
             try {
                 onFormClosing();
