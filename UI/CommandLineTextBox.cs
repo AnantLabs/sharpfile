@@ -106,7 +106,7 @@ namespace SharpFile.UI {
             this.txtPath.Width = (int)size.Width - 5;
             this.txtFile.Width = (this.Width - this.txtPath.Width - this.chkUseCommandLine.Width - 2);
 
-            txtPath.Location = new Point(1, 0);
+            txtPath.Location = new Point(0, 0);
             txtFile.Location = new Point(txtPath.Width, 0);
             chkUseCommandLine.Location = new Point(txtFile.Location.X + txtFile.Width + 5, 0);
 
