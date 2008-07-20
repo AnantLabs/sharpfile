@@ -161,7 +161,6 @@ namespace SharpFile.UI {
             this.menuStrip.Items.AddRange(new ToolStripItem[]
 			                              	{
 			                              		this.fileMenu,
-			                              		this.editMenu,
 			                              		this.viewMenu,
 			                              		this.toolsMenu,
 			                              		this.helpMenu

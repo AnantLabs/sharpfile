@@ -1,3 +1,5 @@
+- base parent copy/paste
+- txtPath copy/paste
 - finish up command line pane
 	- results height
 	- location and color of command line textbox
