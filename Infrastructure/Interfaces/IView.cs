@@ -36,13 +36,13 @@ namespace SharpFile.Infrastructure {
         void OnUpdateProgress(int progress);
         int OnGetImageIndex(IResource resource, bool useFileAttributes);
         void OnUpdateStatus(IView view);
-        void OnUpdatePanels(IView view);
+        void OnUpdatePluginPanes(IView view);
 
 		event View.GetImageIndexDelegate GetImageIndex;
 		event View.UpdateProgressDelegate UpdateProgress;
 		event View.UpdateStatusDelegate UpdateStatus;
 		event View.UpdatePathDelegate UpdatePath;
-        event View.UpdatePanelsDelegate UpdatePanels;
+        event View.UpdatePluginPanesDelegate UpdatePluginPanes;
 	}
 
 	public static class View {
@@ -50,6 +50,6 @@ namespace SharpFile.Infrastructure {
 		public delegate void UpdateProgressDelegate(int value);
 		public delegate void UpdatePathDelegate(string path);
 		public delegate void UpdateStatusDelegate(IView view);
-        public delegate void UpdatePanelsDelegate(IView view);
+        public delegate void UpdatePluginPanesDelegate(IView view);
 	}
 }

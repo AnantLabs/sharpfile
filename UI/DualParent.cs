@@ -7,13 +7,13 @@ using Common.Logger;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
-        private ToolStripMenuItem swapPanelItem = new ToolStripMenuItem();
-        private ToolStripMenuItem displayPanelItem = new ToolStripMenuItem();
-        private ToolStripMenuItem displayPanel1Item = new ToolStripMenuItem();
-        private ToolStripMenuItem displayPanel2Item = new ToolStripMenuItem();
-        private ToolStripMenuItem panelOrientationItem = new ToolStripMenuItem();
-        private ToolStripMenuItem verticalPanelOrientationItem = new ToolStripMenuItem();
-        private ToolStripMenuItem horizontalPanelOrientationItem = new ToolStripMenuItem();
+        private ToolStripMenuItem swapPaneItem = new ToolStripMenuItem();
+        private ToolStripMenuItem displayPaneItem = new ToolStripMenuItem();
+        private ToolStripMenuItem displayPane1Item = new ToolStripMenuItem();
+        private ToolStripMenuItem displayPane2Item = new ToolStripMenuItem();
+        private ToolStripMenuItem paneOrientationItem = new ToolStripMenuItem();
+        private ToolStripMenuItem verticalPaneOrientationItem = new ToolStripMenuItem();
+        private ToolStripMenuItem horizontalPaneOrientationItem = new ToolStripMenuItem();
         private int splitterPercentage = 50;
         private Orientation orientation = Orientation.Vertical;
         private ContextMenu splitterContextMenu = new ContextMenu();
@@ -40,8 +40,6 @@ namespace SharpFile.UI {
                         fiftyMenuItem,
                         seventyFiveMenuItem
                     });
-                } else {
-                    // Do nothing.
                 }
             };
 
@@ -69,9 +67,9 @@ namespace SharpFile.UI {
             switch (menuItem.Text) {
                 case "Add tab":
                     if (MousePosition.X < PointToScreen(dockPanel.Panes[1].Location).X) {
-                        addPanel1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
+                        addPane1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                     } else {
-                        addPanel2Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
+                        addPane2Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                     }
                     break;
                 case "Close tab":
@@ -95,7 +93,7 @@ namespace SharpFile.UI {
             return browser;
         }
 
-        private void addPanel1Browser(string path) {
+        private void addPane1Browser(string path) {
             Browser browser = getBrowser(path);
 
             browser.UpdatePath += delegate(string updatePath) {
@@ -121,7 +119,7 @@ namespace SharpFile.UI {
             }
         }
 
-        private void addPanel2Browser(string path) {
+        private void addPane2Browser(string path) {
             Browser browser = getBrowser(path);
 
             browser.UpdatePath += delegate(string updatePath) {
@@ -171,73 +169,81 @@ namespace SharpFile.UI {
 			                              	});
 
             this.viewMenu.DropDownItems.AddRange(new ToolStripItem[] {
-                this.displayPanelItem,
-                this.panelOrientationItem,
-                this.swapPanelItem
+                this.displayPaneItem,
+                this.paneOrientationItem,
+                this.swapPaneItem
             });
 
-            this.displayPanelItem.Text = "Display Panel";
-            this.displayPanelItem.DropDownItems.AddRange(new ToolStripItem[] {
-				this.displayPanel1Item,
-				this.displayPanel2Item
+            this.displayPaneItem.Text = "Display Pane";
+            this.displayPaneItem.DropDownItems.AddRange(new ToolStripItem[] {
+				this.displayPane1Item,
+				this.displayPane2Item
 			});
 
-            this.displayPanel1Item.Text = "Panel 1";
-            this.displayPanel1Item.Checked = true;
-            this.displayPanel1Item.CheckOnClick = true;
-            this.displayPanel1Item.CheckStateChanged += delegate(object sender, EventArgs e) {
-                togglePaneDisplay(pane1);
+            this.displayPane1Item.Text = "Pane 1";
+            this.displayPane1Item.Checked = true;
+            this.displayPane1Item.CheckOnClick = true;
+            this.displayPane1Item.CheckStateChanged += delegate(object sender, EventArgs e) {
+                if (ArePanesSwapped) {
+                    togglePaneDisplay(pane2);
+                } else {
+                    togglePaneDisplay(pane1);
+                }
             };
 
-            this.displayPanel2Item.Text = "Panel 2";
-            this.displayPanel2Item.Checked = true;
-            this.displayPanel2Item.CheckOnClick = true;
-            this.displayPanel2Item.CheckStateChanged += delegate(object sender, EventArgs e) {
-                togglePaneDisplay(pane2);
+            this.displayPane2Item.Text = "Pane 2";
+            this.displayPane2Item.Checked = true;
+            this.displayPane2Item.CheckOnClick = true;
+            this.displayPane2Item.CheckStateChanged += delegate(object sender, EventArgs e) {
+                if (ArePanesSwapped) {
+                    togglePaneDisplay(pane1);
+                } else {
+                    togglePaneDisplay(pane2);
+                }
             };
 
-            this.panelOrientationItem.Text = "Orientation";
-            this.panelOrientationItem.DropDownItems.AddRange(new ToolStripItem[] {
-				this.horizontalPanelOrientationItem,
-				this.verticalPanelOrientationItem
+            this.paneOrientationItem.Text = "Orientation";
+            this.paneOrientationItem.DropDownItems.AddRange(new ToolStripItem[] {
+				this.verticalPaneOrientationItem,
+                this.horizontalPaneOrientationItem				
 			});
 
-            this.horizontalPanelOrientationItem.Text = "Horizontal";
-            this.horizontalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
-                if (!this.horizontalPanelOrientationItem.Checked) {
+            this.horizontalPaneOrientationItem.Text = "Horizontal";
+            this.horizontalPaneOrientationItem.Click += delegate(object sender, EventArgs e) {
+                if (!this.horizontalPaneOrientationItem.Checked) {
                     if (pane2.NestedDockingStatus.Alignment == DockAlignment.Right) {
                         pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Bottom, .5);
-                        this.horizontalPanelOrientationItem.Checked = true;
-                        this.verticalPanelOrientationItem.Checked = false;
+                        this.horizontalPaneOrientationItem.Checked = true;
+                        this.verticalPaneOrientationItem.Checked = false;
                     } else if (pane2.NestedDockingStatus.Alignment == DockAlignment.Left) {
                         pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Top, .5);
-                        this.horizontalPanelOrientationItem.Checked = true;
-                        this.verticalPanelOrientationItem.Checked = false;
+                        this.horizontalPaneOrientationItem.Checked = true;
+                        this.verticalPaneOrientationItem.Checked = false;
                     }
 
                     orientation = Orientation.Horizontal;
                 }
             };
 
-            this.verticalPanelOrientationItem.Text = "Vertical";
-            this.verticalPanelOrientationItem.Click += delegate(object sender, EventArgs e) {
-                if (!this.verticalPanelOrientationItem.Checked) {
+            this.verticalPaneOrientationItem.Text = "Vertical";
+            this.verticalPaneOrientationItem.Click += delegate(object sender, EventArgs e) {
+                if (!this.verticalPaneOrientationItem.Checked) {
                     if (pane2.NestedDockingStatus.Alignment == DockAlignment.Bottom) {
                         pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Right, .5);
-                        this.horizontalPanelOrientationItem.Checked = false;
-                        this.verticalPanelOrientationItem.Checked = true;
+                        this.horizontalPaneOrientationItem.Checked = false;
+                        this.verticalPaneOrientationItem.Checked = true;
                     } else if (pane2.NestedDockingStatus.Alignment == DockAlignment.Top) {
                         pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Left, .5);
-                        this.horizontalPanelOrientationItem.Checked = false;
-                        this.verticalPanelOrientationItem.Checked = true;
+                        this.horizontalPaneOrientationItem.Checked = false;
+                        this.verticalPaneOrientationItem.Checked = true;
                     }
 
                     orientation = Orientation.Vertical;
                 }
             };
 
-            this.swapPanelItem.Text = "Swap Panels";
-            this.swapPanelItem.MouseUp += delegate(object sender, MouseEventArgs e) {
+            this.swapPaneItem.Text = "Swap Panes";
+            this.swapPaneItem.MouseUp += delegate(object sender, MouseEventArgs e) {
                 double swappedPercentage = ((100 - splitterPercentage) * 0.01);
 
                 if (pane2.NestedDockingStatus.Alignment == DockAlignment.Right) {
@@ -285,29 +291,22 @@ namespace SharpFile.UI {
         protected override void onFormClosing() {
             base.onFormClosing();
 
-            // Save the paths for each panel.
-            if (DockAlignment.Left == pane2.NestedDockingStatus.Alignment
-                || DockAlignment.Top == pane2.NestedDockingStatus.Alignment) {
-                Settings.Instance.DualParent.Panel1.Paths = getPanePaths(pane2);
-                Settings.Instance.DualParent.Panel2.Paths = getPanePaths(pane1);
+            // Save the paths for each pane and the splitter percentage.
+            if (ArePanesSwapped) {
+                Settings.Instance.DualParent.Pane1.Paths = getPanePaths(pane2);
+                Settings.Instance.DualParent.Pane2.Paths = getPanePaths(pane1);
+                Settings.Instance.DualParent.SplitterPercentage = (100 - splitterPercentage);
             } else {
-                Settings.Instance.DualParent.Panel1.Paths = getPanePaths(pane1);
-                Settings.Instance.DualParent.Panel2.Paths = getPanePaths(pane2);
+                Settings.Instance.DualParent.Pane1.Paths = getPanePaths(pane1);
+                Settings.Instance.DualParent.Pane2.Paths = getPanePaths(pane2);
+                Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
             }
 
             Settings.Instance.DualParent.Orientation = orientation;
 
-            // Save whether each panel is collapsed or not.
-            Settings.Instance.DualParent.Panel1.Collapsed = !pane1.Visible;
-            Settings.Instance.DualParent.Panel2.Collapsed = !pane2.Visible;
-
-            // Save some non-panel specific information.
-            if (DockAlignment.Left == pane2.NestedDockingStatus.Alignment
-                || DockAlignment.Top == pane2.NestedDockingStatus.Alignment) {
-                Settings.Instance.DualParent.SplitterPercentage = (100 - splitterPercentage);
-            } else {
-                Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
-            }
+            // Save whether each pane is collapsed or not.
+            Settings.Instance.DualParent.Pane1.Collapsed = !pane1.Visible;
+            Settings.Instance.DualParent.Pane2.Collapsed = !pane2.Visible;
         }
 
         protected override void onFormLoad() {
@@ -319,41 +318,48 @@ namespace SharpFile.UI {
             // Check the appropriate orientation in the menus.
             switch (orientation) {
                 case Orientation.Horizontal:
-                    this.horizontalPanelOrientationItem.Checked = true;
+                    this.horizontalPaneOrientationItem.Checked = true;
                     break;
                 case Orientation.Vertical:
-                    this.verticalPanelOrientationItem.Checked = true;
+                    this.verticalPaneOrientationItem.Checked = true;
                     break;
             }
 
             // Calculate the splitter distance based on the percentage stored and the width of the form.
             splitterPercentage = Settings.Instance.DualParent.SplitterPercentage;
 
-            // Set the paths for the panels.
-            foreach (string path in Settings.Instance.DualParent.Panel1.Paths) {
-                addPanel1Browser(path);
+            // Set the paths for the panes.
+            foreach (string path in Settings.Instance.DualParent.Pane1.Paths) {
+                addPane1Browser(path);
             }
 
-            foreach (string path in Settings.Instance.DualParent.Panel2.Paths) {
-                addPanel2Browser(path);
+            foreach (string path in Settings.Instance.DualParent.Pane2.Paths) {
+                addPane2Browser(path);
             }
 
             addPluginPanes();
 
-            // Collapse/check menu panel 1 if appropriate.
-            bool panel1Collapsed = Settings.Instance.DualParent.Panel1.Collapsed;
-            this.displayPanel1Item.Checked = !panel1Collapsed;
+            // Collapse/check menu pane 1 if appropriate.
+            bool pane1Collapsed = Settings.Instance.DualParent.Pane1.Collapsed;
+            this.displayPane1Item.Checked = !pane1Collapsed;
 
-            if (panel1Collapsed) {
+            if (pane1Collapsed) {
                 togglePaneDisplay(pane1);
             }            
 
-            // Collapse/check menu panel 2 if appropriate.
-            bool panel2Collapsed = Settings.Instance.DualParent.Panel2.Collapsed;
-            this.displayPanel2Item.Checked = !panel2Collapsed;
+            // Collapse/check menu pane 2 if appropriate.
+            bool pane2Collapsed = Settings.Instance.DualParent.Pane2.Collapsed;
+            this.displayPane2Item.Checked = !pane2Collapsed;
 
-            if (panel2Collapsed) {
+            if (pane2Collapsed) {
                 togglePaneDisplay(pane2);
+            }
+        }
+
+        public bool ArePanesSwapped {
+            get {
+                return (DockAlignment.Left == pane2.NestedDockingStatus.Alignment
+                    || DockAlignment.Top == pane2.NestedDockingStatus.Alignment);
             }
         }
     }
