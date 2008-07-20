@@ -132,7 +132,7 @@ namespace SharpFile.IO.Retrievers {
                     if (e.Error == null &&
                         !e.Cancelled) {
                         // Update some information about the current directory.
-                        view.OnUpdatePath(resource.FullName);
+                        view.OnUpdatePath(resource);
                         view.OnUpdatePluginPanes(view);
 
                         // Set up the watcher.

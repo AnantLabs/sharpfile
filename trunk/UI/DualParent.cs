@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
-using Common.Logger;
 
 namespace SharpFile.UI {
     public class DualParent : BaseParent {
@@ -96,8 +95,8 @@ namespace SharpFile.UI {
         private void addPane1Browser(string path) {
             Browser browser = getBrowser(path);
 
-            browser.UpdatePath += delegate(string updatePath) {
-                Settings.Instance.DualParent.SelectedPath1 = updatePath;
+            browser.UpdatePath += delegate(IResource updatePath) {
+                Settings.Instance.DualParent.SelectedPath1 = updatePath.FullName;
             };
 
             browser.UpdatePanels += delegate(IView view) {
@@ -122,8 +121,8 @@ namespace SharpFile.UI {
         private void addPane2Browser(string path) {
             Browser browser = getBrowser(path);
 
-            browser.UpdatePath += delegate(string updatePath) {
-                Settings.Instance.DualParent.SelectedPath2 = updatePath;
+            browser.UpdatePath += delegate(IResource updatePath) {
+                Settings.Instance.DualParent.SelectedPath2 = updatePath.FullName;
             };
 
             browser.UpdatePanels += delegate(IView view) {
