@@ -1,4 +1,5 @@
-﻿namespace SharpFile.UI {
+﻿using System.Drawing;
+namespace SharpFile.UI {
     partial class CommandLineTextBox {
         /// <summary> 
         /// Required designer variable.
@@ -51,10 +52,11 @@
             this.chkUseCommandLine.AutoSize = true;
             this.chkUseCommandLine.Location = new System.Drawing.Point(234, 4);
             this.chkUseCommandLine.Name = "chkUseCommandLine";
-            this.chkUseCommandLine.Size = new System.Drawing.Size(70, 17);
+            this.chkUseCommandLine.Size = new System.Drawing.Size(70, 14);
             this.chkUseCommandLine.TabIndex = 2;
             this.chkUseCommandLine.Text = "Cmd Line";
             this.chkUseCommandLine.UseVisualStyleBackColor = true;
+            this.chkUseCommandLine.BackColor = Color.White;
             // 
             // CommandLineTextBox
             // 

@@ -424,6 +424,7 @@ namespace SharpFile.UI {
 
 		private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
 			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
+            //System.Windows.Forms.Clipboard.SetText
 		}
 
 		private void pasteToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -468,6 +469,7 @@ namespace SharpFile.UI {
             int paneIndex = dockPanel.Panes.Count;
 
             foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
+                pane.Dock = DockStyle.None;
                 pane.DockAreas = DockAreas.DockBottom;
                 pane.AllowEndUserDocking = false;
 

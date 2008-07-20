@@ -20,7 +20,6 @@ namespace SharpFile.UI {
         /// </summary>
         public PreviewPane() {
             InitializeComponent();
-            this.Dock = DockStyle.Bottom;
 
             this.SizeChanged += delegate {
                 getImageFromResource();
