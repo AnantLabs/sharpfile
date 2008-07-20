@@ -1,4 +1,5 @@
 ﻿using WeifenLuo.WinFormsUI.Docking;
+using System.Windows.Forms;
 
 namespace SharpFile.Infrastructure {
     public interface IPluginPane {
@@ -12,5 +13,6 @@ namespace SharpFile.Infrastructure {
         DockAreas DockAreas { get; set; }
         bool AllowEndUserDocking { get; set; }
         DockContentHandler DockHandler { get; }
+        DockStyle Dock { get; set; }
     }
 }

@@ -46,7 +46,7 @@ namespace SharpFile.UI {
                                 string stdOutput = process.StandardOutput.ReadToEnd();
 
                                 if (!string.IsNullOrEmpty(stdOutput)) {
-                                    string output = string.Format("{0}>{1}",
+                                    string output = string.Format("{0}> {1}",
                                         fileName,
                                         stdOutput);
 
@@ -104,9 +104,9 @@ namespace SharpFile.UI {
             Size size = TextRenderer.MeasureText(path, this.Font);
 
             this.txtPath.Width = (int)size.Width - 5;
-            this.txtFile.Width = (this.Width - this.txtPath.Width - this.chkUseCommandLine.Width - 5);
+            this.txtFile.Width = (this.Width - this.txtPath.Width - this.chkUseCommandLine.Width - 2);
 
-            txtPath.Location = new Point(0, 0);
+            txtPath.Location = new Point(1, 0);
             txtFile.Location = new Point(txtPath.Width, 0);
             chkUseCommandLine.Location = new Point(txtFile.Location.X + txtFile.Width + 5, 0);
 

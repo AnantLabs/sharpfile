@@ -27,17 +27,20 @@ namespace SharpFile.UI {
         private void InitializeComponent() {
             this.txtCommandLine = new CommandLineTextBox();
             this.txtResults = new System.Windows.Forms.TextBox();
+            this.BackColor = Color.White;
             this.SuspendLayout();
             // 
             // txtResults
             // 
-            this.txtResults.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtResults.Location = new System.Drawing.Point(4, 30);
+            this.txtResults.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtResults.Location = new System.Drawing.Point(2, 20);
             this.txtResults.Multiline = true;
             this.txtResults.Name = "txtResults";
             this.txtResults.ReadOnly = true;
             this.txtResults.Size = new System.Drawing.Size(143, 117);
             this.txtResults.TabIndex = 1;
+            this.txtResults.BackColor = Color.White;
+            this.txtResults.ScrollBars = ScrollBars.Vertical;
             //
             // txtCommandLine
             //
