@@ -57,7 +57,8 @@ namespace SharpFile.UI {
                 case "75%":
                     splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
                     double percent = Convert.ToDouble(100 - splitterPercentage) * 0.01;
-                    pane2.DockTo(pane1.NestedPanesContainer, pane1, pane2.NestedDockingStatus.Alignment, percent);
+                    pane2.DockTo(pane1.NestedPanesContainer, pane1, pane2.NestedDockingStatus.Alignment,
+                        percent);
                     break;
             }
         }
@@ -113,16 +114,6 @@ namespace SharpFile.UI {
                 pane1 = dockPanel.Panes[0];
                 pane1.ContextMenu = dockPanelContextMenu;
                 pane1.Contents[0].DockHandler.CloseButton = false;
-
-                pane1.SizeChanged += delegate {
-                    if (orientation == Orientation.Vertical) {
-                        splitterPercentage = 100 - Convert.ToInt32(
-                            (Convert.ToDouble(pane1.Width) / Convert.ToDouble(this.Width)) * 100);
-                    } else {
-                        splitterPercentage = 100 - Convert.ToInt32(
-                            (Convert.ToDouble(pane1.Height) / Convert.ToDouble(this.Height - 75)) * 100);
-                    }
-                };
             } else {
                 foreach (IDockContent content in pane1.Contents) {
                     content.DockHandler.CloseButton = true;
@@ -158,6 +149,10 @@ namespace SharpFile.UI {
                 pane2 = dockPanel.Panes[1];
                 pane2.Contents[0].DockHandler.CloseButton = false;
                 pane2.ContextMenu = dockPanelContextMenu;
+
+                pane2.SizeChanged += delegate {
+                    splitterPercentage = Convert.ToInt32(pane2.NestedDockingStatus.Proportion * 100);
+                };
             } else {
                 foreach (IDockContent content in pane2.Contents) {
                     content.DockHandler.CloseButton = true;
@@ -243,14 +238,16 @@ namespace SharpFile.UI {
 
             this.swapPanelItem.Text = "Swap Panels";
             this.swapPanelItem.MouseUp += delegate(object sender, MouseEventArgs e) {
+                double swappedPercentage = ((100 - splitterPercentage) * 0.01);
+
                 if (pane2.NestedDockingStatus.Alignment == DockAlignment.Right) {
-                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Left, .5);
+                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Left, swappedPercentage);
                 } else if (pane2.NestedDockingStatus.Alignment == DockAlignment.Bottom) {
-                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Top, .5);
+                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Top, swappedPercentage);
                 } else if (pane2.NestedDockingStatus.Alignment == DockAlignment.Left) {
-                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Right, .5);
+                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Right, swappedPercentage);
                 } else if (pane2.NestedDockingStatus.Alignment == DockAlignment.Top) {
-                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Bottom, .5);
+                    pane2.DockTo(pane1.NestedPanesContainer, pane1, DockAlignment.Bottom, swappedPercentage);
                 }
             };
         }
@@ -289,8 +286,15 @@ namespace SharpFile.UI {
             base.onFormClosing();
 
             // Save the paths for each panel.
-            Settings.Instance.DualParent.Panel1.Paths = getPanePaths(pane1);
-            Settings.Instance.DualParent.Panel2.Paths = getPanePaths(pane2);
+            if (DockAlignment.Left == pane2.NestedDockingStatus.Alignment
+                || DockAlignment.Top == pane2.NestedDockingStatus.Alignment) {
+                Settings.Instance.DualParent.Panel1.Paths = getPanePaths(pane2);
+                Settings.Instance.DualParent.Panel2.Paths = getPanePaths(pane1);
+            } else {
+                Settings.Instance.DualParent.Panel1.Paths = getPanePaths(pane1);
+                Settings.Instance.DualParent.Panel2.Paths = getPanePaths(pane2);
+            }
+
             Settings.Instance.DualParent.Orientation = orientation;
 
             // Save whether each panel is collapsed or not.
@@ -298,7 +302,12 @@ namespace SharpFile.UI {
             Settings.Instance.DualParent.Panel2.Collapsed = !pane2.Visible;
 
             // Save some non-panel specific information.
-            Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
+            if (DockAlignment.Left == pane2.NestedDockingStatus.Alignment
+                || DockAlignment.Top == pane2.NestedDockingStatus.Alignment) {
+                Settings.Instance.DualParent.SplitterPercentage = (100 - splitterPercentage);
+            } else {
+                Settings.Instance.DualParent.SplitterPercentage = splitterPercentage;
+            }
         }
 
         protected override void onFormLoad() {
