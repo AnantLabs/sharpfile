@@ -2,7 +2,9 @@
 	- results height
 	- location and color of command line textbox
 	- scroll results
+	- make dos commands work properly
 - CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
+- tool command for winmerge for directory diffs
 
 - figure out how to clone events from an object
 - split out listview class into other classes
@@ -15,3 +17,7 @@ http://www.hanselman.com/blog/ScalingResizingResamplingAnImageInASPNET.aspx
 - stress test the logging functionality
 
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
+http://www.simplehelp.net/2006/10/11/10-windows-explorer-alternatives-compared-and-reviewed/
+http://www.simplehelp.net/2007/07/19/10-more-windows-explorer-alternatives-compared-and-reviewed/
+Servant Salamander: http://www.simplehelp.net/images/winfileman/servsal/filemanager00.jpg
+Directory Opus: http://www.simplehelp.net/images/winfileman/dops/filemanager07.jpg

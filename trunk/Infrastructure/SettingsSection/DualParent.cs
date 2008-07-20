@@ -14,8 +14,8 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private string selectedFile2;
         private int splitterPercentage = 50;
         private Orientation orientation = Orientation.Vertical;        
-        private Panel panel1 = new Panel();
-        private Panel panel2 = new Panel();
+        private Pane pane1 = new Pane();
+        private Pane pane2 = new Pane();
         private List<Tool> tools = new List<Tool>();
 
         public static List<Tool> GenerateDefaultTools() {
@@ -54,31 +54,31 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
         }
 
-        [XmlElement("Panel1")]
-        public Panel Panel1 {
+        [XmlElement("Pane1")]
+        public Pane Pane1 {
             get {
-                if (panel1.Paths.Count == 0) {
-                    panel1.Paths.Add(DefaultDrive);
+                if (pane1.Paths.Count == 0) {
+                    pane1.Paths.Add(DefaultDrive);
                 }
 
-                return panel1;
+                return pane1;
             }
             set {
-                panel1 = value;
+                pane1 = value;
             }
         }
 
-        [XmlElement("Panel2")]
-        public Panel Panel2 {
+        [XmlElement("Pane2")]
+        public Pane Pane2 {
             get {
-                if (panel2.Paths.Count == 0) {
-                    panel2.Paths.Add(DefaultDrive);
+                if (pane2.Paths.Count == 0) {
+                    pane2.Paths.Add(DefaultDrive);
                 }
 
-                return panel2;
+                return pane2;
             }
             set {
-                panel2 = value;
+                pane2 = value;
             }
         }
 

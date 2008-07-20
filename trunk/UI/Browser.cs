@@ -35,7 +35,7 @@ namespace SharpFile.UI {
         public event View.UpdatePathDelegate UpdatePath;
         public event View.UpdateProgressDelegate UpdateProgress;
         public event View.UpdateStatusDelegate UpdateStatus;
-        public event View.UpdatePanelsDelegate UpdatePanels;
+        public event View.UpdatePluginPanesDelegate UpdatePanels;
 
         public Browser() : this(string.Empty) {
         }
@@ -164,7 +164,7 @@ namespace SharpFile.UI {
             this.view.GetImageIndex += OnGetImageIndex;
             this.view.UpdateProgress += OnUpdateProgress;
             this.view.UpdateStatus += OnUpdateStatus;
-            this.view.UpdatePanels += OnUpdatePanels;
+            this.view.UpdatePluginPanes += OnUpdatePanels;
 
             // Wire up the file system watcher.
             fileSystemWatcher = new FileSystemWatcher(this, 100);
@@ -683,8 +683,8 @@ namespace SharpFile.UI {
 
         public FormatTemplate DriveFormatTemplate {
             get {
-                // TODO: Use the correct format template based on the panel.
-                return Settings.Instance.DualParent.Panel1.DriveFormatTemplate;
+                // TODO: Use the correct format template based on the pane.
+                return Settings.Instance.DualParent.Pane1.DriveFormatTemplate;
                 //return Forms.GetPropertyInParent<FormatTemplate>(this.Parent, "DriveFormatTemplate");
             }
         }
