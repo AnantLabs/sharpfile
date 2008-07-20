@@ -33,14 +33,6 @@ namespace SharpFile.UI {
 		protected ToolStripMenuItem exitToolStripMenuItem = new ToolStripMenuItem();
         protected ToolStripMenuItem reloadSettingsStripMenuItem = new ToolStripMenuItem();
 
-		protected ToolStripMenuItem editMenu = new ToolStripMenuItem();
-		protected ToolStripMenuItem undoToolStripMenuItem = new ToolStripMenuItem();
-		protected ToolStripMenuItem redoToolStripMenuItem = new ToolStripMenuItem();
-		protected ToolStripMenuItem cutToolStripMenuItem = new ToolStripMenuItem();
-		protected ToolStripMenuItem copyToolStripMenuItem = new ToolStripMenuItem();
-		protected ToolStripMenuItem pasteToolStripMenuItem = new ToolStripMenuItem();
-		protected ToolStripMenuItem selectAllToolStripMenuItem = new ToolStripMenuItem();
-
 		protected ToolStripSeparator toolStripSeparator6 = new ToolStripSeparator();
 		protected ToolStripSeparator toolStripSeparator7 = new ToolStripSeparator();
 
@@ -166,61 +158,6 @@ namespace SharpFile.UI {
 
             this.reloadSettingsStripMenuItem.Text = "&Reload Settings";
             this.reloadSettingsStripMenuItem.Click += this.reloadSettingsStripMenuItem_Click;
-
-			this.editMenu.DropDownItems.AddRange(new ToolStripItem[]
-			                                     	{
-			                                     		this.undoToolStripMenuItem,
-			                                     		this.redoToolStripMenuItem,
-			                                     		this.toolStripSeparator6,
-			                                     		this.cutToolStripMenuItem,
-			                                     		this.copyToolStripMenuItem,
-			                                     		this.pasteToolStripMenuItem,
-			                                     		this.toolStripSeparator7,
-			                                     		this.selectAllToolStripMenuItem
-			                                     	});
-			this.editMenu.Size = new Size(37, 20);
-			this.editMenu.Text = "&Edit";
-
-			this.undoToolStripMenuItem.Image = ((Image)(resources.GetObject("undoToolStripMenuItem.Image")));
-			this.undoToolStripMenuItem.ImageTransparentColor = Color.Black;
-			this.undoToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.Z);
-			this.undoToolStripMenuItem.Size = new Size(167, 22);
-			this.undoToolStripMenuItem.Text = "&Undo";
-
-			this.redoToolStripMenuItem.Image = (Image)(resources.GetObject("redoToolStripMenuItem.Image"));
-			this.redoToolStripMenuItem.ImageTransparentColor = Color.Black;
-			this.redoToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.Y);
-			this.redoToolStripMenuItem.Size = new Size(167, 22);
-			this.redoToolStripMenuItem.Text = "&Redo";
-
-			this.toolStripSeparator6.Size = new Size(164, 6);
-
-			this.cutToolStripMenuItem.Image = (Image)(resources.GetObject("cutToolStripMenuItem.Image"));
-			this.cutToolStripMenuItem.ImageTransparentColor = Color.Black;
-			this.cutToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.X);
-			this.cutToolStripMenuItem.Size = new Size(167, 22);
-			this.cutToolStripMenuItem.Text = "Cu&t";
-			this.cutToolStripMenuItem.Click += this.cutToolStripMenuItem_Click;
-
-			this.copyToolStripMenuItem.Image = (Image)(resources.GetObject("copyToolStripMenuItem.Image"));
-			this.copyToolStripMenuItem.ImageTransparentColor = Color.Black;
-			this.copyToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.C);
-			this.copyToolStripMenuItem.Size = new Size(167, 22);
-			this.copyToolStripMenuItem.Text = "&Copy";
-			this.copyToolStripMenuItem.Click += this.copyToolStripMenuItem_Click;
-
-			this.pasteToolStripMenuItem.Image = (Image)(resources.GetObject("pasteToolStripMenuItem.Image"));
-			this.pasteToolStripMenuItem.ImageTransparentColor = Color.Black;
-			this.pasteToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.V);
-			this.pasteToolStripMenuItem.Size = new Size(167, 22);
-			this.pasteToolStripMenuItem.Text = "&Paste";
-			this.pasteToolStripMenuItem.Click += this.pasteToolStripMenuItem_Click;
-
-			this.toolStripSeparator7.Size = new Size(164, 6);
-
-			this.selectAllToolStripMenuItem.ShortcutKeys = (Keys.Control | Keys.A);
-			this.selectAllToolStripMenuItem.Size = new Size(167, 22);
-			this.selectAllToolStripMenuItem.Text = "Select &All";
 
 			this.viewMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
