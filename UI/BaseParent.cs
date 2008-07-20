@@ -366,12 +366,12 @@ namespace SharpFile.UI {
                 return IconManager.GetImageIndex(fsi, useFileAttributes, ImageList);
             };
 
-            browser.UpdatePath += delegate(string updatePath) {
+            browser.UpdatePath += delegate(IResource updatePath) {
                 this.Text = string.Format("{0} - {1}",
                                           formName,
-                                          updatePath);
+                                          updatePath.FullName);
 
-                Settings.Instance.DualParent.SelectedPath = path;
+                Settings.Instance.DualParent.SelectedPath = updatePath.FullName;
             };
 
             browser.UpdatePanels += delegate(IView view) {

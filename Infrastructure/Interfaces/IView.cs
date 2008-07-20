@@ -17,7 +17,7 @@ namespace SharpFile.Infrastructure {
         void UpdateImageIndexes(bool useFileAttributes);
         bool Focus();
 
-		string Path { get; }
+		IResource Path { get; }
 		string Filter { get; }
         FileSystemWatcher FileSystemWatcher { get; }
 		Control Control { get; }
@@ -32,7 +32,7 @@ namespace SharpFile.Infrastructure {
         long FileCount { get; }
         long FolderCount { get; }
 
-        void OnUpdatePath(string path);
+        void OnUpdatePath(IResource path);
         void OnUpdateProgress(int progress);
         int OnGetImageIndex(IResource resource, bool useFileAttributes);
         void OnUpdateStatus(IView view);
@@ -48,7 +48,7 @@ namespace SharpFile.Infrastructure {
 	public static class View {
         public delegate int GetImageIndexDelegate(IResource fsi, bool useFileAttributes);
 		public delegate void UpdateProgressDelegate(int value);
-		public delegate void UpdatePathDelegate(string path);
+		public delegate void UpdatePathDelegate(IResource path);
 		public delegate void UpdateStatusDelegate(IView view);
         public delegate void UpdatePluginPanesDelegate(IView view);
 	}

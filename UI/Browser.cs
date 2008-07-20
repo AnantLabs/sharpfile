@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -8,9 +9,8 @@ using SharpFile.Infrastructure;
 using SharpFile.IO;
 using SharpFile.IO.ChildResources;
 using SharpFile.IO.ParentResources;
-using View = SharpFile.Infrastructure.View;
 using WeifenLuo.WinFormsUI.Docking;
-using System.Collections.Generic;
+using View = SharpFile.Infrastructure.View;
 
 namespace SharpFile.UI {
     public class Browser : DockContent {
@@ -107,13 +107,21 @@ namespace SharpFile.UI {
             return -1;
         }
 
-        protected void OnUpdatePath(string path) {
+        protected void OnUpdatePath(IResource path) {
             if (UpdatePath != null) {
                 UpdatePath(path);
             }
 
-            this.Text = path;
-            Path = path;
+            this.Text = path.FullName;
+            this.TabText = path.FullName;
+            Path = path.FullName;
+
+            // Set the icon for the current path.
+            int imageIndex = OnGetImageIndex(path, false);
+
+            if (imageIndex > -1) {
+                this.Icon = Icon.FromHandle(((Bitmap)ImageList.Images[imageIndex]).GetHicon());
+            }
         }
 
         protected void OnUpdateProgress(int value) {

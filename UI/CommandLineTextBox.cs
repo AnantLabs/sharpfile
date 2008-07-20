@@ -83,8 +83,8 @@ namespace SharpFile.UI {
         }
 
         public void UpdateText(IView view) {
-            if (path != view.Path) {
-                path = view.Path;
+            if (path != view.Path.FullName) {
+                path = view.Path.FullName;
                 this.txtPath.Text = path + ">";
                 this.txtFile.Text = string.Empty;
                 this.txtFile.AutoCompleteCustomSource.Clear();
