@@ -78,6 +78,7 @@ Press CANCEL to exit SharpFile.",
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
                     "Start the Dual program");
 
+                /*
                 using (KeyboardHook keyboardHook = new KeyboardHook(HookType.WH_KEYBOARD)) {
                     keyboardHook.KeyDown += delegate(object sender, KeyEventArgs e) {
                         Settings.Instance.Logger.Log(LogLevelType.Verbose,
@@ -97,6 +98,9 @@ Press CANCEL to exit SharpFile.",
 
                     Application.Run(new SharpFile.UI.DualParent());
                 }
+                */
+
+                Application.Run(new SharpFile.UI.DualParent());
             }
         }
     }

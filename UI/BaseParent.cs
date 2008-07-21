@@ -13,7 +13,6 @@ namespace SharpFile.UI {
 
 		private static readonly object lockObject = new object();
         private DriveDetector driveDetector;
-        private int splitterPercentage;
 		private int progressCount = 0;
         private bool isAdvancedLayout = false;
 
@@ -225,6 +224,14 @@ namespace SharpFile.UI {
             this.dockPanel.Name = "dockPanel";
             this.dockPanel.TabIndex = 0;
             this.dockPanel.DocumentStyle = DocumentStyle.DockingWindow;
+            this.dockPanel.MouseClick += delegate(object sender, MouseEventArgs e) {
+                if (e.Button == MouseButtons.Left) {
+                    if (dockPanel.ActivePane.Contents.Count != 1
+                        && dockPanel.ActiveDocument.DockHandler.CloseButton) {
+                        dockPanel.ActiveDocument.DockHandler.Close();
+                    }
+                }
+            };
             this.Controls.Add(this.dockPanel);
 
 			addControls();
@@ -355,19 +362,6 @@ namespace SharpFile.UI {
 			Application.Exit();
 		}
 
-		private void cutToolStripMenuItem_Click(object sender, EventArgs e) {
-			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
-		}
-
-		private void copyToolStripMenuItem_Click(object sender, EventArgs e) {
-			// TODO: Use System.Windows.Forms.Clipboard to insert the selected text or images into the clipboard
-            //System.Windows.Forms.Clipboard.SetText
-		}
-
-		private void pasteToolStripMenuItem_Click(object sender, EventArgs e) {
-			// TODO: Use System.Windows.Forms.Clipboard.GetText() or System.Windows.Forms.GetData to retrieve information from the clipboard.
-		}
-
 		private void statusBarToolStripMenuItem_Click(object sender, EventArgs e) {
 			statusStrip.Visible = statusBarToolStripMenuItem.Checked;
 		}
@@ -419,12 +413,27 @@ namespace SharpFile.UI {
             }
 
             if (dockPanel.Panes.Count > paneIndex) {
-                dockPanel.Panes[paneIndex].Name = "pluginPane";
+                DockPane pluginPane = dockPanel.Panes[paneIndex];
+                pluginPane.Name = "pluginPane";
+
+                if (pluginPane.DockState == DockState.DockBottom 
+                    || pluginPane.DockState == DockState.DockBottomAutoHide) {
+                    dockPanel.DockBottomPortion = Settings.Instance.PluginPanes.DockPortion;
+                }
             }
         }
 
         protected virtual void onFormClosing() {
-            Settings.Instance.PluginPanes.VisibleState = Settings.Instance.PluginPanes.Instances[0].VisibleState;
+            if (Settings.Instance.PluginPanes.Instances.Count > 0) {
+                IPluginPane pluginPane = Settings.Instance.PluginPanes.Instances[0];
+
+                Settings.Instance.PluginPanes.VisibleState = pluginPane.VisibleState;
+
+                if (pluginPane.DockState == DockState.DockBottom
+                    || pluginPane.DockState == DockState.DockBottomAutoHide) {
+                    Settings.Instance.PluginPanes.DockPortion = dockPanel.DockBottomPortion;
+                }
+            }
 
             foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
                 foreach (PluginPane pluginPaneSetting in Settings.Instance.PluginPanes.Panes) {
@@ -438,27 +447,21 @@ namespace SharpFile.UI {
         protected virtual void onFormLoad() {
             foreach (Tool tool in Settings.Instance.DualParent.Tools) {
                 string menuItemName = tool.Name;
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(menuItemName);
 
                 if (tool.Key.HasValue && tool.Key.Value.PrimaryKey != Keys.None) {
-                    string keys = tool.Key.Value.PrimaryKey.ToString();
+                    Keys keys = tool.Key.Value.PrimaryKey;
 
                     if (tool.Key.Value.ModifierKeys != null && tool.Key.Value.ModifierKeys.Count > 0) {
-                        keys = string.Format("{0}+{1}",
-                            string.Join("+",
-                                tool.Key.Value.ModifierKeys.ConvertAll<string>(delegate(Keys k) {
-                                    return k.ToString();
-                                }).ToArray()),
-                                keys);
+                        foreach (Keys key in tool.Key.Value.ModifierKeys) {
+                            keys |= key;
+                        }
                     }
 
-                    menuItemName = string.Format("{0} ({1})",
-                        menuItemName,
-                        keys);
+                    menuItem.ShortcutKeys = keys;
                 }
-
-                ToolStripMenuItem menuItem = new ToolStripMenuItem(menuItemName);
+                
                 menuItem.Tag = tool;
-
                 menuItem.Click += (EventHandler)delegate {
                     Tool t = (Tool)menuItem.Tag;
 

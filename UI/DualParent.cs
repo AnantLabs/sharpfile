@@ -53,6 +53,11 @@ namespace SharpFile.UI {
                 case "50%":
                 case "75%":
                     splitterPercentage = Convert.ToInt32(menuItem.Text.Replace("%", string.Empty));
+
+                    if (ArePanesSwapped) {
+                        splitterPercentage = 100 - splitterPercentage;
+                    }
+
                     double percent = Convert.ToDouble(100 - splitterPercentage) * 0.01;
                     pane2.DockTo(pane1.NestedPanesContainer, pane1, pane2.NestedDockingStatus.Alignment,
                         percent);

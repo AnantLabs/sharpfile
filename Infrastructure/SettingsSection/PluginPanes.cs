@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
-using WeifenLuo.WinFormsUI.Docking;
 using Common;
-using System;
 using Common.Logger;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.Infrastructure.SettingsSection {
     public sealed class PluginPanes {
         private List<IPluginPane> instances;
         private List<PluginPane> pluginPanes = new List<PluginPane>();
         private DockState visibleState = DockState.DockBottomAutoHide;
+        private double dockPortion = 185;
 
         public static List<PluginPane> GenerateDefaultPluginPanels() {
             List<PluginPane> pluginPanes = new List<PluginPane>();
@@ -28,10 +29,24 @@ namespace SharpFile.Infrastructure.SettingsSection {
         [XmlAttribute]
         public DockState VisibleState {
             get {
+                if (visibleState == DockState.Unknown) {
+                    visibleState = DockState.DockBottomAutoHide;
+                }
+
                 return visibleState;
             }
             set {
                 visibleState = value;
+            }
+        }
+
+        [XmlAttribute]
+        public double DockPortion {
+            get {
+                return dockPortion;
+            }
+            set {
+                dockPortion = value;
             }
         }
 
