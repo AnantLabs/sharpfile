@@ -1,4 +1,6 @@
 - extra tab functionality
+- Hide close button: http://sourceforge.net/forum/forum.php?thread_id=1745143&forum_id=402316
+- add common to sln
 - move plugins to their own dll's
 - attributes for plugins (for when there is a settings UI)
 - finish up command line pane

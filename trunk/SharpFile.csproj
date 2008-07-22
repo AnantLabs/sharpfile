@@ -68,10 +68,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=2.2.3102.27317, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Infrastructure\FormatTemplate.cs" />
@@ -124,10 +120,8 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\Browser.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\CommandLinePane.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\CommandLinePane.Designer.cs">
       <DependentUpon>CommandLinePane.cs</DependentUpon>
@@ -171,7 +165,6 @@
     <Compile Include="UI\ListViewItemCreator.cs" />
     <Compile Include="UI\ListViewItemsImageIndexer.cs" />
     <Compile Include="UI\PreviewPane.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\ProgressDisk.cs">
       <SubType>UserControl</SubType>
@@ -236,6 +229,12 @@
       <ProductName>.NET Framework 3.5</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="WinFormsUI\WinFormsUI.csproj">
+      <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
+      <Name>WinFormsUI</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
