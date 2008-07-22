@@ -116,6 +116,10 @@ namespace SharpFile.UI {
                 pane1 = dockPanel.Panes[0];
                 pane1.ContextMenu = dockPanelContextMenu;
                 pane1.Contents[0].DockHandler.CloseButton = false;
+
+                pane1.TabStripControl.MouseDoubleClick += delegate {
+                    addPane1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
+                };
             } else {
                 foreach (IDockContent content in pane1.Contents) {
                     content.DockHandler.CloseButton = true;
@@ -154,6 +158,14 @@ namespace SharpFile.UI {
 
                 pane2.SizeChanged += delegate {
                     splitterPercentage = Convert.ToInt32(pane2.NestedDockingStatus.Proportion * 100);
+                };
+
+                pane2.TabStripControl.MouseDoubleClick += delegate {
+                    addPane2Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
+                };
+
+                pane2.TabStripControl.MouseWheel += delegate(object sender, MouseEventArgs e) {
+                    //e.Delta.ToString();
                 };
             } else {
                 foreach (IDockContent content in pane2.Contents) {

@@ -224,14 +224,6 @@ namespace SharpFile.UI {
             this.dockPanel.Name = "dockPanel";
             this.dockPanel.TabIndex = 0;
             this.dockPanel.DocumentStyle = DocumentStyle.DockingWindow;
-            this.dockPanel.MouseClick += delegate(object sender, MouseEventArgs e) {
-                if (e.Button == MouseButtons.Left) {
-                    if (dockPanel.ActivePane.Contents.Count != 1
-                        && dockPanel.ActiveDocument.DockHandler.CloseButton) {
-                        dockPanel.ActiveDocument.DockHandler.Close();
-                    }
-                }
-            };
             this.Controls.Add(this.dockPanel);
 
 			addControls();
