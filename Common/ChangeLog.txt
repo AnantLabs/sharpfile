@@ -1,0 +1,22 @@
+0.4.9.0
+Create delegate reflection method.
+Re-write Logger as a LoggerService with a custom event to fire if it is attached to.
+Add property caller code, although it needs to be cleaned up.
+Add event handler methods for form children.
+Add enum for Windows messages.
+Fix the human readable digit method so that other text would still show up.
+Add method to cleanup a path.
+Add deep copy method to reflection class.
+Add duplicate object methods to the reflection class.
+
+0.4.6.1
+Fixed a bug in SetPropertyInChild that affected searching for a property with a value type.
+
+0.4.6
+Cleaned up a bunch of code.
+Added the Forms namespace for some code that recursively looks for properties in a control's children or parents.
+Added the Reflection class for a helper method to instantiate an object.
+Added the GetInnerException helper method to the General class.
+
+0.4.2
+First public release.
