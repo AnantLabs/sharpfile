@@ -1,3 +1,5 @@
+These are not ordered in any way except chronologically.
+
 IconReader - Paul Ingles
 http://www.codeproject.com/cs/files/fileicon.asp
 
@@ -61,8 +63,12 @@ http://blogs.msdn.com/toub/archive/2006/05/03/589423.aspx
 OpenPandora.WindowsHook.cs - Eitan Pogrebizsky
 http://www.koders.com/csharp/fid6AF179F76C05AF581905FF86477E98F2D4D86622.aspx
 
- Managed Windows API - Michael Schierl
+Managed Windows API - Michael Schierl
 http://mwinapi.sourceforge.net/
+
+DockPanel Suite - Weifen Lou
+http://www.codeproject.com/KB/miscctrl/DockManager.aspx
+http://sourceforge.net/projects/dockpanelsuite
 
 Plus, many others made silent contributions along the way including the Commander clones 
 (Total Commander, Norton Commander, Midnight Commander, Servant Salamander) and numerous 
