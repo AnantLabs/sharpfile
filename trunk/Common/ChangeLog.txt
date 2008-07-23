@@ -1,3 +1,6 @@
+0.4.9.1
+Fix bug in GetHumanReadableSize that threw an exception in the replace regex call in certain cases.
+
 0.4.9.0
 Create delegate reflection method.
 Re-write Logger as a LoggerService with a custom event to fire if it is attached to.
