@@ -310,7 +310,7 @@ namespace SharpFile.UI {
                 Settings.Instance.DualParent.SelectedPath = updatePath.FullName;
             };
 
-            browser.UpdatePanels += delegate(IView view) {
+            browser.UpdatePluginPanes += delegate(IView view) {
                 foreach (IPluginPane panel in Settings.Instance.PluginPanes.Instances) {
                     panel.Update(view);
                     panel.DockHandler.GiveUpFocus();
@@ -318,6 +318,24 @@ namespace SharpFile.UI {
 
                 if (view.SelectedResource != null) {
                     Settings.Instance.DualParent.SelectedFile = view.SelectedResource.FullName;
+                }
+            };
+
+            browser.KeyDown += delegate(object sender, KeyEventArgs e) {
+                if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Tab) {
+                    int nextContentIndex =
+                        this.dockPanel.ActiveDocumentPane.Contents.IndexOf(this.dockPanel.ActiveDocument);
+                    nextContentIndex++;
+
+                    if (this.dockPanel.ActiveDocumentPane.Contents.Count <= nextContentIndex) {
+                        nextContentIndex = 0;
+                    }
+
+                    this.dockPanel.ActivePane.Contents[nextContentIndex].DockHandler.Show();
+                } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.W) {
+                    if (this.dockPanel.ActiveDocument.DockHandler.CloseButton) {
+                        this.dockPanel.ActiveDocument.DockHandler.Close();
+                    }
                 }
             };
 

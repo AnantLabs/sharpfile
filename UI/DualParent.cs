@@ -104,9 +104,15 @@ namespace SharpFile.UI {
                 Settings.Instance.DualParent.SelectedPath1 = updatePath.FullName;
             };
 
-            browser.UpdatePanels += delegate(IView view) {
+            browser.UpdatePluginPanes += delegate(IView view) {
                 if (view.SelectedResource != null) {
                     Settings.Instance.DualParent.SelectedFile1 = view.SelectedResource.FullName;
+                }
+            };
+
+            browser.KeyDown += delegate(object sender, KeyEventArgs e) {
+                if (e.Modifiers == Keys.Control && e.KeyCode == Keys.T) {
+                    addPane1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                 }
             };
 
@@ -120,6 +126,11 @@ namespace SharpFile.UI {
                 pane1.TabStripControl.MouseDoubleClick += delegate {
                     addPane1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                 };
+
+                // Mousewheel event never fires.
+                //pane1.TabStripControl.MouseWheel += delegate(object sender, MouseEventArgs e) {
+                    //e.Delta.ToString();
+                //};
             } else {
                 foreach (IDockContent content in pane1.Contents) {
                     content.DockHandler.CloseButton = true;
@@ -134,9 +145,15 @@ namespace SharpFile.UI {
                 Settings.Instance.DualParent.SelectedPath2 = updatePath.FullName;
             };
 
-            browser.UpdatePanels += delegate(IView view) {
+            browser.UpdatePluginPanes += delegate(IView view) {
                 if (view.SelectedResource != null) {
                     Settings.Instance.DualParent.SelectedFile2 = view.SelectedResource.FullName;
+                }
+            };
+
+            browser.KeyDown += delegate(object sender, KeyEventArgs e) {
+                if (e.Modifiers == Keys.Control && e.KeyCode == Keys.T) {
+                    addPane2Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                 }
             };
 
@@ -164,9 +181,10 @@ namespace SharpFile.UI {
                     addPane2Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                 };
 
-                pane2.TabStripControl.MouseWheel += delegate(object sender, MouseEventArgs e) {
+                // Mousewheel event never fires.
+                //pane2.TabStripControl.MouseWheel += delegate(object sender, MouseEventArgs e) {
                     //e.Delta.ToString();
-                };
+                //};
             } else {
                 foreach (IDockContent content in pane2.Contents) {
                     content.DockHandler.CloseButton = true;
