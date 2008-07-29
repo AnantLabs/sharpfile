@@ -43,6 +43,7 @@ namespace SharpFile.Infrastructure {
 		event View.UpdateStatusDelegate UpdateStatus;
 		event View.UpdatePathDelegate UpdatePath;
         event View.UpdatePluginPanesDelegate UpdatePluginPanes;
+        event KeyEventHandler KeyDown;
 	}
 
 	public static class View {
