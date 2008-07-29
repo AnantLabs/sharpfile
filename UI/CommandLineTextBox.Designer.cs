@@ -54,7 +54,7 @@ namespace SharpFile.UI {
             this.chkUseCommandLine.Name = "chkUseCommandLine";
             this.chkUseCommandLine.Size = new System.Drawing.Size(70, 14);
             this.chkUseCommandLine.TabIndex = 2;
-            this.chkUseCommandLine.Text = "Cmd Line";
+            this.chkUseCommandLine.Text = "Show Output";
             this.chkUseCommandLine.UseVisualStyleBackColor = true;
             this.chkUseCommandLine.BackColor = Color.White;
             // 
