@@ -312,8 +312,11 @@ namespace SharpFile.UI {
 
             browser.UpdatePluginPanes += delegate(IView view) {
                 foreach (IPluginPane panel in Settings.Instance.PluginPanes.Instances) {
-                    panel.Update(view);
-                    panel.DockHandler.GiveUpFocus();
+                        panel.Update(view);
+
+                        if (panel.DockHandler.IsActivated) {
+                            panel.DockHandler.GiveUpFocus();
+                        }
                 }
 
                 if (view.SelectedResource != null) {
