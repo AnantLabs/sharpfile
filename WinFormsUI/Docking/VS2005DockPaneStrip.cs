@@ -1205,7 +1205,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             else
             {
                 bool showCloseButton = DockPane.ActiveContent == null ? true : DockPane.ActiveContent.DockHandler.CloseButton;
-                ButtonClose.Enabled = showCloseButton;
+                ButtonClose.Enabled = ButtonClose.Visible = showCloseButton;
                 ButtonClose.RefreshChanges();
                 ButtonWindowList.RefreshChanges();
             }
@@ -1236,8 +1236,13 @@ namespace WeifenLuo.WinFormsUI.Docking
 				- DocumentButtonGapRight - buttonWidth;
 			int y = rectTabStrip.Y + DocumentButtonGapTop;
             Point point = new Point(x, y);
-			ButtonClose.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
-			point.Offset(-(DocumentButtonGapBetween + buttonWidth), 0);
+
+            // Don't show the close button if it is disabled.
+            if (ButtonClose.Visible) {
+                ButtonClose.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
+                point.Offset(-(buttonWidth + DocumentButtonGapBetween), 0);
+            }
+
             ButtonWindowList.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
 
 			OnRefreshChanges();

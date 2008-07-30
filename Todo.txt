@@ -1,4 +1,3 @@
-- Hide close button: http://sourceforge.net/forum/forum.php?thread_id=1745143&forum_id=402316
 - make dos commands work properly for command line pane
 - move plugins to their own dll's
 - attributes for plugins (for when there is a settings UI)
