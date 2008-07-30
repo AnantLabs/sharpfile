@@ -414,7 +414,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 
 		private void SetButtons()
 		{
-			ButtonClose.Enabled = CloseButtonEnabled;
+            ButtonClose.Enabled = ButtonClose.Visible = CloseButtonEnabled; 
 			ButtonAutoHide.Visible = ShouldShowAutoHideButton;
             ButtonOptions.Visible = HasTabPageContextMenu;
             ButtonClose.RefreshChanges();
@@ -440,11 +440,19 @@ namespace WeifenLuo.WinFormsUI.Docking
 			int x = rectCaption.X + rectCaption.Width - 1 - ButtonGapRight - m_buttonClose.Width;
 			int y = rectCaption.Y + ButtonGapTop;
 			Point point = new Point(x, y);
-            ButtonClose.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
-			point.Offset(-(buttonWidth + ButtonGapBetween), 0);
-            ButtonAutoHide.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
-            if (ShouldShowAutoHideButton)
+
+            // Don't show the close button if it is disabled.
+            if (ButtonClose.Visible) {
+                ButtonClose.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
                 point.Offset(-(buttonWidth + ButtonGapBetween), 0);
+            }
+
+            ButtonAutoHide.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
+            
+            if (ShouldShowAutoHideButton) {
+                point.Offset(-(buttonWidth + ButtonGapBetween), 0);
+            }
+
             ButtonOptions.Bounds = DrawHelper.RtlTransform(this, new Rectangle(point, buttonSize));
 		}
 
