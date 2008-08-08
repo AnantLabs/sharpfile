@@ -34,9 +34,12 @@ namespace SharpFile.UI {
             size = 0;
         }
 
+		// TODO: FileCount property.
+		// TODO: FolderCount property.
+
         /// <summary>
         /// Total size of all resources in the container.
-        /// Lazy-loaded because it can be labor-intensive for directories.
+        /// Lazy-loaded because it can be labor-intensive to calculate for directories.
         /// </summary>
         public long TotalSize {
             get {
