@@ -385,20 +385,22 @@ namespace SharpFile.UI {
 
             foreach (DockPane pane in dockPanel.Panes) {
                 if (pane.Name.Equals("pluginPane")) {
-                    if (pluginPaneToolStripMenuItem.Checked) {
-                        pane.Visible = true;
-                    } else {
-                        pane.Visible = false;
-                    }
-
+                    // Show/hide each piece of content in the plugin pane.
                     foreach (IDockContent content in pane.Contents) {
                         if (pluginPaneToolStripMenuItem.Checked) {
-                            content.DockHandler.Activate();
+                            content.DockHandler.Show();
                             content.DockHandler.GiveUpFocus();
                         } else {
                             content.DockHandler.Hide();
                         }
                     }
+
+                    // Update the menu items check status to align with the master check status.
+                    foreach (ToolStripMenuItem menuItem in pluginPaneToolStripMenuItem.DropDownItems) {
+                        menuItem.Checked = pluginPaneToolStripMenuItem.Checked;
+                    }
+
+                    break;
                 }
             }            
         }
@@ -428,9 +430,8 @@ namespace SharpFile.UI {
 
                 // Add menu item for the pane to control visibility.
                 ToolStripMenuItem menuItem = new ToolStripMenuItem(pane.Name);
-                //menuItem.Checked = true;
-                //menuItem.CheckOnClick = true;
                 menuItem.Tag = pane;
+                menuItem.Checked = (pane.DockState != DockState.Hidden);
 
                 menuItem.Click += delegate(object sender, EventArgs e) {
                     menuItem.Checked = !menuItem.Checked;
@@ -438,27 +439,34 @@ namespace SharpFile.UI {
 
                     if (p.DockHandler.IsHidden) {
                         p.DockHandler.Show();
+                        p.DockHandler.GiveUpFocus();
                     } else {
                         p.DockHandler.Hide();
                     }
+
+                    // Uncheck the if all of the items are also unchecked.
+                    bool pluginPaneToolStripMenuItemChecked = false;
+
+                    foreach (ToolStripMenuItem i in pluginPaneToolStripMenuItem.DropDownItems) {
+                        pluginPaneToolStripMenuItemChecked |= i.Checked;
+                    }
+
+                    pluginPaneToolStripMenuItem.Checked = pluginPaneToolStripMenuItemChecked;
                 };
 
-                //menuItem.CheckedChanged += delegate(object sender, EventArgs e) {
-                //    IPluginPane p = (IPluginPane)menuItem.Tag;
-
-                //    if (p.DockHandler.IsHidden) {
-                //        p.DockHandler.Show();
-                //    } else {
-                //        p.DockHandler.Hide();
-                //    }
-                //};
                 this.pluginPaneToolStripMenuItem.DropDownItems.Add(menuItem);
 
-                // TODO: Need pane.IsHiddenChanged...
-                pane.VisibleChanged += delegate(object sender, EventArgs e) {
+                // Update the check status if the DockStateChanged delegate fired.
+                // TODO: Still doesn't work when manually "closing" a pane.
+                pane.DockHandler.IsHiddenChanged += delegate(object sender, EventArgs e) {
                     foreach (ToolStripMenuItem item in this.pluginPaneToolStripMenuItem.DropDownItems) {
                         if (pane.Name.Equals(((IPluginPane)item.Tag).Name)) {
-                            item.Checked = !item.Checked;
+                            if (pane.DockHandler.IsHidden) {
+                                item.Checked = false;
+                            } else {
+                                item.Checked = true;
+                            }
+
                             break;
                         }
                     }

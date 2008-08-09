@@ -13,6 +13,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 		{
 			m_dockHandler = new DockContentHandler(this, new GetPersistStringCallback(GetPersistString));
 			m_dockHandler.DockStateChanged += new EventHandler(DockHandler_DockStateChanged);
+            m_dockHandler.IsHiddenChanged += new EventHandler(DockHandler_IsHiddenChanged);
 		}
 
 		private DockContentHandler m_dockHandler = null;
@@ -265,6 +266,26 @@ namespace WeifenLuo.WinFormsUI.Docking
 		protected virtual void OnDockStateChanged(EventArgs e)
 		{
 			EventHandler handler = (EventHandler)Events[DockStateChangedEvent];
+			if (handler != null)
+				handler(this, e);
+		}
+
+        private void DockHandler_IsHiddenChanged(object sender, EventArgs e)
+		{
+			OnIsHiddenChanged(e);
+		}
+
+        private static readonly object IsHiddenChangedEvent = new object();
+		[LocalizedCategory("Category_PropertyChanged")]
+        [LocalizedDescription("Pane_IsHiddenChanged_Description")]
+        public event EventHandler IsHiddenChanged
+		{
+            add { Events.AddHandler(IsHiddenChangedEvent, value); }
+            remove { Events.RemoveHandler(IsHiddenChangedEvent, value); }
+		}
+        protected virtual void OnIsHiddenChanged(EventArgs e)
+		{
+            EventHandler handler = (EventHandler)Events[IsHiddenChangedEvent];
 			if (handler != null)
 				handler(this, e);
 		}

@@ -480,6 +480,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 			if (m_isHidden != isHidden || oldDockState == DockState.Unknown)
 			{
 				m_isHidden = isHidden;
+                OnIsHiddenChanged(EventArgs.Empty);
 			}
 			m_visibleState = visibleState;
 			m_dockState = isHidden ? DockState.Hidden : visibleState;
@@ -884,6 +885,19 @@ namespace WeifenLuo.WinFormsUI.Docking
 		protected virtual void OnDockStateChanged(EventArgs e)
 		{
 			EventHandler handler = (EventHandler)Events[DockStateChangedEvent];
+			if (handler != null)
+				handler(this, e);
+		}
+
+        private static readonly object IsHiddenChangedEvent = new object();
+		public event EventHandler IsHiddenChanged
+		{
+			add	{	Events.AddHandler(IsHiddenChangedEvent, value);	}
+			remove	{	Events.RemoveHandler(IsHiddenChangedEvent, value);	}
+		}
+		protected virtual void OnIsHiddenChanged(EventArgs e)
+		{
+			EventHandler handler = (EventHandler)Events[IsHiddenChangedEvent];
 			if (handler != null)
 				handler(this, e);
 		}

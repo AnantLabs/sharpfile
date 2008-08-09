@@ -511,6 +511,17 @@ namespace WeifenLuo.WinFormsUI.Docking
 			return new HitTestResult(HitTestArea.None, -1);
 		}
 
+        private static readonly object IsHiddenChangedEvent = new object();
+        public event EventHandler IsHiddenChanged {
+            add { Events.AddHandler(IsHiddenChangedEvent, value); }
+            remove { Events.RemoveHandler(IsHiddenChangedEvent, value); }
+        }
+        protected virtual void OnIsHiddenChanged(EventArgs e) {
+            EventHandler handler = (EventHandler)Events[IsHiddenChangedEvent];
+            if (handler != null)
+                handler(this, e);
+        }
+
 		private bool m_isHidden = true;
 		public bool IsHidden
 		{
