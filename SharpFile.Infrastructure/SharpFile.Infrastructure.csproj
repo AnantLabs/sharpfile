@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C061FE8D-F9D6-400F-94B6-135B8F62EC49}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SharpFile.Infrastructure</RootNamespace>
+    <AssemblyName>SharpFile.Infrastructure</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ChildResourceRetrievers.cs" />
+    <Compile Include="FileSystemEnumerator.cs" />
+    <Compile Include="FileSystemWatcher.cs" />
+    <Compile Include="FormatTemplate.cs" />
+    <Compile Include="FullyQualifiedEnum.cs" />
+    <Compile Include="FullyQualifiedMethod.cs" />
+    <Compile Include="FullyQualifiedType.cs" />
+    <Compile Include="IconManager.cs" />
+    <Compile Include="IconReader.cs" />
+    <Compile Include="Interfaces\IChildResource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IChildResourceRetriever.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IParentResource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IParentResourceRetriever.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IPluginPane.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IResource.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Interfaces\IViewComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IO\ChildResources\CompressedDirectoryInfo.cs" />
+    <Compile Include="IO\ChildResources\CompressedFileInfo.cs" />
+    <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
+    <Compile Include="IO\ChildResources\FileInfo.cs" />
+    <Compile Include="IO\ChildResources\FileSystemInfo.cs" />
+    <Compile Include="IO\ChildResources\ParentDirectoryInfo.cs" />
+    <Compile Include="IO\ChildResources\RootDirectoryInfo.cs" />
+    <Compile Include="IO\FileSystemInfoFactory.cs" />
+    <Compile Include="IO\ParentResources\DriveInfo.cs" />
+    <Compile Include="IO\Retrievers\ChildResourceRetriever.cs" />
+    <Compile Include="IO\Retrievers\CompressedRetrievers\ReadOnlyCompressedRetriever.cs" />
+    <Compile Include="IO\Retrievers\CompressedRetrievers\ReadWriteCompressedRetriever.cs" />
+    <Compile Include="IO\Retrievers\DefaultRetriever.cs" />
+    <Compile Include="IO\Retrievers\DriveRetriever.cs" />
+    <Compile Include="KeyboardHook.cs" />
+    <Compile Include="ParentType.cs" />
+    <Compile Include="PluginRetriever.cs" />
+    <Compile Include="ResourceContainer.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SettingsSection\ChildResourceRetriever.cs" />
+    <Compile Include="SettingsSection\ColumnInfo.cs" />
+    <Compile Include="SettingsSection\DualParent.cs" />
+    <Compile Include="SettingsSection\FontInfo.cs" />
+    <Compile Include="SettingsSection\Icons.cs" />
+    <Compile Include="SettingsSection\Key.cs" />
+    <Compile Include="SettingsSection\Logger.cs" />
+    <Compile Include="SettingsSection\Pane.cs" />
+    <Compile Include="SettingsSection\ParentResourceRetriever.cs" />
+    <Compile Include="SettingsSection\PluginPane.cs" />
+    <Compile Include="SettingsSection\PluginPanes.cs" />
+    <Compile Include="SettingsSection\PreviewPane.cs" />
+    <Compile Include="SettingsSection\Retrievers.cs" />
+    <Compile Include="SettingsSection\Tool.cs" />
+    <Compile Include="SettingsSection\View.cs" />
+    <Compile Include="SettingsSection\ViewInfo.cs" />
+    <Compile Include="WindowsApi\EDITBALLOONTIP.cs" />
+    <Compile Include="WindowsApi\FILETIME.cs" />
+    <Compile Include="WindowsApi\Kernel32.cs" />
+    <Compile Include="WindowsApi\SafeFindHandle.cs" />
+    <Compile Include="WindowsApi\Shell32.cs" />
+    <Compile Include="WindowsApi\SHFILEINFO.cs" />
+    <Compile Include="WindowsApi\User32.cs" />
+    <Compile Include="WindowsApi\WIN32_FILE_ATTRIBUTE_DATA.cs" />
+    <Compile Include="WindowsApi\WIN32_FIND_DATA.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WinFormsUI\WinFormsUI.csproj">
+      <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
+      <Name>WinFormsUI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interfaces\.svn\all-wcprops" />
+    <None Include="Interfaces\.svn\entries" />
+    <None Include="Interfaces\.svn\format" />
+    <None Include="Interfaces\.svn\text-base\IChildResource.cs.svn-base" />
+    <None Include="Interfaces\.svn\text-base\IChildResourceRetriever.cs.svn-base" />
+    <None Include="Interfaces\.svn\text-base\IParentResource.cs.svn-base" />
+    <None Include="Interfaces\.svn\text-base\IParentResourceRetriever.cs.svn-base" />
+    <None Include="Interfaces\.svn\text-base\IPluginPane.cs.svn-base" />
+    <None Include="Interfaces\.svn\text-base\IResource.cs.svn-base" />
+    <None Include="Interfaces\.svn\text-base\IView.cs.svn-base" />
+    <None Include="Interfaces\.svn\text-base\IViewComparer.cs.svn-base" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\.svn\prop-base\" />
+    <Folder Include="Interfaces\.svn\props\" />
+    <Folder Include="Interfaces\.svn\tmp\prop-base\" />
+    <Folder Include="Interfaces\.svn\tmp\props\" />
+    <Folder Include="Interfaces\.svn\tmp\text-base\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
