@@ -1,6 +1,5 @@
 ﻿using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using System;
 
 namespace SharpFile.Infrastructure {
     public interface IPluginPane {
