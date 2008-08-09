@@ -1,6 +1,9 @@
-- make dos commands work properly for command line pane
+- plugin settings in the config file
 - move plugins to their own dll's
 - attributes for plugins (for when there is a settings UI)
+- seperate infrastructure dll from dependency on System.Windows.Forms and the WinformsUI assemblies
+
+- make dos commands work properly for command line pane
 - Floppys and CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
 - file operations dialog
 

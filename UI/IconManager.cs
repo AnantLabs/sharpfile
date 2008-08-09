@@ -4,8 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
-using SharpFile.IO.ChildResources;
-using SharpFile.IO.ParentResources;
+using SharpFile.Infrastructure.IO.ChildResources;
+using SharpFile.Infrastructure.IO.ParentResources;
 
 namespace SharpFile.UI {
 	public static class IconManager {

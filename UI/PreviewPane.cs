@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
-using SharpFile.IO.ChildResources;
+using SharpFile.Infrastructure.IO.ChildResources;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
