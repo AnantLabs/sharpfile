@@ -160,8 +160,8 @@ namespace SharpFile.UI {
 
 			this.viewMenu.DropDownItems.AddRange(new ToolStripItem[]
 			                                     	{
-			                                     		this.statusBarToolStripMenuItem,
-                                                        this.pluginPaneToolStripMenuItem
+                                                        this.pluginPaneToolStripMenuItem,
+			                                     		this.statusBarToolStripMenuItem                                                        
 			                                     	});
 			this.viewMenu.Size = new Size(41, 20);
 			this.viewMenu.Text = "&View";
@@ -174,8 +174,8 @@ namespace SharpFile.UI {
 			this.statusBarToolStripMenuItem.Click += statusBarToolStripMenuItem_Click;
 
             this.pluginPaneToolStripMenuItem.Size = new Size(135, 22);
-            this.pluginPaneToolStripMenuItem.Text = "&Plugin Panel";
-            this.pluginPaneToolStripMenuItem.Checked = true;
+            this.pluginPaneToolStripMenuItem.Text = "&Plugin Pane";
+            this.pluginPaneToolStripMenuItem.Checked = true;            
             this.pluginPaneToolStripMenuItem.Click += pluginPaneToolStripMenuItem_Click;
 
 			this.toolsMenu.Text = "&Tools";
@@ -410,13 +410,14 @@ namespace SharpFile.UI {
 		}
 
         protected void addPluginPanes() {
-            // Load plugin panels.
+            // Load plugin panes.
             int paneIndex = dockPanel.Panes.Count;
 
             foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
                 pane.Dock = DockStyle.None;
                 pane.DockAreas = DockAreas.DockBottom;
                 pane.AllowEndUserDocking = false;
+                pane.DockHandler.HideOnClose = true;
 
                 // For the first plugin, create a new pane on the dock panel. Otherwise, attach to first pane.
                 if (dockPanel.Panes.Count == paneIndex) {
@@ -424,6 +425,44 @@ namespace SharpFile.UI {
                 } else {
                     pane.Show(dockPanel.Panes[paneIndex], null);
                 }
+
+                // Add menu item for the pane to control visibility.
+                ToolStripMenuItem menuItem = new ToolStripMenuItem(pane.Name);
+                //menuItem.Checked = true;
+                //menuItem.CheckOnClick = true;
+                menuItem.Tag = pane;
+
+                menuItem.Click += delegate(object sender, EventArgs e) {
+                    menuItem.Checked = !menuItem.Checked;
+                    IPluginPane p = (IPluginPane)menuItem.Tag;
+
+                    if (p.DockHandler.IsHidden) {
+                        p.DockHandler.Show();
+                    } else {
+                        p.DockHandler.Hide();
+                    }
+                };
+
+                //menuItem.CheckedChanged += delegate(object sender, EventArgs e) {
+                //    IPluginPane p = (IPluginPane)menuItem.Tag;
+
+                //    if (p.DockHandler.IsHidden) {
+                //        p.DockHandler.Show();
+                //    } else {
+                //        p.DockHandler.Hide();
+                //    }
+                //};
+                this.pluginPaneToolStripMenuItem.DropDownItems.Add(menuItem);
+
+                // TODO: Need pane.IsHiddenChanged...
+                pane.VisibleChanged += delegate(object sender, EventArgs e) {
+                    foreach (ToolStripMenuItem item in this.pluginPaneToolStripMenuItem.DropDownItems) {
+                        if (pane.Name.Equals(((IPluginPane)item.Tag).Name)) {
+                            item.Checked = !item.Checked;
+                            break;
+                        }
+                    }
+                };
             }
 
             if (dockPanel.Panes.Count > paneIndex) {

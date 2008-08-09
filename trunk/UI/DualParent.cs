@@ -370,6 +370,7 @@ namespace SharpFile.UI {
                 addPane2Browser(path);
             }
 
+            // Initialize the plugin panes.
             addPluginPanes();
 
             // Collapse/check menu pane 1 if appropriate.

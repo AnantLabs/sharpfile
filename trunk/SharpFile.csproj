@@ -66,45 +66,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Infrastructure\FormatTemplate.cs" />
-    <Compile Include="Infrastructure\FullyQualifiedEnum.cs" />
-    <Compile Include="Infrastructure\Interfaces\IPluginPane.cs" />
-    <Compile Include="Infrastructure\KeyboardHook.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Infrastructure\SettingsSection\ChildResourceRetriever.cs" />
-    <Compile Include="Infrastructure\SettingsSection\ColumnInfo.cs" />
-    <Compile Include="Infrastructure\SettingsSection\DualParent.cs" />
-    <Compile Include="Infrastructure\SettingsSection\FontInfo.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Icons.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Key.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Logger.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Pane.cs" />
-    <Compile Include="Infrastructure\SettingsSection\PluginPane.cs" />
-    <Compile Include="Infrastructure\SettingsSection\ParentResourceRetriever.cs" />
-    <Compile Include="Infrastructure\SettingsSection\PluginPanes.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Retrievers.cs" />
-    <Compile Include="Infrastructure\SettingsSection\PreviewPane.cs" />
-    <Compile Include="Infrastructure\SettingsSection\Tool.cs" />
-    <Compile Include="Infrastructure\SettingsSection\View.cs" />
-    <Compile Include="Infrastructure\SettingsSection\ViewInfo.cs" />
-    <Compile Include="Infrastructure\WindowsApi\EDITBALLOONTIP.cs" />
-    <Compile Include="Infrastructure\WindowsApi\FILETIME.cs" />
-    <Compile Include="Infrastructure\WindowsApi\Kernel32.cs" />
-    <Compile Include="Infrastructure\WindowsApi\SafeFindHandle.cs" />
-    <Compile Include="Infrastructure\WindowsApi\Shell32.cs" />
-    <Compile Include="Infrastructure\WindowsApi\SHFILEINFO.cs" />
-    <Compile Include="Infrastructure\WindowsApi\User32.cs" />
-    <Compile Include="Infrastructure\WindowsApi\WIN32_FILE_ATTRIBUTE_DATA.cs" />
-    <Compile Include="Infrastructure\WindowsApi\WIN32_FIND_DATA.cs" />
-    <Compile Include="IO\ChildResources\CompressedDirectoryInfo.cs" />
-    <Compile Include="IO\ChildResources\CompressedFileInfo.cs" />
-    <Compile Include="IO\Retrievers\ChildResourceRetriever.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IO\Retrievers\CompressedRetrievers\ReadOnlyCompressedRetriever.cs" />
-    <Compile Include="IO\Retrievers\CompressedRetrievers\ReadWriteCompressedRetriever.cs" />
-    <Compile Include="IO\Retrievers\DefaultRetriever.cs" />
     <Compile Include="UI\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -118,53 +79,15 @@
     <Compile Include="UI\Browser.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\CommandLinePane.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\CommandLinePane.Designer.cs">
-      <DependentUpon>CommandLinePane.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\CommandLineTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UI\CommandLineTextBox.Designer.cs">
-      <DependentUpon>CommandLineTextBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\DualParent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Infrastructure\ChildResourceRetrievers.cs" />
-    <Compile Include="Infrastructure\FileSystemEnumerator.cs" />
-    <Compile Include="Infrastructure\FileSystemWatcher.cs" />
-    <Compile Include="Infrastructure\FullyQualifiedMethod.cs" />
-    <Compile Include="Infrastructure\FullyQualifiedType.cs" />
-    <Compile Include="Infrastructure\Interfaces\IChildResource.cs" />
-    <Compile Include="Infrastructure\Interfaces\IChildResourceRetriever.cs" />
-    <Compile Include="Infrastructure\Interfaces\IParentResource.cs" />
-    <Compile Include="Infrastructure\Interfaces\IResource.cs" />
-    <Compile Include="Infrastructure\Interfaces\IParentResourceRetriever.cs" />
-    <Compile Include="Infrastructure\Interfaces\IView.cs" />
-    <Compile Include="Infrastructure\Interfaces\IViewComparer.cs" />
-    <Compile Include="Infrastructure\ParentType.cs" />
-    <Compile Include="Infrastructure\Settings.cs" />
-    <Compile Include="IO\ChildResources\DirectoryInfo.cs" />
-    <Compile Include="IO\ChildResources\FileInfo.cs" />
-    <Compile Include="IO\ChildResources\FileSystemInfo.cs" />
-    <Compile Include="IO\ChildResources\ParentDirectoryInfo.cs" />
-    <Compile Include="IO\ChildResources\RootDirectoryInfo.cs" />
-    <Compile Include="IO\FileSystemInfoFactory.cs" />
-    <Compile Include="IO\ParentResources\DriveInfo.cs" />
-    <Compile Include="IO\Retrievers\DriveRetriever.cs" />
-    <Compile Include="UI\ResourceContainer.cs" />
     <Compile Include="UI\ListView.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="UI\ListViewItemCreator.cs" />
     <Compile Include="UI\ListViewItemsImageIndexer.cs" />
-    <Compile Include="UI\PreviewPane.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="UI\ProgressDisk.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -177,22 +100,12 @@
       <DependentUpon>BaseParent.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\CommandLinePane.resx">
-      <DependentUpon>CommandLinePane.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\CommandLineTextBox.resx">
-      <DependentUpon>CommandLineTextBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <Compile Include="UI\ToolStripSpringTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\DriveDetector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\IconManager.cs" />
-    <Compile Include="UI\IconReader.cs" />
     <Compile Include="UI\ListViewItemComparer.cs" />
     <Compile Include="UI\ShellContextMenu.cs" />
     <Compile Include="UI\UnitDisplayType.cs" />
@@ -233,6 +146,10 @@
     <ProjectReference Include="Common\Common.csproj">
       <Project>{343E4170-8C5E-4E9E-AB90-7DA25BDEE740}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="SharpFile.Infrastructure\SharpFile.Infrastructure.csproj">
+      <Project>{C061FE8D-F9D6-400F-94B6-135B8F62EC49}</Project>
+      <Name>SharpFile.Infrastructure</Name>
     </ProjectReference>
     <ProjectReference Include="WinFormsUI\WinFormsUI.csproj">
       <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
