@@ -8,7 +8,6 @@ namespace SharpFile.Infrastructure {
         void Show(DockPanel dockPanel);
         void Show(DockPanel dockPanel, DockState dockState);
         void Show(DockPane dockPane, IDockContent content);
-        event EventHandler VisibleChanged;
 
         string Name { get; set; }
         string TabText { get; set; }

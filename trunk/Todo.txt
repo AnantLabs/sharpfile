@@ -1,5 +1,5 @@
 - plugin settings in the config file
-- move plugins to their own dll's
+- save dockstate of each pluginpane
 - attributes for plugins (for when there is a settings UI)
 - seperate infrastructure dll from dependency on System.Windows.Forms and the WinformsUI assemblies
 
