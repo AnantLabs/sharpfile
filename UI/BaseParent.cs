@@ -289,8 +289,10 @@ namespace SharpFile.UI {
 
             browser.UpdateStatus += delegate(IView view) {
 				// TODO: Add Folder/file count and to the ResourceContainer to show something like 2/25 folders, 0/10 files.
-                toolStripStatus.Text = string.Format("{0} folders, {1} files, {2} selected",
+                toolStripStatus.Text = string.Format("{0}/{1} folders, {2}/{3} files, {4} selected",
+                    view.SelectedResources.FolderCount,
                     view.FolderCount,
+                    view.SelectedResources.FileCount,
                     view.FileCount,
                     view.SelectedResources.HumanReadableTotalSize);
             };
