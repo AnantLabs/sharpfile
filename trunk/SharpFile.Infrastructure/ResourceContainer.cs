@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.IO.ChildResources;
 
 namespace SharpFile.Infrastructure {
     public class ResourceContainer : IEnumerable<IResource> {
         private IList<IResource> list;
         private long size;
+        private long fileCount;
+        private long folderCount;
 
         public ResourceContainer() {
             list = new List<IResource>();
             size = 0;
+            fileCount = 0;
+            folderCount = 0;
         }
 
         public bool Contains(IResource resource) {
@@ -18,24 +23,47 @@ namespace SharpFile.Infrastructure {
         public void Add(IResource resource) {
             list.Add(resource);
             size = 0;
+
+            if (resource is FileInfo) {
+                fileCount++;
+            } else if (resource is DirectoryInfo) {
+                folderCount++;
+            }
         }
 
         public void Remove(IResource resource) {
             list.Remove(resource);
             size = 0;
+            
+            if (resource is FileInfo) {
+                fileCount--;
+            } else if (resource is DirectoryInfo) {
+                folderCount--;
+            }
         }
 
         public void Clear() {
             list.Clear();
             size = 0;
+            fileCount = 0;
+            folderCount = 0;
         }
 
         public void ReevaluateSizes() {
             size = 0;
         }
-        
-        // TODO: FileCount property.
-		// TODO: FolderCount property.
+
+        public long FileCount {        
+            get {
+                return fileCount;
+            }
+        }
+
+        public long FolderCount {        
+            get {
+                return folderCount;
+            }
+        }
 
         /// <summary>
         /// Total size of all resources in the container.

@@ -1,6 +1,7 @@
+- Move retreivers to own assemblies
+- Save whether status bar is visible or not
 - Output plugins in correct bin directory
 - Better logging of major events in verbose mode
-- FolderCount/FileCount on ResourceContainer to show 1/24 files message in status bar
 - show more clear error message if plugin pane was built with the wrong version
 - plugin settings in the config file
 - save dockstate of each pluginpane
@@ -11,6 +12,7 @@
 - make dos commands work properly for command line pane
 - Floppys and CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
 - file operations dialog
+- file search as plugin pane
 
 - figure out how to clone events from an object
 - split out listview class into other classes
