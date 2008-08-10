@@ -118,7 +118,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 // or the method delegate type was null. Either way, set a default.
                 if (filterMethod == null) {
                     filterMethod = Reflection.CreateDelegate<Infrastructure.ChildResourceRetriever.FilterMethodDelegate>(
-                                "SharpFile",
+                                "SharpFile.Infrastructure",
                                 "SharpFile.Infrastructure.ChildResourceRetrievers",
                                 "FalseFilterMethod");
                 }

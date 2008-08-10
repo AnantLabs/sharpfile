@@ -51,7 +51,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
 
         public static List<ParentResourceRetriever> GenerateDefaultParentResourceRetrievers() {
             List<ParentResourceRetriever> parentResourceRetrievers = new List<ParentResourceRetriever>();
-            FullyQualifiedType type = new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.Retrievers.DriveRetriever");
+            FullyQualifiedType type = new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.Retrievers.DriveRetriever");
             ParentResourceRetriever retriever = new ParentResourceRetriever(
                 "DriveRetriever", type, "CompressedRetriever", "DefaultRetriever");
             parentResourceRetrievers.Add(retriever);
@@ -62,36 +62,36 @@ namespace SharpFile.Infrastructure.SettingsSection {
             List<ChildResourceRetriever> childResourceRetrieverSettings = new List<ChildResourceRetriever>();
 
             // Default retriever.
-            FullyQualifiedType type = new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.Retrievers.DefaultRetriever");
+            FullyQualifiedType type = new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.Retrievers.DefaultRetriever");
             FullyQualifiedMethod method = new FullyQualifiedMethod("TrueFilterMethod",
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"));
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.ChildResourceRetrievers"));
 
             List<ColumnInfo> columnInfos = new List<ColumnInfo>();
             columnInfos.Add(new ColumnInfo("Filename", "DisplayName", SortOrder.Ascending, true));
             columnInfos.Add(new ColumnInfo("Size", "Size", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
-                    new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.DirectoryInfo"),
-                    new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ParentResources.DriveInfo")));
+                    new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.DirectoryInfo"),
+                    new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ParentResources.DriveInfo")));
             columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortDateString",
                     new FullyQualifiedType("Common", "Common.General")),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
             columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortTimeString",
                     new FullyQualifiedType("Common", "Common.General")),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
 
             SettingsSection.ChildResourceRetriever retriever = new SettingsSection.ChildResourceRetriever(
                 "DefaultRetriever", type, method, "ListView", columnInfos);
             childResourceRetrieverSettings.Add(retriever);
 
             // Compressed retriever.
-            type = new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers.ReadOnlyCompressedRetriever");
+            type = new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers.ReadOnlyCompressedRetriever");
             method = new FullyQualifiedMethod("IsFileWithExtension",
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.ChildResourceRetrievers"),
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.ChildResourceRetrievers"),
                 ".zip");
 
             columnInfos = new List<ColumnInfo>();
@@ -99,23 +99,23 @@ namespace SharpFile.Infrastructure.SettingsSection {
             columnInfos.Add(new ColumnInfo("Size", "Size", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
-                    new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.DirectoryInfo"),
-                    new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ParentResources.DriveInfo")));
+                    new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.DirectoryInfo"),
+                    new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ParentResources.DriveInfo")));
             columnInfos.Add(new ColumnInfo("Compressed Size", "CompressedSize", SortOrder.None, false,
                 new FullyQualifiedMethod("GetHumanReadableSize",
                     new FullyQualifiedType("Common", "Common.General")),
-                    new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.DirectoryInfo"),
-                    new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.DriveInfo")));
+                    new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.DirectoryInfo"),
+                    new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.DriveInfo")));
             columnInfos.Add(new ColumnInfo("Date", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortDateString",
                     new FullyQualifiedType("Common", "Common.General")),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
             columnInfos.Add(new ColumnInfo("Time", "LastWriteTime", SortOrder.None, false,
                 new FullyQualifiedMethod("GetDateTimeShortTimeString",
                     new FullyQualifiedType("Common", "Common.General")),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.ParentDirectoryInfo"),
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.IO.ChildResources.RootDirectoryInfo")));
 
             retriever = new SettingsSection.ChildResourceRetriever(
                 "CompressedRetriever", type, method, "ListView", columnInfos);
