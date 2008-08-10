@@ -2,7 +2,9 @@
 using System.IO;
 using System.Runtime.InteropServices;   // required for Marshal
 using System.Windows.Forms;             // required for Message
+using Common.Logger;
 using Microsoft.Win32.SafeHandles;
+using SharpFile.Infrastructure;
 
 // DriveDetector - rev. 1, Oct. 31 2007
 // http://www.codeproject.com/KB/system/DriveDetector.aspx
@@ -288,12 +290,16 @@ namespace SharpFile.UI {
 
                             // Call the client event handler
                             // We should create copy of the event before testing it and
-                            // calling the delegate - if any
+                            // calling the delegate - if any                                
                             DriveDetectorEventHandler tempDeviceArrived = DeviceArrived;
                             if (tempDeviceArrived != null) {
                                 DriveDetectorEventArgs e = new DriveDetectorEventArgs();
                                 e.Drive = c + ":\\";
                                 tempDeviceArrived(this, e);
+                                
+                                Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                    "DriveDetector: New device, {0}, detected.",
+                                    e.Drive);
 
                                 // Register for query remove if requested
                                 if (e.HookQueryRemove) {
@@ -326,6 +332,10 @@ namespace SharpFile.UI {
                                 DriveDetectorEventArgs e = new DriveDetectorEventArgs();
                                 e.Drive = mCurrentDrive;        // drive which is hooked
                                 tempQuery(this, e);
+                                
+                                Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                    "DriveDetector: Device, {0}, remove queried.",
+                                    e.Drive);
 
                                 // If the client wants to cancel, let Windows know
                                 if (e.Cancel) {
@@ -358,6 +368,10 @@ namespace SharpFile.UI {
                                     DriveDetectorEventArgs e = new DriveDetectorEventArgs();
                                     e.Drive = c + ":\\";
                                     tempDeviceRemoved(this, e);
+                                    
+                                    Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                                        "DriveDetector: Device, {0}, removed.",
+                                        e.Drive);
                                 }
 
                                 // TODO: we could unregister the notify handle here if we knew it is the

@@ -92,6 +92,9 @@ namespace SharpFile.UI {
 
             initializeComponent();
             UpdateParentListing();
+            
+            Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                    "Browser: Instantiate.");
         }
 
         #region Delegate methods
@@ -122,6 +125,10 @@ namespace SharpFile.UI {
             if (imageIndex > -1) {
                 this.Icon = Icon.FromHandle(((Bitmap)ImageList.Images[imageIndex]).GetHicon());
             }
+            
+            Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                    "Browser: Update the path to {0}.",
+                    path.FullName);
         }
 
         protected void OnUpdateProgress(int value) {
@@ -155,13 +162,13 @@ namespace SharpFile.UI {
             this.HandleCreated += fileBrowser_HandleCreated;
             this.tlsPath.KeyDown += tlsPath_KeyDown;
             this.tlsPath.KeyUp += delegate(object sender, KeyEventArgs e) {
-                handleTexboxHotkeys(this.tlsPath, e);
+                handleTextboxHotkeys(this.tlsPath, e);
             };
 
             this.tlsFilter.KeyUp += tlsFilter_KeyUp;
             this.tlsFilter.LostFocus += tlsFilter_LostFocus;
             this.tlsFilter.KeyUp += delegate(object sender, KeyEventArgs e) {
-                handleTexboxHotkeys(this.tlsFilter, e);
+                handleTextboxHotkeys(this.tlsFilter, e);
             };
 
             this.tlsDrives.DropDownItemClicked += tlsDrives_DropDownItemClicked;
@@ -198,7 +205,7 @@ namespace SharpFile.UI {
         /// </summary>
         /// <param name="textBox">Textbox to copy/cut/paste from/into.</param>
         /// <param name="e">Key event args.</param>
-        private void handleTexboxHotkeys(ToolStripTextBox textBox, KeyEventArgs e) {
+        private void handleTextboxHotkeys(ToolStripTextBox textBox, KeyEventArgs e) {
             if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C) {
                 if (!string.IsNullOrEmpty(textBox.SelectedText)) {
                     Clipboard.SetText(textBox.SelectedText);
