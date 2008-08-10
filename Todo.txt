@@ -13,6 +13,7 @@
 - figure out how to clone events from an object
 - split out listview class into other classes
 - large icons for preview panel
+- ability to check for updates from SharpFile
 
 - Different resizing code:
 http://www.hanselman.com/blog/ScalingResizingResamplingAnImageInASPNET.aspx

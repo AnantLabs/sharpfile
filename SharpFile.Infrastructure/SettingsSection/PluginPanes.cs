@@ -17,13 +17,27 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public static List<PluginPane> GenerateDefaultPluginPanels() {
             List<PluginPane> pluginPanes = new List<PluginPane>();
 
-            pluginPanes.Add(new PluginPane("PreviewPane", "Preview",
+            pluginPanes.Add(new PluginPane("Previewer", "Previewer",
                 new FullyQualifiedType("SharpFile", "SharpFile.UI.PreviewPane"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.PreviewPane")));
 
-            pluginPanes.Add(new PluginPane("CommandLinePane", "Cmd",
+            pluginPanes.Add(new PluginPane("Command Line", "Cmd",
                 new FullyQualifiedType("SharpFile", "SharpFile.UI.CommandLinePane"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.CommandLinePane")));
+
+			/*
+            pluginPanes.Add(new PluginPane("Screen", "Screen",
+                new FullyQualifiedType("SharpFile", "SharpFile.UI.ScreenPane"),
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.ScreenPane")));
+
+            pluginPanes.Add(new PluginPane("Renamer", "Renamer",
+                new FullyQualifiedType("SharpFile", "SharpFile.UI.RegexRenamerPane"),
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.RegexRenamerPane")));
+
+             pluginPanes.Add(new PluginPane("SharpFileEditor", "Editor",
+                new FullyQualifiedType("SharpFileEditor", "SharpFileEditor.SharpFileEditor"),
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.SharpFileEditor")));
+             */
 
             return pluginPanes;
         }
@@ -78,47 +92,56 @@ namespace SharpFile.Infrastructure.SettingsSection {
                         });
 
                         if (assembly != null) {
-                            try {
-                                foreach (Type type in assembly.GetTypes()) {
-                                    if (type.IsPublic && !type.IsAbstract) {
-                                        Type interfaceType = type.GetInterface(typeof(IPluginPane).FullName);
+                            foreach (Type type in assembly.GetTypes()) {
+                                if (type.IsPublic && !type.IsAbstract) {
+                                    Type interfaceType = null;
 
-                                        if (interfaceType != null) {
-                                            try {
-                                                IPluginPane pluginPane = Reflection.InstantiateObject<IPluginPane>(type);
+                                    try {
+                                        interfaceType = type.GetInterface(typeof(IPluginPane).FullName);
+                                    } catch (ReflectionTypeLoadException ex) {
+                                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                            "Plugin pane, {0}, could not be instantiated. Plugin could be built aginst the incorrect version of SharpFile.Infrastructure.",
+                                            pluginPaneSetting.Name);
 
-                                                //IPluginPane pluginPane = Reflection.InstantiateObject<IPluginPane>(
-                                                //    pluginPaneSetting.Type.Assembly,
-                                                //    pluginPaneSetting.Type.Type);
+                                        foreach (Exception exception in ex.LoaderExceptions) {
+                                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
+                                                "Plugin pane, {0}, loader exception.",
+                                                pluginPaneSetting.Name);
+                                        }
+                                    } catch (Exception ex) {
+                                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                                "Retreiving the IPluginPane interface for {0} produced an error.",
+                                                pluginPaneSetting.Name);
+                                    }
 
-                                                pluginPane.Name = pluginPaneSetting.Name;
-                                                pluginPane.TabText = pluginPaneSetting.TabText;
-                                                pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
+                                    if (interfaceType != null) {
+                                        try {
+                                            IPluginPane pluginPane = Reflection.InstantiateObject<IPluginPane>(type);
+                                            pluginPane.Name = pluginPaneSetting.Name;
+                                            pluginPane.TabText = pluginPaneSetting.TabText;
+                                            pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
 
-                                                instances.Add(pluginPane);
-                                            } catch (TypeLoadException ex) {
-                                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                                    "Plugin pane, {0}, could not be instantiated.",
-                                                    pluginPaneSetting.Name);
-                                            } catch (FileNotFoundException ex) {
-                                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                                    "Plugin pane, {0}, could not be instantiated.",
-                                                    pluginPaneSetting.Name);
-                                            }
+                                            instances.Add(pluginPane);
+                                        } catch (TypeLoadException ex) {
+                                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                                "Plugin pane, {0}, could not be instantiated because the type is incorrect.",
+                                                pluginPaneSetting.Name);
+                                        } catch (FileNotFoundException ex) {
+                                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                                "Plugin pane, {0}, could not be instantiated because the file could not be found.",
+                                                pluginPaneSetting.Name);
+                                        } catch (Exception ex) {
+                                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                                "Plugin pane, {0}, could not be instantiated.",
+                                                pluginPaneSetting.Name);
                                         }
                                     }
                                 }
-                            } catch (ReflectionTypeLoadException ex) {
-                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                    "Plugin pane, {0}, could not be instantiated. Plugin could be built aginst the incorrect version of SharpFile.Infrastructure.",
-                                    pluginPaneSetting.Name);
-
-                                foreach (Exception exception in ex.LoaderExceptions) {
-                                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
-                                        "Plugin pane, {0}, loader exception.",
-                                        pluginPaneSetting.Name);
-                                }
                             }
+                        } else {
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly,
+                                "Plugin pane, {0}, assembly could not be found.",
+                                pluginPaneSetting.Name);
                         }
                     }
                 }

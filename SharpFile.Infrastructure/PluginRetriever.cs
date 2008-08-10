@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System;
+using Common.Logger;
 
 namespace SharpFile.Infrastructure {
     public class PluginRetriever {
@@ -35,8 +36,14 @@ namespace SharpFile.Infrastructure {
 
             // TODO: Only load plugin files and not all dll's.
             foreach (string file in files) {
-                Assembly assembly = Assembly.LoadFile(file);
-                assemblies.Add(assembly);
+                try {
+                    Assembly assembly = Assembly.LoadFile(file);
+                    assemblies.Add(assembly);
+                } catch (Exception ex) {
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        "Assembly, {0}, could not be loaded.",
+                        file);
+                }
             }
 
             return assemblies;
