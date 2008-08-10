@@ -1,4 +1,4 @@
-﻿using System.Xml.Serialization;
+using System.Xml.Serialization;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.Infrastructure.SettingsSection {

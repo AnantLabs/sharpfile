@@ -20,11 +20,11 @@ namespace SharpFile.Infrastructure.SettingsSection {
 
             pluginPanes.Add(new PluginPane("Previewer", "Previewer",
                 new FullyQualifiedType("PreviewPane", "SharpFile.UI.PreviewPane"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.PreviewPane")));
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.PreviewPane")));
 
             pluginPanes.Add(new PluginPane("Command Line", "Cmd",
                 new FullyQualifiedType("CommandLinePane", "SharpFile.UI.CommandLinePane"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.CommandLinePane")));
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.CommandLinePane")));
 
 			/*
             pluginPanes.Add(new PluginPane("Screen", "Screen",
@@ -110,9 +110,12 @@ namespace SharpFile.Infrastructure.SettingsSection {
                                     try {
                                         interfaceType = type.GetInterface(typeof(IPluginPane).FullName);
                                     } catch (ReflectionTypeLoadException ex) {
+                                        // TODO: Determine version of SharpFile.Infrastructure this plugin was built against.
                                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                            "Plugin pane, {0}, could not be instantiated. Plugin could be built aginst the incorrect version of SharpFile.Infrastructure.",
-                                            pluginPaneSetting.Name);
+                                            @"Plugin pane, {0}, could not be instantiated. Plugin could be built aginst the incorrect version of 
+                                            SharpFile.Infrastructure. Current version of SharpFile.Infrastructure is {1}.",
+                                            pluginPaneSetting.Name,
+                                            "0");
 
                                         foreach (Exception exception in ex.LoaderExceptions) {
                                             Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
