@@ -13,16 +13,17 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private List<PluginPane> pluginPanes = new List<PluginPane>();
         private DockState visibleState = DockState.DockBottomAutoHide;
         private double dockPortion = 185;
+        private bool isVisible = true;
 
         public static List<PluginPane> GenerateDefaultPluginPanels() {
             List<PluginPane> pluginPanes = new List<PluginPane>();
 
             pluginPanes.Add(new PluginPane("Previewer", "Previewer",
-                new FullyQualifiedType("SharpFile", "SharpFile.UI.PreviewPane"),
+                new FullyQualifiedType("PreviewPane", "SharpFile.UI.PreviewPane"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.PreviewPane")));
 
             pluginPanes.Add(new PluginPane("Command Line", "Cmd",
-                new FullyQualifiedType("SharpFile", "SharpFile.UI.CommandLinePane"),
+                new FullyQualifiedType("CommandLinePane", "SharpFile.UI.CommandLinePane"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.CommandLinePane")));
 
 			/*
@@ -66,6 +67,16 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
         }
 
+        [XmlAttribute]
+        public bool IsVisible {
+            get {
+                return isVisible;
+            }
+            set {
+                isVisible = value;
+            }
+        }
+
         [XmlArray("Panes")]
         [XmlArrayItem("Pane")]
         public List<PluginPane> Panes {
@@ -81,9 +92,9 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public List<IPluginPane> Instances {
             get {
                 if (instances == null) {
-                    PluginRetriever pluginRetriever = new PluginRetriever();
-                    List<Assembly> assemblies = pluginRetriever.GetPluginAssemblies();
                     instances = new List<IPluginPane>();
+                    PluginRetriever pluginRetriever = new PluginRetriever();
+                    List<Assembly> assemblies = pluginRetriever.GetPluginAssemblies();                    
 
                     foreach (PluginPane pluginPaneSetting in Panes) {
                         // TODO: This should be a private method instead of in here.
@@ -121,6 +132,10 @@ namespace SharpFile.Infrastructure.SettingsSection {
                                             pluginPane.TabText = pluginPaneSetting.TabText;
                                             pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
 
+                                            if (!pluginPaneSetting.IsVisible) {
+                                                pluginPane.VisibleState = DockState.Hidden;
+                                            }
+
                                             instances.Add(pluginPane);
                                         } catch (TypeLoadException ex) {
                                             Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
@@ -140,8 +155,10 @@ namespace SharpFile.Infrastructure.SettingsSection {
                             }
                         } else {
                             Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly,
-                                "Plugin pane, {0}, assembly could not be found.",
-                                pluginPaneSetting.Name);
+                                "Plugin pane, {0}, assembly could not be found. Assembly: {1}; Type: {2}",
+                                pluginPaneSetting.Name,
+                                pluginPaneSetting.Type.Assembly,
+                                pluginPaneSetting.Type.Type);
                         }
                     }
                 }

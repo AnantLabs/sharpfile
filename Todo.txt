@@ -1,8 +1,10 @@
+- Output plugins in correct bin directory
 - Better logging of major events in verbose mode
 - FolderCount/FileCount on ResourceContainer to show 1/24 files message in status bar
 - show more clear error message if plugin pane was built with the wrong version
 - plugin settings in the config file
 - save dockstate of each pluginpane
+- save whether plugin pane is shown or not
 - attributes for plugins (for when there is a settings UI)
 - seperate infrastructure dll from dependency on System.Windows.Forms and the WinformsUI assemblies
 

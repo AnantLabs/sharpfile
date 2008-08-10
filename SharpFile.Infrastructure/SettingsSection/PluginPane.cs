@@ -8,6 +8,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private FullyQualifiedType settingsType;
         private double autoHidePortion = 150;
         private string tabText;
+        private bool isVisible = true;
 
         public PluginPane() {
         }
@@ -50,6 +51,16 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 tabText = value;
+            }
+        }
+
+        [XmlAttribute]
+        public bool IsVisible {
+            get {
+                return isVisible;
+            }
+            set {
+                isVisible = value;
             }
         }
 
