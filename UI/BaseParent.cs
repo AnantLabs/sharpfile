@@ -414,9 +414,9 @@ namespace SharpFile.UI {
                     pane.DockHandler.Hide();
                 }
 
-                if (pane.DockHandler.IsHidden) {
-                    pane.DockHandler.Hide();
-                }
+                //if (pane.DockHandler.IsHidden) {
+                    //pane.DockHandler.Hide();
+                //}
 
                 // Update the check status if the DockStateChanged delegate fired.
                 pane.DockHandler.DockStateChanged += delegate(object sender, EventArgs e) {

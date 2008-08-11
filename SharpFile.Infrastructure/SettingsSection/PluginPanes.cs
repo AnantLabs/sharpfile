@@ -115,7 +115,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
                                             @"Plugin pane, {0}, could not be instantiated. Plugin could be built aginst the incorrect version of 
                                             SharpFile.Infrastructure. Current version of SharpFile.Infrastructure is {1}.",
                                             pluginPaneSetting.Name,
-                                            "0");
+                                            Assembly.GetAssembly(typeof(SharpFile.Infrastructure.IPluginPane)).GetName().Version.ToString());
 
                                         foreach (Exception exception in ex.LoaderExceptions) {
                                             Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
