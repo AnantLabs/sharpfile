@@ -8,6 +8,20 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
     public class DirectoryInfo : FileSystemInfo {
         public DirectoryInfo(string fullName)
             : base(fullName) {
+
+			if (name != null) {
+				if (string.IsNullOrEmpty(path)) {
+					path = fullName.Substring(0, (fullName.Length - name.Length - 1));
+				} else {
+					if (path.EndsWith(name, StringComparison.InvariantCultureIgnoreCase)) {
+						path = path.Substring(0, (fullName.Length - name.Length - 1));
+					}
+				}
+			}
+
+			if (path != null && !path.EndsWith(DirectoryInfo.DirectorySeparator)) {
+				path += DirectoryInfo.DirectorySeparator;
+			}
         }
 
         public DirectoryInfo(string fullName, WIN32_FIND_DATA findData)

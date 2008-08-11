@@ -253,8 +253,8 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         public IParentResource Root {
             get {
                 if (root == null) {
-                    string rootPath = this.fullName.Substring(0, this.fullName.IndexOf(DirectorySeparator) + 1);
-                    //System.IO.Path.GetPathRoot?
+                    //string rootPath = this.fullName.Substring(0, this.fullName.IndexOf(DirectorySeparator) + 1);
+					string rootPath = System.IO.Path.GetPathRoot(this.fullName);
                     root = new SharpFile.Infrastructure.IO.ParentResources.DriveInfo(rootPath);
                 }
 

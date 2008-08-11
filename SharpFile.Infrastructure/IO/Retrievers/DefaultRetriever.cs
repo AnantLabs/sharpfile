@@ -53,12 +53,10 @@ namespace SharpFile.Infrastructure.IO.Retrievers {
 
 			// Show parent directory if specified.
 			if (Settings.Instance.ShowParentDirectory) {
-				if (!resource.Path.Equals(resource.FullName, StringComparison.OrdinalIgnoreCase)) {
-					if (!Settings.Instance.ShowRootDirectory ||
-						(Settings.Instance.ShowRootDirectory &&
-						!resource.Path.Equals(resource.Root.FullName, StringComparison.OrdinalIgnoreCase))) {
-						childResources.Add(new ParentDirectoryInfo(resource.Path));
-					}
+				if (!Settings.Instance.ShowRootDirectory ||
+					(Settings.Instance.ShowRootDirectory &&
+					!resource.Path.Equals(resource.Root.FullName, StringComparison.OrdinalIgnoreCase))) {
+					childResources.Add(new ParentDirectoryInfo(resource.Path));
 				}
 			}
 
