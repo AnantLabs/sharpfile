@@ -1,3 +1,6 @@
+- Improve the General.Cleanup code
+  - Improve handling of bad paths when entered manually
+  - Cleanup all of the code that checks for a trailing \ for directories (another General static method)?
 - Move retreivers to own assemblies
 - Save whether status bar is visible or not
 - Output plugins in correct bin directory

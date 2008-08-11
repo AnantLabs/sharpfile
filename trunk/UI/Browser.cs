@@ -110,26 +110,26 @@ namespace SharpFile.UI {
             return -1;
         }
 
-        protected void OnUpdatePath(IResource path) {
-            if (UpdatePath != null) {
-                UpdatePath(path);
-            }
+		protected void OnUpdatePath(IResource path) {
+			if (UpdatePath != null) {
+				UpdatePath(path);
+			}
 
-            this.Text = path.FullName;
-            this.TabText = path.FullName;
-            Path = path.FullName;
+			this.Text = path.FullName;
+			this.TabText = path.FullName;
+			Path = path.FullName;
 
-            // Set the icon for the current path.
-            int imageIndex = OnGetImageIndex(path, false);
+			// Set the icon for the current path.
+			int imageIndex = OnGetImageIndex(path, false);
 
-            if (imageIndex > -1) {
-                this.Icon = Icon.FromHandle(((Bitmap)ImageList.Images[imageIndex]).GetHicon());
-            }
-            
-            Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                    "Browser: Update the path to {0}.",
-                    path.FullName);
-        }
+			if (imageIndex > -1) {
+				this.Icon = Icon.FromHandle(((Bitmap)ImageList.Images[imageIndex]).GetHicon());
+			}
+
+			Settings.Instance.Logger.Log(LogLevelType.Verbose,
+					"Browser: Update the path to {0}.",
+					path.FullName);
+		}
 
         protected void OnUpdateProgress(int value) {
             if (UpdateProgress != null) {
@@ -588,22 +588,24 @@ namespace SharpFile.UI {
 
                 return General.CleanupPath(this.tlsPath.Text);
             }
-            set {
-                if (value != null) {
-                    string path = value;
+			set {
+				if (value != null) {
+					string path = value;
 
-                    IResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
+					IResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
 
-                    if (resource is DirectoryInfo &&
-                        !path.EndsWith(FileSystemInfo.DirectorySeparator)) {
-                        path = string.Format(@"{0}{1}",
-                            path,
-                            FileSystemInfo.DirectorySeparator);
-                    }
+					//if (resource is DirectoryInfo) {
+					if (resource is DirectoryInfo &&
+						!path.EndsWith(FileSystemInfo.DirectorySeparator)) {
+						path = string.Format(@"{0}{1}",
+							path,
+							FileSystemInfo.DirectorySeparator);
+						//path = General.CleanupPath(path);
+					}
 
-                    this.tlsPath.Text = path;
-                }
-            }
+					this.tlsPath.Text = path;
+				}
+			}
         }
 
         public string Filter {
