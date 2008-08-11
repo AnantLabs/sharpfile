@@ -11,6 +11,8 @@
 - save whether plugin pane is shown or not
 - attributes for plugins (for when there is a settings UI)
 - seperate infrastructure dll from dependency on System.Windows.Forms and the WinformsUI assemblies
+- drag and drop hover over a directory will open it after a certain amount of time (spring folders)
+- ability to turn off full row selection
 
 - make dos commands work properly for command line pane
 - Floppys and CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
