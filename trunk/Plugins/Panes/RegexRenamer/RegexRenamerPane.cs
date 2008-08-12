@@ -12,6 +12,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public partial class RegexRenamerPane : DockContent, IPluginPane {
+        private bool isActivated = true;
         private System.ComponentModel.IContainer components;
         private StringBuilder sb = new StringBuilder();
         private Panel panel1;
@@ -381,7 +382,19 @@ namespace SharpFile.UI {
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
+        }
 
+        public new bool IsActivated {
+            get {
+                return isActivated;
+            }
+            set {
+                isActivated = value;
+
+                if (isActivated) {
+                    this.DockHandler.Activate();
+                }
+            }
         }
     }
 }

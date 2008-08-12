@@ -378,10 +378,6 @@ namespace SharpFile.Infrastructure {
                     dualParentSettings.Tools = DualParent.GenerateDefaultTools();
                 }
 
-                //if (dualParentSettings.PluginPanels.Count == 0) {
-                //    dualParentSettings.PluginPanels = DualParent.GenerateDefaultPluginPanels();
-                //}
-
                 return dualParentSettings;
             }
             set {

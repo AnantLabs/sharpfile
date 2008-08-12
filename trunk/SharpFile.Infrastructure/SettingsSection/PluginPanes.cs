@@ -19,22 +19,22 @@ namespace SharpFile.Infrastructure.SettingsSection {
             List<PluginPane> pluginPanes = new List<PluginPane>();
 
             pluginPanes.Add(new PluginPane("Previewer", "Previewer",
-                new FullyQualifiedType("PreviewPane", "SharpFile.UI.PreviewPane"),
-                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.PreviewPane")));
+                new FullyQualifiedType("Previewer", "SharpFile.UI.Previewer"),
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.Preview")));
 
             pluginPanes.Add(new PluginPane("Command Line", "Cmd",
-                new FullyQualifiedType("CommandLinePane", "SharpFile.UI.CommandLinePane"),
-                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.CommandLinePane")));
+                new FullyQualifiedType("CommandLine", "SharpFile.UI.CommandLine"),
+                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.CommandLine")));
 
-			/*
             pluginPanes.Add(new PluginPane("Screen", "Screen",
-                new FullyQualifiedType("SharpFile", "SharpFile.UI.ScreenPane"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.ScreenPane")));
+                new FullyQualifiedType("Screen", "SharpFile.UI.Screen"),
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.Screen")));
 
             pluginPanes.Add(new PluginPane("Renamer", "Renamer",
-                new FullyQualifiedType("SharpFile", "SharpFile.UI.RegexRenamerPane"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.RegexRenamerPane")));
+                new FullyQualifiedType("RegexRenamer", "SharpFile.UI.RegexRenamer"),
+                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.RegexRenamer")));
 
+            /*
              pluginPanes.Add(new PluginPane("SharpFileEditor", "Editor",
                 new FullyQualifiedType("SharpFileEditor", "SharpFileEditor.SharpFileEditor"),
                 new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.SharpFileEditor")));
@@ -110,12 +110,22 @@ namespace SharpFile.Infrastructure.SettingsSection {
                                     try {
                                         interfaceType = type.GetInterface(typeof(IPluginPane).FullName);
                                     } catch (ReflectionTypeLoadException ex) {
-                                        // TODO: Determine version of SharpFile.Infrastructure this plugin was built against.
+                                        string versionBuiltAgainst = string.Empty;
+
+                                        foreach (AssemblyName assemblyName in assembly.GetReferencedAssemblies()) {
+                                            if (assemblyName.Equals("SharpFile.Infrastructure")) {
+                                                versionBuiltAgainst = assemblyName.Version.ToString();
+                                                break;
+                                            }
+                                        }
+
                                         Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                                             @"Plugin pane, {0}, could not be instantiated. Plugin could be built aginst the incorrect version of 
-                                            SharpFile.Infrastructure. Current version of SharpFile.Infrastructure is {1}.",
+                                            SharpFile.Infrastructure. Current version of SharpFile.Infrastructure is {1}. Version of SharpFile.Infrastructure 
+                                            against is {2}.",
                                             pluginPaneSetting.Name,
-                                            Assembly.GetAssembly(typeof(SharpFile.Infrastructure.IPluginPane)).GetName().Version.ToString());
+                                            Assembly.GetAssembly(typeof(IPluginPane)).GetName().Version.ToString(),
+                                            versionBuiltAgainst);                                        
 
                                         foreach (Exception exception in ex.LoaderExceptions) {
                                             Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
@@ -134,12 +144,8 @@ namespace SharpFile.Infrastructure.SettingsSection {
                                             pluginPane.Name = pluginPaneSetting.Name;
                                             pluginPane.TabText = pluginPaneSetting.TabText;
                                             pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
-
-                                            if (pluginPaneSetting.IsHidden) {
-                                                pluginPane.DockHandler.IsHidden = true;
-                                            } else {
-                                                pluginPane.DockHandler.IsHidden = false;
-                                            }
+                                            pluginPane.DockHandler.IsHidden = pluginPaneSetting.IsHidden;
+                                            pluginPane.IsActivated = pluginPaneSetting.IsActivated;
 
                                             instances.Add(pluginPane);
                                         } catch (TypeLoadException ex) {

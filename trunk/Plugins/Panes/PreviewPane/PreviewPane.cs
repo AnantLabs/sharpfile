@@ -8,6 +8,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public partial class PreviewPane : DockContent, IPluginPane {
+        private bool isActivated = true;
         private IResource resource;
         private PictureBox pictureBox;
         private TextBox textBox;
@@ -241,6 +242,19 @@ namespace SharpFile.UI {
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
+
+        public new bool IsActivated {
+            get {
+                return isActivated;
+            }
+            set {
+                isActivated = value;
+
+                if (isActivated) {
+                    this.DockHandler.Activate();
+                }
+            }
         }
     }
 }
