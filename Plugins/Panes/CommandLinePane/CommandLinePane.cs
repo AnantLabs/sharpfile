@@ -4,6 +4,8 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public partial class CommandLinePane : DockContent, IPluginPane {
+        private bool isActivated = true;
+
         public CommandLinePane() {
             InitializeComponent();            
 
@@ -67,6 +69,19 @@ namespace SharpFile.UI {
         public void Update(IView view) {
             this.txtCommandLine.UpdateText(view);
             Refresh();
+        }
+
+        public new bool IsActivated {
+            get {
+                return isActivated;
+            }
+            set {
+                isActivated = value;
+
+                if (isActivated) {
+                    this.DockHandler.Activate();
+                }
+            }
         }
     }
 }

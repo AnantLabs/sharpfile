@@ -12,6 +12,7 @@ namespace SharpFile.Infrastructure {
         string TabText { get; set; }
         bool AllowEndUserDocking { get; set; }
         double AutoHidePortion { get; set; }
+        bool IsActivated { get; set; }
         DockState VisibleState { get; set; }        
         DockAreas DockAreas { get; set; }
         DockState DockState { get; set; }        

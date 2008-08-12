@@ -10,6 +10,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     public partial class ScreenPane : DockContent, IPluginPane {
+        private bool isActivated = true;
         private IResource resource;
 
         private Image image = null;
@@ -263,6 +264,19 @@ namespace SharpFile.UI {
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
+        }
+
+        public new bool IsActivated {
+            get {
+                return isActivated;
+            }
+            set {
+                isActivated = value;
+
+                if (isActivated) {
+                    this.DockHandler.Activate();
+                }
+            }
         }
     }
 }

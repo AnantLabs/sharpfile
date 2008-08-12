@@ -1,5 +1,4 @@
 using System.Xml.Serialization;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.Infrastructure.SettingsSection {
     public sealed class PluginPane {
@@ -9,6 +8,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private double autoHidePortion = 150;
         private string tabText;
         private bool isHidden = false;
+        private bool isActivated = true;
 
         public PluginPane() {
         }
@@ -61,6 +61,16 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
             set {
                 isHidden = value;
+            }
+        }
+
+        [XmlAttribute]
+        public bool IsActivated {
+            get {
+                return isActivated;
+            }
+            set {
+                isActivated = value;
             }
         }
 
