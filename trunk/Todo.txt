@@ -1,5 +1,3 @@
-- show clearer error message if plugin pane was built with the wrong version
-- Output plugins in correct bin directory
 - attributes for plugins (for when there is a settings UI)
 - plugin settings in the config file
 
