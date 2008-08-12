@@ -10,7 +10,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
             : base(fullName) {
 
 			if (name != null) {
-				if (string.IsNullOrEmpty(path)) {
+				if (string.IsNullOrEmpty(path) && (fullName.Length - name.Length - 1) > -1) {
 					path = fullName.Substring(0, (fullName.Length - name.Length - 1));
 				} else {
 					if (path.EndsWith(name, StringComparison.InvariantCultureIgnoreCase)) {
