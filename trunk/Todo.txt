@@ -1,15 +1,14 @@
+- show clearer error message if plugin pane was built with the wrong version
+- Output plugins in correct bin directory
+- attributes for plugins (for when there is a settings UI)
+- plugin settings in the config file
+
 - Improve the General.Cleanup code
   - Improve handling of bad paths when entered manually
   - Cleanup all of the code that checks for a trailing \ for directories (another General static method)?
 - Move retreivers to own assemblies
 - Save whether status bar is visible or not
-- Output plugins in correct bin directory
 - Better logging of major events in verbose mode
-- show more clear error message if plugin pane was built with the wrong version
-- plugin settings in the config file
-- save dockstate of each pluginpane
-- save whether plugin pane is shown or not
-- attributes for plugins (for when there is a settings UI)
 - seperate infrastructure dll from dependency on System.Windows.Forms and the WinformsUI assemblies
 - drag and drop hover over a directory will open it after a certain amount of time (spring folders)
 - ability to turn off full row selection
