@@ -8,7 +8,7 @@
     <ProjectGuid>{B9EE8F55-B8E0-419F-B551-E4F9CDB5781F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommandLinePane</RootNamespace>
+    <RootNamespace>SharpFile.UI</RootNamespace>
     <AssemblyName>CommandLine</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

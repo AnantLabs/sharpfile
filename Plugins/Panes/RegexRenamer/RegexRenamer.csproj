@@ -8,7 +8,7 @@
     <ProjectGuid>{768D20F0-99EE-4144-99F7-45A44DCEA333}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RegexRenamer</RootNamespace>
+    <RootNamespace>SharpFile.UI</RootNamespace>
     <AssemblyName>RegexRenamer</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

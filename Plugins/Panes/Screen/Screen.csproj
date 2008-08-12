@@ -8,7 +8,7 @@
     <ProjectGuid>{E9879E45-70F5-4790-B981-0FC80530B2ED}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ScreenPane</RootNamespace>
+    <RootNamespace>SharpFile.UI</RootNamespace>
     <AssemblyName>Screen</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
