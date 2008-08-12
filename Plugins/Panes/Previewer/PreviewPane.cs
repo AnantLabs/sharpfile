@@ -3,10 +3,15 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Attributes;
 using SharpFile.Infrastructure.IO.ChildResources;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
+    [PluginAttribute(
+        Author = "Adam Hill",
+        Description = "Previews the currently selected resource. Can be configured to thumbnail images and peek inside of text files.",
+        Version = "1.0")]
     public partial class PreviewPane : DockContent, IPluginPane {
         private bool isActivated = true;
         private IResource resource;

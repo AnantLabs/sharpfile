@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\PluginAttribute.cs" />
     <Compile Include="ChildResourceRetrievers.cs" />
     <Compile Include="FileSystemEnumerator.cs" />
     <Compile Include="FileSystemWatcher.cs" />

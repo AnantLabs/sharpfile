@@ -1,8 +1,13 @@
 ﻿using System.Windows.Forms;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Attributes;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
+    [PluginAttribute(
+        Author="Adam Hill", 
+        Description="Runs command for the currently selected path. Can also capture the output of command-line programs and display it insde the pane.", 
+        Version="1.0")]
     public partial class CommandLinePane : DockContent, IPluginPane {
         private bool isActivated = true;
 

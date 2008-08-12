@@ -1,29 +1,12 @@
-- attributes for plugins (for when there is a settings UI)
+0.7.6
 - plugin settings in the config file
-
 - Improve the General.Cleanup code
   - Improve handling of bad paths when entered manually
   - Cleanup all of the code that checks for a trailing \ for directories (another General static method)?
-- Move retreivers to own assemblies
-- Save whether status bar is visible or not
-- Better logging of major events in verbose mode
-- seperate infrastructure dll from dependency on System.Windows.Forms and the WinformsUI assemblies
-- drag and drop hover over a directory will open it after a certain amount of time (spring folders)
-- ability to turn off full row selection
 
-- make dos commands work properly for command line pane
-- Floppys and CDROMs (or other drives that take awhile for IsReady to react to) slow down starting the program
-- file operations dialog
-- file search as plugin pane
-
+0.7.6+
 - figure out how to clone events from an object
 - split out listview class into other classes
-- large icons for preview panel
-- ability to check for updates from SharpFile
-
-- Different resizing code:
-http://www.hanselman.com/blog/ScalingResizingResamplingAnImageInASPNET.aspx
-
 - stress test the logging functionality
 
 http://www.softpanorama.org/OFM/Paradigm/Ofm_01.shtml#Ten_commandments
