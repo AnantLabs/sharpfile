@@ -175,7 +175,7 @@ namespace SharpFile.UI {
 
             this.pluginPaneToolStripMenuItem.Size = new Size(135, 22);
             this.pluginPaneToolStripMenuItem.Text = "&Plugin Pane";
-            this.pluginPaneToolStripMenuItem.Checked = Settings.Instance.PluginPanes.IsVisible;
+            this.pluginPaneToolStripMenuItem.Checked = !Settings.Instance.PluginPanes.IsHidden;
             this.pluginPaneToolStripMenuItem.Click += pluginPaneToolStripMenuItem_Click;
 
 			this.toolsMenu.Text = "&Tools";
@@ -398,6 +398,7 @@ namespace SharpFile.UI {
             int paneIndex = dockPanel.Panes.Count;
 
             foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
+                bool isHidden = pane.DockHandler.IsHidden;
                 pane.Dock = DockStyle.None;
                 pane.DockAreas = DockAreas.DockBottom;
                 pane.AllowEndUserDocking = false;
@@ -410,13 +411,13 @@ namespace SharpFile.UI {
                     pane.Show(dockPanel.Panes[paneIndex], null);
                 }
 
-                if (!Settings.Instance.PluginPanes.IsVisible) {
+                if (Settings.Instance.PluginPanes.IsHidden) {
                     pane.DockHandler.Hide();
                 }
 
-                //if (pane.DockHandler.IsHidden) {
-                    //pane.DockHandler.Hide();
-                //}
+                if (isHidden) {
+                    pane.DockHandler.Hide();
+                }
 
                 // Update the check status if the DockStateChanged delegate fired.
                 pane.DockHandler.DockStateChanged += delegate(object sender, EventArgs e) {
@@ -481,12 +482,13 @@ namespace SharpFile.UI {
                 }
             }
 
-            Settings.Instance.PluginPanes.IsVisible = pluginPaneToolStripMenuItem.Checked;
+            Settings.Instance.PluginPanes.IsHidden = !pluginPaneToolStripMenuItem.Checked;
 
             foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
                 foreach (PluginPane pluginPaneSetting in Settings.Instance.PluginPanes.Panes) {
                     if (pane.Name.Equals(pluginPaneSetting.Name)) {
                         pluginPaneSetting.AutoHidePortion = pane.AutoHidePortion;
+                        pluginPaneSetting.IsHidden = pane.DockHandler.IsHidden;
                     }
                 }
             }
@@ -525,7 +527,7 @@ namespace SharpFile.UI {
                 }
             }
 
-            togglePluginPaneToolStripMenu(Settings.Instance.PluginPanes.IsVisible);
+            togglePluginPaneToolStripMenu(!Settings.Instance.PluginPanes.IsHidden);
         }
 
 		protected virtual void addMenuStripItems() {

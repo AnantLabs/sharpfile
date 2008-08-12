@@ -13,7 +13,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private List<PluginPane> pluginPanes = new List<PluginPane>();
         private DockState visibleState = DockState.DockBottomAutoHide;
         private double dockPortion = 185;
-        private bool isVisible = true;
+        private bool isHidden = false;
 
         public static List<PluginPane> GenerateDefaultPluginPanels() {
             List<PluginPane> pluginPanes = new List<PluginPane>();
@@ -68,12 +68,12 @@ namespace SharpFile.Infrastructure.SettingsSection {
         }
 
         [XmlAttribute]
-        public bool IsVisible {
+        public bool IsHidden {
             get {
-                return isVisible;
+                return isHidden;
             }
             set {
-                isVisible = value;
+                isHidden = value;
             }
         }
 
@@ -135,8 +135,10 @@ namespace SharpFile.Infrastructure.SettingsSection {
                                             pluginPane.TabText = pluginPaneSetting.TabText;
                                             pluginPane.AutoHidePortion = pluginPaneSetting.AutoHidePortion;
 
-                                            if (!pluginPaneSetting.IsVisible) {
-                                                pluginPane.VisibleState = DockState.Hidden;
+                                            if (pluginPaneSetting.IsHidden) {
+                                                pluginPane.DockHandler.IsHidden = true;
+                                            } else {
+                                                pluginPane.DockHandler.IsHidden = false;
                                             }
 
                                             instances.Add(pluginPane);
