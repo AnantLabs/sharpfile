@@ -7,8 +7,13 @@ using System.Text;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using WeifenLuo.WinFormsUI.Docking;
+using SharpFile.Infrastructure.Attributes;
 
 namespace SharpFile.UI {
+    [PluginAttribute(
+        Author = "MG",
+        Description = "Control screen brightness and opacity.",
+        Version = "0.1")]
     public partial class ScreenPane : DockContent, IPluginPane {
         private bool isActivated = true;
         private IResource resource;

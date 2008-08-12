@@ -8,9 +8,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Attributes;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
+    [PluginAttribute(
+        Author = "MG",
+        Description = "Rename several files with regex.",
+        Version = "0.1")]
     public partial class RegexRenamerPane : DockContent, IPluginPane {
         private bool isActivated = true;
         private System.ComponentModel.IContainer components;

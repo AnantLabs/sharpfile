@@ -94,7 +94,7 @@ namespace SharpFile.UI {
             UpdateParentListing();
             
             Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                    "Browser: Instantiate.");
+                    "Instantiate.");
         }
 
         #region Delegate methods
@@ -125,10 +125,6 @@ namespace SharpFile.UI {
 			if (imageIndex > -1) {
 				this.Icon = Icon.FromHandle(((Bitmap)ImageList.Images[imageIndex]).GetHicon());
 			}
-
-			Settings.Instance.Logger.Log(LogLevelType.Verbose,
-					"Browser: Update the path to {0}.",
-					path.FullName);
 		}
 
         protected void OnUpdateProgress(int value) {
