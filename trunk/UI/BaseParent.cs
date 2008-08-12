@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
@@ -107,6 +108,16 @@ namespace SharpFile.UI {
 
             try {
                 onFormLoad();
+            } catch (ReflectionTypeLoadException ex) {
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                    "Error while trying to generate settings when the form was opening.");
+
+                foreach (Exception exception in ex.LoaderExceptions) {
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
+                        "Settings loader exception.");
+                }
+
+                throw;
             } catch (Exception ex) {
                 Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                     "Error while trying to generate settings when the form was opening.");
@@ -398,7 +409,9 @@ namespace SharpFile.UI {
             int paneIndex = dockPanel.Panes.Count;
 
             foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
+                // Need to get some settings before the pane is shown because Show() will wipe them clean.
                 bool isHidden = pane.DockHandler.IsHidden;
+
                 pane.Dock = DockStyle.None;
                 pane.DockAreas = DockAreas.DockBottom;
                 pane.AllowEndUserDocking = false;
@@ -417,7 +430,7 @@ namespace SharpFile.UI {
 
                 if (isHidden) {
                     pane.DockHandler.Hide();
-                }
+                }                
 
                 // Update the check status if the DockStateChanged delegate fired.
                 pane.DockHandler.DockStateChanged += delegate(object sender, EventArgs e) {
@@ -460,6 +473,13 @@ namespace SharpFile.UI {
                 this.pluginPaneToolStripMenuItem.DropDownItems.Add(menuItem);
             }
 
+            // Activate the correct pane.
+            foreach (IPluginPane pane in Settings.Instance.PluginPanes.Instances) {
+                if (pane.IsActivated) {
+                    pane.DockHandler.Activate();
+                }
+            }
+
             if (dockPanel.Panes.Count > paneIndex) {
                 DockPane pluginPane = dockPanel.Panes[paneIndex];
                 pluginPane.Name = "pluginPane";
@@ -489,6 +509,7 @@ namespace SharpFile.UI {
                     if (pane.Name.Equals(pluginPaneSetting.Name)) {
                         pluginPaneSetting.AutoHidePortion = pane.AutoHidePortion;
                         pluginPaneSetting.IsHidden = pane.DockHandler.IsHidden;
+                        pluginPaneSetting.IsActivated = pane.DockHandler.IsActivated;
                     }
                 }
             }
