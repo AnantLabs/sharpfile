@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -237,13 +238,43 @@ namespace SharpFile.UI {
                 if (resource != null) {
                     execute(resource);
                 } else {
-                    Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly,
-                        "The path, {0}, looks like it is incorrect.", Path);
-                    Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
+                    if (string.IsNullOrEmpty(Path)) {
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly,
+                            "The path looks like it is incorrect.", Path);
+                    } else {
+                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly,
+                            "The path, {0}, looks like it is incorrect.", Path);
+                    }
 
+                    showControlError(tlsPath);
                     Path = this.Text;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Paints the background color red to show an error in a control.
+        /// </summary>
+        /// <param name="control"></param>
+        private void showControlError(ToolStripTextBox control) {
+            // Paint the textbox red to show there was an error.
+            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                backgroundWorker.DoWork += delegate {
+                    Color originalBackColor = Color.Gray;
+
+                    Invoke((MethodInvoker)delegate {
+                        originalBackColor = control.BackColor;
+                        control.BackColor = Color.Red;
+                    });
+
+                    Thread.Sleep(100);
+
+                    Invoke((MethodInvoker)delegate {
+                        control.BackColor = originalBackColor;
+                    });
+                };
+
+                backgroundWorker.RunWorkerAsync();
             }
         }
 
