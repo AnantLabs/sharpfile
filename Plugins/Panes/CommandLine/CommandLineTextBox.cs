@@ -83,19 +83,21 @@ namespace SharpFile.UI {
         }
 
         public void UpdateText(IView view) {
-            if (path != view.Path.FullName) {
-                path = view.Path.FullName;
-                this.txtPath.Text = path + ">";
-                this.txtFile.Text = string.Empty;
-                this.txtFile.AutoCompleteCustomSource.Clear();
+            if (view.Path != null) {
+                if (path != view.Path.FullName) {
+                    path = view.Path.FullName;
+                    this.txtPath.Text = path + ">";
+                    this.txtFile.Text = string.Empty;
+                    this.txtFile.AutoCompleteCustomSource.Clear();
 
-                // Load the auto-complete source for the path.
-                foreach (string key in view.ItemDictionary.Keys) {
-                    string source = key.Replace(path, string.Empty);
-                    this.txtFile.AutoCompleteCustomSource.Add(source);
+                    // Load the auto-complete source for the path.
+                    foreach (string key in view.ItemDictionary.Keys) {
+                        string source = key.Replace(path, string.Empty);
+                        this.txtFile.AutoCompleteCustomSource.Add(source);
+                    }
+
+                    Refresh();
                 }
-
-                Refresh();
             }
         }
 

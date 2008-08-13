@@ -6,6 +6,7 @@ using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.Attributes;
 using SharpFile.Infrastructure.IO.ChildResources;
 using WeifenLuo.WinFormsUI.Docking;
+using Common;
 
 namespace SharpFile.UI {
     [PluginAttribute(
@@ -28,8 +29,10 @@ namespace SharpFile.UI {
             InitializeComponent();
 
             this.SizeChanged += delegate {
-                getImageFromResource();
-                updateImage();
+                if (resource != null) {
+                    getImageFromResource();
+                    updateImage();
+                }
             };
         }
 
@@ -46,18 +49,20 @@ namespace SharpFile.UI {
         /// </summary>
         /// <param name="view">View.</param>
         public void Update(IView view) {
-            this.resource = view.SelectedResource;
-            sb = new StringBuilder();
-            image = null;
+            if (view.SelectedResource != null) {
+                this.resource = view.SelectedResource;
+                sb = new StringBuilder();
+                image = null;
 
-            // Grab the appropriate text and update it.
-            formatName();
-            getDetailTextFromResource();
-            updateText();
+                // Grab the appropriate text and update it.
+                formatName();
+                getDetailTextFromResource();
+                updateText();
 
-            // Grab the appropriate image and update it.
-            getImageFromResource();
-            updateImage();
+                // Grab the appropriate image and update it.
+                getImageFromResource();
+                updateImage();
+            }
         }
 
         /// <summary>
@@ -88,7 +93,7 @@ namespace SharpFile.UI {
         /// </summary>
         /// <param name="sb"></param>
         private void formatName() {
-            Common.Templater templater = new Common.Templater(resource);
+            Templater templater = new Templater(resource);
             string result = templater.Generate(Settings.Instance.PreviewPanel.NameFormatTemplate.Template);
 
             if (Settings.Instance.PreviewPanel.NameFormatTemplate.MethodDelegate != null) {
