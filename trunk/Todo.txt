@@ -3,6 +3,10 @@
 - Improve the General.Cleanup code
   - Improve handling of bad paths when entered manually
   - Cleanup all of the code that checks for a trailing \ for directories (another General static method)?
+- DriveDetector NRE
+- is activated doesn't save (sometimes)
+- show path as red if the path is invalid (blink) - improve for other types of invalid paths
+- investigate DirectoryInfo path problems
 
 0.7.6+
 - figure out how to clone events from an object
