@@ -51,9 +51,11 @@ namespace SharpFile.UI {
 
         public void Update(IView view) 
         {
-            txtFolder.Text = view.Path.FullName;
-            ClearForm();
-            SetupBackgroundWorker(new TaskWorker(Trial));
+            if (view.Path != null) {
+                txtFolder.Text = view.Path.FullName;
+                ClearForm();
+                SetupBackgroundWorker(new TaskWorker(Trial));
+            }
         }
 
         private void btnTrial_Click_1(object sender, EventArgs e)
