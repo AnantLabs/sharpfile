@@ -164,18 +164,42 @@ namespace Common {
         }
 
         public static string CleanupPath(string path) {
-            string directorySeperator = Path.DirectorySeparatorChar.ToString();
-
-            if (path.Contains(":") &&
-                !path.Contains(directorySeperator)) {
-                path += directorySeperator;
-            } else if (!path.Contains(@":\")) {
-                path += @":\";
-            } else if (path.EndsWith("/")) {
-                path = path.Replace("/", directorySeperator);
+            if (string.IsNullOrEmpty(path)) {
+                return path;
             }
 
-            return path;
+            string cleanPath = path;
+            string directorySeperator = Path.DirectorySeparatorChar.ToString();
+
+            // Fix any wayward slashes.
+            if (directorySeperator.Equals(@"\")) {
+                if (cleanPath.EndsWith("/")) {
+                    cleanPath = cleanPath.Substring(0, cleanPath.Length - 1);
+                }
+
+                cleanPath = cleanPath.Replace("/", directorySeperator);
+            } else {
+                if (cleanPath.EndsWith(@"\")) {
+                    cleanPath = cleanPath.Substring(0, cleanPath.Length - 1);
+                }
+
+                cleanPath = cleanPath.Replace(@"\", directorySeperator);
+            }
+
+            if (!string.IsNullOrEmpty(cleanPath)) {
+                if (cleanPath.EndsWith(":")) {
+                    cleanPath += directorySeperator;
+                } else if (!cleanPath.Contains(@":\")) {
+                    cleanPath += @":\";
+                } else if (path.EndsWith("/")) {
+                    cleanPath = cleanPath.Replace("/", directorySeperator);
+                }
+
+                // Remove any duplicated slashes.
+                cleanPath = cleanPath.Replace(directorySeperator + directorySeperator, directorySeperator);
+            }
+
+            return cleanPath;
         }
     }
 }
