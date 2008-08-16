@@ -271,14 +271,14 @@ namespace SharpFile.UI {
                 // Don't show the context menu unless the mouse cursor is inside the "tab" area.
                 if (MousePosition.Y < PointToScreen(dockPanel.Location).Y + 30) {
                     if (dockPanel.ActivePane.Contents.Count == 1) {
-                        dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
-                        addTabMenuItem
-                    });
+                            dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+                            addTabMenuItem
+                        });
                     } else {
                         dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
-                        addTabMenuItem,
-                        closeTabMenuItem
-                    });
+                            addTabMenuItem,
+                            closeTabMenuItem
+                        });
                     }
                 }
             } catch (Exception ex) {
@@ -358,10 +358,43 @@ namespace SharpFile.UI {
                     if (this.dockPanel.ActiveDocument.DockHandler.CloseButton) {
                         this.dockPanel.ActiveDocument.DockHandler.Close();
                     }
+                } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.E) {
+                    ((Browser)this.dockPanel.ActiveDocument).FocusPath();
+                } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.F) {
+                    ((Browser)this.dockPanel.ActiveDocument).FocusFilter();
                 }
             };
 
             return browser;
+        }
+
+        /// <summary>
+        /// Override the ProcessCmdKey method to handle tab key presses.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+            switch (keyData) {
+                case Keys.Tab:
+                    // Calculate the next pane index and activate it.
+                    int nextPaneIndex =
+                        this.dockPanel.Panes.IndexOf(this.dockPanel.ActivePane);
+                    nextPaneIndex++;
+
+                    if (this.dockPanel.Panes.Count <= nextPaneIndex 
+                        || this.dockPanel.Panes[nextPaneIndex].IsHidden
+                        || !this.dockPanel.Panes[nextPaneIndex].Visible) {
+                        nextPaneIndex = 0;
+                    }
+
+                    this.dockPanel.Panes[nextPaneIndex].Activate();
+
+                    // Not sure what to return.
+                    return true;
+                default:
+                    return base.ProcessCmdKey(ref msg, keyData);
+            }
         }
 
         protected virtual void dockPanelContextMenuOnClick(object sender, EventArgs e) {
