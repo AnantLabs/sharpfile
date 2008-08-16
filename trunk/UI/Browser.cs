@@ -246,35 +246,10 @@ namespace SharpFile.UI {
                             "The path, {0}, looks like it is incorrect.", Path);
                     }
 
-                    showControlError(tlsPath);
+                    Forms.ShowErrorInControl(tlsPath.Control);
                     Path = this.Text;
+                    tlsPath.SelectionStart = tlsPath.Text.Length;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Paints the background color red to show an error in a control.
-        /// </summary>
-        /// <param name="control"></param>
-        private void showControlError(ToolStripTextBox control) {
-            // Paint the textbox red to show there was an error.
-            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
-                backgroundWorker.DoWork += delegate {
-                    Color originalBackColor = Color.Gray;
-
-                    Invoke((MethodInvoker)delegate {
-                        originalBackColor = control.BackColor;
-                        control.BackColor = Color.Red;
-                    });
-
-                    Thread.Sleep(100);
-
-                    Invoke((MethodInvoker)delegate {
-                        control.BackColor = originalBackColor;
-                    });
-                };
-
-                backgroundWorker.RunWorkerAsync();
             }
         }
 
@@ -613,7 +588,8 @@ namespace SharpFile.UI {
                     this.tlsPath.Text = @"c:\"; //ParentResource.Name;
                 }
 
-                return General.CleanupPath(this.tlsPath.Text);
+                string cleanedPath = General.CleanupPath(this.tlsPath.Text);
+                return cleanedPath;
             }
 			set {
 				if (value != null) {
