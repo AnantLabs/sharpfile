@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -8,7 +7,6 @@ using Common;
 using Common.Logger;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.IO;
-using SharpFile.Infrastructure.IO.ChildResources;
 using SharpFile.Infrastructure.IO.ParentResources;
 using WeifenLuo.WinFormsUI.Docking;
 using View = SharpFile.Infrastructure.View;
@@ -585,28 +583,18 @@ namespace SharpFile.UI {
         public string Path {
             get {
                 if (string.IsNullOrEmpty(this.tlsPath.Text)) {
+                    // TODO: Make this more generic.
                     this.tlsPath.Text = @"c:\"; //ParentResource.Name;
                 }
 
-                string cleanedPath = General.CleanupPath(this.tlsPath.Text);
-                return cleanedPath;
+                string cleanPath = Common.Path.Cleanup(this.tlsPath.Text);
+                return cleanPath;
             }
 			set {
 				if (value != null) {
 					string path = value;
-
-					IResource resource = FileSystemInfoFactory.GetFileSystemInfo(path);
-
-					//if (resource is DirectoryInfo) {
-					if (resource is DirectoryInfo &&
-						!path.EndsWith(FileSystemInfo.DirectorySeparator)) {
-						path = string.Format(@"{0}{1}",
-							path,
-							FileSystemInfo.DirectorySeparator);
-						//path = General.CleanupPath(path);
-					}
-
-					this.tlsPath.Text = path;
+                    string cleanPath = Common.Path.Cleanup(path);
+					this.tlsPath.Text = cleanPath;
 				}
 			}
         }

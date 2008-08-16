@@ -148,7 +148,6 @@ namespace Common {
         /// <summary>
         /// Paints the background color red to show an error in a control.
         /// </summary>
-        /// <param name="form">Form that the control is placed on.</param>
         /// <param name="control">Control to change the background color of.</param>
         public static void ShowErrorInControl(Control control) {
             // Paint the textbox red to show there was an error.

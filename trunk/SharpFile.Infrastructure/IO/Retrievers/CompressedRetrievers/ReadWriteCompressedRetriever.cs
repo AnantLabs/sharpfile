@@ -21,7 +21,7 @@ namespace SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers {
 
                 string tmpDirectory = string.Format(@"{0}{1}tmp{1}{2}\",
                     System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                    FileSystemInfo.DirectorySeparator,
+                    Common.Path.DirectorySeparator,
                     zipFileResource.Name);
 
                 FastZip fastZip = new FastZip();
@@ -62,9 +62,9 @@ namespace SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers {
 
             using (ZipFile zipFile = new ZipFile(resource.FullName)) {
                 foreach (ZipEntry zipEntry in zipFile) {
-                    string zipEntryName = zipEntry.Name.Replace("/", FileSystemInfo.DirectorySeparator);
+                    string zipEntryName = zipEntry.Name.Replace("/", Common.Path.DirectorySeparator);
 
-                    if (zipEntryName.EndsWith(FileSystemInfo.DirectorySeparator)) {
+                    if (zipEntryName.EndsWith(Common.Path.DirectorySeparator)) {
                         zipEntryName = zipEntryName.Remove(zipEntryName.Length - 1, 1);
                     }
 
@@ -75,7 +75,7 @@ namespace SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers {
                         if (directoryLevels.Length == 1) {
                             string fullName = string.Format(@"{0}{1}{2}",
                                     resource.FullName,
-                                    FileSystemInfo.DirectorySeparator,
+                                    Common.Path.DirectorySeparator,
                                     zipEntryName);
 
                             if (zipEntry.IsFile) {
@@ -92,7 +92,7 @@ namespace SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers {
                             if (string.IsNullOrEmpty(filter) || directoryName.Contains(filter)) {
                                 string fullName = string.Format(@"{0}{1}{2}",
                                        resource.FullName,
-                                       FileSystemInfo.DirectorySeparator,
+                                       Common.Path.DirectorySeparator,
                                        directoryName);
 
                                 if (childResources.Find(delegate(IResource c) {

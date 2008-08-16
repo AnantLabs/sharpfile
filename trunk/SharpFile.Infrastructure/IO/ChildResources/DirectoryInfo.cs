@@ -19,8 +19,8 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 				}
 			}
 
-			if (path != null && !path.EndsWith(DirectoryInfo.DirectorySeparator)) {
-				path += DirectoryInfo.DirectorySeparator;
+            if (path != null && !path.EndsWith(Common.Path.DirectorySeparator)) {
+                path += Common.Path.DirectorySeparator;
 			}
         }
 
@@ -51,10 +51,10 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         /// <param name="destination">Destination to copy to.</param>
         public override void Copy(string destination, bool overwrite) {
             // Make sure the destination is correct.
-            if (!destination.EndsWith(FileSystemInfo.DirectorySeparator)) {
+            if (!destination.EndsWith(Common.Path.DirectorySeparator)) {
                 destination = string.Format("{0}{1}",
                     destination,
-                    FileSystemInfo.DirectorySeparator);
+                    Common.Path.DirectorySeparator);
             }
 
             // TODO: Do something with the overwrite bool here.

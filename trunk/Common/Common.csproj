@@ -50,6 +50,7 @@
     <Compile Include="Logger\LogLevelType.cs" />
     <Compile Include="Logger\MildlyVerboseLogger.cs" />
     <Compile Include="Logger\VerboseLogger.cs" />
+    <Compile Include="Path.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection.cs" />
     <Compile Include="WindowsApi\Messages\CCM.cs" />
