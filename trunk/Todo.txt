@@ -1,8 +1,5 @@
 0.7.6
 - plugin settings in the config file
-- Improve the General.Cleanup code
-  - Improve handling of bad paths when entered manually
-  - Cleanup all of the code that checks for a trailing \ for directories (another General static method)?
 - DriveDetector NRE
 
 0.7.6+

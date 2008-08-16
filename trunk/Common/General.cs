@@ -119,6 +119,7 @@ namespace Common {
         /// </summary>
         /// <param name="path">Path.</param>
         /// <returns>Extension.</returns>
+        /// <remarks>Should be used instead of System.IO.Path.GetExtension() because...</remarks>
         public static string GetExtension(string path) {
             int extensionIndex = path.LastIndexOf('.');
             string extension = string.Empty;

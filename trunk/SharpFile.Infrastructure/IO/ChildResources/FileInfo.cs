@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.Infrastructure.IO.ChildResources {
@@ -50,6 +49,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         protected override void getSize() {
             size = findData.SizeLow;
 
+            // Calculate the correct size based on the FindData.
             if (findData.SizeLow < 0) {
                 size = size + 4294967296;
             }
@@ -64,19 +64,10 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
             getSize();
         }
 
-        private void getDirectoryName() {
-            directoryName = this.fullName.Substring(0,
-                this.fullName.LastIndexOf(Common.Path.DirectorySeparator) + 1);
-        }
-
-        private void getDirectory() {
-            directory = new DirectoryInfo(DirectoryName);
-        }
-
         public DirectoryInfo Directory {
             get {
                 if (directory == null) {
-                    getDirectory();
+                    directory = new DirectoryInfo(DirectoryName);
                 }
 
                 return directory;
@@ -85,8 +76,9 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
         public string DirectoryName {
             get {
-                if (directory == null) {
-                    getDirectoryName();
+                if (directoryName == null) {
+                    directoryName = this.fullName.Substring(0,
+                        this.fullName.LastIndexOf(Common.Path.DirectorySeparator) + 1);
                 }
 
                 return directoryName;
@@ -95,8 +87,9 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
         public string Extension {
             get {
-                if (string.IsNullOrEmpty(extension)) {
-                    extension = Common.General.GetExtension(FullName);
+                if (extension == null) {
+                    //extension = Common.General.GetExtension(FullName);
+                    extension = System.IO.Path.GetExtension(FullName);
                 }
 
                 return extension;
