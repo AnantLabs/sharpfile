@@ -141,10 +141,12 @@ namespace SharpFile.UI {
         Dictionary<string, string> GetList()
         {
             Dictionary<string, string> files = new Dictionary<string, string>();
-            foreach (string file in Directory.GetFiles(txtFolder.Text))
-            {
-                if (Regex.IsMatch(file, txtPattern.Text))
-                    files.Add(file, Regex.Replace(file, txtPattern.Text, txtReplacePattern.Text));
+            string directory = txtFolder.Text;
+            if (Directory.Exists(directory)) {
+                foreach (string file in Directory.GetFiles(directory)) {
+                    if (Regex.IsMatch(file, txtPattern.Text))
+                        files.Add(file, Regex.Replace(file, txtPattern.Text, txtReplacePattern.Text));
+                }
             }
             return files;
         }
