@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using Common.Logger;
-using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.Infrastructure.IO.ChildResources {
@@ -9,19 +8,26 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         public DirectoryInfo(string fullName)
             : base(fullName) {
 
-			if (name != null) {
-				if (string.IsNullOrEmpty(path) && (fullName.Length - name.Length - 1) > -1) {
-					path = fullName.Substring(0, (fullName.Length - name.Length - 1));
-				} else {
-					if (path.EndsWith(name, StringComparison.InvariantCultureIgnoreCase)) {
-						path = path.Substring(0, (fullName.Length - name.Length - 1));
-					}
-				}
-			}
+            if (fullName != null && name != null) {
+                // When the path is null, try to determine it by using the FullName and the Name.
+                // This happens for ParentDirectories when starting SharpFile with a path at least 2 directoies deep.
+                if (path == null) {
+                    int lengthOfPath = (fullName.Length - name.Length - 1);
 
-            if (path != null && !path.EndsWith(Common.Path.DirectorySeparator)) {
-                path += Common.Path.DirectorySeparator;
-			}
+                    if (lengthOfPath > -1) {
+                        path = fullName.Substring(0, lengthOfPath);
+                        path = Common.Path.Cleanup(path);
+                    }
+                } else if (path.EndsWith(name, StringComparison.InvariantCultureIgnoreCase)) {
+                    // When the path ends with the name, try to determine the correct path.
+                    int lengthOfPath = (fullName.Length - name.Length - 1);
+
+                    if (lengthOfPath > -1) {
+                        path = path.Substring(0, lengthOfPath);
+                        path = Common.Path.Cleanup(path);
+                    }
+                }
+            }
         }
 
         public DirectoryInfo(string fullName, WIN32_FIND_DATA findData)
@@ -51,13 +57,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         /// <param name="destination">Destination to copy to.</param>
         public override void Copy(string destination, bool overwrite) {
             // Make sure the destination is correct.
-            if (!destination.EndsWith(Common.Path.DirectorySeparator)) {
-                destination = string.Format("{0}{1}",
-                    destination,
-                    Common.Path.DirectorySeparator);
-            }
-
-            // TODO: Do something with the overwrite bool here.
+            destination = Common.Path.Cleanup(destination);
 
             // Create the destination if necessary.
             if (!System.IO.Directory.Exists(destination)) {
@@ -67,7 +67,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
             // Get the files and directories to the destination.
             FileSystemEnumerator enumerator = new FileSystemEnumerator(this.fullName);
             foreach (IChildResource resource in enumerator.Matches()) {
-                resource.Copy(destination + resource.Name, false);
+                resource.Copy(destination + resource.Name, overwrite);
             }
         }
 
@@ -84,7 +84,6 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         protected override void getSize() {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-
             size = getDirectorySize(this);
 
             Settings.Instance.Logger.Log(LogLevelType.Verbose, "Finished retrieving size for {0} took {1} ms.",
@@ -100,7 +99,6 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         /// <returns>Total size of the directory.</returns>
         private long getDirectorySize(DirectoryInfo directoryInfo) {
             long totalSize = 0;
-
 			FileSystemEnumerator filesystemEnumerator = new FileSystemEnumerator(directoryInfo.FullName);
 
 			foreach (IChildResource childResource in filesystemEnumerator.Matches()) {
@@ -110,7 +108,6 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 					DirectoryInfo childDirectoryInfo = (DirectoryInfo)childResource;
 
 					if (!(childDirectoryInfo is ParentDirectoryInfo)
-					&& !(childDirectoryInfo is RootDirectoryInfo)
 					&& (System.IO.FileAttributes.ReparsePoint & childDirectoryInfo.Attributes) != System.IO.FileAttributes.ReparsePoint) {
 						totalSize += getDirectorySize(childDirectoryInfo);
 					}

@@ -190,14 +190,15 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
         public string Name {
             get {
-                // TODO: This should actually determine the name instead of just using the fullName.
-                if (string.IsNullOrEmpty(name)) {
-                    if (fullName.LastIndexOf(Common.Path.DirectorySeparator, 0) > 0) {
-                        name = fullName.Remove(0, fullName.LastIndexOf(Common.Path.DirectorySeparator, 0));
-                    } else {
-                        name = fullName;
-                    }
-                }
+                // TODO: I don't think this code ever gets called.
+                // If it does, look into System.IO.Path.GetFileName(fullName);
+                //if (string.IsNullOrEmpty(name)) {
+                //    if (fullName.LastIndexOf(Common.Path.DirectorySeparator, 0) > 0) {
+                //        name = fullName.Remove(0, fullName.LastIndexOf(Common.Path.DirectorySeparator, 0));
+                //    } else {
+                //        name = fullName;
+                //    }
+                //}
 
                 return name;
             }
@@ -234,9 +235,8 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
         public IParentResource Root {
             get {
                 if (root == null) {
-                    //string rootPath = this.fullName.Substring(0, this.fullName.IndexOf(DirectorySeparator) + 1);
-					string rootPath = System.IO.Path.GetPathRoot(this.fullName);
-                    root = new SharpFile.Infrastructure.IO.ParentResources.DriveInfo(rootPath);
+					string rootPath = System.IO.Path.GetPathRoot(this.FullName);
+                    root = new ParentResources.DriveInfo(rootPath);
                 }
 
                 return root;
@@ -261,13 +261,12 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
         public string Path {
             get {
-                if (string.IsNullOrEmpty(path) && 
+                if (string.IsNullOrEmpty(path) &&
                     !this.FullName.Equals(this.Name, StringComparison.InvariantCultureIgnoreCase)) {
                     path = this.FullName.Replace(this.Name, string.Empty);
-                }
 
-                // Get rid of any extra slashes.
-                path = path.Replace(Common.Path.DirectorySeparator + Common.Path.DirectorySeparator, Common.Path.DirectorySeparator);
+                    path = Common.Path.Cleanup(path);
+                }
 
                 return path;
             }

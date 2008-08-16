@@ -267,18 +267,23 @@ namespace SharpFile.UI {
             MenuItem addTabMenuItem = new MenuItem("Add tab", dockPanelContextMenuOnClick);
             MenuItem closeTabMenuItem = new MenuItem("Close tab", dockPanelContextMenuOnClick);
 
-            // Don't show the context menu unless the mouse cursor is inside the "tab" area.
-            if (MousePosition.Y < PointToScreen(dockPanel.Location).Y + 30) {
-                if (dockPanel.ActivePane.Contents.Count == 1) {
-                    dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+            try {
+                // Don't show the context menu unless the mouse cursor is inside the "tab" area.
+                if (MousePosition.Y < PointToScreen(dockPanel.Location).Y + 30) {
+                    if (dockPanel.ActivePane.Contents.Count == 1) {
+                        dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
                         addTabMenuItem
                     });
-                } else {
-                    dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
+                    } else {
+                        dockPanelContextMenu.MenuItems.AddRange(new MenuItem[] {
                         addTabMenuItem,
                         closeTabMenuItem
                     });
+                    }
                 }
+            } catch (Exception ex) {
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                    "Trying to determine which menu items to add to the dock panel's context menu.");
             }
         }
 
