@@ -96,6 +96,16 @@ namespace SharpFile.UI {
                     "Instantiate.");
         }
 
+        public void FocusPath() {
+            tlsPath.Focus();
+            tlsPath.SelectionStart = tlsPath.Text.Length;
+        }
+
+        public void FocusFilter() {
+            tlsFilter.Focus();
+            tlsFilter.SelectionStart = tlsFilter.Text.Length;
+        }
+
         #region Delegate methods
         /// <summary>
         /// Passes the filesystem info to any listening events.
