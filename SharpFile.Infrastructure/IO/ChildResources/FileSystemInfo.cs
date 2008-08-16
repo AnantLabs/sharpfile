@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using Common;
 using Common.Logger;
-using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.Infrastructure.IO.ChildResources {
     public abstract class FileSystemInfo : IChildResource {
-        public static string DirectorySeparator = System.IO.Path.DirectorySeparatorChar.ToString();
-
         protected IParentResource root;
         protected FileAttributes attributes;
         protected DateTime creationTime;
@@ -30,7 +27,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
             this.fullName = fullName;
 
             // Required because the handle is invalid if there is an "\" on the end of directories.
-            string validFullName = fullName.EndsWith(DirectorySeparator) ? fullName.Remove(fullName.Length - 1, 1) : fullName;
+            string validFullName = fullName.EndsWith(Common.Path.DirectorySeparator) ? fullName.Remove(fullName.Length - 1, 1) : fullName;
 
             using (SafeFindHandle handle = Kernel32.FindFirstFile(validFullName, findData)) {
                 if (handle.IsInvalid) {
@@ -148,17 +145,17 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
                 // Get LastWriteTime.
                 try {
-                    lastWriteTime = ConvertFileTimeToDateTime(findData.LastWriteTime);
+                    lastWriteTime = Utility.ConvertFileTimeToDateTime(findData.LastWriteTime);
                 } catch { }
 
                 // Get LastAccessTime.
                 try {
-                    lastAccessTime = ConvertFileTimeToDateTime(findData.LastAccessTime);
+                    lastAccessTime = Utility.ConvertFileTimeToDateTime(findData.LastAccessTime);
                 } catch { }
 
                 // Get CreationTime.
                 try {
-                    creationTime = ConvertFileTimeToDateTime(findData.CreationTime);
+                    creationTime = Utility.ConvertFileTimeToDateTime(findData.CreationTime);
                 } catch { }
             }
         }
@@ -179,22 +176,6 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
         protected abstract void getSize();
 
-        /// <summary>
-        /// Converts the FILETIME structure to the correct DateTime.
-        /// </summary>
-        /// <param name="fileTime">FILETIME to convert.</param>
-        /// <returns>DateTime.</returns>
-        private static DateTime ConvertFileTimeToDateTime(FILETIME fileTime) {
-            long ticks = (((long)fileTime.dwHighDateTime) << 32) + (long)fileTime.dwLowDateTime;
-            DateTime dateTime = DateTime.FromFileTime(ticks);
-
-            if (TimeZone.CurrentTimeZone.IsDaylightSavingTime(dateTime) == false) {
-                dateTime = dateTime.AddHours(1);
-            }
-
-            return dateTime;
-        }
-
         public string FullName {
             get {
                 return fullName;
@@ -211,8 +192,8 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
             get {
                 // TODO: This should actually determine the name instead of just using the fullName.
                 if (string.IsNullOrEmpty(name)) {
-                    if (fullName.LastIndexOf(DirectorySeparator, 0) > 0) {
-                        name = fullName.Remove(0, fullName.LastIndexOf(DirectorySeparator, 0));
+                    if (fullName.LastIndexOf(Common.Path.DirectorySeparator, 0) > 0) {
+                        name = fullName.Remove(0, fullName.LastIndexOf(Common.Path.DirectorySeparator, 0));
                     } else {
                         name = fullName;
                     }
@@ -286,7 +267,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
                 }
 
                 // Get rid of any extra slashes.
-                path = path.Replace(DirectorySeparator + DirectorySeparator, DirectorySeparator);
+                path = path.Replace(Common.Path.DirectorySeparator + Common.Path.DirectorySeparator, Common.Path.DirectorySeparator);
 
                 return path;
             }

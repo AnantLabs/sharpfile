@@ -118,6 +118,7 @@
     <Compile Include="WindowsApi\Shell32.cs" />
     <Compile Include="WindowsApi\SHFILEINFO.cs" />
     <Compile Include="WindowsApi\User32.cs" />
+    <Compile Include="WindowsApi\Utility.cs" />
     <Compile Include="WindowsApi\WIN32_FILE_ATTRIBUTE_DATA.cs" />
     <Compile Include="WindowsApi\WIN32_FIND_DATA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

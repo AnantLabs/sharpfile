@@ -66,7 +66,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
         private void getDirectoryName() {
             directoryName = this.fullName.Substring(0,
-                this.fullName.LastIndexOf(FileSystemInfo.DirectorySeparator) + 1);
+                this.fullName.LastIndexOf(Common.Path.DirectorySeparator) + 1);
         }
 
         private void getDirectory() {

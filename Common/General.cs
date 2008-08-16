@@ -1,7 +1,6 @@
 using System;
 using System.Drawing;
 using System.Text.RegularExpressions;
-using System.IO;
 
 namespace Common {
     /// <summary>
@@ -161,45 +160,6 @@ namespace Common {
             }
 
             return val;
-        }
-
-        public static string CleanupPath(string path) {
-            if (string.IsNullOrEmpty(path)) {
-                return path;
-            }
-
-            string cleanPath = path;
-            string directorySeperator = Path.DirectorySeparatorChar.ToString();
-
-            // Fix any wayward slashes.
-            if (directorySeperator.Equals(@"\")) {
-                if (cleanPath.EndsWith("/")) {
-                    cleanPath = cleanPath.Substring(0, cleanPath.Length - 1);
-                }
-
-                cleanPath = cleanPath.Replace("/", directorySeperator);
-            } else {
-                if (cleanPath.EndsWith(@"\")) {
-                    cleanPath = cleanPath.Substring(0, cleanPath.Length - 1);
-                }
-
-                cleanPath = cleanPath.Replace(@"\", directorySeperator);
-            }
-
-            if (!string.IsNullOrEmpty(cleanPath)) {
-                if (cleanPath.EndsWith(":")) {
-                    cleanPath += directorySeperator;
-                } else if (!cleanPath.Contains(@":\")) {
-                    cleanPath += @":\";
-                } else if (path.EndsWith("/")) {
-                    cleanPath = cleanPath.Replace("/", directorySeperator);
-                }
-
-                // Remove any duplicated slashes.
-                cleanPath = cleanPath.Replace(directorySeperator + directorySeperator, directorySeperator);
-            }
-
-            return cleanPath;
         }
     }
 }
