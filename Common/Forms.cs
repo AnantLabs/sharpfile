@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows.Forms;
+using System.ComponentModel;
+using System.Drawing;
+using System.Threading;
 
 namespace Common {
     public static class Forms {
@@ -140,6 +143,33 @@ namespace Common {
                 delegate(EventInfo eventInfo, Control childControl) {
                     eventInfo.AddEventHandler(childControl, handler);
                 });
+        }
+
+        /// <summary>
+        /// Paints the background color red to show an error in a control.
+        /// </summary>
+        /// <param name="form">Form that the control is placed on.</param>
+        /// <param name="control">Control to change the background color of.</param>
+        public static void ShowErrorInControl(Control control) {
+            // Paint the textbox red to show there was an error.
+            using (BackgroundWorker backgroundWorker = new BackgroundWorker()) {
+                backgroundWorker.DoWork += delegate {
+                    Color originalBackColor = Color.White;
+
+                    control.Invoke((MethodInvoker)delegate {
+                        originalBackColor = control.BackColor;
+                        control.BackColor = Color.Red;
+                    });
+
+                    Thread.Sleep(500);
+
+                    control.Invoke((MethodInvoker)delegate {
+                        control.BackColor = originalBackColor;
+                    });
+                };
+
+                backgroundWorker.RunWorkerAsync();
+            }
         }
 
         /// <summary>
