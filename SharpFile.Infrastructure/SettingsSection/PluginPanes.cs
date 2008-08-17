@@ -24,16 +24,13 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.Preview")));
 
             pluginPanes.Add(new PluginPane("Command Line", "Cmd",
-                new FullyQualifiedType("CommandLine", "SharpFile.UI.CommandLine"),
-                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.CommandLine")));
+                new FullyQualifiedType("CommandLine", "SharpFile.UI.CommandLine")));
 
             pluginPanes.Add(new PluginPane("Screen", "Screen",
-                new FullyQualifiedType("Screen", "SharpFile.UI.Screen"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.Screen")));
+                new FullyQualifiedType("Screen", "SharpFile.UI.Screen")));
 
             pluginPanes.Add(new PluginPane("Renamer", "Renamer",
-                new FullyQualifiedType("RegexRenamer", "SharpFile.UI.RegexRenamer"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.RegexRenamer")));
+                new FullyQualifiedType("RegexRenamer", "SharpFile.UI.RegexRenamer")));
 
             /*
              pluginPanes.Add(new PluginPane("SharpFileEditor", "Editor",
