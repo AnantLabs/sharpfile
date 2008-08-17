@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Xml;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
 using WeifenLuo.WinFormsUI.Docking;
-using System.Xml;
-using System.Windows.Forms;
 
 namespace SharpFile.Infrastructure.SettingsSection {
     public sealed class PluginPanes {
@@ -90,6 +89,9 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
         }
 
+        /// <summary>
+        /// The loaded instances of the plugin panes.
+        /// </summary>
         [XmlIgnore]
         public List<IPluginPane> Instances {
             get {
@@ -120,28 +122,11 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
         }
 
-        private Type getInterfaceType<T>(Assembly assembly, PluginPane pluginPaneSetting, Type type) {
-            Type interfaceType = null;
-
-            try {
-                interfaceType = type.GetInterface(typeof(T).FullName);
-            } catch (ReflectionTypeLoadException ex) {
-                logReflectionTypeLoadException(assembly, pluginPaneSetting, ex);
-            } catch (Exception ex) {
-                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                        "Retreiving the {0} interface for {1} produced an error.",
-                        typeof(T).Name,
-                        pluginPaneSetting.Name);
-            }
-
-            return interfaceType;
-        }
-
         /// <summary>
         /// Instantiates the plugin pane.
         /// </summary>
-        /// <param name="assembly"></param>
-        /// <param name="pluginPaneSetting"></param>
+        /// <param name="assembly">Assembly.</param>
+        /// <param name="pluginPaneSetting">Plugin pane settings.</param>
         private void instantiatePluginPane(Assembly assembly, PluginPane pluginPaneSetting) {
             foreach (Type type in assembly.GetTypes()) {
                 if (type.IsPublic && !type.IsAbstract) {
@@ -156,44 +141,11 @@ namespace SharpFile.Infrastructure.SettingsSection {
                             pluginPane.DockHandler.IsHidden = pluginPaneSetting.IsHidden;
                             pluginPane.IsActivated = pluginPaneSetting.IsActivated;
 
-                            // This is pretty stupid to repeat all of this code again.
                             if (pluginPaneSetting.SettingsType != null) {
-                                foreach (Type settingsType in assembly.GetTypes()) {
-                                    if (settingsType.IsPublic && !settingsType.IsAbstract) {
-                                        Type settingsInterfaceType = getInterfaceType<IPluginPaneSettings>(assembly, 
-                                            pluginPaneSetting, settingsType);
+                                IPluginPaneSettings settings = instantiatePluginPaneSetting(assembly, pluginPaneSetting);
 
-                                        if (settingsInterfaceType != null) {
-                                            try {
-                                                IPluginPaneSettings settings = Reflection.InstantiateObject<IPluginPaneSettings>(settingsType);
-
-                                                foreach (XmlElement element in Settings.Instance.UnknownConfigurationXmlElements) {
-                                                    string serializedSettingsName = settingsType.Name;
-
-                                                    if (element.Name.Equals(serializedSettingsName)) {
-                                                        XmlSerializer xmlSerializer = new XmlSerializer(settingsType);
-                                                        settings = (IPluginPaneSettings)xmlSerializer.Deserialize(new XmlNodeReader(element));
-                                                        break;
-                                                    }
-                                                }
-
-                                                settings.GenerateDefaultSettings();
-                                                pluginPane.Settings = settings;
-                                            } catch (TypeLoadException ex) {
-                                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                                    "Plugin pane settings, {0}, could not be instantiated because the type is incorrect.",
-                                                    pluginPaneSetting.Name);
-                                            } catch (FileNotFoundException ex) {
-                                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                                    "Plugin pane settings, {0}, could not be instantiated because the file could not be found.",
-                                                    pluginPaneSetting.Name);
-                                            } catch (Exception ex) {
-                                                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                                                    "Plugin pane settings, {0}, could not be instantiated.",
-                                                    pluginPaneSetting.Name);
-                                            }
-                                        }
-                                    }
+                                if (settings != null) {
+                                    pluginPane.Settings = settings;
                                 }
                             }
 
@@ -216,6 +168,85 @@ namespace SharpFile.Infrastructure.SettingsSection {
             }
         }
 
+        /// <summary>
+        /// Instantiates the plugin pane settings.
+        /// </summary>
+        /// <param name="assembly">Assembly.</param>
+        /// <param name="pluginPaneSetting">Plugin pane settings.</param>
+        /// <returns>Plugin pane settings.</returns>
+        private IPluginPaneSettings instantiatePluginPaneSetting(Assembly assembly, PluginPane pluginPaneSetting) {
+            foreach (Type settingsType in assembly.GetTypes()) {
+                if (settingsType.IsPublic && !settingsType.IsAbstract) {
+                    Type settingsInterfaceType = getInterfaceType<IPluginPaneSettings>(assembly,
+                        pluginPaneSetting, settingsType);
+
+                    if (settingsInterfaceType != null) {
+                        try {
+                            IPluginPaneSettings settings = Reflection.InstantiateObject<IPluginPaneSettings>(settingsType);
+
+                            foreach (XmlElement element in Settings.Instance.UnknownConfigurationXmlElements) {
+                                string serializedSettingsName = settingsType.Name;
+
+                                if (element.Name.Equals(serializedSettingsName)) {
+                                    XmlSerializer xmlSerializer = new XmlSerializer(settingsType);
+                                    settings = (IPluginPaneSettings)xmlSerializer.Deserialize(new XmlNodeReader(element));
+                                    break;
+                                }
+                            }
+
+                            settings.GenerateDefaultSettings();
+                            return settings;
+                        } catch (TypeLoadException ex) {
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Plugin pane settings, {0}, could not be instantiated because the type is incorrect.",
+                                pluginPaneSetting.Name);
+                        } catch (FileNotFoundException ex) {
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Plugin pane settings, {0}, could not be instantiated because the file could not be found.",
+                                pluginPaneSetting.Name);
+                        } catch (Exception ex) {
+                            Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                                "Plugin pane settings, {0}, could not be instantiated.",
+                                pluginPaneSetting.Name);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the correct interface from the setting.
+        /// </summary>
+        /// <typeparam name="T">Type of the interface.</typeparam>
+        /// <param name="assembly">Assembly.</param>
+        /// <param name="pluginPaneSetting">Plugin pane setting.</param>
+        /// <param name="type">Type.</param>
+        /// <returns>The interface type.</returns>
+        private Type getInterfaceType<T>(Assembly assembly, PluginPane pluginPaneSetting, Type type) {
+            Type interfaceType = null;
+
+            try {
+                interfaceType = type.GetInterface(typeof(T).FullName);
+            } catch (ReflectionTypeLoadException ex) {
+                logReflectionTypeLoadException(assembly, pluginPaneSetting, ex);
+            } catch (Exception ex) {
+                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        "Retreiving the {0} interface for {1} produced an error.",
+                        typeof(T).Name,
+                        pluginPaneSetting.Name);
+            }
+
+            return interfaceType;
+        }
+
+        /// <summary>
+        /// Logs the reflection type load exception.
+        /// </summary>
+        /// <param name="assembly">Assembly.</param>
+        /// <param name="pluginPaneSetting">Plugin pane settings.</param>
+        /// <param name="ex">ReflectionTypeLoad exception.</param>
         private void logReflectionTypeLoadException(Assembly assembly, PluginPane pluginPaneSetting, ReflectionTypeLoadException ex) {
             string versionBuiltAgainst = string.Empty;
 
