@@ -1,3 +1,6 @@
+0.7.6.0
+	Change the versioning convention to use the svn revision number for the minor version number.
+
 0.7.0.061208
 	Application-wide keyboard shortcuts (with modifiers) for tools. [Issue 25]
 	Cut/copy/paste in path and filter textbox.

@@ -1,6 +1,9 @@
 0.7.6
 - plugin settings in the config file
 - DriveDetector NRE (only in Vista?)
+- update Interfaces namespances to be .Interfaces
+- fix previewer so it is spaced correctly -- like the command line
+- cleanup any of the reflection code that I can -- move it to common if possible
 
 0.7.6+
 - store last 10? filters and last 10? paths -- show path history in auto complete box (always? sometimes? configurable?)

@@ -127,8 +127,9 @@ namespace SharpFile.UI {
                     addPane1Browser(Infrastructure.SettingsSection.DualParent.DefaultDrive);
                 };
 
-                // Mousewheel event never fires.
+                // TODO: Get Mousewheel event to fire.
                 //pane1.TabStripControl.MouseWheel += delegate(object sender, MouseEventArgs e) {
+                    //throw new Exception("Mousewheel");
                     //e.Delta.ToString();
                 //};
             } else {

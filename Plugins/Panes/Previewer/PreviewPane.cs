@@ -2,11 +2,12 @@
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using Common;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.Attributes;
 using SharpFile.Infrastructure.IO.ChildResources;
+using SharpFile.Infrastructure.SettingsSection;
 using WeifenLuo.WinFormsUI.Docking;
-using Common;
 
 namespace SharpFile.UI {
     [PluginAttribute(
@@ -18,9 +19,10 @@ namespace SharpFile.UI {
         private IResource resource;
         private PictureBox pictureBox;
         private TextBox textBox;
-
         private Image image = null;
         private StringBuilder sb = new StringBuilder();
+        private IPluginPaneSettings pluginPaneSettings;
+        private PreviewPaneSettings settings = new PreviewPaneSettings();
 
         /// <summary>
         /// Ctor.
@@ -94,10 +96,10 @@ namespace SharpFile.UI {
         /// <param name="sb"></param>
         private void formatName() {
             Templater templater = new Templater(resource);
-            string result = templater.Generate(Settings.Instance.PreviewPanel.NameFormatTemplate.Template);
+            string result = templater.Generate(settings.NameFormatTemplate.Template);
 
-            if (Settings.Instance.PreviewPanel.NameFormatTemplate.MethodDelegate != null) {
-                result = Settings.Instance.PreviewPanel.NameFormatTemplate.MethodDelegate(result);
+            if (settings.NameFormatTemplate.MethodDelegate != null) {
+                result = settings.NameFormatTemplate.MethodDelegate(result);
             }
 
             sb.AppendFormat("{0}{1}",
@@ -113,23 +115,23 @@ namespace SharpFile.UI {
             if (resource != null && resource is FileInfo) {
                 FileInfo fileInfo = (FileInfo)resource;
 
-                bool generateDetailText = (Settings.Instance.PreviewPanel.ShowDetailTextForAllExtensions ||
-                    Settings.Instance.PreviewPanel.DetailTextExtensions.Contains(fileInfo.Extension.ToLower()));
+                bool generateDetailText = (settings.ShowDetailTextForAllExtensions ||
+                    settings.DetailTextExtensions.Contains(fileInfo.Extension.ToLower()));
 
                 if (generateDetailText) {
-                    if (Settings.Instance.PreviewPanel.ShowAllDetailText) {
+                    if (settings.ShowAllDetailText) {
                         try {
                             sb.Append(System.IO.File.ReadAllText(resource.FullName));
                         } catch {
                             // Ignore any exceptions.s
                         }
-                    } else if (Settings.Instance.PreviewPanel.MaximumLinesOfDetailText > 0) {
+                    } else if (settings.MaximumLinesOfDetailText > 0) {
                         System.IO.StreamReader sr = null;
 
                         try {
                             sr = System.IO.File.OpenText(resource.FullName);
 
-                            for (int i = 0; i < Settings.Instance.PreviewPanel.MaximumLinesOfDetailText; i++) {
+                            for (int i = 0; i < settings.MaximumLinesOfDetailText; i++) {
                                 if (sr.EndOfStream) {
                                     break;
                                 } else {
@@ -137,7 +139,7 @@ namespace SharpFile.UI {
                                     sb.Append(line);
                                     sb.Append(Environment.NewLine);
 
-                                    if (i == Settings.Instance.PreviewPanel.MaximumLinesOfDetailText - 1) {
+                                    if (i == settings.MaximumLinesOfDetailText - 1) {
                                         sb.Append("...");
                                     }
                                 }
@@ -160,7 +162,7 @@ namespace SharpFile.UI {
         /// <returns></returns>
         private void getImageFromResource() {
             if (resource != null) {
-                if (Settings.Instance.PreviewPanel.ThumbnailImages) {
+                if (settings.ThumbnailImages) {
                     try {
                         image = Image.FromFile(resource.FullName);
 
@@ -198,10 +200,10 @@ namespace SharpFile.UI {
 
                 // Try to grab the resource's icon if there is no thumbnail for the resource.
                 if (image == null) {
-                    int index = IconManager.GetImageIndex(resource, false, Settings.Instance.ImageList);
+                    int index = IconManager.GetImageIndex(resource, false, SharpFile.Infrastructure.Settings.Instance.ImageList);
 
                     if (index > -1) {
-                        image = Settings.Instance.ImageList.Images[index];
+                        image = SharpFile.Infrastructure.Settings.Instance.ImageList.Images[index];
                     }
                 }
             }
@@ -264,6 +266,16 @@ namespace SharpFile.UI {
                 if (isActivated) {
                     this.DockHandler.Activate();
                 }
+            }
+        }
+
+        public IPluginPaneSettings Settings {
+            get {
+                return pluginPaneSettings;
+            }
+            set {
+                pluginPaneSettings = value;
+                settings = (PreviewPaneSettings)pluginPaneSettings;
             }
         }
     }

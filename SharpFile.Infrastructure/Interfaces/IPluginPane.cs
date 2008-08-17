@@ -18,5 +18,6 @@ namespace SharpFile.Infrastructure {
         DockState DockState { get; set; }        
         DockContentHandler DockHandler { get; }
         DockStyle Dock { get; set; }
+        IPluginPaneSettings Settings { get; set; }
     }
 }
