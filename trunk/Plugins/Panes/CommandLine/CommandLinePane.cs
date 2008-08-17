@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.Attributes;
 using WeifenLuo.WinFormsUI.Docking;
@@ -86,6 +87,15 @@ namespace SharpFile.UI {
                 if (isActivated) {
                     this.DockHandler.Activate();
                 }
+            }
+        }
+
+        public IPluginPaneSettings Settings {
+            get {
+                return null;
+            }
+            set {
+                throw new NotImplementedException("Not implemented");
             }
         }
     }

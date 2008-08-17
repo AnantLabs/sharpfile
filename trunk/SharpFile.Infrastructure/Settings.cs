@@ -40,7 +40,6 @@ namespace SharpFile.Infrastructure {
         // Sub-settings.
         private DualParent dualParentSettings;
         private Icons iconSettings;
-        private PreviewPane previewPanelSettings;
         private Logger loggerSettings;
         private Retrievers retrieverSettings;
         private FontInfo fontInfo;
@@ -52,7 +51,7 @@ namespace SharpFile.Infrastructure {
         private List<IParentResourceRetriever> parentResourceRetrievers;
         private Font font;
         private System.Windows.Forms.View view;
-        
+        private List<XmlElement> unknownConfigurationXmlElements;
 
         #region Ctors.
         /// <summary>
@@ -69,16 +68,15 @@ namespace SharpFile.Infrastructure {
         private Settings() {
             dualParentSettings = new DualParent();
             iconSettings = new Icons();
-            previewPanelSettings = new PreviewPane();
             loggerSettings = new Logger();
             retrieverSettings = new Retrievers();
             fontInfo = new FontInfo();
             viewInfo = new ViewInfo();
-            //pluginPanelSettings = new List<PluginPane>();
             pluginPaneSettings = new PluginPanes();
 
             lockObject = new object();
             this.ImageList.ColorDepth = ColorDepth.Depth32Bit;
+            unknownConfigurationXmlElements = new List<XmlElement>();
         }
         #endregion
 
@@ -105,7 +103,7 @@ namespace SharpFile.Infrastructure {
                     // If there is no settings file, create one from some defaults.
                     if (fileInfo.Exists && fileInfo.Length > 0) {
                         // Set our instance properties from the Xml file.
-                        deserializeSettings(xmlSerializer);
+                        retrieveSettings(xmlSerializer);
                     }
                 } catch (Exception ex) {
                     LoggerService loggerService = new LoggerService("log.txt", LogLevelType.Verbose);
@@ -157,8 +155,62 @@ namespace SharpFile.Infrastructure {
                     using (TextWriter tw = new StreamWriter(FilePath)) {
                         xmlSerializer.Serialize(tw, Instance);
                     }
+
+                    savePluginPaneSettings();
                 } catch (Exception ex) {
                     instance.loggerService.Log(LogLevelType.ErrorsOnly, ex, "Error when saving settings.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Saves the dynamic PluginPane setting's serialized output to the config file.
+        /// </summary>
+        private static void savePluginPaneSettings() {
+            XmlDocument xmlDocument = new XmlDocument();
+            xmlDocument.Load(FilePath);
+
+            //Create our own namespaces for the output and empty namespaces.
+            XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+            namespaces.Add(string.Empty, string.Empty);
+
+            foreach (IPluginPane pluginPane in instance.PluginPanes.Instances) {
+                if (pluginPane.Settings != null) {
+                    try {
+                        Type type = pluginPane.Settings.GetType();
+                        XmlSerializer pluginPaneSerializer = new XmlSerializer(type);
+
+                        using (StringWriter sw = new StringWriter()) {
+                            pluginPaneSerializer.Serialize(sw, pluginPane.Settings, namespaces);
+
+                            string serializedOutput = sw.ToString();
+                            XmlDocument serializedXmlDocument = new XmlDocument();
+                            serializedXmlDocument.LoadXml(serializedOutput);
+
+                            // Get the position that the settings xml should be inserted into.
+                            string xPathQuery = string.Format("Settings/PluginPanes/Panes/Pane/SettingsType[@Type='{0}']",
+                                type.FullName);
+                            XmlNode settingsTypeXmlNode = xmlDocument.SelectSingleNode(xPathQuery);
+
+                            if (settingsTypeXmlNode != null && serializedXmlDocument.ChildNodes.Count > 0) {
+                                // Skip the root node and go to straight to the good stuff 
+                                // and then import it into the current xml document.
+                                XmlNode serializedXmlNode = serializedXmlDocument.ChildNodes[1];
+                                XmlNode importedXmlNode = xmlDocument.ImportNode(serializedXmlNode, true);
+
+                                // The parent node is required for the InsertAfter method.
+                                XmlNode parentNodeToInsertAfter = settingsTypeXmlNode.ParentNode;
+                                parentNodeToInsertAfter.InsertAfter(importedXmlNode, settingsTypeXmlNode);
+
+                                // Save the xml file back out to disk.
+                                xmlDocument.Save(FilePath);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        instance.loggerService.Log(LogLevelType.ErrorsOnly, ex, "Error when saving plugin settings for {0} and settings type {1}.",
+                            pluginPane.Name,
+                            pluginPane.Settings.GetType().FullName);
+                    }
                 }
             }
         }
@@ -167,7 +219,14 @@ namespace SharpFile.Infrastructure {
         /// Deserializes the settings config file to an object and sets the singleton's properties appropriately.
         /// </summary>
         /// <param name="xmlSerializer">XmlSerializer to deserialize.</param>
-        private static void deserializeSettings(XmlSerializer xmlSerializer) {
+        private static void retrieveSettings(XmlSerializer xmlSerializer) {
+            // Add any unknown elements to a list.
+            // This list will be used later for plugin pane settings.
+            xmlSerializer.UnknownElement += delegate(object sender, XmlElementEventArgs e) {
+                instance.unknownConfigurationXmlElements.Add(e.Element);
+            };
+
+            // Deserialize the settings from the xml serializer.
             using (TextReader tr = new StreamReader(FilePath)) {
                 Settings settings = (Settings)xmlSerializer.Deserialize(tr);
                 Reflection.DuplicateObject<Settings>(settings, instance);
@@ -391,7 +450,7 @@ namespace SharpFile.Infrastructure {
         public PluginPanes PluginPanes {
             get {
                 if (pluginPaneSettings.Panes.Count == 0) {
-                    pluginPaneSettings.Panes = PluginPanes.GenerateDefaultPluginPanels();
+                    pluginPaneSettings.Panes = PluginPanes.GenerateDefaultPluginPanes();
                 }
 
                 return pluginPaneSettings;
@@ -419,26 +478,6 @@ namespace SharpFile.Infrastructure {
             }
             set {
                 iconSettings = value;
-            }
-        }
-
-        /// <summary>
-        /// Icon settings.
-        /// </summary>
-        [XmlElement("PreviewPanel")]
-        public PreviewPane PreviewPanel {
-            get {
-                if (previewPanelSettings.DetailTextExtensions.Count == 0) {
-                    previewPanelSettings.DetailTextExtensions = 
-                        PreviewPane.GenerateDefaultDetailTextExtensions();
-                }
-
-                return previewPanelSettings;
-            }
-            set {
-                previewPanelSettings = value;
-
-                
             }
         }
         #endregion
@@ -612,6 +651,17 @@ namespace SharpFile.Infrastructure {
         public ImageList ImageList {
             get {
                 return imageList;
+            }
+        }
+
+        /// <summary>
+        /// Unknown elements in the config file that will be stored in case they are needed.
+        /// Used to store dynamic plugin settings.
+        /// </summary>
+        [XmlIgnore]
+        public List<XmlElement> UnknownConfigurationXmlElements {
+            get {
+                return unknownConfigurationXmlElements;
             }
         }
         #endregion

@@ -23,7 +23,6 @@ namespace SharpFile.UI {
 		protected StatusStrip statusStrip = new StatusStrip();
 		protected ToolStripStatusLabel toolStripStatus = new ToolStripStatusLabel();
 		protected MenuStrip menuStrip = new MenuStrip();
-        protected PreviewPane previewPanel = new PreviewPane();
         protected NotifyIcon notifyIcon = new NotifyIcon();
         
         protected DockPanel dockPanel = new DockPanel();
@@ -371,9 +370,9 @@ namespace SharpFile.UI {
         /// <summary>
         /// Override the ProcessCmdKey method to handle tab key presses.
         /// </summary>
-        /// <param name="msg"></param>
-        /// <param name="keyData"></param>
-        /// <returns></returns>
+        /// <param name="msg">Message.</param>
+        /// <param name="keyData">Key data.</param>
+        /// <returns>True if the key has been processed, otherwise returns the result from calling the base's ProcessCmdKey method.</returns>
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
             switch (keyData) {
                 case Keys.Tab:
@@ -390,7 +389,8 @@ namespace SharpFile.UI {
 
                     this.dockPanel.Panes[nextPaneIndex].Activate();
 
-                    // Not sure what to return.
+                    // Return true to indicate that the key has been processed.
+                    // http://msdn.microsoft.com/en-us/library/system.windows.forms.control.processcmdkey.aspx
                     return true;
                 default:
                     return base.ProcessCmdKey(ref msg, keyData);

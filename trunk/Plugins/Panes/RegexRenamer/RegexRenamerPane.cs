@@ -405,5 +405,14 @@ namespace SharpFile.UI {
                 }
             }
         }
+
+        public IPluginPaneSettings Settings {
+            get {
+                return null;
+            }
+            set {
+                throw new NotImplementedException("Not implemented");
+            }
+        }
     }
 }

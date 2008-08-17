@@ -67,6 +67,7 @@
     <Compile Include="Interfaces\IPluginPane.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Interfaces\IPluginPaneSettings.cs" />
     <Compile Include="Interfaces\IResource.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -106,7 +107,6 @@
     <Compile Include="SettingsSection\ParentResourceRetriever.cs" />
     <Compile Include="SettingsSection\PluginPane.cs" />
     <Compile Include="SettingsSection\PluginPanes.cs" />
-    <Compile Include="SettingsSection\PreviewPane.cs" />
     <Compile Include="SettingsSection\Retrievers.cs" />
     <Compile Include="SettingsSection\Tool.cs" />
     <Compile Include="SettingsSection\View.cs" />
@@ -132,26 +132,6 @@
       <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
       <Name>WinFormsUI</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Interfaces\.svn\all-wcprops" />
-    <None Include="Interfaces\.svn\entries" />
-    <None Include="Interfaces\.svn\format" />
-    <None Include="Interfaces\.svn\text-base\IChildResource.cs.svn-base" />
-    <None Include="Interfaces\.svn\text-base\IChildResourceRetriever.cs.svn-base" />
-    <None Include="Interfaces\.svn\text-base\IParentResource.cs.svn-base" />
-    <None Include="Interfaces\.svn\text-base\IParentResourceRetriever.cs.svn-base" />
-    <None Include="Interfaces\.svn\text-base\IPluginPane.cs.svn-base" />
-    <None Include="Interfaces\.svn\text-base\IResource.cs.svn-base" />
-    <None Include="Interfaces\.svn\text-base\IView.cs.svn-base" />
-    <None Include="Interfaces\.svn\text-base\IViewComparer.cs.svn-base" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\.svn\prop-base\" />
-    <Folder Include="Interfaces\.svn\props\" />
-    <Folder Include="Interfaces\.svn\tmp\prop-base\" />
-    <Folder Include="Interfaces\.svn\tmp\props\" />
-    <Folder Include="Interfaces\.svn\tmp\text-base\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
