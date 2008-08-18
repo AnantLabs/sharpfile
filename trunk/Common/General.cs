@@ -45,57 +45,21 @@ namespace Common {
                 int previousMatchDifference = 0;
 
                 foreach (Match match in regex.Matches(value)) {
-                    value = match.Value;
+                    string matchedValue = match.Value;
 
-                    if (double.TryParse(value, out size)) {
-                        int originalValueLength = value.Length;
-                        value = getHumanReadableSize(size);
-                        previousMatchDifference += (originalValueLength - value.Length);
-                        int startAt = (match.Index - previousMatchDifference);
+					if (double.TryParse(matchedValue, out size)) {
+                        string parsedValue = getHumanReadableSize(size);
+
+						// Calculate the difference by subtracting 2 from the lengths to account for each of them being 0-based.
+						previousMatchDifference += (value.Length - parsedValue.Length - 2);
+						int startAt = (previousMatchDifference - match.Index);
 
                         if (startAt > 0 && startAt < result.Length) {
-                            result = regex.Replace(result, value, 1,
+							result = regex.Replace(result, parsedValue, 1,
                                 startAt);
                         }
                     }
                 }
-            }
-
-            return result;
-        }
-
-        private static string getHumanReadableSize(double size) {
-            string unit;
-            string result;
-
-            // Assume that size is in bytes
-            if (size >= 1073741824) {
-                size = size / 1024 / 1024 / 1024;
-                unit = "GB";
-            } else if (size >= 1048576) {
-                size = size / 1024 / 1024;
-                unit = "MB";
-            } else if (size >= 1024) {
-                size = size / 1024;
-                unit = "KB";
-            } else {
-                unit = "B";
-            }
-
-            if (size == 0) {
-                result = string.Format("{0} {1}",
-                    size,
-                    unit);
-            } else {
-                result = string.Format("{0:0,0.0}",
-                        size);
-
-                result = result.Trim('0');
-                result = result.TrimEnd('.');
-
-                result = string.Format("{0} {1}",
-                    result,
-                    unit);
             }
 
             return result;
@@ -162,5 +126,47 @@ namespace Common {
 
             return val;
         }
+
+		/// <summary>
+		/// Calculates the correct human-readable string from a double.
+		/// </summary>
+		/// <param name="size">Value to generate a human-readable size from.</param>
+		/// <returns>Human-readable size string.</returns>
+		private static string getHumanReadableSize(double size) {
+			string unit;
+			string result;
+
+			// Assume that size is in bytes
+			if (size >= 1073741824) {
+				size = size / 1024 / 1024 / 1024;
+				unit = "GB";
+			} else if (size >= 1048576) {
+				size = size / 1024 / 1024;
+				unit = "MB";
+			} else if (size >= 1024) {
+				size = size / 1024;
+				unit = "KB";
+			} else {
+				unit = "B";
+			}
+
+			if (size == 0) {
+				result = string.Format("{0} {1}",
+					size,
+					unit);
+			} else {
+				result = string.Format("{0:0,0.0}",
+						size);
+
+				result = result.Trim('0');
+				result = result.TrimEnd('.');
+
+				result = string.Format("{0} {1}",
+					result,
+					unit);
+			}
+
+			return result;
+		}
     }
 }

@@ -109,7 +109,7 @@ namespace SharpFile.UI {
                 onFormLoad();
             } catch (ReflectionTypeLoadException ex) {
                 Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
-                    "Error while trying to generate settings when the form was opening.");
+                    "Reflection type error while trying to generate settings when the form was opening.");
 
                 foreach (Exception exception in ex.LoaderExceptions) {
                     Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
