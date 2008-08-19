@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using System.IO;
 
-namespace SharpFile.Infrastructure {
+namespace SharpFile.Infrastructure.Interfaces {
 	public interface IParentResourceRetriever {
         IEnumerable<IParentResource> Get();
         ChildResourceRetrievers ChildResourceRetrievers { get; set; }

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using Common;
 using Common.Logger;
-using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.Infrastructure.IO.Retrievers {
@@ -19,17 +19,17 @@ namespace SharpFile.Infrastructure.IO.Retrievers {
         /// <summary>
         /// Fired when the resources are received.
         /// </summary>
-        public event Infrastructure.ChildResourceRetriever.GetCompleteDelegate GetComplete;
+        public event Interfaces.ChildResourceRetriever.GetCompleteDelegate GetComplete;
 
         /// <summary>
         /// The Custom method that determines if this retriever should be used for a particular resource.
         /// </summary>
-        public event Infrastructure.ChildResourceRetriever.FilterMethodDelegate FilterMethod;
+        public event Interfaces.ChildResourceRetriever.FilterMethodDelegate FilterMethod;
 
         /// <summary>
         /// The Custom method with arguments that determines if this retriever should be used for a particular resource.
         /// </summary>
-        public event Infrastructure.ChildResourceRetriever.FilterMethodWithArgumentsDelegate FilterMethodWithArguments;
+        public event Interfaces.ChildResourceRetriever.FilterMethodWithArgumentsDelegate FilterMethodWithArguments;
 
         /// <summary>
         /// Fires the GetComplete event.

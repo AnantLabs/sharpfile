@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers;
 
 namespace SharpFile.Infrastructure.IO.ChildResources {

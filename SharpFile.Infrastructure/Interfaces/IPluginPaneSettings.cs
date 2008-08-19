@@ -1,4 +1,4 @@
-﻿namespace SharpFile.Infrastructure {
+﻿namespace SharpFile.Infrastructure.Interfaces {
     public interface IPluginPaneSettings {
         /// <summary>
         /// Checks specific settings to see if they need default values for any reason and spplies them.

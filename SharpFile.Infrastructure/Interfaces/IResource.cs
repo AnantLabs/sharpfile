@@ -1,4 +1,4 @@
-﻿namespace SharpFile.Infrastructure {
+﻿namespace SharpFile.Infrastructure.Interfaces {
     public interface IResource {
         string DisplayName { get; }
         string FullName { get; }

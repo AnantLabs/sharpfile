@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace SharpFile.Infrastructure {
+namespace SharpFile.Infrastructure.Interfaces {
     public interface IPluginPane {
         void Update(IView view);
         void Show(DockPanel dockPanel);

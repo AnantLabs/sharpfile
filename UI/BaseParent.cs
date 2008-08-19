@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.SettingsSection;
 using WeifenLuo.WinFormsUI.Docking;
 

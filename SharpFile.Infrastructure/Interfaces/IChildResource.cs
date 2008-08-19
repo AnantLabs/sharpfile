@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SharpFile.Infrastructure {
+namespace SharpFile.Infrastructure.Interfaces {
     public interface IChildResource : IResource {
         IResource Parent { get; }
         DateTime LastWriteTime { get; }

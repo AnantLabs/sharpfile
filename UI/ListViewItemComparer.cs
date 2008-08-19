@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Common.Comparers;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.IO.ChildResources;
 using SharpFile.Infrastructure.IO.ParentResources;
 

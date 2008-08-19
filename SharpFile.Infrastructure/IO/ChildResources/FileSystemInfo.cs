@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Common;
 using Common.Logger;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.WindowsApi;
 
 namespace SharpFile.Infrastructure.IO.ChildResources {
