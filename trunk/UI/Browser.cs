@@ -6,10 +6,11 @@ using System.Windows.Forms;
 using Common;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.IO;
 using SharpFile.Infrastructure.IO.ParentResources;
 using WeifenLuo.WinFormsUI.Docking;
-using View = SharpFile.Infrastructure.View;
+using View = SharpFile.Infrastructure.Interfaces.View;
 
 namespace SharpFile.UI {
     public class Browser : DockContent {

@@ -6,6 +6,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
+using SharpFile.Infrastructure.Interfaces;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.Infrastructure.SettingsSection {

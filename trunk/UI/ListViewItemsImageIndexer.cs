@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 
 namespace SharpFile.UI {
     public class ListViewItemsImageIndexer {

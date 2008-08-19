@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Common;
 using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.Attributes;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.IO.ChildResources;
 using SharpFile.Infrastructure.SettingsSection;
 using WeifenLuo.WinFormsUI.Docking;

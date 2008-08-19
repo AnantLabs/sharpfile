@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common;
-using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 
 namespace SharpFile.Infrastructure.IO.ParentResources {
     public class DriveInfo : IParentResource {

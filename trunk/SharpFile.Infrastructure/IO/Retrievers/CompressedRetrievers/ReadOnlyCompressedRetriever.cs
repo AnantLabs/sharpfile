@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ICSharpCode.SharpZipLib.Zip;
-using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.IO.ChildResources;
 
 namespace SharpFile.Infrastructure.IO.Retrievers.CompressedRetrievers {

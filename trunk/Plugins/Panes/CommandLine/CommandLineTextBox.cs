@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 
 namespace SharpFile.UI {
     public partial class CommandLineTextBox : UserControl {

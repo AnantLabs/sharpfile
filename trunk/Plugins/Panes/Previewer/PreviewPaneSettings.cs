@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
+using SharpFile.Infrastructure.Interfaces;
 
 namespace SharpFile.Infrastructure.SettingsSection {
     public sealed class PreviewPaneSettings : IPluginPaneSettings {

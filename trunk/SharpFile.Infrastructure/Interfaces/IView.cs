@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using SharpFile.Infrastructure.SettingsSection;
 
-namespace SharpFile.Infrastructure {
+namespace SharpFile.Infrastructure.Interfaces {
 	public interface IView {
 		void AddItemRange(IList<IResource> resources);
         void AddItem(IChildResource resource);

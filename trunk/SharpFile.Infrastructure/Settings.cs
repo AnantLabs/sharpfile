@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile.Infrastructure {
@@ -571,11 +572,11 @@ namespace SharpFile.Infrastructure {
                                         childResourceRetriever.Name = childResourceRetrieverName;
                                         childResourceRetriever.ColumnInfos = childResourceRetrieverInfo.ColumnInfos;
 
-                                        if (childResourceRetrieverInfo.FilterMethod is ChildResourceRetriever.FilterMethodWithArgumentsDelegate) {
-                                            childResourceRetriever.FilterMethodWithArguments += (ChildResourceRetriever.FilterMethodWithArgumentsDelegate)childResourceRetrieverInfo.FilterMethod;
+                                        if (childResourceRetrieverInfo.FilterMethod is Interfaces.ChildResourceRetriever.FilterMethodWithArgumentsDelegate) {
+                                            childResourceRetriever.FilterMethodWithArguments += (Interfaces.ChildResourceRetriever.FilterMethodWithArgumentsDelegate)childResourceRetrieverInfo.FilterMethod;
                                             childResourceRetriever.FilterMethodArguments = childResourceRetrieverInfo.FilterMethodArguments;
-                                        } else if (childResourceRetrieverInfo.FilterMethod is ChildResourceRetriever.FilterMethodDelegate) {
-                                            childResourceRetriever.FilterMethod += (ChildResourceRetriever.FilterMethodDelegate)childResourceRetrieverInfo.FilterMethod;
+                                        } else if (childResourceRetrieverInfo.FilterMethod is Interfaces.ChildResourceRetriever.FilterMethodDelegate) {
+                                            childResourceRetriever.FilterMethod += (Interfaces.ChildResourceRetriever.FilterMethodDelegate)childResourceRetrieverInfo.FilterMethod;
                                         }
 
                                         SettingsSection.View viewSetting = retrieverSettings.Views.Find(delegate(SettingsSection.View v) {

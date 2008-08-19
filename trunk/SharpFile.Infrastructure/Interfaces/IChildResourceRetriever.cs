@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using SharpFile.Infrastructure.SettingsSection;
 
-namespace SharpFile.Infrastructure {
+namespace SharpFile.Infrastructure.Interfaces {
 	public interface IChildResourceRetriever {
         string Name { get; set; }
 		void Execute(IView view, IResource resource);

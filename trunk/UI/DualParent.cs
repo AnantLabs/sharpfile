@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {

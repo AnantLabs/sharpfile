@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using SharpFile.Infrastructure;
+using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.IO.ParentResources;
 
 namespace SharpFile.Infrastructure.IO.Retrievers {

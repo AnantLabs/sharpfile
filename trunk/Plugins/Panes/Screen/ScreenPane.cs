@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using SharpFile.Infrastructure;
-using WeifenLuo.WinFormsUI.Docking;
 using SharpFile.Infrastructure.Attributes;
+using SharpFile.Infrastructure.Interfaces;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
     [PluginAttribute(

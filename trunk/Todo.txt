@@ -1,8 +1,9 @@
 0.7.6
-- update Interfaces namespances to be .Interfaces
 - cleanup any of the reflection code that I can -- move it to common if possible
+- update post_build.bat to account for plugins
 
 0.7.6+
+- save last active tab so that closing a different tab would keep the previously active tab active
 - store last 10? filters and last 10? paths -- show path history in auto complete box (always? sometimes? configurable?)
 - figure out how to clone events from an object
 - split out listview class into other classes

@@ -2,6 +2,7 @@
 using System.Xml.Serialization;
 using Common;
 using Common.Logger;
+using SharpFile.Infrastructure.Interfaces;
 
 namespace SharpFile.Infrastructure.SettingsSection {
     public class View {

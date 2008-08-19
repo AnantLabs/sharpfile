@@ -7,8 +7,8 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using SharpFile.Infrastructure;
 using SharpFile.Infrastructure.Attributes;
+using SharpFile.Infrastructure.Interfaces;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace SharpFile.UI {
