@@ -84,7 +84,9 @@ namespace SharpFile.UI {
                 this.pictureBox.Visible = true;
                 this.pictureBox.Image = image;
 
-                this.pictureBox.Size = new Size(image.Size.Width + 5, image.Size.Height);
+                this.pictureBox.Size = new Size(image.Size.Width + 4, image.Size.Height);
+                this.textBox.Location = new Point(this.pictureBox.Width + 2, this.textBox.Location.Y);
+                this.textBox.Size = new Size(this.Width - this.pictureBox.Width - 4, this.Height - 8);
             } else {
                 this.pictureBox.Visible = false;
             }
@@ -165,13 +167,12 @@ namespace SharpFile.UI {
                 if (settings.ThumbnailImages) {
                     try {
                         image = Image.FromFile(resource.FullName);
-
                         int width = 0;
                         int height = 0;
 
                         if (image.Width == image.Height) {
                             // If the image is square, just make the height and width equal.
-                            height = this.Height;
+                            height = this.Height - 8;
                             width = height;
                         } else {
                             // Otherwise, calculate a ratio for the width and height.
@@ -222,17 +223,16 @@ namespace SharpFile.UI {
             // 
             // pictureBox
             // 
-            this.pictureBox.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox.Location = new System.Drawing.Point(4, 4);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size(100, 110);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
-            this.pictureBox.Dock = DockStyle.Left;
             // 
             // label
             // 
             this.textBox.AutoSize = true;
-            this.textBox.Location = new System.Drawing.Point(111, 0);
+            this.textBox.Location = new System.Drawing.Point(this.pictureBox.Width, 4);
             this.textBox.Name = "label";
             this.textBox.TabIndex = 1;
             this.textBox.WordWrap = true;
@@ -240,12 +240,10 @@ namespace SharpFile.UI {
             this.textBox.Multiline = true;
             this.textBox.BorderStyle = BorderStyle.None;
             this.textBox.ScrollBars = ScrollBars.Both;
-            this.textBox.Dock = DockStyle.Fill;
             this.textBox.BackColor = Color.White;
             // 
             // PreviewPanel
             // 
-            this.Dock = DockStyle.Fill;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.textBox);
