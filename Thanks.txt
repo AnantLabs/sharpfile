@@ -1,4 +1,4 @@
-These are not ordered in any way except chronologically.
+Ordered chronologically:
 
 IconReader - Paul Ingles
 http://www.codeproject.com/cs/files/fileicon.asp

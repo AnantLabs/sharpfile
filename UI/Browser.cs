@@ -409,7 +409,12 @@ namespace SharpFile.UI {
                 this.BeginInvoke((MethodInvoker)delegate {
                     bool isLocalDiskFound = false;
 
-                    // Create a new menu item in the dropdown for each drive.
+                    if (Settings.Instance.ParentResources == null || Settings.Instance.ParentResources.Count == 0) {
+                        // This is primarily to initialize the ParentResources property which is 
+                        // sometimes empty when loading up a brand new config file.
+                        throw new Exception("No drives are initialized. This is usually caused by incorrect settings.");
+                    }
+
                     foreach (IParentResource resource in Settings.Instance.ParentResources) {
                         if (!tlsDrives.DropDownItems.ContainsKey(resource.Name)) {
                             ToolStripMenuItem item = new ToolStripMenuItem();

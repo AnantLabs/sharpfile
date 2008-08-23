@@ -5,7 +5,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         private string name;
         private FullyQualifiedType type;
         private FullyQualifiedType settingsType;
-        private double autoHidePortion = 150;
+        private double autoHidePortion = 100;
         private string tabText;
         private bool isHidden = false;
         private bool isActivated = true;

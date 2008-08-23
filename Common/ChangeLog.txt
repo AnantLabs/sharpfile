@@ -1,5 +1,9 @@
+0.4.9.2
+Add InstantiateObject overload to create an object from a Type.
+FIX: Templater would prevent template from correctly swapping in content.
+
 0.4.9.1
-Fix bug in GetHumanReadableSize that threw an exception in the replace regex call in certain cases.
+FIX: GetHumanReadableSize threw an exception in the replace regex call in certain cases.
 
 0.4.9.0
 Create delegate reflection method.

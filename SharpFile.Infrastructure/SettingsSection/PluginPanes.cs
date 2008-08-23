@@ -13,8 +13,8 @@ namespace SharpFile.Infrastructure.SettingsSection {
     public sealed class PluginPanes {
         private List<IPluginPane> instances;
         private List<PluginPane> pluginPanes = new List<PluginPane>();
-        private DockState visibleState = DockState.DockBottomAutoHide;
-        private double dockPortion = 185;
+        private DockState visibleState = DockState.DockBottom;
+        private double dockPortion = 65;
         private bool isHidden = false;
 
         public static List<PluginPane> GenerateDefaultPluginPanes() {
@@ -27,17 +27,13 @@ namespace SharpFile.Infrastructure.SettingsSection {
             pluginPanes.Add(new PluginPane("Command Line", "Cmd",
                 new FullyQualifiedType("CommandLine", "SharpFile.UI.CommandLine")));
 
+            /*
             pluginPanes.Add(new PluginPane("Screen", "Screen",
                 new FullyQualifiedType("Screen", "SharpFile.UI.Screen")));
 
             pluginPanes.Add(new PluginPane("Renamer", "Renamer",
                 new FullyQualifiedType("RegexRenamer", "SharpFile.UI.RegexRenamer")));
-
-            /*
-             pluginPanes.Add(new PluginPane("SharpFileEditor", "Editor",
-                new FullyQualifiedType("SharpFileEditor", "SharpFileEditor.SharpFileEditor"),
-                new FullyQualifiedType("SharpFile", "SharpFile.Infrastructure.SettingsSection.SharpFileEditor")));
-             */
+            */
 
             return pluginPanes;
         }
@@ -46,7 +42,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
         public DockState VisibleState {
             get {
                 if (visibleState == DockState.Unknown) {
-                    visibleState = DockState.DockBottomAutoHide;
+                    visibleState = DockState.DockBottom;
                 }
 
                 return visibleState;

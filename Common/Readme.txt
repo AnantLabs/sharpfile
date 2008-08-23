@@ -1,5 +1,5 @@
 Common
-Version 0.4.9.0
+Version 0.4.9.2
 
 A common repository for code I use across more than one project.
 
