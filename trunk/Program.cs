@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using Common.Logger;
 using SharpFile.Infrastructure;
-using SharpFile.Infrastructure.SettingsSection;
 
 namespace SharpFile {
     static class Program {
@@ -15,21 +14,14 @@ namespace SharpFile {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);            
 
-            Application.ApplicationExit += delegate {
-                Settings.Instance.Logger.Log(LogLevelType.Verbose,
-                    "ApplicationExit");
-
-                Settings.Save();
-            };
-
             string settingsVersion = string.Empty;
             string assemblyVersion = string.Empty;
 
             if (!Settings.CompareSettingsVersion(ref settingsVersion, ref assemblyVersion)) {
                 string message = string.Format(@"
 The current configuration file version is {0}. SharpFile's current version is {1}. 
-Settings might have changed between the two versions, so some settings may be lost. 
-Press OK to continue loading the program even though settings may be lost.
+Settings have changed between the two versions, so any custom settings will be lost. 
+Press OK to continue loading the program even though settings will be lost.
 Press CANCEL to exit SharpFile.",
                     settingsVersion,
                     assemblyVersion);
@@ -39,7 +31,9 @@ Press CANCEL to exit SharpFile.",
                     MessageBoxButtons.OKCancel);
 
                 if (dialogResult == DialogResult.OK) {
-                    Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    //Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    Settings.Clear();                    
+                    startProgram();
                 } else if (dialogResult == DialogResult.Cancel) {
                     Application.Exit();
                 }
@@ -68,12 +62,19 @@ Press CANCEL to exit SharpFile.",
                     Application.Exit();
                 }
                 */
+            } else {
+                startProgram();
             }
-
-            startProgram();
         }
 
         private static void startProgram() {
+            Application.ApplicationExit += delegate {
+                Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                    "ApplicationExit");
+
+                Settings.Save();
+            };
+
             if (Settings.Instance.ParentType == ParentType.Dual) {
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
                     "Start the Dual program");

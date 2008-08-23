@@ -1,5 +1,5 @@
 ﻿SharpFile
-Version 0.7.6.0
+Version 0.7.6.572
 
 A small, efficient orthodox file manager written in C#.
 
@@ -12,7 +12,6 @@ ListView: Lists the current directories and files with appropriate attributes. C
 
 Key shortcuts:
 Tab: Rotate through the panes
-For panes:
 Ctrl-Tab: Rotate through the tabs in the active pane
 Ctrl-W: Close the active tab
 Ctrl-E: Focus the path textbox for the active tab

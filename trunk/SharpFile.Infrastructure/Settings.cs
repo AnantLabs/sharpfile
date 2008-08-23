@@ -22,7 +22,7 @@ namespace SharpFile.Infrastructure {
         public const string FilePath = "settings.config";
 
         // Statics.
-        private static readonly Settings instance = new Settings();
+        private static Settings instance = new Settings();
         private static object lockObject = new object();
 
         // Privates.
@@ -161,6 +161,17 @@ namespace SharpFile.Infrastructure {
                 } catch (Exception ex) {
                     instance.loggerService.Log(LogLevelType.ErrorsOnly, ex, "Error when saving settings.");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Clears the config file.
+        /// </summary>
+        public static void Clear() {
+            if (File.Exists(FilePath)) {
+                File.Delete(FilePath);
+                ClearResources();
+                instance = new Settings();
             }
         }
 
