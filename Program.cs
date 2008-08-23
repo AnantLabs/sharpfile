@@ -1,7 +1,7 @@
 using System;
-using System.Reflection;
 using System.Windows.Forms;
 using Common.Logger;
+using SharpFile.ConfigConverters;
 using SharpFile.Infrastructure;
 
 namespace SharpFile {
@@ -18,21 +18,15 @@ namespace SharpFile {
             string assemblyVersion = string.Empty;
 
             if (!Settings.CompareSettingsVersion(ref settingsVersion, ref assemblyVersion)) {
-                string message = string.Format(@"
-The current configuration file version is {0}. SharpFile's current version is {1}. 
-Settings have changed between the two versions, so any custom settings will be lost. 
-Press OK to continue loading the program even though settings will be lost.
-Press CANCEL to exit SharpFile.",
-                    settingsVersion,
-                    assemblyVersion);
+                ConfigConverter configConverter = ConfigConverterFactory.GetConfigConverter(settingsVersion, assemblyVersion);
+                string message = configConverter.GetMessage();
 
                 // Show the modal dialog asking about converting the settings.
                 DialogResult dialogResult = MessageBox.Show(message, "Convert Settings?",
                     MessageBoxButtons.OKCancel);
 
                 if (dialogResult == DialogResult.OK) {
-                    //Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                    Settings.Clear();                    
+                    configConverter.Convert();
                     startProgram();
                 } else if (dialogResult == DialogResult.Cancel) {
                     Application.Exit();

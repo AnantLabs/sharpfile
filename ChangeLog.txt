@@ -3,11 +3,11 @@
 		- Double-click in the tab area creates a new tab.
 		- Right-click in the tab area displays a context-sensitive menu.
 		- Middle-click on a tab closes the currently active tab.
-		- Right-click the seperator for a context menu.
+		- Right-click the separator  for a context menu.
 		- Switch tabs by Ctrl-Tab. 
 		- Close active tab by Ctrl-W. 
 		- Add new tab to active pane with Ctrl-T.
-		- Foxus the path textbox with Ctrl-E.
+		- Focus the path textbox with Ctrl-E.
 		- Focus the filter textbox with Ctrl-F.
 		- Swap active pane with tab key.
 		- Ability to swap panels.

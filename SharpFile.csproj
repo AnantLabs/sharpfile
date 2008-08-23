@@ -66,6 +66,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigConverters\Convert070061208_to_076572.cs" />
+    <Compile Include="ConfigConverters\ConfigConverter.cs" />
+    <Compile Include="ConfigConverterFactory.cs" />
+    <Compile Include="ConfigConverters\DefaultConfigConverter.cs" />
     <Compile Include="UI\AboutBox.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -180,6 +184,6 @@
     -->
     <PreBuildEvent>
     </PreBuildEvent>
-    <PostBuildEvent>$(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>rem $(ProjectDir)post_build.bat $(ProjectDir) $(TargetDir) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
