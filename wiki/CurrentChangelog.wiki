@@ -23,19 +23,19 @@ None.
  * Customize listview view type.
  * Plugin pane infrastructure so that each pane is a dll that can be loaded dynamically.
    * Command line pane to have access to the command line of the currently selected path.
-   * Screen pane to change opacity and brightness of application. [MG]
-   * Regex renamer pane for batch renaming of currently selected pane. [MG]
+   * Screen pane to change opacity and brightness of application. [Marc.GIRAUDOU]
+   * Regex renamer pane for batch renaming of currently selected pane. [Marc.GIRAUDOU]
    * Updated preview pane to adhere to the plugin pane infrastructure.
    * Store orientation, state, height, tab text for startup/exit.
-   * Load/store custom settings for plugins. [Issue 103]
+   * Load/store custom settings for plugins. [Issue: 103]
    * View menu to hide/show panes on the fly.
  * Change the versioning convention to use the svn revision number for the minor version number.
- * Add in Common source to source tree. [Issue 99]
+ * Add in Common source to source tree. [Issue: 99]
  * Split Infrastructure into its own assembly for easier plugin generation.
  * New status message shows more data about the selected files and the total selected size.
- * Save position of form and window state (maximize, normal, minimized). [Issue 92]
+ * Save position of form and window state (maximize, normal, minimized). [Issue: 92]
  * Blink the path textbox if it was entered incorrectly.
- * FIX: An intermittent exception when starting the application. [Issue 94]
+ * FIX: An intermittent exception when starting the application. [Issue: 94]
  * FIX: Add newly discovered drives into the drive dropdown in the correct location.
  * FIX: When showing a parent directory and loading a path at least 2 directories deep, the parent directory now correctly goes to the parent.
  * FIX: Large file sizes will now show the correct human-readable size.
