@@ -1,10 +1,44 @@
 #summary Current changelog
 #labels Featured
 === Recent svn commits ===
- * Customize font of listview.
- * Customize listview view type. Defaults to "Details" and other types might pose unknown issues.
- * Show sort graphic in column header.
- * Store sort order of column. 
+None.
+
+=== 0.7.6.572 ===
+ * New implementation of docking/tabbing functionality with !DockPanel Suite.
+   * Double-click in the tab area creates a new tab.
+   * Right-click in the tab area displays a context-sensitive menu.
+   * Middle-click on a tab closes the currently active tab.
+   * Right-click the separator for a context menu.
+   * Switch tabs by Ctrl-Tab. 
+   * Close active tab by Ctrl-W. 
+   * Add new tab to active pane with Ctrl-T.
+   * Focus the path textbox with Ctrl-E.
+   * Focus the filter textbox with Ctrl-F.
+   * Swap active pane with tab key.
+   * Ability to swap panels.
+   * Ability to change orientation.
+   * Save, retrieve paths on startup/exit of application.
+ * Store sort order for each column in the listviews.
+ * Customize listview font.
+ * Customize listview view type.
+ * Plugin pane infrastructure so that each pane is a dll that can be loaded dynamically.
+   * Command line pane to have access to the command line of the currently selected path.
+   * Screen pane to change opacity and brightness of application. [MG]
+   * Regex renamer pane for batch renaming of currently selected pane. [MG]
+   * Updated preview pane to adhere to the plugin pane infrastructure.
+   * Store orientation, state, height, tab text for startup/exit.
+   * Load/store custom settings for plugins. [Issue 103]
+   * View menu to hide/show panes on the fly.
+ * Change the versioning convention to use the svn revision number for the minor version number.
+ * Add in Common source to source tree. [Issue 99]
+ * Split Infrastructure into its own assembly for easier plugin generation.
+ * New status message shows more data about the selected files and the total selected size.
+ * Save position of form and window state (maximize, normal, minimized). [Issue 92]
+ * Blink the path textbox if it was entered incorrectly.
+ * FIX: An intermittent exception when starting the application. [Issue 94]
+ * FIX: Add newly discovered drives into the drive dropdown in the correct location.
+ * FIX: When showing a parent directory and loading a path at least 2 directories deep, the parent directory now correctly goes to the parent.
+ * FIX: Large file sizes will now show the correct human-readable size.
 
 === 0.7.0.061208 ===
  * Application-wide keyboard shortcuts (with modifiers) for tools. [Issue: 25]
