@@ -1297,6 +1297,34 @@ namespace WeifenLuo.WinFormsUI.Docking
             ResetMouseEventArgs();
 		}
 
+        protected override void OnMouseUp(MouseEventArgs e) {
+            base.OnMouseUp(e);
+
+            int hitTestIndex = HitTest(PointToClient(Control.MousePosition));
+
+            if (hitTestIndex != -1) {
+                if (e.Button == MouseButtons.Middle) {
+                    if (DockPane.ActiveContent.DockHandler.CloseButton) {
+                        int indexOfClosedContent = DockPane.Contents.IndexOf(DockPane.ActiveContent);
+                        int indexOfPreviousActiveContent = (DockPane.PreviousActiveContent != null)
+                            ? DockPane.Contents.IndexOf(DockPane.PreviousActiveContent)
+                            : 0;
+                        int indexToActivate = indexOfPreviousActiveContent;
+
+                        DockPane.CloseActiveContent();
+
+                        // Determine the next tab to activate.
+                        if (DockPane.Contents.Count == indexOfPreviousActiveContent
+                            || indexOfPreviousActiveContent >= indexOfClosedContent) {
+                            indexToActivate--;
+                        }
+
+                        DockPane.Contents[indexToActivate].DockHandler.Activate();
+                    }
+                }
+            }
+        }
+
         protected override void OnRightToLeftChanged(EventArgs e)
         {
             base.OnRightToLeftChanged(e);
