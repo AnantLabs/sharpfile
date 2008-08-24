@@ -212,11 +212,6 @@ namespace WeifenLuo.WinFormsUI.Docking
 
             if (e.Button == MouseButtons.Right) {
                 ShowTabPageContextMenu(new Point(e.X, e.Y));
-            } else if (e.Button == MouseButtons.Middle) {
-                if (DockPane.ActiveContent.DockHandler.CloseButton) {
-                    // TODO: Save current active content and re-focus that.
-                    DockPane.CloseActiveContent();
-                }
             }
         }
 

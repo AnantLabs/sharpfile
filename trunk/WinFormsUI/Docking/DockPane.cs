@@ -147,6 +147,13 @@ namespace WeifenLuo.WinFormsUI.Docking
 			base.Dispose(disposing);
 		}
 
+        private IDockContent m_previousActiveContent = null;
+        public virtual IDockContent PreviousActiveContent {
+            get {
+                return m_previousActiveContent;
+            }
+        }
+
 		private IDockContent m_activeContent = null;
 		public virtual IDockContent ActiveContent
 		{
@@ -168,6 +175,7 @@ namespace WeifenLuo.WinFormsUI.Docking
 				}
 
 				IDockContent oldValue = m_activeContent;
+                m_previousActiveContent = oldValue;
 
 				if (DockPanel.ActiveAutoHideContent == oldValue)
 					DockPanel.ActiveAutoHideContent = null;
