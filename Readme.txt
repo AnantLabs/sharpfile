@@ -11,6 +11,7 @@ Tab: Contains a drive selection, path, filter, and the ListView.
 ListView: Lists the current directories and files with appropriate attributes. Can also contain meta-data for the current path such as a link to the parent or root directory.
 
 Key shortcuts:
+Space: Selects a file/directory; calculates the total size of selected files/directories
 Tab: Rotate through the panes
 Ctrl-Tab: Rotate through the tabs in the active pane
 Ctrl-W: Close the active tab

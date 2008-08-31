@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Common.Logger {
     public class LoggerService {
-        string fileName;
-        LogLevelType _logLevel = LogLevelType.ErrorsOnly;
-        Logger logger;
-
         public delegate void ProcessContentDelegate(string content);
-        public event ProcessContentDelegate ProcessContent;
+
+        private string fileName;
+        private LogLevelType _logLevel = LogLevelType.ErrorsOnly;
+        private Logger logger;        
 
         /// <summary>
         /// Default ctor.
@@ -46,18 +43,6 @@ namespace Common.Logger {
         }
 
         /// <summary>
-        /// Raises the ProcessContent event.
-        /// </summary>
-        /// <param name="content">Content to raise.</param>
-        /// <param name="arguments">Arguments to the content.</param>
-        public void OnProcessContent(string content, string[] arguments) {
-            if (ProcessContent != null) {
-                ProcessContent(string.Format(content,
-                    arguments));
-            }
-        }
-
-        /// <summary>
         /// Log the message to the configured log file.
         /// </summary>
         /// <param name="logLevel">LogLevel.</param>
@@ -72,8 +57,8 @@ namespace Common.Logger {
         /// <param name="logLevel">LogLevel.</param>
         /// <param name="content">Content to log.</param>
         /// <param name="arguments">Arguments for the content.</param>
-        public void Log(LogLevelType logLevel, string content, params string[] arguments) {
-            Log(logLevel, null, content, arguments);
+        public bool Log(LogLevelType logLevel, string content, params string[] arguments) {
+            return Log(logLevel, null, content, arguments);
         }
 
         /// <summary>
@@ -82,8 +67,8 @@ namespace Common.Logger {
         /// <param name="logLevel">LogLevel.</param>
         /// <param name="exception">Exception to log.</param>
         /// <param name="content">Content to log.</param>
-        public void Log(LogLevelType logLevel, Exception exception, string content) {
-            Log(logLevel, exception, content, new string[] {});
+        public bool Log(LogLevelType logLevel, Exception exception, string content) {
+            return Log(logLevel, exception, content, new string[] {});
         }
 
         /// <summary>
@@ -93,15 +78,71 @@ namespace Common.Logger {
         /// <param name="exception">Exception to log.</param>
         /// <param name="content">Content to log.</param>
         /// <param name="arguments">Arguments for the content.</param>
-        public void Log(LogLevelType logLevel, Exception exception, string content, params string[] arguments) {
-            if (LogLevel >= logLevel) {
-                try {
-                    OnProcessContent(content, arguments);
-                } catch (Exception ex) {
-                    logger.Log(fileName, ex, "Error while trying to process the content.", new string[] { });
-                }
+        public bool Log(LogLevelType logLevel, Exception exception, string content, params string[] arguments) {
+            bool logged = false;
 
+            if (LogLevel >= logLevel) {
                 logger.Log(fileName, exception, content, arguments);
+                logged = true;
+            }
+
+            return logged;
+        }
+
+        /// <summary>
+        /// Log the message to the configured log file.
+        /// </summary>
+        /// <param name="logLevel">LogLevel.</param>
+        /// <param name="method">ProcessMethodDelegate to invoke.</param>
+        /// <param name="content">Content to log.</param>
+        public bool LogAndInvoke(LogLevelType logLevel, ProcessContentDelegate method, string content) {
+            return LogAndInvoke(logLevel, method, null, content, new string[] {});
+        }
+
+        /// <summary>
+        /// Log the message to the configured log file.
+        /// </summary>
+        /// <param name="logLevel">LogLevel.</param>
+        /// <param name="method">ProcessMethodDelegate to invoke.</param>
+        /// <param name="content">Content to log.</param>
+        /// <param name="arguments">Arguments for the content.</param>
+        public bool LogAndInvoke(LogLevelType logLevel, ProcessContentDelegate method, string content, 
+            params string[] arguments) {
+            return LogAndInvoke(logLevel, method, null, content, arguments);
+        }
+
+        /// <summary>
+        /// Log the message to the configured log file.
+        /// </summary>
+        /// <param name="logLevel">LogLevel.</param>
+        /// <param name="method">ProcessMethodDelegate to invoke.</param>
+        /// <param name="exception">Exception to log.</param>
+        /// <param name="content">Content to log.</param>
+        /// <param name="arguments">Arguments for the content.</param>
+        public bool LogAndInvoke(LogLevelType logLevel, ProcessContentDelegate method, Exception exception,
+            string content, params string[] arguments) {
+            bool logged = false;
+            logged = Log(logLevel, exception, content, arguments);
+
+            if (logged) {
+                if (method != null) {
+                    method.DynamicInvoke(string.Format(content, arguments));
+                }
+            }
+
+            return logged;
+        }
+
+        /// <summary>
+        /// Logs numerous exceptions with the same content.
+        /// </summary>
+        /// <param name="logLevel">LogLevel.</param>
+        /// <param name="exceptions">Exceptions to log.</param>
+        /// <param name="content">Content to log.</param>
+        /// <param name="arguments">Arguments for the content.</param>
+        public void LogNumerous(LogLevelType logLevel, Exception[] exceptions, string content, params string[] arguments) {
+            foreach (Exception exception in exceptions) {
+                Log(logLevel, exception, content, arguments);
             }
         }
 

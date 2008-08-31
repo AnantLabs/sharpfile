@@ -24,7 +24,7 @@ namespace SharpFile.Infrastructure.IO.Retrievers {
 				try {
 					Process.Start(processStartInfo);
 				} catch (System.ComponentModel.Win32Exception ex) {
-					Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "File, {0}, cannot be opened.",
+                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex, "File, {0}, cannot be opened.",
 						resource.FullName);
 				}
 

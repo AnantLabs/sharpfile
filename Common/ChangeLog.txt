@@ -1,3 +1,7 @@
+NIGHTLIES
+Add LogAndInvoke to Logger to display log messages by passing in a delegate.
+Add LogNumerous to Logger so that an array of exceptions can be logged with the same content (primarily used for ReflectionTypeLoadException exceptions).
+
 0.4.9.2
 Add InstantiateObject overload to create an object from a Type.
 FIX: Templater would prevent template from correctly swapping in content.

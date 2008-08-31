@@ -112,10 +112,8 @@ namespace SharpFile.UI {
                 Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
                     "Reflection type error while trying to generate settings when the form was opening.");
 
-                foreach (Exception exception in ex.LoaderExceptions) {
-                    Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
+                Settings.Instance.Logger.LogNumerous(LogLevelType.ErrorsOnly, ex.LoaderExceptions,
                         "Settings loader exception.");
-                }
 
                 throw;
             } catch (Exception ex) {
