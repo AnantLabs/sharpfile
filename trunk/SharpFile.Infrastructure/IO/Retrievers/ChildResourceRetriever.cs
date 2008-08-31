@@ -105,17 +105,13 @@ namespace SharpFile.Infrastructure.IO.Retrievers {
                     } catch (UnauthorizedAccessException ex) {
                         e.Cancel = true;
 
-                        Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        Settings.Instance.Logger.LogAndInvoke(LogLevelType.ErrorsOnly, view.ShowMessageBox, ex,
                             "Access is unauthorized for {0}.", resource.FullName);
-                        Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
                     } catch (Exception ex) {
                         e.Cancel = true;
 
-                        Settings.Instance.Logger.ProcessContent += view.ShowMessageBox;
-                        Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, ex,
+                        Settings.Instance.Logger.LogAndInvoke(LogLevelType.ErrorsOnly, view.ShowMessageBox, ex,
                             "Error when getting resources for {0}.", resource.FullName);
-                        Settings.Instance.Logger.ProcessContent -= view.ShowMessageBox;
                     } finally {
                         backgroundWorker.ReportProgress(100);
                         Common.Forms.SetPropertyInParent<bool>(view.Control, "Executing", false);

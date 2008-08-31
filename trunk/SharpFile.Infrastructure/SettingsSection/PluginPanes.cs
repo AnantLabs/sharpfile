@@ -259,11 +259,9 @@ namespace SharpFile.Infrastructure.SettingsSection {
                 Assembly.GetAssembly(typeof(IPluginPane)).GetName().Version.ToString(),
                 versionBuiltAgainst);
 
-            foreach (Exception exception in ex.LoaderExceptions) {
-                Settings.Instance.Logger.Log(LogLevelType.ErrorsOnly, exception,
+            Settings.Instance.Logger.LogNumerous(LogLevelType.ErrorsOnly, ex.LoaderExceptions,
                     "Plugin pane, {0}, loader exception.",
                     pluginPaneSetting.Name);
-            }
         }
     }
 }

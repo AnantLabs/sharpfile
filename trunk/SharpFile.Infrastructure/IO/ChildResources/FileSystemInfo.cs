@@ -32,7 +32,7 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
 
             using (SafeFindHandle handle = Kernel32.FindFirstFile(validFullName, findData)) {
                 if (handle.IsInvalid) {
-                    Settings.Instance.Logger.Log(LogLevelType.Verbose,
+                    Settings.Instance.Logger.Log(LogLevelType.Verbose, 
                         "Filesystem object cannot be found for {0}", fullName);
                 } else {
                     getDetails();

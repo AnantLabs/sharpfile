@@ -1,3 +1,7 @@
+NIGHTLIES
+	Last active tab is saved so that it will be activated when the current tab is closed.
+	FIX: Tabs must be middle-clicked to close them, instead of just in the tab area.
+
 0.7.6.572
 	New implementation of docking/tabbing functionality with DockPanel Suite.
 		- Double-click in the tab area creates a new tab.
