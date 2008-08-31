@@ -1,8 +1,6 @@
-UPDATE WEBSITE
-
 0.7.6+
-- cleanup any of the reflection code that I can -- move it to common if possible
-- save last active tab so that closing a different tab would keep the previously active tab active
+- cleanup any of the reflection code that I can -- move it to common if possible -- use LCG
+- convert strings to consts when possible -- should free up some memory
 - store last 10? filters and last 10? paths -- show path history in auto complete box (always? sometimes? configurable?)
 - figure out how to clone events from an object
 - split out listview class into other classes
