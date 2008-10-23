@@ -6,7 +6,7 @@ This is the current, tentative, roadmap for the upcoming releases for !SharpFile
 
 === 0.8 Proposed Features ===
  * Configurable action hotkeys (0.7.0.061208)
- * Command bar for current path (Done in the nightlies)
+ * Command bar for current path (0.7.6.572)
  * Copy/move progress dialog
  * Store column settings
 
