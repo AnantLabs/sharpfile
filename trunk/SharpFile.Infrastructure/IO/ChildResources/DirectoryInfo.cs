@@ -68,7 +68,8 @@ namespace SharpFile.Infrastructure.IO.ChildResources {
             // Get the files and directories to the destination.
             FileSystemEnumerator enumerator = new FileSystemEnumerator(this.fullName);
             foreach (IChildResource resource in enumerator.Matches()) {
-                resource.Copy(destination + resource.Name, overwrite);
+                string fullPath = System.IO.Path.Combine(destination, resource.Name);
+                resource.Copy(fullPath, overwrite);
             }
         }
 
