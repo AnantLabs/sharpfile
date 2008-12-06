@@ -1,4 +1,4 @@
-NIGHTLIES
+0.4.9.3
 Add LogAndInvoke to Logger to display log messages by passing in a delegate.
 Add LogNumerous to Logger so that an array of exceptions can be logged with the same content (primarily used for ReflectionTypeLoadException exceptions).
 
