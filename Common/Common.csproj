@@ -54,6 +54,8 @@
     <Compile Include="PluginRetriever.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection.cs" />
+    <Compile Include="SettingsBase.cs" />
+    <Compile Include="SettingsSection\Logger.cs" />
     <Compile Include="WindowsApi\Messages\CCM.cs" />
     <Compile Include="WindowsApi\Messages\EM.cs" />
     <Compile Include="WindowsApi\Messages\LVM.cs" />
