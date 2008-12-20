@@ -416,7 +416,7 @@ namespace SharpFile.UI {
         }
 
         private void reloadSettingsStripMenuItem_Click(object sender, EventArgs e) {
-            Settings.Load();
+			Settings.Load(Settings.Instance);
 
             // Call a method called reload on every child control to reload data.
             // Refresh the screen.

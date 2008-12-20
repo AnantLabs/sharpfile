@@ -16,7 +16,7 @@ namespace SharpFile.ConfigConverters {
         /// Convert the config file from one format to another.
         /// </summary>
         public override void Convert() {
-            Settings.Clear();
+			Settings.Clear(Settings.Instance);
         }
     }
 }

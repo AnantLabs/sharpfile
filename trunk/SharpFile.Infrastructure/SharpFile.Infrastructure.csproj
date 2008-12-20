@@ -101,7 +101,6 @@
     <Compile Include="SettingsSection\FontInfo.cs" />
     <Compile Include="SettingsSection\Icons.cs" />
     <Compile Include="SettingsSection\Key.cs" />
-    <Compile Include="SettingsSection\Logger.cs" />
     <Compile Include="SettingsSection\Pane.cs" />
     <Compile Include="SettingsSection\ParentResourceRetriever.cs" />
     <Compile Include="SettingsSection\PluginPane.cs" />

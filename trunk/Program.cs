@@ -66,7 +66,7 @@ Press CANCEL to exit SharpFile.",
                 Settings.Instance.Logger.Log(LogLevelType.Verbose,
                     "ApplicationExit");
 
-                Settings.Save();
+				Settings.Save(Settings.Instance);
             };
 
             if (Settings.Instance.ParentType == ParentType.Dual) {
