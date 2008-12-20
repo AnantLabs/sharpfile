@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using Common.Logger;
 using SharpFile.Infrastructure.Interfaces;
-using SharpFile.Infrastructure.WindowsApi;
+using Common.Win32;
 
 namespace SharpFile.Infrastructure.IO.ChildResources {
     public class DirectoryInfo : FileSystemInfo {

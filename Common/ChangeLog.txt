@@ -1,3 +1,12 @@
+0.4.11
+Move SharpFile's Windows API to Common.
+
+0.4.10
+Add Animation code for tweening, fading and expanding forms/controls.
+
+0.4.9.4
+Add ConvertObject method to General.
+
 0.4.9.3
 Add LogAndInvoke to Logger to display log messages by passing in a delegate.
 Add LogNumerous to Logger so that an array of exceptions can be logged with the same content (primarily used for ReflectionTypeLoadException exceptions).

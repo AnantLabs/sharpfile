@@ -128,6 +128,18 @@ namespace Common {
         }
 
 		/// <summary>
+		/// Converts an object to a specified type.
+		/// </summary>
+		/// <typeparam name="T">Type to convert object to.</typeparam>
+		/// <param name="obj">Object to convert.</param>
+		/// <returns>Correctly-typed object.</returns>
+		public static T ConvertObject<T>(object obj) {
+			T val = default(T);
+			val = (T)Convert.ChangeType(obj, typeof(T));
+			return val;
+		}
+
+		/// <summary>
 		/// Calculates the correct human-readable string from a double.
 		/// </summary>
 		/// <param name="size">Value to generate a human-readable size from.</param>

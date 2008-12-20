@@ -51,7 +51,6 @@
     <Compile Include="FullyQualifiedMethod.cs" />
     <Compile Include="FullyQualifiedType.cs" />
     <Compile Include="IconManager.cs" />
-    <Compile Include="IconReader.cs" />
     <Compile Include="Interfaces\IChildResource.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -109,16 +108,6 @@
     <Compile Include="SettingsSection\Tool.cs" />
     <Compile Include="SettingsSection\View.cs" />
     <Compile Include="SettingsSection\ViewInfo.cs" />
-    <Compile Include="WindowsApi\EDITBALLOONTIP.cs" />
-    <Compile Include="WindowsApi\FILETIME.cs" />
-    <Compile Include="WindowsApi\Kernel32.cs" />
-    <Compile Include="WindowsApi\SafeFindHandle.cs" />
-    <Compile Include="WindowsApi\Shell32.cs" />
-    <Compile Include="WindowsApi\SHFILEINFO.cs" />
-    <Compile Include="WindowsApi\User32.cs" />
-    <Compile Include="WindowsApi\Utility.cs" />
-    <Compile Include="WindowsApi\WIN32_FILE_ATTRIBUTE_DATA.cs" />
-    <Compile Include="WindowsApi\WIN32_FIND_DATA.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

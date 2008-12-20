@@ -11,6 +11,7 @@ namespace SharpFile.Infrastructure {
             string assemblyPath = string.Format("{0}plugins{1}",
                 AppDomain.CurrentDomain.BaseDirectory,
                 Path.DirectorySeparatorChar);
+
             return GetPluginFiles(assemblyPath);
         }
 
