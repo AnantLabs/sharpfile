@@ -93,7 +93,6 @@
     <Compile Include="IO\Retrievers\DriveRetriever.cs" />
     <Compile Include="KeyboardHook.cs" />
     <Compile Include="ParentType.cs" />
-    <Compile Include="PluginRetriever.cs" />
     <Compile Include="ResourceContainer.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SettingsSection\ChildResourceRetriever.cs" />

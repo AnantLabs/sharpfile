@@ -91,7 +91,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
             get {
                 if (instances == null) {
                     instances = new List<IPluginPane>();
-                    PluginRetriever pluginRetriever = new PluginRetriever();
+                    PluginRetriever pluginRetriever = new PluginRetriever(Settings.Instance.Logger);
                     List<Assembly> assemblies = pluginRetriever.GetPluginAssemblies();                    
 
                     foreach (PluginPane pluginPaneSetting in Panes) {
