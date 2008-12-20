@@ -28,6 +28,7 @@ namespace Common {
 		private LoggerService loggerService;
 		private List<XmlElement> unknownConfigurationXmlElements;
 		private FileSystemWatcher fileSystemWatcher;
+		private static bool ignoreFileSystemWatcher = false;
 
 		/// <summary>
 		/// Explicit static ctor to load settings and to 
@@ -43,10 +44,14 @@ namespace Common {
 		protected SettingsBase() {
 			loggerSettings = new SettingsSection.Logger();			
 			unknownConfigurationXmlElements = new List<XmlElement>();
-			fileSystemWatcher = new FileSystemWatcher(FilePath);
-			fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
+
+			FileInfo fileInfo = new FileInfo(FilePath);
+			fileSystemWatcher = new FileSystemWatcher(fileInfo.DirectoryName);
+			fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite;
 			fileSystemWatcher.Changed += delegate(object sender, FileSystemEventArgs e) {
-				SettingsChanged(sender, e);
+				if (!ignoreFileSystemWatcher && e.Name.Equals(FilePath, StringComparison.OrdinalIgnoreCase)) {
+					SettingsChanged(sender, e);
+				}
 			};
 			fileSystemWatcher.EnableRaisingEvents = true;
 		}
@@ -56,6 +61,8 @@ namespace Common {
 		/// </summary>
 		public static void Load<T>(T instance) where T : SettingsBase {
 			lock (lockObject) {
+				ignoreFileSystemWatcher = true;
+
 				try {
 					XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
 					FileInfo fileInfo = new FileInfo(FilePath);
@@ -72,6 +79,42 @@ namespace Common {
 
 					throw;
 				}
+
+				ignoreFileSystemWatcher = false;
+			}
+		}
+
+		/// <summary>
+		/// Persists the setttings to the config file.
+		/// </summary>
+		public static void Save<T>(T instance) where T : SettingsBase {
+			lock (lockObject) {
+				ignoreFileSystemWatcher = true;
+
+				try {
+					XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+
+					using (TextWriter tw = new StreamWriter(FilePath)) {
+						xmlSerializer.Serialize(tw, instance);
+					}
+
+					instance.SaveSettings();
+				} catch (Exception ex) {
+					instance.loggerService.Log(LogLevelType.ErrorsOnly, ex, "Error when saving settings.");
+				}
+
+				ignoreFileSystemWatcher = false;
+			}
+		}
+
+		/// <summary>
+		/// Clears the config file.
+		/// </summary>
+		public static void Clear<T>(T instance) where T : SettingsBase {
+			if (File.Exists(FilePath)) {
+				File.Delete(FilePath);
+				instance.ClearSettings();
+				instance = default(T);
 			}
 		}
 
@@ -105,48 +148,6 @@ namespace Common {
 		}
 
 		/// <summary>
-		/// Persists the setttings to the config file.
-		/// </summary>
-		public static void Save<T>(T instance) where T : SettingsBase {
-			lock (lockObject) {
-				try {
-					XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-
-					using (TextWriter tw = new StreamWriter(FilePath)) {
-						xmlSerializer.Serialize(tw, instance);
-					}
-
-					instance.SaveSettings();
-				} catch (Exception ex) {
-					instance.loggerService.Log(LogLevelType.ErrorsOnly, ex, "Error when saving settings.");
-				}
-			}
-		}
-
-		/// <summary>
-		/// Designed to be overriden for any settings that need to be saved by inheriting classes.
-		/// </summary>
-		protected virtual void SaveSettings() {
-		}
-
-		/// <summary>
-		/// Designed to be overriden for any settings that need to be cleared by inheriting classes.
-		/// </summary>
-		protected virtual void ClearSettings() {
-		}
-
-		/// <summary>
-		/// Clears the config file.
-		/// </summary>
-		public static void Clear<T>(T instance) where T : SettingsBase {
-			if (File.Exists(FilePath)) {
-				File.Delete(FilePath);
-				instance.ClearSettings();
-				instance = default(T);
-			}
-		}
-
-		/// <summary>
 		/// Deserializes the settings config file to an object and sets the singleton's properties appropriately.
 		/// </summary>
 		/// <param name="xmlSerializer">XmlSerializer to deserialize.</param>
@@ -162,6 +163,18 @@ namespace Common {
 				T settings = (T)xmlSerializer.Deserialize(tr);
 				Reflection.DuplicateObject<T>(settings, instance);
 			}
+		}
+
+		/// <summary>
+		/// Designed to be overriden for any settings that need to be saved by inheriting classes.
+		/// </summary>
+		protected virtual void SaveSettings() {
+		}
+
+		/// <summary>
+		/// Designed to be overriden for any settings that need to be cleared by inheriting classes.
+		/// </summary>
+		protected virtual void ClearSettings() {
 		}
 
 		/// <summary>
