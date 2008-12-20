@@ -9,15 +9,13 @@ using Common;
 using Common.Logger;
 using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.SettingsSection;
-using Logger = Common.SettingsSection.Logger;
 
 namespace SharpFile.Infrastructure {
 	/// <summary>
 	/// Settings singleton.
 	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html.
 	/// </summary>
-	[Serializable]
-	public sealed class Settings : Common.SettingsBase {
+	public sealed class Settings : SettingsBase {
 		private static Settings instance = new Settings();
 
 		private ImageList imageList = new ImageList();
@@ -63,13 +61,27 @@ namespace SharpFile.Infrastructure {
 			fontInfo = new FontInfo();
 			viewInfo = new ViewInfo();
 			pluginPaneSettings = new PluginPanes();
-
 			ImageList.ColorDepth = ColorDepth.Depth32Bit;
+
+			instance.SettingsChanged += delegate {
+				Load(instance);
+			};
 		}
 
+		/// <summary>
+		/// Save the dynamic plugin pane settings when the settings file is being saved.
+		/// </summary>
 		protected override void SaveSettings() {
 			savePluginPaneSettings();
 			base.SaveSettings();
+		}
+
+		/// <summary>
+		/// Clear the parent resource retrievers when the settings file is being cleared.
+		/// </summary>
+		protected override void ClearSettings() {
+			instance.parentResourceRetrievers = null;
+			base.ClearSettings();
 		}
 
 		/// <summary>
