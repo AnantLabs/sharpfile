@@ -48,6 +48,10 @@ namespace SharpFile.Infrastructure {
 		/// </summary>
 		static Settings() {
 			Load(instance);
+
+			instance.SettingsChanged += delegate {
+				Load(instance);
+			};
 		}
 
 		/// <summary>
@@ -62,10 +66,6 @@ namespace SharpFile.Infrastructure {
 			viewInfo = new ViewInfo();
 			pluginPaneSettings = new PluginPanes();
 			ImageList.ColorDepth = ColorDepth.Depth32Bit;
-
-			instance.SettingsChanged += delegate {
-				Load(instance);
-			};
 		}
 
 		/// <summary>
