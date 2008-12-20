@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Common.Logger;
+using Common.UI;
 using SharpFile.Infrastructure.Interfaces;
 using SharpFile.Infrastructure.IO.ChildResources;
 using SharpFile.Infrastructure.IO.ParentResources;
@@ -26,7 +27,7 @@ namespace SharpFile.Infrastructure {
                 try {
                     // Prevent more than one thread from updating the ImageList at a time.
                     lock (lockObject) {
-                        const IconReader.IconSize iconSize = IconReader.IconSize.Small;
+                        const IconReader.Size iconSize = IconReader.Size.Small;
                         string fullPath = resource.FullName.ToLower();
                         bool showOverlay = false;
                         bool isLink = false;

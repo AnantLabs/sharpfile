@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using SharpFile.Infrastructure.Interfaces;
-using SharpFile.Infrastructure.WindowsApi;
+using Common.Win32;
 
 namespace SharpFile.Infrastructure {
     /// <summary>

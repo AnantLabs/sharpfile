@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Common.WindowsApi;
+using Common.Win32;
+using Common.Win32.Messages;
 
 /*
  * 

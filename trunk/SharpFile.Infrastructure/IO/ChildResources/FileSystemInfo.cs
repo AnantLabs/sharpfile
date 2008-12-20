@@ -4,7 +4,7 @@ using System.IO;
 using Common;
 using Common.Logger;
 using SharpFile.Infrastructure.Interfaces;
-using SharpFile.Infrastructure.WindowsApi;
+using Common.Win32;
 
 namespace SharpFile.Infrastructure.IO.ChildResources {
     public abstract class FileSystemInfo : IChildResource {
