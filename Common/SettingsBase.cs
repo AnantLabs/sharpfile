@@ -8,17 +8,26 @@ using Common.Logger;
 
 namespace Common {
 	/// <summary>
-	/// Settings singleton.
-	/// Number 4 from: http://www.yoda.arachsys.com/csharp/singleton.html.
+	/// SettingsBase class that can be inherited to implement settings functionality.
+	/// provides methods to load, save and clear. Provides some default properties like version and logging functionality.
+	/// Overriding classes should do the following:
+	/// 1. inherit from this class
+	/// 2. Create a static instance variable: private static Settings instance = new Settings();
+	/// 3. Create a static ctor: static Settings() { Load(instance); }
+	/// 4. Create a private instance ctor: private Settings() : base() { ... }
+	/// 5. Override any save or clear methods as required
+	/// 6. Create a public instance property: public static Settings Instance { get { return instance; } }
+	/// 7. Add in any extra properties as needed
 	/// </summary>
-	[Serializable]
 	public class SettingsBase {
+		public event FileSystemEventHandler SettingsChanged = delegate { };
 		public const string FilePath = "settings.config";
 		private static object lockObject = new object();
 		private string version = Assembly.GetEntryAssembly().GetName().Version.ToString();
 		private SettingsSection.Logger loggerSettings;
 		private LoggerService loggerService;
 		private List<XmlElement> unknownConfigurationXmlElements;
+		private FileSystemWatcher fileSystemWatcher;
 
 		/// <summary>
 		/// Explicit static ctor to load settings and to 
@@ -34,6 +43,12 @@ namespace Common {
 		protected SettingsBase() {
 			loggerSettings = new SettingsSection.Logger();			
 			unknownConfigurationXmlElements = new List<XmlElement>();
+			fileSystemWatcher = new FileSystemWatcher(FilePath);
+			fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
+			fileSystemWatcher.Changed += delegate(object sender, FileSystemEventArgs e) {
+				SettingsChanged(sender, e);
+			};
+			fileSystemWatcher.EnableRaisingEvents = true;
 		}
 
 		/// <summary>
@@ -115,11 +130,18 @@ namespace Common {
 		}
 
 		/// <summary>
+		/// Designed to be overriden for any settings that need to be cleared by inheriting classes.
+		/// </summary>
+		protected virtual void ClearSettings() {
+		}
+
+		/// <summary>
 		/// Clears the config file.
 		/// </summary>
 		public static void Clear<T>(T instance) where T : SettingsBase {
 			if (File.Exists(FilePath)) {
 				File.Delete(FilePath);
+				instance.ClearSettings();
 				instance = default(T);
 			}
 		}
