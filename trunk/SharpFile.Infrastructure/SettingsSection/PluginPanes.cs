@@ -22,7 +22,7 @@ namespace SharpFile.Infrastructure.SettingsSection {
 
             pluginPanes.Add(new PluginPane("Previewer", "Previewer",
                 new FullyQualifiedType("Previewer", "SharpFile.UI.Previewer"),
-                new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.Preview")));
+				new FullyQualifiedType("SharpFile.Infrastructure", "SharpFile.Infrastructure.SettingsSection.PreviewPaneSettings")));
 
             pluginPanes.Add(new PluginPane("Command Line", "Cmd",
                 new FullyQualifiedType("CommandLine", "SharpFile.UI.CommandLine")));
