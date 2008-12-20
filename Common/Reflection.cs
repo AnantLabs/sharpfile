@@ -81,6 +81,25 @@ namespace Common {
             }
         }
 
+		/// <summary>
+		///  Instantiates an object based on its type.
+		/// </summary>
+		/// <typeparam name="T"><Type of the return value./typeparam>
+		/// <param name="type">Type to instantiate.</param>
+		/// <param name="args">Args to pass to the ctor.</param>
+		/// <exception cref="System.TypeLoadException">Thrown when the instantiated object does not conform to the passed-in type parameter.</exception>
+		/// <returns>Object that cooresponds to the assembly and type.</returns>
+		public static T InstantiateObject<T>(Type type, params object[] args) {
+			object obj = Activator.CreateInstance(type, args);
+
+			if (obj is T) {
+				return (T)obj;
+			} else {
+				throw new TypeLoadException(string.Format(
+					"Type, {0}, is not type of T, {1}.", type, typeof(T).Name));
+			}
+		}
+
         /// <summary>
         /// Creates a delegate of the specified type that references the passed in method.
         /// Uses the BindingFlags of: Public | Static.
