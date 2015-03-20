@@ -1,0 +1,197 @@
+### Recent svn commits ###
+None.
+
+### 0.7.6.581 ###
+  * Last active tab is saved so that it will be activated when the current tab is closed.
+  * FIX: Tabs must be middle-clicked to close them, instead of just in the tab area.
+  * FIX: Copy files that are in a subfolder correctly.
+
+### 0.7.6.572 ###
+  * New implementation of docking/tabbing functionality with DockPanel Suite.
+    * Double-click in the tab area creates a new tab.
+    * Right-click in the tab area displays a context-sensitive menu.
+    * Middle-click on a tab closes the currently active tab.
+    * Right-click the separator for a context menu.
+    * Switch tabs by Ctrl-Tab.
+    * Close active tab by Ctrl-W.
+    * Add new tab to active pane with Ctrl-T.
+    * Focus the path textbox with Ctrl-E.
+    * Focus the filter textbox with Ctrl-F.
+    * Swap active pane with tab key.
+    * Ability to swap panels.
+    * Ability to change orientation.
+    * Save, retrieve paths on startup/exit of application.
+  * Store sort order for each column in the listviews.
+  * Customize listview font.
+  * Customize listview view type.
+  * Plugin pane infrastructure so that each pane is a dll that can be loaded dynamically.
+    * Command line pane to have access to the command line of the currently selected path.
+    * Screen pane to change opacity and brightness of application. [Marc.GIRAUDOU]
+    * Regex renamer pane for batch renaming of currently selected pane. [Marc.GIRAUDOU]
+    * Updated preview pane to adhere to the plugin pane infrastructure.
+    * Store orientation, state, height, tab text for startup/exit.
+    * Load/store custom settings for plugins. [Issue: 103]
+    * View menu to hide/show panes on the fly.
+  * Change the versioning convention to use the svn revision number for the minor version number.
+  * Add in Common source to source tree. [Issue: 99]
+  * Split Infrastructure into its own assembly for easier plugin generation.
+  * New status message shows more data about the selected files and the total selected size.
+  * Save position of form and window state (maximize, normal, minimized). [Issue: 92]
+  * Blink the path textbox if it was entered incorrectly.
+  * FIX: An intermittent exception when starting the application. [Issue: 94]
+  * FIX: Add newly discovered drives into the drive dropdown in the correct location.
+  * FIX: When showing a parent directory and loading a path at least 2 directories deep, the parent directory now correctly goes to the parent.
+  * FIX: Large file sizes will now show the correct human-readable size.
+
+### 0.7.0.061208 ###
+  * Application-wide keyboard shortcuts (with modifiers) for tools. [Issue: 25]
+  * Cut/copy/paste in path and filter textbox.
+  * Minimize to the system tray. [Issue: 90 - Marc.GIRAUDOU]
+  * Add more information for drives. [Issue: 89 - Marc.GIRAUDOU]
+  * FIX: Starting the program with a non-fixed drive path and/or with a child resource path would break.
+  * FIX: Some filesystem info couldn't be retrieved for fixed drives other than the current drive. [Issue: 93 - Marc.GIRAUDOU]
+  * FIX: Show icons for files on CD-Roms.
+
+### 0.7.0.052008 ###
+  * FIX: Compressed files did not show icons for their contents. [Issue: 88]
+  * FIX: Compressed files with folders would never show their contents. [Issue: 87]
+  * FIX: Compressed file Time column incorrectly showed the date. [Issue: 86 - Marc.GIRAUDOU]
+
+### 0.7.0.051208 ###
+  * FIX: Default Time column incorrectly showed the date. [Issue: 85 - Marc.GIRAUDOU]
+
+### 0.7.0.051108 ###
+  * KNOWN ISSUE: Some large compressed files corrupt the program.
+  * Add preview panel that shows text in a file or thumbnails for images and dynamic information about the currently selected filesytem object.
+  * Add about box and icon for the program.
+  * Check for correct version of the settings file when starting the program for settings file compatibility.
+  * Add dynamic tools menu to start a process with custom inputs.
+  * Renaming file usability.
+    * Select just the filename.
+    * Show tooltip balloon when an incorrect character is typed for filenames.
+  * Provide ability to define custom template for drive information.
+  * Save previous directory index.
+  * Save filtering history.
+  * Complete update and overhaul of settings XML file and the code to load it.
+  * FIX: Filtering was broken.
+  * FIX: Progress shows correctly for long-running operations.
+  * FIX: Drives that weren't ready, i.e. a floppy disk drive.
+
+### 0.65 - Speedy Gonzales - 3/30/2008 ###
+  * Rewritten core of the file retrieval routine which created a dramatic speedup in retrieving files/directories.
+    * On my "slow" testbed (700 Mhz, 256 MB RAM, 5400 RPM notebook drive)
+    * From 6 to 3 seconds to display c:\windows
+    * From 3 min+ to 12 seconds to display c:\windows\system32
+    * From 8 to 1 second to display a network drive over wifi with ~200 folders and a few files
+  * Tweaked how files/directories added to the listview to be the fastest possible.
+  * More options for retrieving icons.
+    * Show overlays off by default, but can be turned on by path.
+    * Intensive search off by default except for fixed drives.
+    * Ability to turn off all icons for even faster file retrieval.
+  * Improve speed when dragging-and-dropping onto/from the listview.
+  * Beginning of support to swap out views on the fly.
+  * Update to panel settings.
+    * Change panel orientation.
+    * Toggle panel being collapsed.
+    * Toggle filter shown.
+  * FIX: Most common broken paths that are entered can now be determined.
+  * FIX: Auto-complete of paths.
+  * FIX: Adding/disconnecting a drive would have inconsistent behavior.
+  * FIX: Trying to retrieve a drive before it was ready.
+  * FIX: Potential for stack overflow when retrieving a size for a directory with a reparse point.
+  * FIX: Path/filter textboxes would sometimes disappear into overflow.
+  * FIX: Update status bar when focus changes.
+
+### 0.60 - 1/31/2008 ###
+  * Sorting of listview by columns.
+  * Xml configuration
+    * column headers, sorting, custom methods.
+    * child resource retrievers and relationship to resource retrievers.
+    * tabs' path information
+    * extensions to retrieve icons for
+    * whether or not to show icon overlays
+  * Log debug information to a file.
+  * Disable dropdown, path, filter, listview when switching drives.
+  * Prevent the application from crashing if the retrievers or column methods are incorrectly configured.
+  * Rudimentary, readonly compressed file view (only supports zip files).
+  * Add view as configurable per child resource retriever.
+  * FIX: Sorting by date/time now works correctly.
+  * FIX: Newly created directories sorted correctly.
+  * FIX: Show the "Open With" Windows dialog if no program has been associated with an extension.
+  * FIX: Don't show file size for folders until it is calculated.
+  * FIX: Don't show information about root/parent directories.
+  * FIX: Only append a forward slash to directories in the path.
+
+### 0.50 ###
+  * Dual view.
+  * Drag and drop re-written; directories now supported.
+  * Beginnings of some settings support (height and width saved).
+  * Faster updates of items on file operations.
+  * Save current paths on exit.
+  * Ability for plug-in retrievers to update the listview.
+  * Parent control updated with currently selected path.
+  * Menu support for dual view.
+  * Switch contents of panel1 with contents of panel2 in dual view.
+  * Hide panel1/panel2.
+  * Context menu for some set percentages of splitter position.
+  * Tooltip for splitter percentage position.
+  * Ability to cancel the file retrieval for directories.
+  * Show message if a directory is inaccessible.
+  * Auto-resize columns when directory sizes are calculated.
+  * Execute currently selected item with the Enter key.
+  * Get the drives once and store the information, so that it doesn't need to be queried everytime.
+  * Newly connected drives now refresh the drive dropdown.
+  * Preliminary support for plug-in views and file retrievers.
+  * FIX: Prevent renaming root/parent directories.
+  * FIX: Better operation of the progress disk so that the disk doesn't continue to spin when the operation is canceled.
+  * FIX: Updates on right-click operations now works correctly.
+  * FIX: Drag and drop inconsistencies.
+
+### 0.40 ###
+  * Completely flicker-less listview refreshes.
+  * Rename directories.
+  * Better icon support.
+  * Drive icons.
+  * Selection of current drive displayed in dropdown menu.
+  * Selection now correctly moves to the next object.
+  * FIX: Drive button wouldn't correctly update the current drive.
+  * FIX: Remove files/directories from selected list now correctly updates total.
+
+### 0.35 ###
+  * Right-click context menu.
+  * Preliminary support for drag-and-drop operations.
+  * F2 to Rename files.
+  * On-the-fly file filtering.
+  * Tabbed child windows.
+  * Show overlays on files/folders.
+  * FIX: Less flickering listview (again).
+
+### 0.30 ###
+  * Show progress on long-running operations.
+  * Re-organization of code. Split out non-UI assemblies from the UI.
+  * Automatic refresh of current directory.
+  * Less flicker when updating the listview.
+  * Re-implemented drive retrieval code.
+  * FIX: Prevent extra filesystem retrieval when populating the drives.
+
+### 0.25 ###
+  * Icon retrieval for files and directories.
+  * Show root directory shortcut.
+  * Correct implementation of root/parent directory behavior.
+  * Asynchronous retrieval of drive information.
+  * Resize drive information box correctly.
+  * Updating the filesytem objects in the listbox should be slightly faster because of enhancements.
+  * Calculate the folder size on selection.
+  * FIX: Sometimes selecting a filesytem object would throw an exception.
+  * FIX: Cross-thread issues when updating the listview.
+
+### 0.2 ###
+  * Textbox for specific path retrieval.
+  * Wildcard pattern filtering on files.
+  * Asynchronous retrieval of files/folders.
+
+### 0.1 ###
+  * Proof of concept MDI application.
+  * Retrieves drives.
+  * Retrieves files and folders.
+  * Root/parent custom files.
